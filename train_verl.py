@@ -15,6 +15,11 @@ import os
 import subprocess
 import argparse
 
+# Add project root to Python path so verl can import reward_model
+project_root = os.path.dirname(os.path.abspath(__file__))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 def main():
     parser = argparse.ArgumentParser(
         description="Train Qwen3-8B to generate harder questions using verl GRPO",

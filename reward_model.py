@@ -83,14 +83,37 @@ class VerlRewardModel:
         Extract seed question from prompt template.
         
         Args:
-            prompt: Full prompt string (may include template)
+            prompt: Full prompt string (may include template or be a chat format)
             
         Returns:
             Seed question string
         """
-        # Try to extract seed question from common prompt formats
-        # This is a simple heuristic - adjust based on your prompt template
+        # Handle chat format (list of dicts) if prompt is a string representation
+        import json
+        try:
+            # Try to parse as JSON if it's a string representation of a list
+            if isinstance(prompt, str) and prompt.strip().startswith('['):
+                prompt_list = json.loads(prompt)
+                # Find the user message and extract question
+                for msg in prompt_list:
+                    if msg.get("role") == "user":
+                        content = msg.get("content", "")
+                        # Look for "Given the following question:" pattern
+                        if "Given the following question:" in content or "generate a harder question" in content.lower():
+                            # Extract the question after the instruction
+                            parts = content.split("generate a harder question")
+                            if len(parts) > 1:
+                                question = parts[1].strip()
+                                # Remove leading colons, newlines, and quotes
+                                question = question.lstrip(":\n").strip().strip('"').strip("'")
+                                if question:
+                                    return question
+                        # If no pattern, return the whole content
+                        return content.strip()
+        except (json.JSONDecodeError, AttributeError):
+            pass
         
+        # Try to extract seed question from common prompt formats (string format)
         # Look for "Given the following question:" pattern
         if "Given the following question:" in prompt:
             parts = prompt.split("Given the following question:")
@@ -103,7 +126,47 @@ class VerlRewardModel:
         return prompt.strip()
 
 
-# Factory function for verl to use
+# Global reward model instance for function-based API
+_reward_model_instance: Optional[VerlRewardModel] = None
+
+
+def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_info: Optional[dict] = None) -> float:
+    """
+    VERL-compatible reward function signature.
+    
+    This function matches VERL's expected custom_reward_function signature:
+    def compute_score(data_source, solution_str, ground_truth, extra_info=None)
+    
+    Args:
+        data_source: Dataset identifier (ignored, but required by VERL)
+        solution_str: Generated response (harder question)
+        ground_truth: Original seed question (from data)
+        extra_info: Optional additional information
+        
+    Returns:
+        Reward score (float)
+    """
+    global _reward_model_instance
+    
+    # Initialize reward model if not already done
+    if _reward_model_instance is None:
+        _reward_model_instance = VerlRewardModel(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            model_name="gpt-4o",
+        )
+    
+    try:
+        # Use ground_truth as the seed question (prompt)
+        # solution_str is the generated harder question (response)
+        judge_scores = _reward_model_instance.judge.score(ground_truth, solution_str)
+        reward = judge_scores.get("overall", 0.0)
+        return reward
+    except Exception as e:
+        logger.error(f"Error computing reward: {e}")
+        return 0.0
+
+
+# Factory function for verl to use (class-based approach)
 def create_reward_model(config: Optional[dict] = None) -> VerlRewardModel:
     """
     Factory function to create reward model from config.

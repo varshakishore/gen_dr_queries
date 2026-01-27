@@ -33,7 +33,6 @@ generation:
   top_p: 0.9
   max_new_tokens: 128
 
-# Reward model configuration
-# The reward model will be provided via the VerlRewardModel wrapper
-reward_model:
-  type: "custom"  # We provide our own via VerlRewardModel
+custom_reward_function:
+  path: "reward_model.py"  # Path relative to working directory (project root)
+  name: "compute_score"
