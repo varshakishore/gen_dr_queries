@@ -59,4 +59,5 @@ models/
 
 #folder
 /analysis/*.json
+/analysis/*.jsonl
 /analysis/run_utils.py
