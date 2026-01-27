@@ -1,0 +1,39 @@
+# verl configuration for GRPO training
+# This config is compatible with verl's expected format
+
+model:
+  name: "Qwen/Qwen2.5-7B-Instruct"
+  torch_dtype: "float16"
+
+algorithm:
+  type: "grpo"
+  adv_estimator: "grpo"
+
+actor_rollout_ref:
+  rollout:
+    n: 4  # Group size - number of rollouts per prompt (must be > 1 for GRPO)
+  actor:
+    ppo_mini_batch_size: 4
+    ppo_epochs: 1
+    clip_ratio: 0.2
+    use_kl_loss: false
+    kl_loss_coef: 0.0
+    loss_agg_mode: "token-mean"  # or "sample-mean" - token-mean is more stable
+
+training:
+  backend: "fsdp"  # Options: fsdp, megatron
+  rollout_backend: "vllm"  # Options: vllm, sglang
+  train_batch_size: 4
+  learning_rate: 1e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+
+generation:
+  temperature: 1.0
+  top_p: 0.9
+  max_new_tokens: 128
+
+# Reward model configuration
+# The reward model will be provided via the VerlRewardModel wrapper
+reward_model:
+  type: "custom"  # We provide our own via VerlRewardModel

@@ -1,0 +1,9 @@
+torch>=2.0.0
+transformers>=4.35.0
+verl>=0.1.0  # Required - install with: pip install verl or verl[vllm,sglang]
+openai>=1.0.0
+pyyaml>=6.0
+numpy>=1.24.0
+tqdm>=4.65.0
+wandb>=0.15.0
+accelerate>=0.24.0
