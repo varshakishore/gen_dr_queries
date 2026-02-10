@@ -1,5 +1,11 @@
 # verl configuration for GRPO training
 # This config is compatible with verl's expected format
+# Generate the dataset with: python data/convert_data_for_verl.py --input data/seed_questions.txt --output data/seed_questions.parquet
+
+data:
+  train_files: "data/seed_questions.parquet"
+  prompt_key: "prompt"  # default; matches convert_data_for_verl.py output
+  train_max_samples: -1  # use full dataset
 
 model:
   name: "Qwen/Qwen2.5-7B-Instruct"
