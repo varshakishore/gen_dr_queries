@@ -29,8 +29,8 @@ Examples:
   # Basic usage
   python train_verl.py --config configs/verl_config.yaml
   
-  # With additional verl arguments
-  python train_verl.py --config configs/verl_config.yaml --training.train_batch_size 8
+  # With Hydra overrides (use key=value, not --key value)
+  python train_verl.py --config configs/verl_config.yaml training.train_batch_size=8
   
   # Direct verl CLI (equivalent)
   python -m verl.trainer.main_ppo --config configs/verl_config.yaml
@@ -66,15 +66,20 @@ Examples:
         print(f"Please create a verl configuration file or specify an existing one with --config")
         sys.exit(1)
     
-    # Prepare verl command
+    # Hydra expects config-path (directory) and config-name (filename without .yaml)
+    config_path = os.path.dirname(args.config) or "."
+    config_name = os.path.splitext(os.path.basename(args.config))[0]
+    
+    # Prepare verl command (verl uses Hydra: --config-path, --config-name)
     verl_cmd = [
         sys.executable,
         "-m",
         "verl.trainer.main_ppo",
-        "--config", args.config,
+        "--config-path", config_path,
+        "--config-name", config_name,
     ]
     
-    # Add any additional verl arguments (these will be passed to verl)
+    # Add any additional Hydra overrides (e.g. training.train_batch_size=8)
     verl_cmd.extend(unknown_args)
     
     print("=" * 70)
@@ -88,8 +93,8 @@ Examples:
     print("=" * 70)
     print()
     print("Note: This script is a simple wrapper around verl's native trainer.")
-    print("You can also run verl directly:")
-    print(f"  python -m verl.trainer.main_ppo --config {args.config}")
+    print("You can also run verl directly (Hydra uses --config-path and --config-name):")
+    print(f"  python -m verl.trainer.main_ppo --config-path {config_path} --config-name {config_name}")
     print()
     
     # Run verl trainer
