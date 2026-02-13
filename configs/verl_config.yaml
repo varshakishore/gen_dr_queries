@@ -1,44 +1,44 @@
-# verl configuration for GRPO training
-# This config is compatible with verl's expected format
-# Generate the dataset with: python data/convert_data_for_verl.py --input data/seed_questions.txt --output data/seed_questions.parquet
+# Overrides for verl GRPO (verl default config is base; only keys that exist in default struct)
+# Generate data: python data/convert_data_for_verl.py --input data/seed_questions.txt --output data/seed_questions.parquet
+# Batch size: use CLI override data.train_batch_size=8
 
 data:
   train_files: "data/seed_questions.parquet"
-  prompt_key: "prompt"  # default; matches convert_data_for_verl.py output
-  train_max_samples: -1  # use full dataset
-
-model:
-  name: "Qwen/Qwen2.5-7B-Instruct"
-  torch_dtype: "float16"
+  val_files: "data/seed_questions.parquet"  # override default (was ~/data/rlhf/gsm8k/test.parquet)
+  prompt_key: "prompt"
+  train_max_samples: -1
+  train_batch_size: 4
 
 algorithm:
-  type: "grpo"
   adv_estimator: "grpo"
 
 actor_rollout_ref:
+  model:
+    path: "Qwen/Qwen2.5-0.5B-Instruct"
+    # torch_dtype not in default struct - omit or set via CLI if needed
   rollout:
-    n: 4  # Group size - number of rollouts per prompt (must be > 1 for GRPO)
+    name: "vllm"  # Inference engine for rollout (required: "vllm" or "sglang")
+    n: 4  # Group size for GRPO (must be > 1)
+    log_prob_micro_batch_size_per_gpu: 8  # required by verl
+  ref:
+    log_prob_micro_batch_size_per_gpu: 16  # reference policy log-prob batch size
   actor:
     ppo_mini_batch_size: 4
+    ppo_micro_batch_size_per_gpu: 2  # required by verl when use_dynamic_bsz is false
     ppo_epochs: 1
     clip_ratio: 0.2
     use_kl_loss: false
     kl_loss_coef: 0.0
-    loss_agg_mode: "token-mean"  # or "sample-mean" - token-mean is more stable
+    loss_agg_mode: "token-mean"
 
-training:
-  backend: "fsdp"  # Options: fsdp, megatron
-  rollout_backend: "vllm"  # Options: vllm, sglang
-  train_batch_size: 4
-  learning_rate: 1e-5
-  weight_decay: 0.01
-  max_grad_norm: 1.0
-
-generation:
-  temperature: 1.0
-  top_p: 0.9
-  max_new_tokens: 128
+# Use 2 GPUs (override default 8 so it runs on machines with fewer GPUs)
+# Wandb: project and run name (VeRL Tracking uses project_name → wandb project, experiment_name → wandb run name)
+trainer:
+  n_gpus_per_node: 2
+  # project_name: "gen_queries"   # wandb project
+  # experiment_name: "testing"           # wandb run name (override per run via CLI: trainer.experiment_name=my_run)
+  logger: ["console"]     # enable wandb (default may be console-only)
 
 custom_reward_function:
-  path: "reward_model.py"  # Path relative to working directory (project root)
+  path: "reward_model.py"
   name: "compute_score"

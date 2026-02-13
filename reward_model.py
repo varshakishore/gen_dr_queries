@@ -4,8 +4,14 @@ This module provides a verl-compatible reward model interface.
 """
 
 import os
+import sys
 from typing import List, Optional
 import logging
+
+# Ensure project root is on path when loaded by verl (e.g. from Ray workers)
+_project_root = os.path.dirname(os.path.abspath(__file__))
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
 
 from models.judge import GPT5Judge
 

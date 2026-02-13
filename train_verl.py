@@ -1,52 +1,69 @@
 #!/usr/bin/env python3
 """
 Simple CLI wrapper for verl's native trainer.
-This script calls verl.trainer.main_ppo with GRPO configuration.
+Uses verl's default config (like the official examples) and applies our YAML as
+Hydra overrides, so we don't need to duplicate ray_kwargs, transfer_queue, etc.
 
 Usage:
     python train_verl.py --config configs/verl_config.yaml
-    
-Or directly use verl's CLI:
-    python -m verl.trainer.main_ppo --config configs/verl_config.yaml
+    python train_verl.py --config configs/verl_config.yaml data.train_batch_size=8
 """
 
 import sys
 import os
 import subprocess
 import argparse
+import yaml
 
 # Add project root to Python path so verl can import reward_model
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
+
+def _flatten_to_overrides(obj, prefix=""):
+    """Convert nested dict to Hydra override strings key=value."""
+    overrides = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            key = f"{prefix}.{k}" if prefix else k
+            overrides.extend(_flatten_to_overrides(v, key))
+    elif isinstance(obj, list):
+        overrides.append(f"{prefix}=[{','.join(str(x) for x in obj)}]")
+    elif obj is None:
+        overrides.append(f"{prefix}=null")
+    else:
+        val = obj
+        if isinstance(val, str) and (" " in val or "=" in val or val == ""):
+            val = f'"{val}"'
+        elif isinstance(val, bool):
+            val = "true" if val else "false"
+        overrides.append(f"{prefix}={val}")
+    return overrides
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Train Qwen3-8B to generate harder questions using verl GRPO",
+        description="Train with verl GRPO using default config + our overrides",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Basic usage
   python train_verl.py --config configs/verl_config.yaml
-  
-  # With Hydra overrides (use key=value, not --key value)
-  python train_verl.py --config configs/verl_config.yaml training.train_batch_size=8
-  
-  # Direct verl CLI (equivalent)
-  python -m verl.trainer.main_ppo --config configs/verl_config.yaml
-        """
+  python train_verl.py --config configs/verl_config.yaml data.train_batch_size=8
+  python train_verl.py  # uses configs/verl_config.yaml
+        """,
     )
     parser.add_argument(
         "--config",
         type=str,
         default="configs/verl_config.yaml",
-        help="Path to verl configuration file",
+        help="YAML with overrides (verl default config is used as base)",
     )
     parser.add_argument(
         "--seed_questions",
         type=str,
         default="data/seed_questions.txt",
-        help="Path to seed questions file (for reference - actual data should be in verl config)",
+        help="Path to seed questions file (for reference)",
     )
     
     args, unknown_args = parser.parse_known_args()
@@ -60,46 +77,36 @@ Examples:
         print("  or from source: git clone https://github.com/volcengine/verl.git && cd verl && pip install -e .")
         sys.exit(1)
     
-    # Check if config file exists
-    if not os.path.exists(args.config):
-        print(f"ERROR: Config file not found: {args.config}")
-        print(f"Please create a verl configuration file or specify an existing one with --config")
+    config_file = os.path.join(project_root, args.config) if not os.path.isabs(args.config) else args.config
+    if not os.path.exists(config_file):
+        print(f"ERROR: Config file not found: {config_file}")
         sys.exit(1)
-    
-    # Hydra expects config-path (directory) and config-name (filename without .yaml)
-    config_path = os.path.dirname(args.config) or "."
-    config_name = os.path.splitext(os.path.basename(args.config))[0]
-    
-    # Prepare verl command (verl uses Hydra: --config-path, --config-name)
-    verl_cmd = [
-        sys.executable,
-        "-m",
-        "verl.trainer.main_ppo",
-        "--config-path", config_path,
-        "--config-name", config_name,
-    ]
-    
-    # Add any additional Hydra overrides (e.g. training.train_batch_size=8)
+
+    with open(config_file) as f:
+        config = yaml.safe_load(f)
+    if not config:
+        config = {}
+    overrides = _flatten_to_overrides(config)
+
+    # No --config-path: use verl's default config (like official examples)
+    verl_cmd = [sys.executable, "-m", "verl.trainer.main_ppo"]
+    verl_cmd.extend(overrides)
     verl_cmd.extend(unknown_args)
-    
+
     print("=" * 70)
-    print("Starting verl GRPO training")
+    print("Starting verl GRPO training (verl default config + overrides)")
     print("=" * 70)
-    print(f"Config: {args.config}")
+    print(f"Override config: {config_file}")
     print(f"Seed questions reference: {args.seed_questions}")
-    print(f"Command: {' '.join(verl_cmd)}")
+    print(f"Command: {' '.join(verl_cmd[:4])} ... ({len(overrides)} overrides + {len(unknown_args)} extra)")
     if unknown_args:
-        print(f"Additional args: {' '.join(unknown_args)}")
+        print(f"Extra args: {' '.join(unknown_args)}")
     print("=" * 70)
     print()
-    print("Note: This script is a simple wrapper around verl's native trainer.")
-    print("You can also run verl directly (Hydra uses --config-path and --config-name):")
-    print(f"  python -m verl.trainer.main_ppo --config-path {config_path} --config-name {config_name}")
-    print()
     
-    # Run verl trainer
+    # Run verl trainer from project root so data paths and reward_model resolve correctly
     try:
-        subprocess.run(verl_cmd, check=True)
+        subprocess.run(verl_cmd, check=True, cwd=project_root)
     except subprocess.CalledProcessError as e:
         print(f"\nERROR: verl training failed with exit code {e.returncode}")
         print("Check verl logs above for details.")
