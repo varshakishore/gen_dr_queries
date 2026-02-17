@@ -57,6 +57,9 @@ models/
 *.bin
 *.safetensors
 
+# Secrets (never commit real keys)
+secrets.env
+
 #folder
 /analysis/*.json
 /analysis/*.jsonl

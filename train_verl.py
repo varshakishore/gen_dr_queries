@@ -42,6 +42,30 @@ def _flatten_to_overrides(obj, prefix=""):
     return overrides
 
 
+def _load_secrets(project_root: str) -> None:
+    """Load secrets.env in project root and set env vars (e.g. OPENAI_API_KEY)."""
+    secrets_path = os.path.join(project_root, "secrets.env")
+    if not os.path.exists(secrets_path):
+        return
+    with open(secrets_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if line.startswith("export "):
+                line = line[7:]
+            if "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key, value = key.strip(), value.strip()
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+            elif value.startswith("'") and value.endswith("'"):
+                value = value[1:-1]
+            if key:
+                os.environ[key] = value
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Train with verl GRPO using default config + our overrides",
@@ -103,7 +127,10 @@ Examples:
         print(f"Extra args: {' '.join(unknown_args)}")
     print("=" * 70)
     print()
-    
+
+    # Load secrets (e.g. OPENAI_API_KEY) so the subprocess and reward model can use them
+    _load_secrets(project_root)
+
     # Run verl trainer from project root so data paths and reward_model resolve correctly
     try:
         subprocess.run(verl_cmd, check=True, cwd=project_root)
