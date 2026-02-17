@@ -17,6 +17,10 @@ from models.judge import GPT5Judge
 
 logger = logging.getLogger(__name__)
 
+# Ensure judge cost (INFO) is visible when run under verl if no other logging config
+if not logging.root.handlers and logging.root.level > logging.INFO:
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+
 
 class VerlRewardModel:
     """
@@ -67,20 +71,37 @@ class VerlRewardModel:
             List of reward values (one per prompt-response pair)
         """
         rewards = []
+        total_cost_usd = 0.0
+        total_prompt_tokens = 0
+        total_completion_tokens = 0
         for prompt, response in zip(prompts, responses):
             try:
                 # Extract seed question from prompt (remove template)
                 seed_question = self._extract_seed_from_prompt(prompt)
                 
-                # Score with judge (returns dict with 'overall' score)
+                # Score with judge (returns dict with 'overall', 'usage', 'cost_usd')
                 judge_scores = self.judge.score(seed_question, response)
                 
                 # Use the overall score as reward (judge already computes weighted average)
                 reward = judge_scores.get("overall", 0.0)
                 rewards.append(reward)
+                # Aggregate judge cost and usage for logging
+                total_cost_usd += judge_scores.get("cost_usd") or 0.0
+                usage = judge_scores.get("usage")
+                if usage:
+                    total_prompt_tokens += usage.get("prompt_tokens", 0)
+                    total_completion_tokens += usage.get("completion_tokens", 0)
             except Exception as e:
                 logger.error(f"Error computing reward for prompt-response pair: {e}")
                 rewards.append(0.0)  # Default to 0 on error
+
+        if total_cost_usd > 0 or total_prompt_tokens > 0:
+            logger.info(
+                "Judge cost this batch: $%.6f USD (prompt_tokens=%d, completion_tokens=%d)",
+                total_cost_usd,
+                total_prompt_tokens,
+                total_completion_tokens,
+            )
         
         return rewards
     
@@ -166,6 +187,9 @@ def compute_score(data_source: str, solution_str: str, ground_truth: str, extra_
         # solution_str is the generated harder question (response)
         judge_scores = _reward_model_instance.judge.score(ground_truth, solution_str)
         reward = judge_scores.get("overall", 0.0)
+        cost_usd = judge_scores.get("cost_usd") or 0.0
+        if cost_usd > 0:
+            logger.info("Judge cost (single call): $%.6f USD", cost_usd)
         return reward
     except Exception as e:
         logger.error(f"Error computing reward: {e}")
