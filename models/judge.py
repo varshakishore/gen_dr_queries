@@ -99,6 +99,7 @@ Reply with a single number between 0 and 10 (e.g. 7)."""
             if match:
                 raw = float(match.group(1))
                 overall = min(1.0, max(0.0, raw / 10.0))
+                logger.warning("jcost=%.6f", cost_usd)
                 return {"overall": overall, "usage": usage_dict, "cost_usd": cost_usd}
             return {"overall": 0.5, "usage": usage_dict, "cost_usd": cost_usd}
         except Exception as e:

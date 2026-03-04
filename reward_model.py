@@ -17,9 +17,9 @@ from models.judge import GPT5Judge
 
 logger = logging.getLogger(__name__)
 
-# Ensure judge cost (INFO) is visible when run under verl if no other logging config
-if not logging.root.handlers and logging.root.level > logging.INFO:
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+# # Ensure judge cost (INFO) is visible when run under verl if no other logging config
+# if not logging.root.handlers and logging.root.level > logging.INFO:
+#     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
 
 class VerlRewardModel:
@@ -95,8 +95,9 @@ class VerlRewardModel:
                 logger.error(f"Error computing reward for prompt-response pair: {e}")
                 rewards.append(0.0)  # Default to 0 on error
 
+        print("jjcost=%.6f" % total_cost_usd) 
         if total_cost_usd > 0 or total_prompt_tokens > 0:
-            logger.info(
+            print(
                 "Judge cost this batch: $%.6f USD (prompt_tokens=%d, completion_tokens=%d)",
                 total_cost_usd,
                 total_prompt_tokens,

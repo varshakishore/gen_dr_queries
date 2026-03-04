@@ -35,9 +35,11 @@ actor_rollout_ref:
 # Wandb: project and run name (VeRL Tracking uses project_name → wandb project, experiment_name → wandb run name)
 trainer:
   n_gpus_per_node: 2
-  # project_name: "gen_queries"   # wandb project
-  # experiment_name: "testing"           # wandb run name (override per run via CLI: trainer.experiment_name=my_run)
-  logger: ["console"]     # enable wandb (default may be console-only)
+  project_name: "gen_queries"   # wandb project
+  experiment_name: "testing_gantry"           # wandb run name (override per run via CLI: trainer.experiment_name=my_run)
+  logger: ["console", "wandb"]     # enable wandb (default may be console-only)
+  total_epochs: 3
+  save_freq: 3
 
 custom_reward_function:
   path: "reward_model.py"

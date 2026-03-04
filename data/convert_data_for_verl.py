@@ -84,6 +84,80 @@ Output:
 }}
 """
 
+"""Deep research queries require searching for information from multiple sources, reasoning about the retrieved results and synthesizing a structured report.
+Given a seed question, I want to generate a strictly harder deep research question.
+
+The generated question must be significantly more demanding than the seed question in terms of reasoning, evidence integration, and epistemic difficulty.
+
+Given a seed research question, generate ONE new research question that:
+- Remains within the same general topic or problem space as the seed question
+- Is strictly more difficult in scope, reasoning, or evidence requirements
+- Cannot be adequately answered with a definitional, summary, or single-source response
+
+Difficulty may be increased using strategies such as:
+- Adding precise constraints (e.g., time periods, populations, mechanisms, evaluation criteria)
+- Requiring reconciliation of conflicting, low-quality, or incomplete evidence
+- Introducing a subtle or false premise
+- Requiring multi-hop reasoning or synthesis across documents
+- Altering the question to make it partially or fully unanswerable
+- Requiring analysis of experimental design details rather than surface results
+- Narrowing to rare or sparsely studied subcases within the same topic
+
+These strategies are illustrative, not exhaustive.
+
+The output MUST be a JSON object with exactly the following fields:
+- "rationale": 1–2 sentences explaining why the new question is strictly harder
+- "harder_question": The newly generated, strictly harder research question
+
+The new question should sound natural, be concise, and remain broadly framed.
+
+No additional text outside the JSON object is allowed.
+
+Example 1:
+Seed question:
+is social media good or bad for us?
+Output:
+{{
+    "rationale": "Adding specific constraints and requiring a judgment based on synthesizing evidence across domains makes the question harder.",
+    "harder_question": "Across mental health, political polarization, and economic opportunity, has social media had a net positive or net negative societal impact since 2010, and how should conflicting empirical findings be reconciled?"
+}}
+
+Example 2:
+Seed question:
+Which DPO variants have been evaluated on language models with fewer than 1B parameters?
+Output:
+{{
+    "rationale": "I am going to require analyzing experimental setups, dataset characteristics, and evaluation setups rather than simply listing variants.",
+    "harder_question": "Given 3,000 pairwise judgments on long-form question answering tasks (10,000–50,000 tokens per instance) and a sub-1B parameter model, which DPO variant is most suitable, considering reported accuracy on comparable tasks and the rigor of its evaluation methodology?"
+}}
+
+Example 3:
+Seed question:
+Tell me about rubric generation models.
+Output:
+{{
+    "rationale": "I am going to narrow the scope to models explicitly trained for rubric generation, requiring identification of specific training setups rather than general usage.",
+    "harder_question": "Tell me about models trained specifically for rubric generation?"
+}}
+
+Example 4:
+Seed question:
+what body regions encode immune memory
+Output:
+{{
+    "rationale": "The harder question will include a biologically implausible premise, requiring the system to detect and reason about the false assumption.",
+    "harder_question": "What brain regions encode immune memory?"
+}}
+
+Example 5:
+Seed question:
+What proteins are upregulated in early-stage Alzheimers but downregulated in late-stage disease?
+Output:
+{{
+    "rationale": "The harder question removes the explicit contrast and instead requires identifying consistencies across disease stages, which is less directly documented and requires broader synthesis.",
+    "harder_question": "What proteins are upregulated in early-stage Alzheimers and late-stage Alzheimers?"
+}}
+"""
 
 
 def load_seed_questions(input_file):
