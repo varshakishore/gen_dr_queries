@@ -2,15 +2,23 @@
 Question difficulty scorer.
 
 Pipeline:
-  1. Retrieve Semantic Scholar papers via snippet search (S2SnippetRetriever)
-  2. Generate evaluation rubrics via GPT-5 (RubricGenerator)
-  3. Score question difficulty 1-10 (DifficultyScorer) with pluggable inputs
+  1. Run registered input providers to build a context dict
+  2. Score question difficulty 1-10 via LLM using that context
 
-Adding/removing inputs to the scorer:
+All signal providers live in difficulty_signals.py.
+Set up providers before scoring:
+
+  from difficulty_signals import register_default_signals, register_all_signals
+
+  scorer = DifficultyScorer()
+  register_default_signals(scorer)          # papers + rubric (standard setup)
+  register_all_signals(scorer)              # papers + rubric + all extended signals
+
+Add/remove individual providers:
   scorer.register_input("my_input", my_provider_fn)   # add
   scorer.unregister_input("my_input")                  # remove
 
-Each provider is a callable: (question: str, context: dict) -> dict
+Each provider: (question: str, context: dict) -> dict
 Its returned dict is merged into the scoring context passed to the LLM.
 """
 
@@ -18,14 +26,13 @@ import os
 import re
 import json
 import logging
-import requests
 from typing import Optional, Callable
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Cost table (same pattern as judge.py)
+# Cost table
 # ---------------------------------------------------------------------------
 _DEFAULT_COST_PER_1M = (2.50, 10.0)
 _MODEL_COST_PER_1M = {
@@ -41,218 +48,185 @@ def _cost_usd(model_name: str, input_tokens: int, output_tokens: int) -> float:
 
 
 # ---------------------------------------------------------------------------
-# 1. Semantic Scholar snippet retrieval
-# ---------------------------------------------------------------------------
-
-class S2SnippetRetriever:
-    """
-    Retrieves papers from Semantic Scholar using the snippet/relevance search endpoint.
-    Docs: https://api.semanticscholar.org/graph/v1
-    """
-
-    BASE_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
-
-    def __init__(self, api_key: Optional[str] = None, top_k: int = 5):
-        self.api_key = api_key or os.getenv("S2_API_KEY")
-        self.top_k = top_k
-
-    def _headers(self) -> dict:
-        h = {"x-api-key": self.api_key} if self.api_key else {}
-        return h
-
-    def retrieve(self, query: str) -> list[dict]:
-        """
-        Search S2 for `query` and return up to `top_k` papers.
-
-        Each result dict has keys: paperId, title, year, authors, url.
-        """
-        params = {
-            "query": query,
-            "limit": self.top_k,
-            "fields": "paperId,title,year,authors,url",
-        }
-        try:
-            resp = requests.get(
-                self.BASE_URL,
-                params=params,
-                headers=self._headers(),
-                timeout=30,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            papers = []
-            for item in data.get("data", []):
-                authors = [a["name"] for a in item.get("authors", [])]
-                papers.append({
-                    "paperId": item.get("paperId", ""),
-                    "title": item.get("title", ""),
-                    "year": item.get("year"),
-                    "authors": authors,
-                    "url": item.get("url", ""),
-                })
-            logger.info("S2 retrieved %d papers for query: %r", len(papers), query[:60])
-            return papers
-        except Exception as e:
-            logger.warning("S2 retrieval failed: %s", e)
-            return []
-
-
-# ---------------------------------------------------------------------------
-# 2. Rubric generator
-# ---------------------------------------------------------------------------
-
-_RUBRIC_SYSTEM = """\
-You are an expert question analyst. Given a question, produce a JSON rubric for \
-evaluating how hard it is to answer. The rubric should list 4-6 criteria, each \
-with a name, a one-sentence description, and a weight (0-1, weights must sum to 1).
-
-Respond ONLY with valid JSON of the form:
-{
-  "criteria": [
-    {"name": "...", "description": "...", "weight": 0.2},
-    ...
-  ]
-}"""
-
-
-class RubricGenerator:
-    """Uses GPT-5 to produce a difficulty rubric for a question."""
-
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        model_name: str = "gpt-5-mini",
-        base_url: Optional[str] = None,
-    ):
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        self.model_name = model_name
-        self.base_url = base_url
-        self._client = None
-
-    def _get_client(self):
-        if self._client is None:
-            kwargs = {}
-            if self.api_key:
-                kwargs["api_key"] = self.api_key
-            if self.base_url:
-                kwargs["base_url"] = self.base_url
-            self._client = OpenAI(**kwargs)
-        return self._client
-
-    def generate(self, question: str) -> dict:
-        """
-        Returns a rubric dict: {"criteria": [...], "usage": {...}, "cost_usd": float}
-        Falls back to a simple default rubric on failure.
-        """
-        client = self._get_client()
-        try:
-            resp = client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {"role": "system", "content": _RUBRIC_SYSTEM},
-                    {"role": "user", "content": f"Question: {question}"},
-                ],
-                response_format={"type": "json_object"},
-            )
-            usage = getattr(resp, "usage", None)
-            usage_dict = None
-            cost = 0.0
-            if usage:
-                pt = getattr(usage, "prompt_tokens", 0) or 0
-                ct = getattr(usage, "completion_tokens", 0) or 0
-                usage_dict = {"prompt_tokens": pt, "completion_tokens": ct}
-                cost = _cost_usd(self.model_name, pt, ct)
-            text = (resp.choices[0].message.content or "").strip()
-            rubric = json.loads(text)
-            rubric["usage"] = usage_dict
-            rubric["cost_usd"] = cost
-            return rubric
-        except Exception as e:
-            logger.warning("RubricGenerator failed: %s. Using default rubric.", e)
-            return self._default_rubric()
-
-    @staticmethod
-    def _default_rubric() -> dict:
-        return {
-            "criteria": [
-                {"name": "domain_depth", "description": "Requires deep domain knowledge.", "weight": 0.3},
-                {"name": "multi_hop", "description": "Requires reasoning across multiple facts.", "weight": 0.3},
-                {"name": "ambiguity", "description": "Question contains ambiguous or nuanced phrasing.", "weight": 0.2},
-                {"name": "evidence_scarcity", "description": "Supporting evidence is rare or hard to find.", "weight": 0.2},
-            ],
-            "usage": None,
-            "cost_usd": 0.0,
-        }
-
-
-# ---------------------------------------------------------------------------
-# 3. Difficulty scorer with pluggable inputs
+# Scoring prompt
 # ---------------------------------------------------------------------------
 
 _SCORE_SYSTEM = """\
-You are an expert question difficulty evaluator for research and academic settings.
+You are a difficulty scorer for research questions that require long-form reports with citations.
+Score 1 (trivial) to 10 (at the research frontier). Base your score entirely on the signals provided.
 
-Score the question on a 1–10 scale using these criteria:
-  1–2  Factual recall, single concept, answer in one sentence (e.g. "What is DNA?")
-  3–4  Requires basic domain knowledge or simple comparison (e.g. "What are LLMs?")
-  5–6  Multi-concept synthesis, some domain depth required
-  7–8  Cross-domain reasoning, contested/incomplete evidence, or rare specialist knowledge
-  9–10 Open research frontier, requires integrating findings across multiple sub-fields,
-       answer is actively debated or unknown
+Signal interpretation guide:
 
-Scoring signals to consider:
-- Specificity: vague questions are easier; highly specific mechanistic questions are harder
-- Breadth: does answering require knowledge from multiple fields?
-- Evidence availability: is the answer well-established or at the research frontier?
-- Reasoning depth: single-hop lookup vs. multi-step causal/mechanistic reasoning
-- Ambiguity: is there a clear correct answer, or is it contested?
+LITERATURE signals
+  s2_result_count         low (<20) → sparse literature → harder
+  s2_field_count          high (>3) → cross-disciplinary synthesis required → harder
+  s2_evidence_heterogeneity  >2 distinct field buckets → methodologically diverse sources → harder
+  s2_pct_last_5yr         high (>0.7) → rapidly evolving, evidence unsettled → harder
+  s2_year_spread          wide AND recent skew → paradigm still shifting → harder
+  s2_meta_analysis_present  True → primary studies disagree, contested evidence → harder
+  s2_avg_citation_count   low → niche/emerging area → harder; high → well-established → easier
 
-Anchor examples (do NOT copy these scores blindly, calibrate relative to the question):
-  "What is the capital of France?" → 1
-  "What does RNA stand for?" → 2
-  "How does attention work in transformers?" → 5
-  "What are the trade-offs between RLHF and DPO for aligning language models?" → 7
-  "What molecular mechanisms link mitochondrial dysfunction to tau hyperphosphorylation in Alzheimer's disease?" → 9
+REASONING signals
+  causal_chain_depth      0–1 = direct lookup; 3–5 = deep multi-hop causal chain → harder
+  inference_type          deductive = easier; abductive or mixed = harder
+  sub_question_count      each additional sub-question adds synthesis burden → harder
+  scope_anchor_count      0 = unconstrained question, reporter must define scope → harder
 
-Respond with ONLY valid JSON (no markdown, no explanation outside the JSON):
-{"score": <integer 1-10>, "reasoning": "<one concise sentence explaining the score>"}"""
+CONCEPT signals
+  concept_embedding_avg_distance   >0.5 → concepts span different semantic domains → harder
+  concept_rarity_ratio             <0.05 → concepts rarely studied together → novel intersection → harder
+
+RUBRIC criteria weights reflect domain-specific difficulty dimensions — higher-weighted criteria
+that are structurally hard (multi_hop, evidence_scarcity) push the score up.
+
+Scoring process:
+1. Read each signal value and note whether it pushes difficulty up or down.
+2. Weight signals that are present more heavily than absent ones.
+3. Reason about how difficult this question is and write` a rationale .
+4. Produce a single integer score that best reflects the aggregate signal evidence.
+
+
+Respond with ONLY valid JSON:
+{"reasoning": "<rationale for score>", "score": <integer 1-10>}"""
+
+
+# ---------------------------------------------------------------------------
+# Prompt builder
+# ---------------------------------------------------------------------------
+
+_S2_META_KEYS = frozenset({
+    "s2_result_count", "s2_max_year", "s2_avg_year", "s2_pct_last_5yr",
+    "s2_year_spread", "s2_fields", "s2_field_count", "s2_evidence_heterogeneity",
+    "s2_meta_analysis_present", "s2_avg_citation_count", "s2_min_citation_count",
+    "s2_max_citation_count",
+})
+_LLM_ANALYSIS_KEYS = frozenset({
+    "causal_chain_depth", "inference_type", "sub_question_count",
+    "scope_anchors", "scope_anchor_count",
+})
+_CONCEPT_KEYS = frozenset({
+    "key_concepts", "concept_embedding_avg_distance", "concept_embedding_max_distance",
+    "concept_individual_counts", "concept_combined_count", "concept_rarity_ratio",
+})
+_KNOWN_KEYS = frozenset({"rubric", "retrieved_papers", "reranker_scores"}) \
+    | _S2_META_KEYS | _LLM_ANALYSIS_KEYS | _CONCEPT_KEYS
 
 
 def _build_score_prompt(question: str, context: dict) -> str:
     lines = [f"Question: {question}\n"]
+
+    # Rubric
     rubric = context.get("rubric")
     if rubric and rubric.get("criteria"):
         lines.append("Rubric criteria:")
         for c in rubric["criteria"]:
             lines.append(f"  - {c['name']} (weight {c['weight']}): {c['description']}")
         lines.append("")
+
+    # Retrieved papers
     papers = context.get("retrieved_papers")
     if papers:
         lines.append(f"Retrieved papers ({len(papers)}):")
         for i, p in enumerate(papers[:5], 1):
             authors = ", ".join(p.get("authors", [])[:3])
-            lines.append(f"  {i}. [{p.get('year','?')}] {p.get('title','')} ({authors})")
+            fields = ", ".join((p.get("fieldsOfStudy") or [])[:3])
+            suffix = f" [{fields}]" if fields else ""
+            lines.append(f"  {i}. [{p.get('year', '?')}] {p.get('title', '')} ({authors}){suffix}")
         lines.append("")
+
+    # Reranker
     reranker = context.get("reranker_scores")
     if reranker is not None:
         lines.append(f"Reranker top score: {reranker:.4f}\n")
-    # Any extra inputs registered by user
+
+    # S2 metadata signals
+    if any(k in context for k in _S2_META_KEYS):
+        lines.append("Literature signals:")
+        lines.append(f"  result_count: {context.get('s2_result_count', '?')}")
+        if context.get("s2_avg_year") is not None:
+            pct = context.get("s2_pct_last_5yr")
+            pct_str = f"{pct:.0%}" if pct is not None else "?"
+            lines.append(
+                f"  publication_years: avg={context['s2_avg_year']}, "
+                f"max={context.get('s2_max_year')}, "
+                f"spread={context.get('s2_year_spread')}, "
+                f"pct_last_5yr={pct_str}"
+            )
+        if context.get("s2_fields"):
+            lines.append(
+                f"  fields_of_study ({context.get('s2_field_count')}): "
+                f"{', '.join(context['s2_fields'][:8])}"
+            )
+            lines.append(
+                f"  evidence_heterogeneity_buckets: {context.get('s2_evidence_heterogeneity')}"
+            )
+        lines.append(f"  meta_analysis_present: {context.get('s2_meta_analysis_present')}")
+        if context.get("s2_avg_citation_count") is not None:
+            lines.append(
+                f"  citation_counts: avg={context['s2_avg_citation_count']:.0f}, "
+                f"min={context.get('s2_min_citation_count')}, "
+                f"max={context.get('s2_max_citation_count')}"
+            )
+        lines.append("")
+
+    # LLM analysis signals
+    if any(k in context for k in _LLM_ANALYSIS_KEYS):
+        lines.append("Reasoning signals:")
+        if "causal_chain_depth" in context:
+            lines.append(f"  causal_chain_depth: {context['causal_chain_depth']}/5")
+        if "inference_type" in context:
+            lines.append(f"  inference_type: {context['inference_type']}")
+        if "sub_question_count" in context:
+            lines.append(f"  sub_question_count: {context['sub_question_count']}")
+        anchors = context.get("scope_anchors") or []
+        anchor_count = context.get("scope_anchor_count", len(anchors))
+        anchor_str = ", ".join(anchors) if anchors else "none — broad/unconstrained"
+        lines.append(f"  scope_anchors ({anchor_count}): {anchor_str}")
+        lines.append("")
+
+    # Concept signals
+    if any(k in context for k in _CONCEPT_KEYS):
+        lines.append("Concept signals:")
+        concepts = context.get("key_concepts") or []
+        if concepts:
+            lines.append(f"  key_concepts: {', '.join(concepts)}")
+        avg_d = context.get("concept_embedding_avg_distance")
+        max_d = context.get("concept_embedding_max_distance")
+        if avg_d is not None:
+            lines.append(
+                f"  embedding_distance: avg={avg_d}, max={max_d} "
+                "(0=same domain, 2=maximally cross-domain)"
+            )
+        rarity = context.get("concept_rarity_ratio")
+        if rarity is not None:
+            lines.append(
+                f"  concept_rarity_ratio: {rarity} "
+                "(low=rarely studied together, high=well-established intersection)"
+            )
+        lines.append("")
+
+    # Any remaining custom inputs not handled above
     for key, val in context.items():
-        if key not in ("rubric", "retrieved_papers", "reranker_scores"):
+        if key not in _KNOWN_KEYS:
             lines.append(f"{key}: {val}\n")
+
     return "\n".join(lines)
 
+
+# ---------------------------------------------------------------------------
+# Scorer
+# ---------------------------------------------------------------------------
 
 class DifficultyScorer:
     """
     Scores a question's difficulty on a 1-10 scale.
 
-    Built-in inputs: rubric, retrieved_papers, reranker_scores.
-    Add custom inputs via register_input(); remove via unregister_input().
+    Providers are registered externally via register_input().
+    Use difficulty_signals.register_default_signals() or register_all_signals()
+    to set up the standard provider stack.
 
-    Each input provider is a callable:
-        provider(question: str, context: dict) -> dict
-    The returned dict is merged into the context dict before scoring.
+    Each provider: (question: str, context: dict) -> dict
+    The returned dict is merged into the context before scoring.
     """
 
     def __init__(
@@ -260,44 +234,19 @@ class DifficultyScorer:
         api_key: Optional[str] = None,
         model_name: str = "gpt-5-mini",
         base_url: Optional[str] = None,
-        retriever: Optional[S2SnippetRetriever] = None,
-        rubric_generator: Optional[RubricGenerator] = None,
-        use_retriever: bool = True,
-        use_rubric: bool = True,
     ):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.model_name = model_name
         self.base_url = base_url
-        self._client = None
-
-        self.retriever = retriever or S2SnippetRetriever()
-        self.rubric_gen = rubric_generator or RubricGenerator(
-            api_key=api_key, model_name=model_name, base_url=base_url
-        )
-
-        # Registry of pluggable input providers: name -> callable
+        self._client: Optional[OpenAI] = None
         self._input_providers: dict[str, Callable] = {}
-        if use_retriever:
-            self.register_input("retrieved_papers", self._provide_papers)
-        if use_rubric:
-            self.register_input("rubric", self._provide_rubric)
-
-    # ------------------------------------------------------------------
-    # Input provider registry
-    # ------------------------------------------------------------------
 
     def register_input(self, name: str, provider: Callable) -> None:
-        """
-        Register a named input provider.
-
-        provider(question, context) -> dict
-        The dict is merged into context before the LLM scoring call.
-        """
+        """Register a named input provider. Providers run in registration order."""
         self._input_providers[name] = provider
         logger.info("Registered input provider: %r", name)
 
     def unregister_input(self, name: str) -> None:
-        """Remove a previously registered input provider."""
         if name in self._input_providers:
             del self._input_providers[name]
             logger.info("Unregistered input provider: %r", name)
@@ -305,26 +254,9 @@ class DifficultyScorer:
     def list_inputs(self) -> list[str]:
         return list(self._input_providers.keys())
 
-    # ------------------------------------------------------------------
-    # Built-in providers
-    # ------------------------------------------------------------------
-
-    def _provide_papers(self, question: str, context: dict) -> dict:
-        papers = self.retriever.retrieve(question)
-        return {"retrieved_papers": papers}
-
-    def _provide_rubric(self, question: str, context: dict) -> dict:
-        rubric = self.rubric_gen.generate(question)
-        return {"rubric": rubric}
-
-    # ------------------------------------------------------------------
-    # Scoring
-    # ------------------------------------------------------------------
-
-    def _get_client(self):
+    def _get_client(self) -> OpenAI:
         if self._client is None:
-            from openai import OpenAI
-            kwargs = {}
+            kwargs: dict = {}
             if self.api_key:
                 kwargs["api_key"] = self.api_key
             if self.base_url:
@@ -338,38 +270,29 @@ class DifficultyScorer:
 
         Args:
             question: The question to evaluate.
-            extra_context: Optional pre-computed context to seed the pipeline
-                           (e.g. {"reranker_scores": 0.87}). Providers listed
-                           in the registry are still called unless you pass their
-                           key here to short-circuit them.
+            extra_context: Optional pre-computed context values. Providers whose
+                           key is already present are still called (they may add
+                           other keys); pass a key to short-circuit a provider
+                           by having it check context before doing work.
 
         Returns:
-            {
-              "score": int (1-10),
-              "reasoning": str,
-              "context": dict,    # full context fed to LLM
-              "usage": dict | None,
-              "cost_usd": float,
-            }
+            {"score": int, "reasoning": str, "context": dict,
+             "usage": dict | None, "cost_usd": float}
         """
         context: dict = dict(extra_context or {})
 
-        # Run each registered provider in order (skip if key already in context)
         for name, provider in self._input_providers.items():
-            key = name  # provider is expected to return {name: value} or any dict
             try:
                 result = provider(question, context)
                 context.update(result)
             except Exception as e:
                 logger.warning("Input provider %r failed: %s", name, e)
-
         client = self._get_client()
         prompt = _build_score_prompt(question, context)
         try:
-            # print(_SCORE_SYSTEM+"\n"+prompt)
             resp = client.responses.create(
                 model=self.model_name,
-                input=_SCORE_SYSTEM+"\n"+prompt
+                input=_SCORE_SYSTEM + "\n" + prompt,
             )
             usage = getattr(resp, "usage", None)
             usage_dict = None
@@ -379,14 +302,12 @@ class DifficultyScorer:
                 ct = getattr(usage, "output_tokens", 0) or 0
                 usage_dict = {"input_tokens": pt, "output_tokens": ct}
                 cost = _cost_usd(self.model_name, pt, ct)
-            text = (resp.output_text).strip()
-            # Try JSON first, fall back to regex extraction of the score number
+            text = resp.output_text.strip()
             try:
                 parsed = json.loads(text)
                 raw_score = parsed.get("score", -1)
                 reasoning = parsed.get("reasoning", "")
             except json.JSONDecodeError:
-                import pdb; pdb.set_trace()
                 m = re.search(r"\b([1-9]|10)\b", text)
                 raw_score = int(m.group(1)) if m else 5
                 reasoning = text
@@ -406,10 +327,11 @@ class DifficultyScorer:
 
 
 # ---------------------------------------------------------------------------
-# Quick CLI demo
+# CLI
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import argparse
+    from difficulty_signals import register_default_signals, register_all_signals
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -420,25 +342,40 @@ if __name__ == "__main__":
     parser.add_argument("--no-retriever", action="store_true")
     parser.add_argument("--no-rubric", action="store_true")
     parser.add_argument("--reranker-score", type=float, default=None)
-    parser.add_argument("--batch", metavar="FILE",
+    parser.add_argument("--input_file", metavar="FILE",
                         help="JSON file with [{seed_question, updated_questions: [{updated_question, ...}]}]")
     parser.add_argument("--output", metavar="FILE", default=None,
                         help="Write batch results to this JSON file (default: print only)")
+    parser.add_argument("--extended-signals", action="store_true",
+                        help="Enable all extended signals (S2 metadata, LLM analysis, "
+                             "concept embeddings, co-occurrence)")
     args = parser.parse_args()
 
-    scorer = DifficultyScorer(
-        model_name=args.model,
-        retriever=S2SnippetRetriever(top_k=args.top_k),
-        use_retriever=not args.no_retriever,
-        use_rubric=not args.no_rubric,
-    )
+    scorer = DifficultyScorer(model_name=args.model)
+
+    if args.extended_signals:
+        register_all_signals(
+            scorer,
+            model_name=args.model,
+            top_k=args.top_k,
+            use_retriever=not args.no_retriever,
+            use_rubric=not args.no_rubric,
+        )
+    else:
+        register_default_signals(
+            scorer,
+            model_name=args.model,
+            top_k=args.top_k,
+            use_retriever=not args.no_retriever,
+            use_rubric=not args.no_rubric,
+        )
 
     extra = {}
     if args.reranker_score is not None:
         extra["reranker_scores"] = args.reranker_score
 
-    if args.batch:
-        with open(args.batch) as f:
+    if args.input_file and args.input_file.endswith(".json"):
+        with open(args.input_file) as f:
             items = json.load(f)
 
         results = []
@@ -464,7 +401,6 @@ if __name__ == "__main__":
                     "reasoning": r["reasoning"],
                 })
             results.append(entry)
-            # Print as we go
             uq_scores = [uq["score"] for uq in entry["updated_questions"]]
             avg = sum(uq_scores) / len(uq_scores) if uq_scores else 0.0
             entry["avg_updated_score"] = round(avg, 2)
@@ -473,6 +409,37 @@ if __name__ == "__main__":
                 print(f"  [{uq['score']}/10] {uq['updated_question']}")
             print(f"  avg updated: {avg:.1f}/10")
 
+        print(f"\nTotal cost: ${total_cost:.6f} USD")
+        if args.output:
+            with open(args.output, "w") as f:
+                json.dump(results, f, indent=2)
+            print(f"Results written to {args.output}")
+
+    elif args.input_file and args.input_file.endswith(".jsonl"):
+        total_cost = 0.0
+        results = []
+        with open(args.input_file) as f:
+            for line in f:
+                item = json.loads(line)
+                easy_question = item["easy"]
+                hard_question = item["hard"]
+                result_easy = scorer.score(easy_question, extra_context=extra or None)
+                total_cost += result_easy["cost_usd"]
+                result_hard = scorer.score(hard_question, extra_context=extra or None)
+                total_cost += result_hard["cost_usd"]
+                print(f"\n[{result_easy['score']}/10] {easy_question}")
+                print(f"[{result_hard['score']}/10] {hard_question}")
+                results.append({
+                    "easy_question": easy_question,
+                    "easy_score": result_easy["score"],
+                    "easy_reasoning": result_easy["reasoning"],
+                    "hard_question": hard_question,
+                    "hard_score": result_hard["score"],
+                    "hard_reasoning": result_hard["reasoning"],
+                })
+                if len(results) == 3:
+                    break
+        
         print(f"\nTotal cost: ${total_cost:.6f} USD")
         if args.output:
             with open(args.output, "w") as f:
