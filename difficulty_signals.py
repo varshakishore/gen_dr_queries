@@ -88,6 +88,8 @@ class S2SnippetRetriever:
             # Preserve snippet-search ranking order via an ordered dict
             papers: dict[str, dict] = {}
             for item in resp.json().get("data", []):
+                if item.get("score") < 0.5:
+                    continue
                 p = item.get("paper", {})
                 corpus_id = p.get("corpusId")
                 if corpus_id is None:

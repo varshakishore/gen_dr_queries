@@ -437,7 +437,7 @@ if __name__ == "__main__":
                     "hard_score": result_hard["score"],
                     "hard_reasoning": result_hard["reasoning"],
                 })
-                if len(results) == 3:
+                if len(results) == 4:
                     break
         
         print(f"\nTotal cost: ${total_cost:.6f} USD")
