@@ -17,6 +17,7 @@ import argparse
 import json
 from pathlib import Path
 import pandas as pd
+from datasets import load_dataset
 
 """
 Your task is to generate hard deep research questions that require searching for information in mutiple sources, reasoning and synthesizing the information, to provide a detailed answer.
@@ -159,16 +160,75 @@ Output:
 }}
 """
 
+current_prompt = """
+You are an expert in constructing challenging research questions.
 
-def load_seed_questions(input_file):
+Given a seed question, produce an updated question designed to expose weaknesses in deep research systems.
+
+RULES:
+- Avoid "what" questions that merely retrieve information.
+- The updated question MUST require higher-order thinking: analysis, comparison, evaluation, or synthesis.
+- It must NOT be answerable with a definition, summary, or single-source response.
+- The updated question length should change by fewer than 10 words from the seed.
+
+STRATEGIES TO CONSIDER (pick the most promising one):
+1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., science + economics).
+2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
+3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
+4. Require handling conflicting, incomplete, or low-quality evidence.
+5. Require correcting a hidden misconception or establishing key knowns before answering.
+6. Ask for a specific "moment of truth" — a concrete case highlighting consequences and lessons learned.
+7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{{
+  "brainstorming": "<think about distinct strategies and reason about why they may or may not work>",
+  "chosen_strategy": "<name and justify the single most promising strategy>",
+  "updated_question": "<the rewritten question>",
+  "why_harder": "<explanation of why this question might be hard for a deep research system>",
+  "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
+}}
+
+EXAMPLES:
+
+Seed question: What body regions encode immune memory?
+Output:
+{{
+  "brainstorming": "My first instinct is to push for cross-domain synthesis — force the question to span immunology and neuroscience simultaneously. But that might actually make it easier, since a deep research system could just pull from neuroimmunology literature and produce a fluent-sounding answer without real reasoning. What would be harder is embedding a false premise directly into the question — attributing immune memory to the brain — so the system has to detect the error before it can even begin answering. A shallow system will likely just hallucinate brain-immune connections rather than flag the contradiction. That said, the false premise alone might be too easy to spot if the error is obvious, so it would be stronger if the premise were plausible enough to tempt a confident wrong answer. The brain does interact with the immune system — glial cells, brain-resident macrophages — so there's enough surface plausibility to make the false premise genuinely tricky rather than trivially wrong.",
+  "chosen_strategy": "Embed a false premise — the question falsely implies the brain encodes immune memory.",
+  "updated_question": "What brain regions encode immune memory?",
+  "why_harder": "A shallow system may attempt to answer the question as asked, hallucinating a connection between brain regions and immune memory.",
+  "verification_criterion": "The answer must explicitly flag the false premise (brain ≠ immune memory site) and correctly identify the actual biological structures involved before providing any substantive response."
+}}
+
+Seed question: Tell me about rubric generation models.
+Output:
+{{
+  "brainstorming": "I could ask for a survey of rubric generation models, but that's basically the original question restated — a deep research system would just retrieve a list and summarize it. What if instead we asked for a failure case, like a deployed system that produced biased assessments? That's harder, but the field is niche enough that a system might just confabulate a plausible-sounding example. I could ask about general-purpose LLMs prompted to generate rubrics versus models actually trained for this task, and a shallow system will likely fail to distinguish between them.",
+  "chosen_strategy": "Narrow scope to force multi-step reasoning — restricting to models purpose-trained for rubric generation requires distinguishing architectural and training choices rather than describing general LLM prompting workflows.",
+  "updated_question": "Tell me about models trained specifically for rubric generation.",
+  "why_harder": "General LLM prompting for rubric generation is well-documented and easy to summarize. Models purpose-trained for this task are rare, poorly documented, and require the responder to reason about methodology.",
+  "verification_criterion": "For the models/papers mentioned, the answer should correctly identify whether there was training, or if the model was only prompted."
+}}
+
+Seed question: {seed_question}
+"""
+
+
+def load_seed_questions_from_file(input_file):
     """Load seed questions from text file (one per line)."""
     questions = []
     with open(input_file, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.strip()
-            if line:  # Skip empty lines
+            if line:
                 questions.append(line)
     return questions
+
+def load_seed_questions_from_hf(dataset_name="akariasai/openscholar_source_input_gpt5_s2snippets", split="train"):
+    """Load seed questions from the 'question' column of a HuggingFace dataset."""
+    dataset = load_dataset(dataset_name, split=split)
+    return [row["question"] for row in dataset if row["question"]]
 
 def convert_to_verl_format(questions, data_source="gen_dr_queries", ability="question_generation", prompt_template=None):
     """
@@ -186,12 +246,11 @@ def convert_to_verl_format(questions, data_source="gen_dr_queries", ability="que
     """
     verl_data = []
     
-    # Default prompt template: instruct model to generate a harder version of the question
+    # Default prompt template: use current_prompt formatted for qwen3-8b
     if prompt_template is None:
         def default_prompt_template(question):
             return [
-                {"role": "system", "content": "You are an expert at creating challenging questions. Given a seed question, generate a harder version that requires deeper understanding or more complex reasoning."},
-                {"role": "user", "content": f"Generate a harder version of the following question:\n\n{question}"}
+                {"role": "user", "content": current_prompt.format(seed_question=question)}
             ]
         prompt_template = default_prompt_template
     
@@ -238,18 +297,24 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Basic usage
+  # From text file
   python convert_data_for_verl.py --input data/seed_questions.txt --output data/seed_questions.parquet
-  
-  # With custom data source
-  python convert_data_for_verl.py --input data/seed_questions.txt --output data/seed_questions.parquet --data_source my_dataset
+
+  # From HuggingFace dataset (default)
+  python convert_data_for_verl.py --hf_dataset akariasai/openscholar_source_input_gpt5_s2snippets --output data/seed_questions.parquet
         """
     )
-    parser.add_argument(
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument(
         "--input",
         type=str,
-        default="data/seed_questions.txt",
         help="Input text file with seed questions (one per line)"
+    )
+    source.add_argument(
+        "--hf_dataset",
+        type=str,
+        default="akariasai/openscholar_source_input_gpt5_s2snippets",
+        help="HuggingFace dataset name to load questions from"
     )
     parser.add_argument(
         "--output",
@@ -269,19 +334,23 @@ Examples:
         default="question_generation",
         help="Task category/ability name"
     )
-    
+
     args = parser.parse_args()
-    
-    # Check input file
-    if not Path(args.input).exists():
-        print(f"ERROR: Input file not found: {args.input}")
-        return 1
-    
-    # Load questions
-    print(f"Loading questions from {args.input}...")
-    questions = load_seed_questions(args.input)
+
+    # Load questions from the appropriate source
+    if args.input:
+        if not Path(args.input).exists():
+            print(f"ERROR: Input file not found: {args.input}")
+            return 1
+        print(f"Loading questions from {args.input}...")
+        questions = load_seed_questions_from_file(args.input)
+        source_label = args.input
+    else:
+        print(f"Loading questions from HuggingFace dataset '{args.hf_dataset}'")
+        questions = load_seed_questions_from_hf(args.hf_dataset)
+        source_label = f"{args.hf_dataset}"
     print(f"✓ Loaded {len(questions)} questions")
-    
+
     # Convert to verl format
     print("Converting to verl format...")
     verl_data = convert_to_verl_format(
@@ -289,19 +358,19 @@ Examples:
         data_source=args.data_source,
         ability=args.ability
     )
-    
+
     # Create output directory if needed
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Save to Parquet
     print(f"Saving to {args.output}...")
     save_parquet(verl_data, args.output)
-    
+
     print("\n" + "=" * 70)
     print("Conversion complete!")
     print("=" * 70)
-    print(f"Input:  {args.input} ({len(questions)} questions)")
+    print(f"Input:  {source_label} ({len(questions)} questions)")
     print(f"Output: {args.output}")
     print(f"\nNext steps:")
     print(f"1. Update verl_config.yaml to point to: {args.output}")

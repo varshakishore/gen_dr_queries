@@ -95,9 +95,8 @@ class VerlRewardModel:
                 logger.error(f"Error computing reward for prompt-response pair: {e}")
                 rewards.append(0.0)  # Default to 0 on error
 
-        print("jjcost=%.6f" % total_cost_usd) 
         if total_cost_usd > 0 or total_prompt_tokens > 0:
-            print(
+            logger.info(
                 "Judge cost this batch: $%.6f USD (prompt_tokens=%d, completion_tokens=%d)",
                 total_cost_usd,
                 total_prompt_tokens,
@@ -109,49 +108,31 @@ class VerlRewardModel:
     def _extract_seed_from_prompt(self, prompt: str) -> str:
         """
         Extract seed question from prompt template.
-        
-        Args:
-            prompt: Full prompt string (may include template or be a chat format)
-            
-        Returns:
-            Seed question string
+
+        Handles both a JSON-encoded chat list and a plain string.
+        current_prompt ends with "Seed question: {seed_question}".
         """
-        # Handle chat format (list of dicts) if prompt is a string representation
         import json
+        # Unwrap JSON chat list → get the user message content
+        content = prompt
         try:
-            # Try to parse as JSON if it's a string representation of a list
             if isinstance(prompt, str) and prompt.strip().startswith('['):
                 prompt_list = json.loads(prompt)
-                # Find the user message and extract question
                 for msg in prompt_list:
                     if msg.get("role") == "user":
                         content = msg.get("content", "")
-                        # Look for "Given the following question:" pattern
-                        if "Given the following question:" in content or "generate a harder question" in content.lower():
-                            # Extract the question after the instruction
-                            parts = content.split("generate a harder question")
-                            if len(parts) > 1:
-                                question = parts[1].strip()
-                                # Remove leading colons, newlines, and quotes
-                                question = question.lstrip(":\n").strip().strip('"').strip("'")
-                                if question:
-                                    return question
-                        # If no pattern, return the whole content
-                        return content.strip()
+                        break
         except (json.JSONDecodeError, AttributeError):
             pass
-        
-        # Try to extract seed question from common prompt formats (string format)
-        # Look for "Given the following question:" pattern
-        if "Given the following question:" in prompt:
-            parts = prompt.split("Given the following question:")
-            if len(parts) > 1:
-                seed_part = parts[1].split("\n")[0].strip().strip('"').strip("'")
-                if seed_part:
-                    return seed_part
-        
-        # If no pattern found, assume prompt is just the seed question
-        return prompt.strip()
+
+        # Extract text after the last "Seed question:" marker
+        marker = "Seed question:"
+        idx = content.rfind(marker)
+        if idx != -1:
+            return content[idx + len(marker):].strip()
+
+        # Fallback: return whatever we have
+        return content.strip()
 
 
 # Global reward model instance for function-based API
