@@ -36,7 +36,7 @@ actor_rollout_ref:
 trainer:
   n_gpus_per_node: 2
   project_name: "gen_queries"   # wandb project
-  experiment_name: "testing_gantry"           # wandb run name (override per run via CLI: trainer.experiment_name=my_run)
+  experiment_name: "testing_new"           # wandb run name (override per run via CLI: trainer.experiment_name=my_run)
   logger: ["console", "wandb"]     # enable wandb (default may be console-only)
   total_epochs: 3
   save_freq: 3
