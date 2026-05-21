@@ -3,8 +3,8 @@
 Pipeline for generating hard research questions, evaluating answers, and iterating.
 
 Flow per seed question:
-  1. Use Claude to harden the seed question (with prior attempts as context after round 1).
-  2. Send the new question to a drtulu server at localhost:8007/ask.
+  1. Use Claude to create a harder version of the seed question (with prior attempts as context after round 1).
+  2. Send the harder question to a local research server at localhost:8007/ask.
   3. Use Claude to judge the answer against the verification criterion.
   4. If the answer FAILED, stop (we found a question that breaks the system).
      Otherwise, loop back to step 1 with feedback, up to 5 attempts total.
@@ -25,43 +25,23 @@ import json
 import os
 import re
 import sys
-import asyncio
 import time
 import uuid
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Optional
 
+import requests
 from anthropic import Anthropic
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
-# The workflow lives in this repo path; we add it to sys.path so we can import it.
-WORKFLOW_REPO_PATH = "/weka/nora-default/varshak/dr-tulu/agent"
-WORKFLOW_CONFIG_PATH = (
-    "/weka/nora-default/varshak/dr-tulu/agent/workflows/"
-    "auto_search_sft_s2_only_hamish.yaml"
-)
-DATASET_NAME = "sqav2"
+RESEARCH_SERVER_URL = "http://localhost:8007/ask"
+RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 
-if WORKFLOW_REPO_PATH not in sys.path:
-    sys.path.insert(0, WORKFLOW_REPO_PATH)
-
-# Imported lazily inside _get_workflow_class() so `--help` and unit tests work
-# even when the workflow repo isn't on this machine.
-_AutoReasonSearchWorkflow = None
-
-
-def _get_workflow_class():
-    global _AutoReasonSearchWorkflow
-    if _AutoReasonSearchWorkflow is None:
-        from workflows.auto_search_sft import AutoReasonSearchWorkflow  # type: ignore
-        _AutoReasonSearchWorkflow = AutoReasonSearchWorkflow
-    return _AutoReasonSearchWorkflow
-
-CLAUDE_MODEL = "claude-opus-4-5"
+CLAUDE_MODEL = "claude-sonnet-4-5"
 MAX_ATTEMPTS = 5
 
 # Per-million-token pricing in USD (input, output).
@@ -82,9 +62,12 @@ CACHE_WRITE_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.10
 
 
-HARDENING_PROMPT = """You are an expert in constructing challenging research questions.
+PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
 
 Given a seed question, produce an updated question designed to expose weaknesses in deep research systems.
+
+ANSWERING SYSTEM PROFILE:
+The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not come from requiring sources outside this corpus.
 
 RULES:
 - Avoid "what" questions that merely retrieve information.
@@ -98,8 +81,8 @@ EXAMPLE STRATEGIES TO CONSIDER:
 3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
 4. Require handling conflicting, incomplete, or low-quality evidence.
 5. Require correcting a hidden misconception or establishing key knowns before answering.
-6. Ask for a specific "moment of truth" — a concrete case highlighting consequences and lessons learned.
-7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+6. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+7. Make a question that is unanswerable by cuurent research.
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
@@ -113,7 +96,7 @@ OUTPUT FORMAT (valid JSON, no extra text):
 JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system outputs.
 
 You will be given:
-- A hardened research question
+- A research question
 - The verification criterion that defines what a good answer must do
 - The answer the research system produced
 
@@ -174,7 +157,7 @@ class RunLogger:
         *,
         seed: str,
         attempt: int,
-        purpose: str,           # "harden" or "judge"
+        purpose: str,           # "make harder" or "judge"
         model: str,
         system: Optional[str],
         messages: list,
@@ -304,7 +287,7 @@ def price_call(model: str, usage: dict) -> tuple[float, dict]:
 # ---------------------------------------------------------------------------
 
 @dataclass
-class HardenedQuestion:
+class HarderQuestion:
     brainstorming: str
     chosen_strategy: str
     updated_question: str
@@ -326,7 +309,7 @@ class Judgment:
 @dataclass
 class AttemptRecord:
     attempt: int
-    hardened: HardenedQuestion
+    harder: HarderQuestion
     answer: str
     judgment: Judgment
 
@@ -428,29 +411,29 @@ def _call_claude(
     return response_text, bucket
 
 
-def harden_question(
+def harder_question_gen(
     client: Anthropic,
     model: str,
     seed: str,
     prior_attempts: list,
     logger: RunLogger,
     attempt: int,
-) -> tuple[HardenedQuestion, CostBucket]:
+) -> tuple[HarderQuestion, CostBucket]:
     user_content = f"Seed question: {seed}"
     if prior_attempts:
         feedback_blocks = []
         for rec in prior_attempts:
             feedback_blocks.append(
                 f"--- Previous attempt {rec.attempt} ---\n"
-                f"Question tried: {rec.hardened.updated_question}\n"
-                f"Strategy: {rec.hardened.chosen_strategy}\n"
-                f"Verification criterion: {rec.hardened.verification_criterion}\n"
+                f"Question tried: {rec.harder.updated_question}\n"
+                f"Strategy: {rec.harder.chosen_strategy}\n"
+                f"Verification criterion: {rec.harder.verification_criterion}\n"
                 f"Judge verdict: {rec.judgment.verdict}\n"
                 f"Judge summary: {rec.judgment.summary}\n"
                 f"Other issues flagged: {rec.judgment.other_issues}\n"
             )
         user_content += (
-            "\n\nThe research system PASSED the previous hardened versions of this seed, "
+            "\n\nThe research system PASSED the previous harder versions of this seed, "
             "which means those questions were not hard enough. MAKE THE QUESTION HARDER "
             "this time. Pick a meaningfully different strategy — do not just rephrase a "
             "prior attempt — and target a weakness the previous attempts did not exploit. "
@@ -460,12 +443,12 @@ def harden_question(
 
     messages = [{"role": "user", "content": user_content}]
     raw, bucket = _call_claude(
-        client, model=model, system=HARDENING_PROMPT, messages=messages,
-        max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harden",
+        client, model=model, system=PROMPT_TO_MAKE_HARDER_QUESTION, messages=messages,
+        max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)
     return (
-        HardenedQuestion(
+        HarderQuestion(
             brainstorming=data.get("brainstorming", ""),
             chosen_strategy=data.get("chosen_strategy", ""),
             updated_question=data["updated_question"],
@@ -513,103 +496,57 @@ def judge_answer(
 
 
 # ---------------------------------------------------------------------------
-# Research workflow call
+# Research server call
 # ---------------------------------------------------------------------------
-
-# Cache the workflow instance — config loading isn't free, and reusing the
-# instance across seeds is the same pattern the user's snippet implies.
-_workflow_instance = None
-
-
-def _get_workflow():
-    global _workflow_instance
-    if _workflow_instance is None:
-        cls = _get_workflow_class()
-        _workflow_instance = cls(configuration=WORKFLOW_CONFIG_PATH)
-    return _workflow_instance
-
-
-async def _run_workflow_async(question: str, dataset_name: str) -> dict:
-    workflow = _get_workflow()
-    return await workflow(
-        problem=question,
-        dataset_name=dataset_name,
-        verbose=False,
-    )
-
-
-def _run_workflow_sync(question: str, dataset_name: str) -> dict:
-    """Run the workflow on a fresh event loop, then drain pending async
-    resources before closing.
-
-    asyncio.run() closes the loop immediately after the coroutine returns,
-    which leaves aiohttp connectors and client sessions inside long-lived
-    MCP tools (e.g. Crawl4AIBrowseTool) un-awaited and produces "Unclosed
-    connector" warnings. The fix is to (1) keep the loop alive long enough
-    to run shutdown_asyncgens, (2) give pending close callbacks one tick
-    to flush, and (3) close cleanly.
-    """
-    loop = asyncio.new_event_loop()
-    try:
-        result = loop.run_until_complete(_run_workflow_async(question, dataset_name))
-        # Drain async generators created by the workflow's HTTP clients.
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        # One extra tick lets any deferred close callbacks (TCPConnector, etc.)
-        # complete before the loop is torn down.
-        loop.run_until_complete(asyncio.sleep(0))
-        return result
-    finally:
-        loop.close()
-
 
 def query_research_system(
     question: str,
     logger: RunLogger,
     seed: str,
     attempt: int,
-    dataset_name: str = DATASET_NAME,
+    url: str = RESEARCH_SERVER_URL,
+    timeout_s: float = RESEARCH_TIMEOUT_S,
 ) -> str:
-    """Run the AutoReasonSearchWorkflow and return the final response string.
+    """POST the question to the research server and return the answer string.
 
-    The full trace and the final response are logged via log_research_call.
+    The server is expected to respond with JSON of the form {"answer": "..."}
+    (and may include additional fields, which are logged verbatim).
     """
-    request_meta = {
-        "problem": question,
-        "dataset_name": dataset_name,
-        "configuration": WORKFLOW_CONFIG_PATH,
-    }
+    request_json = {"question": question}
     t0 = time.perf_counter()
     err: Optional[str] = None
-    final_response = ""
-    trace_dump = None
+    status: Optional[int] = None
+    body = None
+    answer = ""
 
     try:
-        result = _run_workflow_sync(question, dataset_name)
-        final_response = result["final_response"]
-        ft = result.get("full_traces")
-        trace_dump = ft.model_dump() if ft is not None and hasattr(ft, "model_dump") else ft
+        resp = requests.post(url, json=request_json, timeout=timeout_s)
+        status = resp.status_code
+        try:
+            body = resp.json()
+        except ValueError:
+            body = resp.text
+        resp.raise_for_status()
+        if not isinstance(body, dict) or "answer" not in body:
+            raise ValueError(
+                f"Research server response missing 'answer' field; got: {body!r}"
+            )
+        answer = body["answer"]
     except Exception as e:
         err = f"{type(e).__name__}: {e}"
         latency = time.perf_counter() - t0
         logger.log_research_call(
-            seed=seed, attempt=attempt, url=f"workflow:{WORKFLOW_CONFIG_PATH}",
-            request_json=request_meta, response_status=None,
-            response_body=None, latency_s=latency, error=err,
+            seed=seed, attempt=attempt, url=url, request_json=request_json,
+            response_status=status, response_body=body, latency_s=latency, error=err,
         )
         raise
 
     latency = time.perf_counter() - t0
-    # We pack final_response + trace into response_body so a single log record
-    # captures everything the workflow returned. trace_dump can be large; we
-    # serialize to JSON-compatible structures (the logger handles dataclasses
-    # via default=str, but model_dump() already returns plain dicts).
     logger.log_research_call(
-        seed=seed, attempt=attempt, url=f"workflow:{WORKFLOW_CONFIG_PATH}",
-        request_json=request_meta, response_status=None,
-        response_body={"final_response": final_response, "trace": trace_dump},
-        latency_s=latency, error=None,
+        seed=seed, attempt=attempt, url=url, request_json=request_json,
+        response_status=status, response_body=body, latency_s=latency, error=None,
     )
-    return final_response
+    return answer
 
 
 # ---------------------------------------------------------------------------
@@ -623,7 +560,7 @@ def process_seed(
     logger: RunLogger,
     max_attempts: int = MAX_ATTEMPTS,
     verbose: bool = True,
-    dataset_name: str = DATASET_NAME,
+    server_url: str = RESEARCH_SERVER_URL,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
@@ -633,35 +570,34 @@ def process_seed(
             print(f"SEED: {seed!r}  |  Attempt {attempt}/{max_attempts}")
             print("=" * 70)
 
-        # Step 1 — harden
+        # Step 1 — make harder
         try:
-            hardened, bucket = harden_question(
+            harder, bucket = harder_question_gen(
                 client, model, seed, result.attempts, logger, attempt
             )
             result.cost.add(bucket)
         except Exception as e:
             result.final_status = "ERROR"
-            result.error = f"Hardening failed: {e}"
+            result.error = f"Making harder question failed: {e}"
             if verbose:
-                print(f"[ERROR] Hardening failed: {e}")
+                print(f"[ERROR] Making harder question failed: {e}")
             return result
 
         if verbose:
-            print(f"[1] Hardened question: {hardened.updated_question}")
-            print(f"    Strategy: {hardened.chosen_strategy}")
-            print(f"    Criterion: {hardened.verification_criterion}")
+            print(f"[1] Harder question: {harder.updated_question}")
+            print(f"    Strategy: {harder.chosen_strategy}")
+            print(f"    Criterion: {harder.verification_criterion}")
 
         # Step 2 — query research system
         try:
             answer = query_research_system(
-                hardened.updated_question, logger, seed, attempt,
-                dataset_name=dataset_name,
+                harder.updated_question, logger, seed, attempt, url=server_url,
             )
         except Exception as e:
             result.final_status = "ERROR"
-            result.error = f"Research workflow call failed: {e}"
+            result.error = f"Research server call failed: {e}"
             if verbose:
-                print(f"[ERROR] Research workflow call failed: {e}")
+                print(f"[ERROR] Research server call failed: {e}")
             return result
 
         if verbose:
@@ -672,8 +608,8 @@ def process_seed(
         # Step 3 — judge
         try:
             judgment, bucket = judge_answer(
-                client, model, hardened.updated_question,
-                hardened.verification_criterion, answer, logger, seed, attempt,
+                client, model, harder.updated_question,
+                harder.verification_criterion, answer, logger, seed, attempt,
             )
             result.cost.add(bucket)
         except Exception as e:
@@ -700,7 +636,7 @@ def process_seed(
 
         result.attempts.append(
             AttemptRecord(
-                attempt=attempt, hardened=hardened, answer=answer, judgment=judgment,
+                attempt=attempt, harder=harder, answer=answer, judgment=judgment,
             )
         )
 
@@ -729,7 +665,7 @@ def result_to_dict(result: SeedResult) -> dict:
         "attempts": [
             {
                 "attempt": a.attempt,
-                "hardened": asdict(a.hardened),
+                "harder": asdict(a.harder),
                 "answer": a.answer,
                 "judgment": asdict(a.judgment),
             }
@@ -743,15 +679,14 @@ def result_to_dict(result: SeedResult) -> dict:
 # ---------------------------------------------------------------------------
 
 def main():
-    global WORKFLOW_CONFIG_PATH
     parser = argparse.ArgumentParser(
-        description="Harden seed questions, query a research server, and judge answers."
+        description="Make seed questions harder, query a research server, and judge answers."
     )
     parser.add_argument("seeds", nargs="*",
                         help="Seed questions. If omitted, reads from --seeds-file or stdin.")
     parser.add_argument("--seeds-file", help="Path to a file with one seed per line.")
     parser.add_argument("--max-attempts", type=int, default=MAX_ATTEMPTS,
-                        help=f"Max hardening attempts per seed (default: {MAX_ATTEMPTS}).")
+                        help=f"Max attempts per seed (default: {MAX_ATTEMPTS}).")
     parser.add_argument("--model", default=CLAUDE_MODEL,
                         help=f"Anthropic model (default: {CLAUDE_MODEL}).")
     parser.add_argument("--output", help="Optional path to write final JSON results.")
@@ -763,17 +698,10 @@ def main():
     parser.add_argument("--run-id", help="Optional run identifier; auto-generated if omitted.")
     parser.add_argument("--quiet", action="store_true", help="Suppress per-attempt output.")
     parser.add_argument(
-        "--dataset-name", default=DATASET_NAME,
-        help=f"Dataset name passed to the workflow (default: {DATASET_NAME}).",
-    )
-    parser.add_argument(
-        "--workflow-config", default=WORKFLOW_CONFIG_PATH,
-        help="Path to the AutoReasonSearchWorkflow YAML config.",
+        "--server-url", default=RESEARCH_SERVER_URL,
+        help=f"Research server endpoint (default: {RESEARCH_SERVER_URL}).",
     )
     args = parser.parse_args()
-
-    # Allow CLI override of the workflow config before the workflow is built
-    WORKFLOW_CONFIG_PATH = args.workflow_config
 
     seeds = list(args.seeds)
     if args.seeds_file:
@@ -802,7 +730,7 @@ def main():
         result = process_seed(
             client, args.model, seed, logger,
             max_attempts=args.max_attempts, verbose=not args.quiet,
-            dataset_name=args.dataset_name,
+            server_url=args.server_url,
         )
         all_results.append(result)
         grand_total.add(result.cost)
@@ -820,7 +748,7 @@ def main():
             print(f"    error: {r.error}")
         elif r.final_status == "FAILED_FOUND":
             last = r.attempts[-1]
-            print(f"    failing question: {last.hardened.updated_question}")
+            print(f"    failing question: {last.harder.updated_question}")
             print(f"    judge summary: {last.judgment.summary}")
 
     print(

@@ -1,0 +1,32 @@
+version: v2
+budget: ai2/asta
+description: "dr-tulu-server"
+tasks:
+  - name: "dr-tulu-server"
+    image:
+      beaker: varshak/drtulu
+    hostNetworking: true
+    command: ["/bin/sh", "-c"]
+    arguments:
+      [
+        "cd /weka/nora-default/varshak/dr-tulu/agent/workflows && python auto_launch.py"
+      ]
+    timeout: "3h30m"
+    envVars:
+      - name: S2_API_KEY
+        secret: varshak_S2_API_KEY
+    datasets:
+      - mountPath: /weka/oe-adapt-default
+        source:
+          weka: oe-adapt-default
+      - mountPath: /weka/nora-default
+        source:
+          weka: nora-default
+    constraints:
+      cluster:
+        - ai2/saturn
+    resources:
+      gpuCount: 1
+    context:
+      priority: high
+      preemptible: True
