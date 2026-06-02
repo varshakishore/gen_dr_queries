@@ -66,9 +66,10 @@ CACHE_READ_MULTIPLIER = 0.10
 
 PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
 
-Given a seed question, produce an updated question designed to expose weaknesses in deep research systems.
+Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
 
 ANSWERING SYSTEM PROFILE:
+<<<<<<< HEAD
 The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not 
 come from requiring sources outside this corpus.
 
@@ -96,6 +97,9 @@ Along with the updated question, also produce up to 3 simple, ATOMIC verificatio
 must test exactly ONE concrete property of a good answer — not a combination. Bad (compound): "is well-cited
 and synthesizes multiple viewpoints". Good (atomic): "cites at least 3 distinct sources"; separately,
 "presents at least two opposing viewpoints". Use fewer criteria if the question is narrow.
+=======
+The answering system is an open "deep research" model that is trained to produce attributed long-form answers and whose ONLY tool is Semantic Scholar ("S2") search over academic papers. The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not come from requiring sources outside this corpus. The system is good at surveying a single well-studied topic and producing a long well-structured report. It is bad at complex reasoning. 
+>>>>>>> f5d2f76 (updated prompt, added script for parallelization, added caching)
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
@@ -103,8 +107,58 @@ OUTPUT FORMAT (valid JSON, no extra text):
   "chosen_strategy": "<name and justify the single most promising strategy>",
   "updated_question": "<the rewritten question>",
   "why_harder": "<explanation of why this question might be hard for a deep research system>",
+<<<<<<< HEAD
   "verification_criteria": ["<atomic criterion 1>", "<atomic criterion 2 (optional)>", "<atomic criterion 3 (optional)>"]
 }"""
+=======
+  "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
+}
+
+RULES:
+- Avoid questions that can easily be answered by retrieving information.
+- The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
+- The updated question length should change by fewer than 15 words from the seed.
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+
+EXAMPLE STRATEGIES TO CONSIDER:
+1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., science + economics).
+2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
+3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
+4. Require handling conflicting, incomplete, or low-quality evidence.
+5. Require correcting a hidden misconception or establishing key knowns before answering.
+6. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+7. Make a question that is unanswerable by current research.
+
+Here are a few examples:
+Seed Question: What is pretraining-data deduplication?
+{
+"brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
+"chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
+"updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
+"why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
+"verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+}
+
+Seed Question: What is the role of attention sparsity in efficient transformers?
+{
+"brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
+"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY cited papers disagree rather than just report their results.",
+"updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
+"why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
+"verification_criterion": "The answer must show that its OWN cited sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it cites do not actually report conflicting sparse-vs-dense comparisons."
+}
+
+Seed Question: How does brown adipose tissue produce heat?
+{
+"brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
+"chosen_strategy": "False premise via conjunction of separately-documented facts.",
+"updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
+"why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
+"verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
+}
+"""
+>>>>>>> f5d2f76 (updated prompt, added script for parallelization, added caching)
 
 PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research systems.
 
@@ -349,6 +403,7 @@ class AttemptRecord:
     harder: HarderQuestion
     answer: str
     judgment: Judgment
+    trace: object = None
 
 
 @dataclass
@@ -393,8 +448,14 @@ def _call_claude(
     seed: str,
     attempt: int,
     purpose: str,
+    log_messages: Optional[list] = None,
 ) -> tuple[str, CostBucket]:
-    """Single Claude call wrapped with logging + cost accounting."""
+    """Single Claude call wrapped with logging + cost accounting.
+
+    `log_messages`, if given, is logged instead of the real `messages` — used to
+    redact the bulky research answer from the judge prompt in the log.
+    """
+    logged_messages = log_messages if log_messages is not None else messages
     t0 = time.perf_counter()
     err: Optional[str] = None
     response_text = ""
@@ -404,7 +465,14 @@ def _call_claude(
     try:
         kwargs = {"model": model, "max_tokens": max_tokens, "messages": messages}
         if system is not None:
-            kwargs["system"] = system
+            # Cache the (static, reused) system prompt so repeated calls within the
+            # 5-min TTL read it at 0.10x instead of full input price. Only the harder-
+            # question generator passes a system prompt; the judge passes None.
+            kwargs["system"] = [{
+                "type": "text",
+                "text": system,
+                "cache_control": {"type": "ephemeral"},
+            }]
         resp = client.messages.create(**kwargs)
         response_text = resp.content[0].text
         usage_obj = getattr(resp, "usage", None)
@@ -425,7 +493,7 @@ def _call_claude(
         latency = time.perf_counter() - t0
         logger.log_claude_call(
             seed=seed, attempt=attempt, purpose=purpose, model=model,
-            system=system, messages=messages, response_text=response_text,
+            system=system, messages=logged_messages, response_text=response_text,
             usage=usage, cost_usd=cost_usd, latency_s=latency, error=err,
         )
         raise
@@ -433,7 +501,7 @@ def _call_claude(
     latency = time.perf_counter() - t0
     logger.log_claude_call(
         seed=seed, attempt=attempt, purpose=purpose, model=model,
-        system=system, messages=messages, response_text=response_text,
+        system=system, messages=logged_messages, response_text=response_text,
         usage=usage, cost_usd=cost_usd, latency_s=latency, error=None,
     )
 
@@ -493,8 +561,8 @@ def harder_question_gen(
         user_content += (
             "\n\nThe research system PASSED the previous harder versions of this seed, "
             "which means those questions were not hard enough. MAKE THE QUESTION HARDER "
-            "this time. Pick a meaningfully different strategy — do not just rephrase a "
-            "prior attempt — and target a weakness the previous attempts did not exploit. "
+            "this time. Do not just rephrase a prior attempt."
+            "You can use a different strategy than before, and you can also use the feedback on prior attempts."
             "Below is what was tried:\n\n"
             + "\n".join(feedback_blocks)
         )
@@ -537,9 +605,16 @@ def judge_answer(
         question=question, criteria=criteria_block, answer=answer
     )
     messages = [{"role": "user", "content": prompt}]
+    # Log the prompt with the (bulky) answer redacted; it lives in the results file.
+    log_prompt = JUDGE_PROMPT_TEMPLATE.format(
+        question=question, criterion=criterion,
+        answer=f"<answer omitted: {len(answer)} chars — see results file>",
+    )
+    log_messages = [{"role": "user", "content": log_prompt}]
     raw, bucket = _call_claude(
         client, model=model, system=None, messages=messages,
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="judge",
+        log_messages=log_messages,
     )
     data = extract_json(raw)
 
@@ -571,6 +646,22 @@ def judge_answer(
 # Research server call
 # ---------------------------------------------------------------------------
 
+def _redact_research_body(body):
+    """Strip the bulky `answer`/`trace` from a response body before logging.
+
+    The full answer and trace live only in the results file; the log keeps just
+    lightweight metadata (sizes/presence) plus any other fields verbatim.
+    """
+    if not isinstance(body, dict):
+        return body
+    redacted = {k: v for k, v in body.items() if k not in ("answer", "trace")}
+    if "answer" in body:
+        redacted["answer_chars"] = len(body.get("answer") or "")
+    if "trace" in body:
+        redacted["trace_present"] = body.get("trace") is not None
+    return redacted
+
+
 def query_research_system(
     question: str,
     logger: RunLogger,
@@ -578,11 +669,12 @@ def query_research_system(
     attempt: int,
     url: str = RESEARCH_SERVER_URL,
     timeout_s: float = RESEARCH_TIMEOUT_S,
-) -> str:
-    """POST the question to the research server and return the answer string.
+) -> tuple[str, object]:
+    """POST the question to the research server and return (answer, trace).
 
-    The server is expected to respond with JSON of the form {"answer": "..."}
-    (and may include additional fields, which are logged verbatim).
+    The server is expected to respond with JSON of the form
+    {"answer": "...", "trace": ...}. The full body is logged verbatim; `trace`
+    is None if the server did not include it.
     """
     request_json = {"question": question}
     t0 = time.perf_counter()
@@ -590,6 +682,7 @@ def query_research_system(
     status: Optional[int] = None
     body = None
     answer = ""
+    trace = None
 
     try:
         resp = requests.post(url, json=request_json, timeout=timeout_s)
@@ -604,21 +697,24 @@ def query_research_system(
                 f"Research server response missing 'answer' field; got: {body!r}"
             )
         answer = body["answer"]
+        trace = body.get("trace")
     except Exception as e:
         err = f"{type(e).__name__}: {e}"
         latency = time.perf_counter() - t0
         logger.log_research_call(
             seed=seed, attempt=attempt, url=url, request_json=request_json,
-            response_status=status, response_body=body, latency_s=latency, error=err,
+            response_status=status, response_body=_redact_research_body(body),
+            latency_s=latency, error=err,
         )
         raise
 
     latency = time.perf_counter() - t0
     logger.log_research_call(
         seed=seed, attempt=attempt, url=url, request_json=request_json,
-        response_status=status, response_body=body, latency_s=latency, error=None,
+        response_status=status, response_body=_redact_research_body(body),
+        latency_s=latency, error=None,
     )
-    return answer
+    return answer, trace
 
 
 # ---------------------------------------------------------------------------
@@ -685,7 +781,7 @@ def process_seed(
 
         # Step 2 — query research system
         try:
-            answer = query_research_system(
+            answer, trace = query_research_system(
                 harder.updated_question, logger, seed, attempt, url=server_url,
             )
         except Exception as e:
@@ -736,6 +832,7 @@ def process_seed(
         result.attempts.append(
             AttemptRecord(
                 attempt=attempt, harder=harder, answer=answer, judgment=judgment,
+                trace=trace,
             )
         )
 
@@ -779,6 +876,7 @@ def result_to_dict(result: SeedResult) -> dict:
                 "attempt": a.attempt,
                 "harder": asdict(a.harder),
                 "answer": a.answer,
+                "trace": a.trace,
                 "judgment": asdict(a.judgment),
             }
             for a in result.attempts
