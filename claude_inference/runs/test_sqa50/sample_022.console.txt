@@ -1,0 +1,12 @@
+Run ID: sample_022
+Logging every call to: runs/test_sqa50/run-sample_022.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0000, 0 Claude calls) epidemiology of cchfv in the world as of 2025
+    error: Making harder question failed: list index out of range
+
+Total cost: $0.0000 (0 Claude calls, 0 input + 0 output tokens)
+Run log written to: runs/test_sqa50/run-sample_022.jsonl
+Final results written to: runs/test_sqa50/sample_022.json

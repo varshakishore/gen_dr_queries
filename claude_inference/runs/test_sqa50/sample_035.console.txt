@@ -1,0 +1,12 @@
+Run ID: sample_035
+Logging every call to: runs/test_sqa50/run-sample_035.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0000, 0 Claude calls) 拟除虫菊酯降解酯酶的诱导表达方案
+    error: Making harder question failed: list index out of range
+
+Total cost: $0.0000 (0 Claude calls, 0 input + 0 output tokens)
+Run log written to: runs/test_sqa50/run-sample_035.jsonl
+Final results written to: runs/test_sqa50/sample_035.json

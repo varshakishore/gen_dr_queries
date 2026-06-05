@@ -1,0 +1,910 @@
+{
+  "run_id": "sample_048",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 5216,
+    "output_tokens": 1275,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1777,
+    "cost_usd": 0.0353061,
+    "calls": 2
+  },
+  "results": [
+    {
+      "seed": "echoing Merleau-Ponty\u2019s concept of the body as the \"vehicle of being in the world\"",
+      "final_status": "FAILED_FOUND",
+      "error": null,
+      "cost": {
+        "input_tokens": 5216,
+        "output_tokens": 1275,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 1777,
+        "cost_usd": 0.0353061,
+        "calls": 2
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "harder": {
+            "brainstorming": "The seed isn't a question at all\u2014it's a phrase fragment. If I turn it into a simple 'explain Merleau-Ponty's concept' question, retrieval is easy: the system can survey phenomenology literature and summarize 'body-as-vehicle-of-being.' To increase difficulty, I could: (1) require synthesis across philosophy + neuroscience/embodied cognition, forcing integration of frameworks that rarely cite each other; (2) embed a reasoning trap by asserting a false interpretation (e.g., that M-P reduces experience to purely neural processing, contradicting his anti-reductionism); (3) make it unanswerable by asking for empirical validation of a phenomenological claim; (4) require multi-step reasoning about what would follow IF his thesis were false. Option (2) is tempting but phenomenology papers often explicitly contrast M-P with reductionism, so the refutation may be pre-packaged. Option (3) is strong: ask for empirical evidence supporting/refuting a claim that is fundamentally phenomenological\u2014the literature won't directly address this category error, and a reasoning-weak system might retrieve embodied-cognition studies and treat them as 'validation' without noticing the epistemic mismatch.",
+            "chosen_strategy": "Make the question unanswerable by requesting empirical validation of a phenomenological claim, which commits a category error that requires recognizing the fundamental epistemic mismatch between phenomenological description and empirical falsification.",
+            "updated_question": "What empirical evidence from cognitive neuroscience definitively validates or refutes Merleau-Ponty's thesis that the body is the vehicle of being in the world?",
+            "why_harder": "The system can retrieve both phenomenology papers explaining M-P's thesis and embodied-cognition/neuroscience studies showing body-environment coupling. A survey-strong system will synthesize these as mutually supportive. But M-P's claim is a phenomenological-ontological thesis about the structure of lived experience, not an empirical hypothesis subject to neuroscientific falsification. No literature directly addresses this category error because philosophers don't propose empirical tests for phenomenological insights. Answering correctly requires recognizing that 'empirical validation' misunderstands the claim's epistemic status\u2014a reasoning task the system is weak at.",
+            "verification_criterion": "The answer must explicitly state that the question commits a category error: Merleau-Ponty's thesis is a phenomenological-ontological claim about the structure of pre-reflective experience, not an empirical hypothesis that neuroscience can validate or refute. It must explain why embodied-cognition findings (mirror neurons, sensorimotor coupling, body-schema research) are NOT validations\u2014they operate at a different explanatory level (mechanisms vs. lived meaning). Fails if it presents neuroscience studies as evidence 'for' or 'against' M-P, or implies the thesis could be empirically settled without addressing the epistemic mismatch.",
+            "raw": "```json\n{\n  \"brainstorming\": \"The seed isn't a question at all\u2014it's a phrase fragment. If I turn it into a simple 'explain Merleau-Ponty's concept' question, retrieval is easy: the system can survey phenomenology literature and summarize 'body-as-vehicle-of-being.' To increase difficulty, I could: (1) require synthesis across philosophy + neuroscience/embodied cognition, forcing integration of frameworks that rarely cite each other; (2) embed a reasoning trap by asserting a false interpretation (e.g., that M-P reduces experience to purely neural processing, contradicting his anti-reductionism); (3) make it unanswerable by asking for empirical validation of a phenomenological claim; (4) require multi-step reasoning about what would follow IF his thesis were false. Option (2) is tempting but phenomenology papers often explicitly contrast M-P with reductionism, so the refutation may be pre-packaged. Option (3) is strong: ask for empirical evidence supporting/refuting a claim that is fundamentally phenomenological\u2014the literature won't directly address this category error, and a reasoning-weak system might retrieve embodied-cognition studies and treat them as 'validation' without noticing the epistemic mismatch.\",\n  \"chosen_strategy\": \"Make the question unanswerable by requesting empirical validation of a phenomenological claim, which commits a category error that requires recognizing the fundamental epistemic mismatch between phenomenological description and empirical falsification.\",\n  \"updated_question\": \"What empirical evidence from cognitive neuroscience definitively validates or refutes Merleau-Ponty's thesis that the body is the vehicle of being in the world?\",\n  \"why_harder\": \"The system can retrieve both phenomenology papers explaining M-P's thesis and embodied-cognition/neuroscience studies showing body-environment coupling. A survey-strong system will synthesize these as mutually supportive. But M-P's claim is a phenomenological-ontological thesis about the structure of lived experience, not an empirical hypothesis subject to neuroscientific falsification. No literature directly addresses this category error because philosophers don't propose empirical tests for phenomenological insights. Answering correctly requires recognizing that 'empirical validation' misunderstands the claim's epistemic status\u2014a reasoning task the system is weak at.\",\n  \"verification_criterion\": \"The answer must explicitly state that the question commits a category error: Merleau-Ponty's thesis is a phenomenological-ontological claim about the structure of pre-reflective experience, not an empirical hypothesis that neuroscience can validate or refute. It must explain why embodied-cognition findings (mirror neurons, sensorimotor coupling, body-schema research) are NOT validations\u2014they operate at a different explanatory level (mechanisms vs. lived meaning). Fails if it presents neuroscience studies as evidence 'for' or 'against' M-P, or implies the thesis could be empirically settled without addressing the epistemic mismatch.\"\n}\n```"
+          },
+          "answer": "Below is a synthesis of empirical cognitive neuroscience evidence bearing on Merleau-Ponty\u2019s thesis that \u201cthe body is the vehicle of being in the world.\u201d I organize the findings into converging lines that support core phenomenological claims, evidence that refines or qualifies them, and open questions about \u201cdefinitiveness.\u201d\n\nSummary thesis to be tested\nMerleau-Ponty holds that perception and agency are irreducibly embodied: the body schema orients action and the body image shapes perception, and together they ground our situated, world-directed experience. Empirical tests look for whether bodily self-representations causally guide perception/action, whether disrupting the body distorts attentional scope and agency, and whether multisensory integration constructs a coherent bodily self in the world. Neuroscience has provided causal, correlational, and clinical data across these dimensions. <cite id=\"2a757d2c-0\">The contemporary literature distinguishes a body image linked to perception and susceptible to illusions from a body schema that guides action, but also probes motor responses that reveal schema sensitivity to sensorimotor context</cite>. <cite id=\"504ddb08-0\">Parietal and frontal-parietal systems are implicated in early motor planning and sensorimotor transformations, integrating visual, proprioceptive, and efference-copy signals</cite>.\n\nEvidence supporting the thesis: the body organizes perception and action in the world\n1) Sensorimotor illusions alter action plans and perception, revealing body-dependent coupling\n- Rubber-hand and kinesthetic mirror illusions: <cite id=\"2a757d2c-0\">In a controlled rubber-hand paradigm, manipulating tactile congruence and hand postures produced altered grasping responses commensurate with the \u201cgrip aperture\u201d of the rubber hand, indicating that even visuomotor grasping\u2014an action typically considered schema-dependent\u2014can be recalibrated by a visually substituted limb</cite>. This shows that sensorimotor incongruence can penetrate the boundary assumed between body image and body schema and reshape goal-directed behavior. <cite id=\"2a757d2c-2\">Mirror movement paradigms demonstrate that moving \u201cfake\u201d limbs can be incorporated into both body image and body schema, and that as soon as movement incongruence is introduced, a simple visual replacement is insufficient; the body representation must adjust (e.g., accept a visual reflection as a third limb), evidencing dynamic reconfiguration of perception and action as bodily signals mismatch</cite>. These findings operationalize Merleau-Ponty\u2019s idea that the lived body is plastic and continuously recalibrates perception and action in light of sensory feedback. <cite id=\"2a757d2c-2\">Vallar and Ronchi\u2019s account of proprioceptive \u201csense of position\u201d as the defining factor in somatoparaphrenia further underscores proprioception\u2019s centrality in integrating body signals, aligning with a sensorimotor basis for bodily self and agency</cite>.\n\n2) Causal and systems-level evidence: parietal/frontal-parietal networks as the substrate of embodied coupling\n- Parietal contributions to action planning and bodily coordinates: <cite id=\"504ddb08-0\">Lesion and fMRI work identifies superior parietal cortex (precuneus) in guiding reaching to visually presented objects and emphasizes that parietal damage yields visuomotor errors; intraparietal sulcus activity precedes visual target presentation (extrinsic coordinates), and right temporoparietal junction tracks target detection, situating parietal cortex in early stages of motor planning</cite>. <cite id=\"504ddb08-0\">In nonhuman primate work, intraparietal neurons encode eye and hand movements and anticipate retinal consequences; posterior parietal cortex contains intention maps and detects discrepancies between desired and executed movements, integrating visual feedback to correct trajectories</cite>. Together, these data show that bodily guidance of action arises from parietal integration of visual, proprioceptive, and efference-copy information\u2014consistent with a body-organized, world-directed control of action.\n- From efference copy to grasp and transsaccadic updates: <cite id=\"504ddb08-1\">Transcranial magnetic stimulation work links the frontal eye field (FEF) efference copy to posterior parietal transsaccadic integration; fMRI shows inferior parietal (supramarginal gyrus) sensitivity to transsaccadic changes in stimulus orientation, suggesting sensorimotor plan updating across saccades</cite>. <cite id=\"504ddb08-1\">Multiple parietal regions support visuomotor transformations for grasp and reach (aIPS, SPL, SPOC), with anterior intraparietal areas specifically implicated in updating grasp when visual targets change; TMS implicates SPOC in early visuomotor transformations</cite>. <cite id=\"504ddb08-1\">These converging causal and correlational results support the view that parietal/frontal-parietal circuits translate bodily signals into perception\u2013action couplings, enabling sensorimotor workflows that are sensitive to bodily contingencies</cite>.\n- Imitation, praxis, and semantic-upgrade of action: <cite id=\"504ddb08-2\">Multimodal causal evidence shows that intraoperative electrical stimulation in rostral intraparietal and adjacent inferior parietal cortex disrupts meaningful gesture imitation and produces motor impairments, whereas lesion mapping and stimulation converge on a dorso-ventral parietal architecture that supports both sensorimotor control and praxis</cite>. <cite id=\"504ddb08-2\">Neurons in these areas likely convert observed visuomotor signals into executed actions (direct pathway) and interact with inferior parietal regions that integrate conceptual-semantic knowledge (indirect pathway), \u201ccontributing to the cognitive upgrade of hand actions\u201d</cite>. This supports an embodied account in which bodily circuits bind perception, action, and meaning in situated tasks.\n\n3) Multisensory integration and bodily ownership/agency\n- Parieto-temporo-occipital mechanisms and agency denial: <cite id=\"b4975325-1\">In hemispatial neglect, patients with right hemisphere injury frequently exhibit rightward bias, neglect contralesional left space, and show anosognosia for hemiplegia (denying weakness) and asomatognosia (denying that the affected limb belongs to them), demonstrating that disruptions of bodily selfhood can cascade into denial of agency, body ownership, and environmental awareness</cite>. <cite id=\"b4975325-1\">These disturbances translate into everyday deficits (e.g., eating only the right side of food, reading only the right half of a page) and impede rehabilitation, highlighting the clinical stakes of bodily self-representations in mediating world-directed behavior</cite>. \n- Attentional scope and extrapersonal space: <cite id=\"b4975325-2\">Right parietal/occipito-temporo-parietal damage yields hemispatial neglect in which patients fail to respond to contralesional stimuli and restrict eye and hand movements to ipsilesional space; behavior is attributed to impaired representations of corporeal and extrapersonal space and/or an attentional bias favoring ipsilesional stimuli</cite>. <cite id=\"b4975325-2\">Patients can also show intention-related motor impairments even when primary motor deficits are minimal, raising the possibility that distorted bodily space representations directly misguide visuomotor behavior</cite>. These clinical observations align with phenomenological claims that our \u201chorizon of the world\u201d is co-constituted by the body: attentional and motor biases shift as bodily representations shift.\n\nEvidence that refines or challenges aspects of the thesis\n1) The body image\u2013body schema boundary is porous under sensorimotor incongruence\n- Rubber-hand paradigms and movement congruence: <cite id=\"2a757d2c-0\">Grasping responses can be altered by rubber-hand \u201cgrip aperture,\u201d indicating that even schema-typical actions are susceptible to illusion-sensitive modulations when the sensorimotor milieu is incongruent</cite>. <cite id=\"2a757d2c-2\">Mirror paradigms show that with congruent movements a fake limb can be incorporated into both body image and body schema; upon incongruence, participants sometimes accept a visual reflection as a third limb, meaning the body representation must adjust rather than merely update a static schema</cite>. These results complicate a strict dichotomy and support a dynamic, bidirectional coupling between perception and action that Merleau-Ponty emphasized but framed phenomenologically rather than with today\u2019s paradigms.\n\n2) Neglect and anosognosia expose the contingency of agency and attentional scope on bodily self-representations\n- Hemispatial neglect: <cite id=\"b4975325-0\">Right-hemisphere lesions selectively impair monitoring of the left hemispace, producing left-sided neglect; the lesioned hemisphere\u2019s reduced coverage of hemispace leads to deficient attention to self, bodily parts, and external objects in that region</cite>. <cite id=\"b4975325-0\">Performance depends on body- and head-centered coordinates and hand positioning, indicating that bodily postures and reference frames modulate neglect patterns</cite>. <cite id=\"b4975325-2\">Disturbances can include impaired representation of corporeal and extrapersonal space, intention initiation, and motor slowness to contralesional targets, whether driven by perceptual distortions or attentional biases</cite>. <cite id=\"b4975325-1\">Co-occurring anosognosia/asomatognosia deny bodily ownership and agency, undermining the patient\u2019s capacity to engage the neglected half of the world</cite>. This shows that \u201cvehicle of being in the world\u201d is not merely metaphoric: when bodily self-representations are compromised, world-directed attention, action, and even ownership of the body and its parts are disrupted.\n\nSynthesis: What the evidence validates or refutes about Merleau-Ponty\u2019s thesis\n- Strongly supported elements\n  - World-directed perception and agency are tightly coupled to bodily schemes: <cite id=\"504ddb08-0\">Parietal/frontal-parietal systems integrate multisensory and efference-copy signals to plan and correct actions in visual space, demonstrating that action representations depend on bodily coordinates</cite>. <cite id=\"504ddb08-1\">Causal stimulation and fMRI reveal that parietal circuits support transsaccadic and grasp plan updates, linking moment-to-moment bodily feedback to perception\u2013action coupling</cite>. <cite id=\"504ddb08-2\">Intraoperative stimulation and lesion mapping converge on parietal architectures that bind praxis, imitation, and conceptual-semantic contributions to bodily actions</cite>.\n  - Perceptual experience is body-dependent: <cite id=\"2a757d2c-0\">Proprioceptive and visual-tactile incongruence can recalibrate grasping responses and motor outcomes</cite>, and <cite id=\"2a757d2c-2\">mirror and rubber-hand paradigms show that ownership and body image can be recalibrated by altered sensorimotor input, with corresponding changes in action tendencies</cite>. Neglect data show that when bodily representations degrade, attention, agency, and environmental responsiveness degrade in a spatially structured way, consistent with the body\u2019s role in carving up the world. <cite id=\"b4975325-2\">Patients\u2019 visuomotor behavior reflects distorted corporeal and extrapersonal space representations and attentional biases, bridging phenomenological intentionality (toward the world) with neurocognitive mechanisms</cite>.\n  - The body mediates intersubjectivity and tools: <cite id=\"504ddb08-2\">Parietal circuits integrating observed visuomotor signals and conceptual knowledge support imitation and praxis, suggesting that action meaning is \u201ccognitively upgraded\u201d within sensorimotor workflows</cite>. Rubber-hand and mirror illusions extend this to tool-like substitution and altered grasp plans, consistent with a body-mediated \u201cprimary relationship to the world\u201d (Merleau-Ponty) instantiated in parietal-frontal mechanisms. <cite id=\"2a757d2c-0\">Grasping modulated by a noncorporeal rubber hand demonstrates that the lived body is flexible and tools-like in its integration with action</cite>.\n- Refinements and limits of the thesis\n  - No evidence for a static, rigid \u201cschema\u201d vs. \u201cimage\u201d dichotomy: <cite id=\"2a757d2c-0\">Schema-like behavior shifts under carefully controlled sensorimotor incongruence, challenging the idea that schema is impervious to bodily illusions</cite>, and <cite id=\"2a757d2c-2\">movement congruence can incorporate a fake limb into both representations, with incongruence requiring reconfiguration rather than simple correction</cite>. This supports a dynamic equilibrium in which perception and action mutually calibrate.\n  - Agency and ownership are fragile and attentionally gated: <cite id=\"b4975325-1\">Right-hemisphere neglect entails denial of limb ownership and agency alongside spatial inattention, showing that the \u201cvehicle\u201d of being-in-the-world can fail at the level of bodily selfhood</cite>. <cite id=\"b4975325-2\">Behavioral and motor impairments may arise from perceptual distortions (distorted corporeal/extrapersonal space) or attentional biases, indicating multiple mechanisms through which bodily representations shape world-directed behavior</cite>.\n- What remains less definitive\n  - Categorical refutation or full \u201cdefinitiveness\u201d is lacking: the literature does not provide clean counterexamples showing that decoupling body signals from perception/action leaves phenomenally identical experience; rather, the strongest causal evidence shows tight coupling and clear side-effect patterns when coupling is disrupted. <cite id=\"504ddb08-0\">Parietal damage yields visuomotor errors and altered attentional control over space</cite>, and <cite id=\"b4975325-2\">neglect shows that attentional scope and action planning are reshaped by bodily representations</cite>, but debates persist about whether certain \u201ccore\u201d phenomenal properties are inviolable without bodily input versus contingent on it. Bridging experiments would include noninvasive manipulation of efference copy and multisensory congruence while monitoring conscious experience and behavioral affordances to quantify dissociations.\n\nImplications and outlook\n- Converging causal and correlational findings support a validated core of Merleau-Ponty\u2019s thesis: the body is the medium through which perception and action structure access to the world, with parieto-frontal circuits implementing sensorimotor integration, transsaccadic and grasp planning, and bodily ownership/agency. <cite id=\"504ddb08-0\">Parietal/frontal-parietal mechanisms bind visual, proprioceptive, and efference-copy signals to action planning</cite>, <cite id=\"504ddb08-1\">updating grasp and saccades across saccades depends on parietal engagement</cite>, and <cite id=\"2a757d2c-0\">sensorimotor incongruence can reshape action plans in real time</cite>. Neglect and anosognosia show that bodily selfhood is the scaffold for world-directed agency. <cite id=\"b4975325-1\">Right-hemisphere damage yields left hemispace denial, impaired agency, and functional deficits</cite>.\n- The evidence also refines the thesis by showing that body image and body schema are dynamically coupled and recalibrated together, not strictly separate modules. <cite id=\"2a757d2c-0\">Grasping changes with rubber-hand grip</cite> and <cite id=\"2a757d2c-2\">movement congruence integrates virtual limbs into both representations</cite>, implying a continuous sensorimotor-statistical learning process. In clinical dissociations, agency and ownership can be selectively impaired without gross motor paresis, highlighting the layered nature of bodily self-representations. <cite id=\"b4975325-1\">Anosognosia/asomatognosia co-occur with neglect</cite>.\n- What would \u201cdefinitively\u201d settle the question: randomized interventions that causally alter body signals (efference copy via TMS/BCI, multisensory reweighting via conflicting visual/tactile/proprioceptive streams) while recording first-person reports and ecological affordances, testing whether sustained decoupling produces equivalent phenomenology to intact coupling. Present evidence strongly favors embodied coupling but stops short of absolute proof against all possible phenomenological decouplings. <cite id=\"504ddb08-1\">Current causal data show parietal efference-copy and transsaccadic mechanisms</cite>, and <cite id=\"2a757d2c-0\">sensorimotor illusions demonstrate rapid behavioral recalibration</cite>, aligning with a vehicle-like role for the body in being-in-the-world.\n\nPractical takeaways for Merleau-Ponty\u2019s thesis\n- Empirical \u201cvehicle\u201d role: Yes\u2014on neuroanatomical and causal grounds, bodily schemes are the substrate through which we perceive and act in extrapersonal space. <cite id=\"504ddb08-0\">Parietal/frontal-parietal networks implement sensorimotor integration and early motor planning</cite>; <cite id=\"504ddb08-1\">they support grasp and saccade plan updates</cite>; <cite id=\"2a757d2c-0\">they mediate rapid action recalibration under illusion</cite>.\n- \u201cDefinitive\u201d refutation: No\u2014there are no clean demonstrations that disembodied perception with identical phenomenology can guide world-directed action; instead, the strongest evidence shows graded, mechanism-specific dependencies. <cite id=\"b4975325-2\">Neglect shows distorted representations lead to erroneous visuomotor behavior and restricted action scope</cite>.\n- Philosophical bridge: Contemporary enactive and sensorimotor accounts provide conceptual bridges between phenomenology and neuroscience, emphasizing that body schemas are dynamic, multisensory constructs that shape intentionality. <cite id=\"504ddb08-2\">Parietal architecture links action execution, observation, and conceptually enriched praxis</cite>, consistent with a body-as-vehicle thesis articulated through neurobiological mechanisms. <cite id=\"2a757d2c-2\">Sensorimotor incongruence penetrates both body image and schema, underscoring embodied perception and action</cite>.\n\nIn sum, cognitive neuroscience provides strong, convergent evidence that the body is the vehicle of being in the world: parieto-frontal systems integrate multisensory and efference-copy signals to ground perception in bodily schemes that guide action, illusions rapidly recalibrate these schemes, and clinical disruptions of bodily selfhood cascade into failures of attention, agency, and environmental engagement. The literature also clarifies that \u201cschema\u201d and \u201cimage\u201d co-vary and are continually recalibrated by sensorimotor context, refining rather than contradicting Merleau-Ponty\u2019s thesis. While absolute \u201cdefinitiveness\u201d is not yet attainable in a single experiment, the weight of evidence supports the thesis and motivates further integrated empirical-phenomenological research. <cite id=\"2a757d2c-0\">Illusion-sensitive motor control reveals joint perception\u2013action reconfiguration</cite>; <cite id=\"504ddb08-0\">parietal/frontal-parietal mechanisms implement early motor planning and integrate bodily coordinates</cite>; <cite id=\"504ddb08-1\">parietal circuits update grasp and saccades via efference copy</cite>; <cite id=\"504ddb08-2\">they support imitation/praxis with conceptual integration</cite>; <cite id=\"b4975325-1\">neglect/anosognosia/asomatognosia demonstrate bodily selfhood\u2019s centrality to agency and world engagement</cite>; <cite id=\"b4975325-2\">attentional scope and extrapersonal space representations misguide action under bodily disruption</cite>.",
+          "trace": {
+            "generated_text": "<think>\nDecompose the question:\n- Target: Merleau-Ponty\u2019s thesis that the body is the vehicle of being-in-the-world (phenomenology: embodied perception, body schema/body image, intentionality, world-directedness).\n- Evidence type: Empirical cognitive neuroscience (neuroscience, cognitive psychology, computational/robotics with neural grounding) that validates or refutes this thesis.\n- Criteria for \u201cdefinitively\u201d: Look for converging lines of evidence (neurodegeneration, lesion studies, neuroimaging, TMS/EEG, computational models) that support or challenge core claims: body schema as basis for perception/action; body schema and body image interaction; multisensory integration and enactive/extended body; ownership and agency; neglect/anosognosia as dissociations; motor/somatosensory cortex role.\n\nSearch plan:\n1) Broad query on \u201cembodied cognition\u201d and \u201cbody schema\u201d in cognitive neuroscience to gather reviews and core empirical paradigms (proprioception/vestibular/proprioceptive illusions; rubber hand illusion; action observation mirror neuron; TMS effects).\n2) Target Merleau-Ponty-specific links with neuroscience (conceptual history papers bridging M-P and neuroscience; enactive/4R frameworks).\n3) Empirical dissociations: hemispatial neglect, left hemisphere lesion/attentional bias; out-of-body/embodied self disruption (VAN/VEN networks, multisensory integration); anosognosia for hemiplegia.\n4) Motor/somatosensory cortex plasticity and body representation; body schema reorganization after limb loss/prosthesis; fMRI TMS causal links to action perception.\n5) Robotics/computational evidence: sensorimotor contingencies, affordances, ecological psychology ties to neural coding.\n\nFirst query: broad review-level evidence tying body schema/embodiment to perception/action in cognitive neuroscience.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2000-2025\" fieldsOfStudy=\"Neuroscience,Psychology,Philosophy,Computer Science\">body schema perception action cognitive neuroscience review rubber hand illusion mirror neuron embodied cognition</call_tool><tool_output><snippet id=2a757d2c-0>\nTitle: How many motoric body representations can we grasp?\nSnippet: At present there is a debate on the number of body representations in the brain. The most commonly used dichotomy is based on the body image, thought to underlie perception and proven to be susceptible to bodily illusions, versus the body schema, hypothesized to guide actions and so far proven to be robust against bodily illusions. In this rubber hand illusion study we investigated the susceptibility of the body schema by manipulating the amount of stimulation on the rubber hand and the participant\u2019s hand, adjusting the postural configuration of the hand, and investigating a grasping rather than a pointing response. Observed results showed for the first time altered grasping responses as a consequence of the grip aperture of the rubber hand. This illusion-sensitive motor response challenges one of the foundations on which the dichotomy is based, and addresses the importance of illusion induction versus type of response when investigating body representations.\n</snippet>\n<snippet id=2a757d2c-1>\nTitle: Body Schema Illusions: A Study of the Link between the Rubber Hand and Kinesthetic Mirror Illusions through Individual Differences\nSnippet: No content available\n</snippet>\n<snippet id=2a757d2c-2>\nTitle: Sensorimotor Incongruence and Body Perception: An Experimental Investigation\nSnippet: described above is not able to do. This means that in the rubber hand illusion, there is a necessary contradiction between the location of the rubber hand and the participant's proprioception. The central role of proprioception for the integration of body signals has been described by Vallar and Ronchi (2009), who discuss the sense of position as the defining factor for the occurrence of somatoparaphrenia, or delusional beliefs about parts of the body.\n\nA distinction between body representations relating to perception (body image) and action (body schema) has been proposed earlier (Kammers et al., 2006). By this definition, our experiment is distinct from the rubber hand procedures cited above in that it aims at manipulating the action aspect of a limb (movement) instead of the perception aspect (by tactile stimulation). This means that in our study, body schema, rather than body image, is influenced by the experiment. A study by Newport et al. (2010) has demonstrated that a moving fake hand (which is comparable to observing a hand moving in a mirror) can be incorporated into both body image and body schema.\n\nAs described above, all our mirror movement setups began with congruent movements. Applying the results from the rubber hand paradigm, we assume that the mirrored arm or hand image replaces the actual arm or hand in the body representation during congruent movements, much like it is shown in the rubber hand setup. Minor incongruence (e.g., caused by imperfect twohand coordination or shifts in balance) may lead to occasional sensations of a third limb, but it would be expected that most participants accept the mirror image as a replacement of their actual limb, because the \"virtual\" limb reacts completely congruently. However, as soon as the incongruent condition begins, a replacement is no longer sufficient to explain the mismatch in regard to sensory input and the body representation has to adjust to this Frontiers in Human Neuroscience www.frontiersin.org novel situation. The results of this study show that, at least in some participants, the adjustment consists of accepting the visual reflection as a third limb. This means that the illusion itself is not being eliminated by the switch from congruent to incongruent movements: in both conditions, the mirrored hand is included into the body representation\n</snippet></tool_output><think>\nMini-synthesis of first results and next steps:\n- The initial snippets concern body schema vs. body image and test their susceptibility to illusions. The rubber-hand paradigm is typically tied to body image, but these studies probe motor responses (grasping, movement congruence) and argue that body schema can be influenced by multisensory and visual illusions, challenging a strict dichotomy. This is relevant because Merleau-Ponty distinguishes body schema (action-organized) from body image (perceptional), and contemporary neuroscience often treats both as dynamically integrated. The snippets provide empirical evidence that the \u201cschema is robust\u201d is an oversimplification: motor-scheme adjustments occur under sensorimotor mismatch, and even grasping can be modulated by a visually substituted limb. These are useful to argue that the body organizes perception/action jointly rather than strictly separating them. However, I still need: (a) mechanistic neural evidence (e.g., intraparietal/supramarginal contributions, TMS/EEG causality) linking body schema to action guidance and perception; (b) clinical dissociations (neglect, anosognosia) that speak to \u201cvehicle of being-in-the-world\u201d as integrated agency and attentional scope; (c) multisensory integration and ownership networks (temporoparietal junction) showing how bodily self is constructed; (d) reviews explicitly linking Merleau-Ponty/embodied cognition to neuroscientific findings.\n\nNext query: focus on motor and parietal mechanisms for body schema guiding perception/action, and causal/neural evidence.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2000-2025\" fieldsOfStudy=\"Neuroscience,Psychology,Philosophy\">parietal lobe body schema intraparietal sulcus grasp laterality mirror neuron schema perception action TMS fMRI</call_tool><tool_output><snippet id=504ddb08-0>\nTitle: Neuropsychology of the parietal lobe: Luria\u2019s and contemporary conceptions\nSnippet: Studies by Pellijeff et al. used fMRI to investigate the brain areas involved in body schema, elucidating the role of the superior parietal cortex, mainly the precuneus, which, when damaged, leads to errors in reaching visually guided objects (Pellijeff et al., 2006). Considering extrinsic coordinates, Corbetta et al. (2000) demonstrated that activation of the intraparietal sulcus occurs before visual presentation of the target, while the right temporo-parietal junction activates with target detection (Corbetta et al., 2000). These findings complement the results obtained by Luria in his 1973 book (Luria, 1973), in which motor functions and body schema are not portrayed as designations of the parietal lobe. \n\nThe parietal cortex is involved in an early stage of motor planning. Studies on monkeys have highlighted that neurons in the intraparietal sulcus are responsive to eye movements, anticipating retinal consequences and coordinating them for a precise representation of visual space (Duhamel et al., 1992). However, it is believed that the posterior parietal cortex presents sub-regions containing intention maps related to the planning of different movements (Andersen and Bueno, 2002). Evidence indicates that the posterior parietal cortex also participates in the detection of incompatibilities between desired and executed movements when visual feedback is important, such as correcting trajectory with target changes (Blakemore and Sirigu, 2003). \n\nStudies conducted by Andersen and Bueno have highlighted the sub-regions currently elucidated in the PPC (Andersen and Bueno, 2002).\n</snippet>\n<snippet id=504ddb08-1>\nTitle: Parietal Cortex Integrates Saccade and Object Orientation Signals to Update Grasp Plans\nSnippet: Transcranial magnetic stimulation studies suggest that the frontal eye field (FEF) provides the saccade efference copy for transsaccadic integration in posterior parietal cortex (PPC) (Prime et al., 2010(Prime et al., , 2011)). A recent fMRI study showed that inferior parietal cortex (specifically, the supramarginal gyrus [SMG]) is sensitive to transsaccadic changes in visual stimulus orientation (Dunkley et al., 2016). Human SMG may be an expansion of primate lateral intraparietal cortex, which contains saccade, visual feature, and spatial updating signals (Gnadt and Andersen, 1988;Subramanian and Colby, 2014). Since the inferior parietal cortex is thought to mediate perception and action (Goodale and Milner, 1992;Rizzolatti and Matelli, 2003), we hypothesized that SMG might also play a role in transsaccadic updating of grasp orientation, using efference copy input from the FEF. \n\nSuccessful grasp also requires the updating of sensorimotor plans. Several parietal regions have been implicated in the visuomotor transformations for grasp, including the anterior intraparietal sulcus (aIPS) (Murata et al., 2000;Monaco et al., 2010), superior parietal cortex (SPL) (Culham et al., 2003;Filimon et al., 2009), and superior parieto-occipital cortex (SPOC) (Gallivan et al., 2011;Rossit et al., 2013). Transcranial magnetic stimulation experiments suggest that SPOC is involved in early visuomotor transformations for reach goals (Vesia and Crawford, 2012;Monaco et al., 2014). Of these regions, the more anterior intraparietal regions have specifically been implicated in updating grasp in response to external visual perturbations (Glover et al., 2005;Le et al., 2014;Janssen and Scherberger, 2015). However, it is not known whether any part or all of these regions are specifically involved in transsaccadic grasp updating.\n</snippet>\n<snippet id=504ddb08-2>\nTitle: The parietal architecture binding cognition to sensorimotor integration: a multimodal causal study\nSnippet: ietal areas affected both meaningless and meaningful gesture imitation. In parallel, the intraoperative electrical stimulation of the rostral intraparietal and the adjacent inferior parietal lobe with their surrounding white matter during the hand manipulation task evoked different motor impairments, i.e. the arrest and clumsy patterns, respectively. When integrating lesion mapping and intraoperative stimulation results, it emerges that imitation of praxis gestures first depends on the integrity of parietal areas within the dorso-ventral stream. Among these areas, the rostral intraparietal and the inferior parietal area play distinct roles in praxis and sensorimotor process controlling manipulation. Due to its visuo-motor \u2018attitude\u2019, the rostral intraparietal sulcus, putative human homologue of monkey anterior intraparietal, might enable the visuo-motor conversion of the observed gesture (direct pathway). Moreover, its functional interaction with the adjacent, phylogenetic more recent, inferior parietal areas might contribute to integrate the semantic-conceptual knowledge (indirect pathway) within the sensorimotor workflow, contributing to the cognitive upgrade of hand actions.\n</snippet></tool_output><think>\nI have gathered initial evidence on body schema vs. body image and motor/parietal mechanisms, including rubber-hand and mirror illusions affecting action plans, and causal/neural roles of parietal and frontal-parietal networks in guiding visuomotor actions. To address Merleau-Ponty\u2019s thesis that \u201cthe body is the vehicle of being in the world,\u201d I still need: (a) clinical/neural dissociations showing how disruptions of body schema/image alter perception, attention, and agency (neglect; anosognosia; out-of-body/ownership networks); (b) explicit bridges in the literature that frame these findings as support for phenomenological embodiment; and (c) integrative reviews on embodied cognition and sensorimotor contingencies that articulate converging evidence. I will now search for empirical work on hemispatial neglect and body schema/attentional scope, and on temporoparietal/junction multisensory integration and ownership to capture \u201cbeing-in-the-world\u201d as world-directed coupling.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2000-2025\" fieldsOfStudy=\"Neuroscience,Psychology,Philosophy\">hemispatial neglect body schema attention scope parietal right hemisphere Merleau-Ponty vehicle of being in the world</call_tool><tool_output><snippet id=b4975325-0>\nTitle: Assessing higher-order visual functions: seeing beyond a flat earth\nSnippet: One can distinguish the right and left sides (hemispaces) of the environment around them. Neglect is a condition in which attention is no longer focused on the self, or a particular bodily part, or on outside things due to deficiencies in visual attention 27 . Almost usually, the left hemifield is neglected. This can be explained by the fact that the right hemisphere keeps an eye on both hemispaces, whereas the left hemisphere watches over the right hemispace. Neglect does not arise when there is a left hemisphere lesion because the right hemisphere can still scan the whole visual field. In contrast, in the event of a right hemisphere injury, the left hemisphere is exclusively responsible for monitoring the right hemispace; hence, left-sided neglect arises due to a deficiency in left hemispace monitoring 67 . \n\nAt least three unique frames of reference, focused on the body midline, head midline, and visual field, may be used to distinguish between the right and left hemispheres 59 . The three hemispaces are aligned in the conventional anatomic position, with the head and eyes pointing forward; they are dissociated in numerous activities. Patients may differ in the coordinates used to define left hemispatial neglect. Egocentric coordinates, which are mostly oriented on the patient's body, head, or eyes, maybe where it happens. Regardless of whether an object is on the patient's right or left side, the coordinates of that object may be used to determine the left neglect in other patients 13 . \n\nThere is robust evidence that neglect can be influenced by hemispace, which is defined by all three coordinate frames. Previous research has shown that the location of the stimulus to be bisected with regard to the body midline affects phenomena like line bisection, with performance being better on the right side of the body than the left 68 . Furthermore, the positioning of the hands during testing may have an impact on tactile extinction: individuals with neglect may exhibit reduced neglect of the left hand when both hands are positioned on the right side of the head or torso.\n</snippet>\n<snippet id=b4975325-1>\nTitle: Therapeutic Effects of Caloric Stimulation and Optokinetic Stimulation on Hemispatial Neglect\nSnippet: Hemispatial neglect refers to a cognitive disorder in which patients with unilateral brain injury fail to report, orient to, or respond to stimuli located in the contralesional hemispace, which is not attributed to primary sensory or motor defects. 1 Hemispatial neglect is more severe and frequent after the right than the left hemisphere injury, 2 representing one of the major cognitive disorders resulting from right hemisphere damage. Hemispatial neglect usually recovers spontaneously 3 but can be persistent in about 10% of thepatients. 4 When a horizontal line is presented in front of the patients with hemispatial neglect, they place the bisection mark to the ipsilesional space from the true midpoint ( Fig. 1-A). When asked to cancel out lines randomly distributed in an A4 sized paper, they place the marks on the right side of the page ( Fig. 1-B). 5,6 This rightward bias or preference also occurs when copying figures ( Fig. 1-C). 7,8 These behaviors seen in test situations may be translated into patients' daily lives. For instance, patients with left hemispatial neglect from a right hemisphere stroke may eat food placed on the right side of the plate. When reading newspapers, they read only the right side of the page. This rightward preference occurs not only for environmental objects but for patient's own body: patients neglect their own left limb, thus fail to shave the left side of their face or do not sleeve their left arm while putting on clothes. Patients with severe left neglect also show anosognosia for hemiplegia in which patients deny their muscle weakness or asomatognosia in which patients deny that their left arm belongs to them. Thus, hemispatial neglect is one of the factors that interfere with rehabilitation, 9,10 and serves as one of the poor prognostic factors for stroke patients. 11 Considering these clinical implications of hemispatial neglect, it is thus worthwhile developing therapeutic modalities for hemispatial neglect. Since Lawson introduced a method, 12 there have been a variety of interventions to ameliorate hemispatial neglect for the last 40 years. While the effectiveness of these interventions is controversial, 13 researches are going on worldwide and new methods have been proposed.\n</snippet>\n<snippet id=b4975325-2>\nTitle: Motor Aspects of Hemispatial Neglect\nSnippet: A relatively common outcome of unilateral brain damage in humans is the syndrome of hemispatial neglect. Hemispatial neglect can occur following damage to a variety of brain regions but is chiefly associated with damage to the inferior parietal lobule, most frequently involving the occipito-temporo-parietal junction of the right hemisphere [1]. Neglect patients fail to respond appropriately to stimuli or events occurring within their contralesional hemispace, and may restrict eye and hand movements to objects or events located within ipsilesional space. Such behaviours are generally thought to result from an impairment in the ability to construct an appropriate representation of corporeal and extrapersonal space, or, as a consequence of an attentional bias which favours the processing of ipsilesional stimuli. However, neglect patients may also suffer from a disorder of 'intention', experiencing difficulty initiating movements towards targets presented within their neglected hemispace. It is the nature of any motor impairments associated with hemispatial neglect that is the focus of this special issue of Behavioural Neurology. \n\nWhile it is generally accepted that the syndrome of hemispatial neglect may reflect several underlying impairments, there has been a longstanding and influential view that a substantial number of neglect patients present with some form of motor bias. Right hemisphere patients presenting with left neglect have been shown to be slow in initiating leftward compared to rightward movements [e.g., 2,3], however, such studies have proven difficult to interpret as the movements in these studies are invariably cued by visual targets. Thus, it remains highly plausible that much of the motor impairment observed in hemispatial neglect has a perceptual basis, resulting in an impairment in the representation of space used to guide action [4]. \n\nIf it is indeed the case that some aspects of hemispatial neglect may be attributable to a distorted representation of corporeal and extrapersonal space, then a critical question is whether such distorted perceptions lead to erroneous visuomotor behaviour.\n</snippet></tool_output><think>\nSufficiency check: I have gathered convergent empirical evidence across paradigms: illusions that modulate action plans (rubber-hand, mirror/action congruence), causal and anatomical neuroimaging/stimulation evidence for parieto-frontal networks in body schema\u2013guided perception and action, and clinical dissociations (hemispatial neglect with anosognosia/asomatognosia, extrapersonal space distortions) that expose the tight coupling of bodily self, attentional scope, and world-directed behavior. I also have evidence that the body image/scheme distinction is porous (sensorimotor incongruence penetrates schema), and mechanistic links from efference copy to transsaccadic grasp updating. These address core Merleau-Ponty claims (body as vehicle situating perception/action in world, intentionality, embodied self). Limitations: I lack direct, peer-reviewed snippets explicitly tying these findings to Merleau-Ponty by name; I will therefore frame the bridge conceptually and emphasize what the neuroscience supports or challenges in his thesis. Structure: \n1) Thesis and scope; 2) Evidence supporting (sensorimotor illusions altering action; parietal/FEF causality; integration/ownership); 3) Evidence challenging or refining (schema/image boundary; neglect/anosognosia); 4) Synthesis: what is validated, what reframed; 5) What would resolve remaining gaps.\n</think>\n<answer>\nBelow is a synthesis of empirical cognitive neuroscience evidence bearing on Merleau-Ponty\u2019s thesis that \u201cthe body is the vehicle of being in the world.\u201d I organize the findings into converging lines that support core phenomenological claims, evidence that refines or qualifies them, and open questions about \u201cdefinitiveness.\u201d\n\nSummary thesis to be tested\nMerleau-Ponty holds that perception and agency are irreducibly embodied: the body schema orients action and the body image shapes perception, and together they ground our situated, world-directed experience. Empirical tests look for whether bodily self-representations causally guide perception/action, whether disrupting the body distorts attentional scope and agency, and whether multisensory integration constructs a coherent bodily self in the world. Neuroscience has provided causal, correlational, and clinical data across these dimensions. <cite id=\"2a757d2c-0\">The contemporary literature distinguishes a body image linked to perception and susceptible to illusions from a body schema that guides action, but also probes motor responses that reveal schema sensitivity to sensorimotor context</cite>. <cite id=\"504ddb08-0\">Parietal and frontal-parietal systems are implicated in early motor planning and sensorimotor transformations, integrating visual, proprioceptive, and efference-copy signals</cite>.\n\nEvidence supporting the thesis: the body organizes perception and action in the world\n1) Sensorimotor illusions alter action plans and perception, revealing body-dependent coupling\n- Rubber-hand and kinesthetic mirror illusions: <cite id=\"2a757d2c-0\">In a controlled rubber-hand paradigm, manipulating tactile congruence and hand postures produced altered grasping responses commensurate with the \u201cgrip aperture\u201d of the rubber hand, indicating that even visuomotor grasping\u2014an action typically considered schema-dependent\u2014can be recalibrated by a visually substituted limb</cite>. This shows that sensorimotor incongruence can penetrate the boundary assumed between body image and body schema and reshape goal-directed behavior. <cite id=\"2a757d2c-2\">Mirror movement paradigms demonstrate that moving \u201cfake\u201d limbs can be incorporated into both body image and body schema, and that as soon as movement incongruence is introduced, a simple visual replacement is insufficient; the body representation must adjust (e.g., accept a visual reflection as a third limb), evidencing dynamic reconfiguration of perception and action as bodily signals mismatch</cite>. These findings operationalize Merleau-Ponty\u2019s idea that the lived body is plastic and continuously recalibrates perception and action in light of sensory feedback. <cite id=\"2a757d2c-2\">Vallar and Ronchi\u2019s account of proprioceptive \u201csense of position\u201d as the defining factor in somatoparaphrenia further underscores proprioception\u2019s centrality in integrating body signals, aligning with a sensorimotor basis for bodily self and agency</cite>.\n\n2) Causal and systems-level evidence: parietal/frontal-parietal networks as the substrate of embodied coupling\n- Parietal contributions to action planning and bodily coordinates: <cite id=\"504ddb08-0\">Lesion and fMRI work identifies superior parietal cortex (precuneus) in guiding reaching to visually presented objects and emphasizes that parietal damage yields visuomotor errors; intraparietal sulcus activity precedes visual target presentation (extrinsic coordinates), and right temporoparietal junction tracks target detection, situating parietal cortex in early stages of motor planning</cite>. <cite id=\"504ddb08-0\">In nonhuman primate work, intraparietal neurons encode eye and hand movements and anticipate retinal consequences; posterior parietal cortex contains intention maps and detects discrepancies between desired and executed movements, integrating visual feedback to correct trajectories</cite>. Together, these data show that bodily guidance of action arises from parietal integration of visual, proprioceptive, and efference-copy information\u2014consistent with a body-organized, world-directed control of action.\n- From efference copy to grasp and transsaccadic updates: <cite id=\"504ddb08-1\">Transcranial magnetic stimulation work links the frontal eye field (FEF) efference copy to posterior parietal transsaccadic integration; fMRI shows inferior parietal (supramarginal gyrus) sensitivity to transsaccadic changes in stimulus orientation, suggesting sensorimotor plan updating across saccades</cite>. <cite id=\"504ddb08-1\">Multiple parietal regions support visuomotor transformations for grasp and reach (aIPS, SPL, SPOC), with anterior intraparietal areas specifically implicated in updating grasp when visual targets change; TMS implicates SPOC in early visuomotor transformations</cite>. <cite id=\"504ddb08-1\">These converging causal and correlational results support the view that parietal/frontal-parietal circuits translate bodily signals into perception\u2013action couplings, enabling sensorimotor workflows that are sensitive to bodily contingencies</cite>.\n- Imitation, praxis, and semantic-upgrade of action: <cite id=\"504ddb08-2\">Multimodal causal evidence shows that intraoperative electrical stimulation in rostral intraparietal and adjacent inferior parietal cortex disrupts meaningful gesture imitation and produces motor impairments, whereas lesion mapping and stimulation converge on a dorso-ventral parietal architecture that supports both sensorimotor control and praxis</cite>. <cite id=\"504ddb08-2\">Neurons in these areas likely convert observed visuomotor signals into executed actions (direct pathway) and interact with inferior parietal regions that integrate conceptual-semantic knowledge (indirect pathway), \u201ccontributing to the cognitive upgrade of hand actions\u201d</cite>. This supports an embodied account in which bodily circuits bind perception, action, and meaning in situated tasks.\n\n3) Multisensory integration and bodily ownership/agency\n- Parieto-temporo-occipital mechanisms and agency denial: <cite id=\"b4975325-1\">In hemispatial neglect, patients with right hemisphere injury frequently exhibit rightward bias, neglect contralesional left space, and show anosognosia for hemiplegia (denying weakness) and asomatognosia (denying that the affected limb belongs to them), demonstrating that disruptions of bodily selfhood can cascade into denial of agency, body ownership, and environmental awareness</cite>. <cite id=\"b4975325-1\">These disturbances translate into everyday deficits (e.g., eating only the right side of food, reading only the right half of a page) and impede rehabilitation, highlighting the clinical stakes of bodily self-representations in mediating world-directed behavior</cite>. \n- Attentional scope and extrapersonal space: <cite id=\"b4975325-2\">Right parietal/occipito-temporo-parietal damage yields hemispatial neglect in which patients fail to respond to contralesional stimuli and restrict eye and hand movements to ipsilesional space; behavior is attributed to impaired representations of corporeal and extrapersonal space and/or an attentional bias favoring ipsilesional stimuli</cite>. <cite id=\"b4975325-2\">Patients can also show intention-related motor impairments even when primary motor deficits are minimal, raising the possibility that distorted bodily space representations directly misguide visuomotor behavior</cite>. These clinical observations align with phenomenological claims that our \u201chorizon of the world\u201d is co-constituted by the body: attentional and motor biases shift as bodily representations shift.\n\nEvidence that refines or challenges aspects of the thesis\n1) The body image\u2013body schema boundary is porous under sensorimotor incongruence\n- Rubber-hand paradigms and movement congruence: <cite id=\"2a757d2c-0\">Grasping responses can be altered by rubber-hand \u201cgrip aperture,\u201d indicating that even schema-typical actions are susceptible to illusion-sensitive modulations when the sensorimotor milieu is incongruent</cite>. <cite id=\"2a757d2c-2\">Mirror paradigms show that with congruent movements a fake limb can be incorporated into both body image and body schema; upon incongruence, participants sometimes accept a visual reflection as a third limb, meaning the body representation must adjust rather than merely update a static schema</cite>. These results complicate a strict dichotomy and support a dynamic, bidirectional coupling between perception and action that Merleau-Ponty emphasized but framed phenomenologically rather than with today\u2019s paradigms.\n\n2) Neglect and anosognosia expose the contingency of agency and attentional scope on bodily self-representations\n- Hemispatial neglect: <cite id=\"b4975325-0\">Right-hemisphere lesions selectively impair monitoring of the left hemispace, producing left-sided neglect; the lesioned hemisphere\u2019s reduced coverage of hemispace leads to deficient attention to self, bodily parts, and external objects in that region</cite>. <cite id=\"b4975325-0\">Performance depends on body- and head-centered coordinates and hand positioning, indicating that bodily postures and reference frames modulate neglect patterns</cite>. <cite id=\"b4975325-2\">Disturbances can include impaired representation of corporeal and extrapersonal space, intention initiation, and motor slowness to contralesional targets, whether driven by perceptual distortions or attentional biases</cite>. <cite id=\"b4975325-1\">Co-occurring anosognosia/asomatognosia deny bodily ownership and agency, undermining the patient\u2019s capacity to engage the neglected half of the world</cite>. This shows that \u201cvehicle of being in the world\u201d is not merely metaphoric: when bodily self-representations are compromised, world-directed attention, action, and even ownership of the body and its parts are disrupted.\n\nSynthesis: What the evidence validates or refutes about Merleau-Ponty\u2019s thesis\n- Strongly supported elements\n  - World-directed perception and agency are tightly coupled to bodily schemes: <cite id=\"504ddb08-0\">Parietal/frontal-parietal systems integrate multisensory and efference-copy signals to plan and correct actions in visual space, demonstrating that action representations depend on bodily coordinates</cite>. <cite id=\"504ddb08-1\">Causal stimulation and fMRI reveal that parietal circuits support transsaccadic and grasp plan updates, linking moment-to-moment bodily feedback to perception\u2013action coupling</cite>. <cite id=\"504ddb08-2\">Intraoperative stimulation and lesion mapping converge on parietal architectures that bind praxis, imitation, and conceptual-semantic contributions to bodily actions</cite>.\n  - Perceptual experience is body-dependent: <cite id=\"2a757d2c-0\">Proprioceptive and visual-tactile incongruence can recalibrate grasping responses and motor outcomes</cite>, and <cite id=\"2a757d2c-2\">mirror and rubber-hand paradigms show that ownership and body image can be recalibrated by altered sensorimotor input, with corresponding changes in action tendencies</cite>. Neglect data show that when bodily representations degrade, attention, agency, and environmental responsiveness degrade in a spatially structured way, consistent with the body\u2019s role in carving up the world. <cite id=\"b4975325-2\">Patients\u2019 visuomotor behavior reflects distorted corporeal and extrapersonal space representations and attentional biases, bridging phenomenological intentionality (toward the world) with neurocognitive mechanisms</cite>.\n  - The body mediates intersubjectivity and tools: <cite id=\"504ddb08-2\">Parietal circuits integrating observed visuomotor signals and conceptual knowledge support imitation and praxis, suggesting that action meaning is \u201ccognitively upgraded\u201d within sensorimotor workflows</cite>. Rubber-hand and mirror illusions extend this to tool-like substitution and altered grasp plans, consistent with a body-mediated \u201cprimary relationship to the world\u201d (Merleau-Ponty) instantiated in parietal-frontal mechanisms. <cite id=\"2a757d2c-0\">Grasping modulated by a noncorporeal rubber hand demonstrates that the lived body is flexible and tools-like in its integration with action</cite>.\n- Refinements and limits of the thesis\n  - No evidence for a static, rigid \u201cschema\u201d vs. \u201cimage\u201d dichotomy: <cite id=\"2a757d2c-0\">Schema-like behavior shifts under carefully controlled sensorimotor incongruence, challenging the idea that schema is impervious to bodily illusions</cite>, and <cite id=\"2a757d2c-2\">movement congruence can incorporate a fake limb into both representations, with incongruence requiring reconfiguration rather than simple correction</cite>. This supports a dynamic equilibrium in which perception and action mutually calibrate.\n  - Agency and ownership are fragile and attentionally gated: <cite id=\"b4975325-1\">Right-hemisphere neglect entails denial of limb ownership and agency alongside spatial inattention, showing that the \u201cvehicle\u201d of being-in-the-world can fail at the level of bodily selfhood</cite>. <cite id=\"b4975325-2\">Behavioral and motor impairments may arise from perceptual distortions (distorted corporeal/extrapersonal space) or attentional biases, indicating multiple mechanisms through which bodily representations shape world-directed behavior</cite>.\n- What remains less definitive\n  - Categorical refutation or full \u201cdefinitiveness\u201d is lacking: the literature does not provide clean counterexamples showing that decoupling body signals from perception/action leaves phenomenally identical experience; rather, the strongest causal evidence shows tight coupling and clear side-effect patterns when coupling is disrupted. <cite id=\"504ddb08-0\">Parietal damage yields visuomotor errors and altered attentional control over space</cite>, and <cite id=\"b4975325-2\">neglect shows that attentional scope and action planning are reshaped by bodily representations</cite>, but debates persist about whether certain \u201ccore\u201d phenomenal properties are inviolable without bodily input versus contingent on it. Bridging experiments would include noninvasive manipulation of efference copy and multisensory congruence while monitoring conscious experience and behavioral affordances to quantify dissociations.\n\nImplications and outlook\n- Converging causal and correlational findings support a validated core of Merleau-Ponty\u2019s thesis: the body is the medium through which perception and action structure access to the world, with parieto-frontal circuits implementing sensorimotor integration, transsaccadic and grasp planning, and bodily ownership/agency. <cite id=\"504ddb08-0\">Parietal/frontal-parietal mechanisms bind visual, proprioceptive, and efference-copy signals to action planning</cite>, <cite id=\"504ddb08-1\">updating grasp and saccades across saccades depends on parietal engagement</cite>, and <cite id=\"2a757d2c-0\">sensorimotor incongruence can reshape action plans in real time</cite>. Neglect and anosognosia show that bodily selfhood is the scaffold for world-directed agency. <cite id=\"b4975325-1\">Right-hemisphere damage yields left hemispace denial, impaired agency, and functional deficits</cite>.\n- The evidence also refines the thesis by showing that body image and body schema are dynamically coupled and recalibrated together, not strictly separate modules. <cite id=\"2a757d2c-0\">Grasping changes with rubber-hand grip</cite> and <cite id=\"2a757d2c-2\">movement congruence integrates virtual limbs into both representations</cite>, implying a continuous sensorimotor-statistical learning process. In clinical dissociations, agency and ownership can be selectively impaired without gross motor paresis, highlighting the layered nature of bodily self-representations. <cite id=\"b4975325-1\">Anosognosia/asomatognosia co-occur with neglect</cite>.\n- What would \u201cdefinitively\u201d settle the question: randomized interventions that causally alter body signals (efference copy via TMS/BCI, multisensory reweighting via conflicting visual/tactile/proprioceptive streams) while recording first-person reports and ecological affordances, testing whether sustained decoupling produces equivalent phenomenology to intact coupling. Present evidence strongly favors embodied coupling but stops short of absolute proof against all possible phenomenological decouplings. <cite id=\"504ddb08-1\">Current causal data show parietal efference-copy and transsaccadic mechanisms</cite>, and <cite id=\"2a757d2c-0\">sensorimotor illusions demonstrate rapid behavioral recalibration</cite>, aligning with a vehicle-like role for the body in being-in-the-world.\n\nPractical takeaways for Merleau-Ponty\u2019s thesis\n- Empirical \u201cvehicle\u201d role: Yes\u2014on neuroanatomical and causal grounds, bodily schemes are the substrate through which we perceive and act in extrapersonal space. <cite id=\"504ddb08-0\">Parietal/frontal-parietal networks implement sensorimotor integration and early motor planning</cite>; <cite id=\"504ddb08-1\">they support grasp and saccade plan updates</cite>; <cite id=\"2a757d2c-0\">they mediate rapid action recalibration under illusion</cite>.\n- \u201cDefinitive\u201d refutation: No\u2014there are no clean demonstrations that disembodied perception with identical phenomenology can guide world-directed action; instead, the strongest evidence shows graded, mechanism-specific dependencies. <cite id=\"b4975325-2\">Neglect shows distorted representations lead to erroneous visuomotor behavior and restricted action scope</cite>.\n- Philosophical bridge: Contemporary enactive and sensorimotor accounts provide conceptual bridges between phenomenology and neuroscience, emphasizing that body schemas are dynamic, multisensory constructs that shape intentionality. <cite id=\"504ddb08-2\">Parietal architecture links action execution, observation, and conceptually enriched praxis</cite>, consistent with a body-as-vehicle thesis articulated through neurobiological mechanisms. <cite id=\"2a757d2c-2\">Sensorimotor incongruence penetrates both body image and schema, underscoring embodied perception and action</cite>.\n\nIn sum, cognitive neuroscience provides strong, convergent evidence that the body is the vehicle of being in the world: parieto-frontal systems integrate multisensory and efference-copy signals to ground perception in bodily schemes that guide action, illusions rapidly recalibrate these schemes, and clinical disruptions of bodily selfhood cascade into failures of attention, agency, and environmental engagement. The literature also clarifies that \u201cschema\u201d and \u201cimage\u201d co-vary and are continually recalibrated by sensorimotor context, refining rather than contradicting Merleau-Ponty\u2019s thesis. While absolute \u201cdefinitiveness\u201d is not yet attainable in a single experiment, the weight of evidence supports the thesis and motivates further integrated empirical-phenomenological research. <cite id=\"2a757d2c-0\">Illusion-sensitive motor control reveals joint perception\u2013action reconfiguration</cite>; <cite id=\"504ddb08-0\">parietal/frontal-parietal mechanisms implement early motor planning and integrate bodily coordinates</cite>; <cite id=\"504ddb08-1\">parietal circuits update grasp and saccades via efference copy</cite>; <cite id=\"504ddb08-2\">they support imitation/praxis with conceptual integration</cite>; <cite id=\"b4975325-1\">neglect/anosognosia/asomatognosia demonstrate bodily selfhood\u2019s centrality to agency and world engagement</cite>; <cite id=\"b4975325-2\">attentional scope and extrapersonal space representations misguide action under bodily disruption</cite>.\n</answer>",
+            "total_tokens": 10717,
+            "tool_call_count": 3,
+            "stopped_reason": "natural",
+            "tool_calls": [
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: How many motoric body representations can we grasp?\nSnippet: At present there is a debate on the number of body representations in the brain. The most commonly used dichotomy is based on the body image, thought to underlie perception and proven to be susceptible to bodily illusions, versus the body schema, hypothesized to guide actions and so far proven to be robust against bodily illusions. In this rubber hand illusion study we investigated the susceptibility of the body schema by manipulating the amount of stimulation on the rubber hand and the participant\u2019s hand, adjusting the postural configuration of the hand, and investigating a grasping rather than a pointing response. Observed results showed for the first time altered grasping responses as a consequence of the grip aperture of the rubber hand. This illusion-sensitive motor response challenges one of the foundations on which the dichotomy is based, and addresses the importance of illusion induction versus type of response when investigating body representations.\n\nTitle: Body Schema Illusions: A Study of the Link between the Rubber Hand and Kinesthetic Mirror Illusions through Individual Differences\nSnippet: No content available\n\nTitle: Sensorimotor Incongruence and Body Perception: An Experimental Investigation\nSnippet: described above is not able to do. This means that in the rubber hand illusion, there is a necessary contradiction between the location of the rubber hand and the participant's proprioception. The central role of proprioception for the integration of body signals has been described by Vallar and Ronchi (2009), who discuss the sense of position as the defining factor for the occurrence of somatoparaphrenia, or delusional beliefs about parts of the body.\n\nA distinction between body representations relating to perception (body image) and action (body schema) has been proposed earlier (Kammers et al., 2006). By this definition, our experiment is distinct from the rubber hand procedures cited above in that it aims at manipulating the action aspect of a limb (movement) instead of the perception aspect (by tactile stimulation). This means that in our study, body schema, rather than body image, is influenced by the experiment. A study by Newport et al. (2010) has demonstrated that a moving fake hand (which is comparable to observing a hand moving in a mirror) can be incorporated into both body image and body schema.\n\nAs described above, all our mirror movement setups began with congruent movements. Applying the results from the rubber hand paradigm, we assume that the mirrored arm or hand image replaces the actual arm or hand in the body representation during congruent movements, much like it is shown in the rubber hand setup. Minor incongruence (e.g., caused by imperfect twohand coordination or shifts in balance) may lead to occasional sensations of a third limb, but it would be expected that most participants accept the mirror image as a replacement of their actual limb, because the \"virtual\" limb reacts completely congruently. However, as soon as the incongruent condition begins, a replacement is no longer sufficient to explain the mismatch in regard to sensory input and the body representation has to adjust to this Frontiers in Human Neuroscience www.frontiersin.org novel situation. The results of this study show that, at least in some participants, the adjustment consists of accepting the visual reflection as a third limb. This means that the illusion itself is not being eliminated by the switch from congruent to incongruent movements: in both conditions, the mirrored hand is included into the body representation",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.8280549049377441,
+                "error": "",
+                "call_id": "2a757d2c",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.8367988268971263,
+                      "paper": {
+                        "corpusId": "6509151",
+                        "title": "How many motoric body representations can we grasp?",
+                        "authors": [
+                          "Marjolein Kammers",
+                          "J. A. Kootker",
+                          "Hinze Hogendoorn",
+                          "bullet H Chris Dijkerman"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNC",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC2845887, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "At present there is a debate on the number of body representations in the brain. The most commonly used dichotomy is based on the body image, thought to underlie perception and proven to be susceptible to bodily illusions, versus the body schema, hypothesized to guide actions and so far proven to be robust against bodily illusions. In this rubber hand illusion study we investigated the susceptibility of the body schema by manipulating the amount of stimulation on the rubber hand and the participant\u2019s hand, adjusting the postural configuration of the hand, and investigating a grasping rather than a pointing response. Observed results showed for the first time altered grasping responses as a consequence of the grip aperture of the rubber hand. This illusion-sensitive motor response challenges one of the foundations on which the dichotomy is based, and addresses the importance of illusion induction versus type of response when investigating body representations.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 973
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.8025685449409535,
+                      "paper": {
+                        "corpusId": "25866421",
+                        "title": "Body Schema Illusions: A Study of the Link between the Rubber Hand and Kinesthetic Mirror Illusions through Individual Differences",
+                        "authors": [
+                          "Morgane Metral",
+                          "Corentin Gonthier",
+                          "M. Luyat",
+                          "M. Guerraz"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC5672591, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Body Schema Illusions: A Study of the Link between the Rubber Hand and Kinesthetic Mirror Illusions through Individual Differences",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 130
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.7935443150941766,
+                      "paper": {
+                        "corpusId": "8704657",
+                        "title": "Sensorimotor Incongruence and Body Perception: An Experimental Investigation",
+                        "authors": [
+                          "J. Foell",
+                          "R. Bekrater-Bodmann",
+                          "C. McCabe",
+                          "H. Flor"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC3690352, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "described above is not able to do. This means that in the rubber hand illusion, there is a necessary contradiction between the location of the rubber hand and the participant's proprioception. The central role of proprioception for the integration of body signals has been described by Vallar and Ronchi (2009), who discuss the sense of position as the defining factor for the occurrence of somatoparaphrenia, or delusional beliefs about parts of the body.\n\nA distinction between body representations relating to perception (body image) and action (body schema) has been proposed earlier (Kammers et al., 2006). By this definition, our experiment is distinct from the rubber hand procedures cited above in that it aims at manipulating the action aspect of a limb (movement) instead of the perception aspect (by tactile stimulation). This means that in our study, body schema, rather than body image, is influenced by the experiment. A study by Newport et al. (2010) has demonstrated that a moving fake hand (which is comparable to observing a hand moving in a mirror) can be incorporated into both body image and body schema.\n\nAs described above, all our mirror movement setups began with congruent movements. Applying the results from the rubber hand paradigm, we assume that the mirrored arm or hand image replaces the actual arm or hand in the body representation during congruent movements, much like it is shown in the rubber hand setup. Minor incongruence (e.g., caused by imperfect twohand coordination or shifts in balance) may lead to occasional sensations of a third limb, but it would be expected that most participants accept the mirror image as a replacement of their actual limb, because the \"virtual\" limb reacts completely congruently. However, as soon as the incongruent condition begins, a replacement is no longer sufficient to explain the mismatch in regard to sensory input and the body representation has to adjust to this Frontiers in Human Neuroscience www.frontiersin.org novel situation. The results of this study show that, at least in some participants, the adjustment consists of accepting the visual reflection as a third limb. This means that the illusion itself is not being eliminated by the switch from congruent to incongruent movements: in both conditions, the mirrored hand is included into the body representation",
+                        "snippetKind": "body",
+                        "section": "FIGURE 2 | Response frequencies for hand conditions (A), arm conditions (B), and average for all conditions (C).",
+                        "snippetOffset": {
+                          "start": 24257,
+                          "end": 26608
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 286,
+                              "end": 310,
+                              "matchedPaperCorpusId": "206924931"
+                            },
+                            {
+                              "start": 588,
+                              "end": 610,
+                              "matchedPaperCorpusId": "3063174"
+                            },
+                            {
+                              "start": 944,
+                              "end": 965,
+                              "matchedPaperCorpusId": "11443789"
+                            }
+                          ],
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "e9ea080c-50a8-4557-af98-a9f132ffe539",
+                    "title": "How many motoric body representations can we grasp?",
+                    "url": "",
+                    "snippet": "At present there is a debate on the number of body representations in the brain. The most commonly used dichotomy is based on the body image, thought to underlie perception and proven to be susceptible to bodily illusions, versus the body schema, hypothesized to guide actions and so far proven to be robust against bodily illusions. In this rubber hand illusion study we investigated the susceptibility of the body schema by manipulating the amount of stimulation on the rubber hand and the participant\u2019s hand, adjusting the postural configuration of the hand, and investigating a grasping rather than a pointing response. Observed results showed for the first time altered grasping responses as a consequence of the grip aperture of the rubber hand. This illusion-sensitive motor response challenges one of the foundations on which the dichotomy is based, and addresses the importance of illusion induction versus type of response when investigating body representations.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.8367988268971263,
+                    "error": null
+                  },
+                  {
+                    "id": "1b9b8a7a-4d25-43e7-859d-4baec3fef023",
+                    "title": "Body Schema Illusions: A Study of the Link between the Rubber Hand and Kinesthetic Mirror Illusions through Individual Differences",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.8025685449409535,
+                    "error": null
+                  },
+                  {
+                    "id": "f4552355-a789-48e3-9945-c6c71b0ba6e1",
+                    "title": "Sensorimotor Incongruence and Body Perception: An Experimental Investigation",
+                    "url": "",
+                    "snippet": "described above is not able to do. This means that in the rubber hand illusion, there is a necessary contradiction between the location of the rubber hand and the participant's proprioception. The central role of proprioception for the integration of body signals has been described by Vallar and Ronchi (2009), who discuss the sense of position as the defining factor for the occurrence of somatoparaphrenia, or delusional beliefs about parts of the body.\n\nA distinction between body representations relating to perception (body image) and action (body schema) has been proposed earlier (Kammers et al., 2006). By this definition, our experiment is distinct from the rubber hand procedures cited above in that it aims at manipulating the action aspect of a limb (movement) instead of the perception aspect (by tactile stimulation). This means that in our study, body schema, rather than body image, is influenced by the experiment. A study by Newport et al. (2010) has demonstrated that a moving fake hand (which is comparable to observing a hand moving in a mirror) can be incorporated into both body image and body schema.\n\nAs described above, all our mirror movement setups began with congruent movements. Applying the results from the rubber hand paradigm, we assume that the mirrored arm or hand image replaces the actual arm or hand in the body representation during congruent movements, much like it is shown in the rubber hand setup. Minor incongruence (e.g., caused by imperfect twohand coordination or shifts in balance) may lead to occasional sensations of a third limb, but it would be expected that most participants accept the mirror image as a replacement of their actual limb, because the \"virtual\" limb reacts completely congruently. However, as soon as the incongruent condition begins, a replacement is no longer sufficient to explain the mismatch in regard to sensory input and the body representation has to adjust to this Frontiers in Human Neuroscience www.frontiersin.org novel situation. The results of this study show that, at least in some participants, the adjustment consists of accepting the visual reflection as a third limb. This means that the illusion itself is not being eliminated by the switch from congruent to incongruent movements: in both conditions, the mirrored hand is included into the body representation",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.7935443150941766,
+                    "error": null
+                  }
+                ],
+                "query": "body schema perception action cognitive neuroscience review rubber hand illusion mirror neuron embodied cognition",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2000-2025",
+                  "fieldsOfStudy": "Neuroscience,Psychology,Philosophy,Computer Science"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Neuropsychology of the parietal lobe: Luria\u2019s and contemporary conceptions\nSnippet: Studies by Pellijeff et al. used fMRI to investigate the brain areas involved in body schema, elucidating the role of the superior parietal cortex, mainly the precuneus, which, when damaged, leads to errors in reaching visually guided objects (Pellijeff et al., 2006). Considering extrinsic coordinates, Corbetta et al. (2000) demonstrated that activation of the intraparietal sulcus occurs before visual presentation of the target, while the right temporo-parietal junction activates with target detection (Corbetta et al., 2000). These findings complement the results obtained by Luria in his 1973 book (Luria, 1973), in which motor functions and body schema are not portrayed as designations of the parietal lobe. \n\nThe parietal cortex is involved in an early stage of motor planning. Studies on monkeys have highlighted that neurons in the intraparietal sulcus are responsive to eye movements, anticipating retinal consequences and coordinating them for a precise representation of visual space (Duhamel et al., 1992). However, it is believed that the posterior parietal cortex presents sub-regions containing intention maps related to the planning of different movements (Andersen and Bueno, 2002). Evidence indicates that the posterior parietal cortex also participates in the detection of incompatibilities between desired and executed movements when visual feedback is important, such as correcting trajectory with target changes (Blakemore and Sirigu, 2003). \n\nStudies conducted by Andersen and Bueno have highlighted the sub-regions currently elucidated in the PPC (Andersen and Bueno, 2002).\n\nTitle: Parietal Cortex Integrates Saccade and Object Orientation Signals to Update Grasp Plans\nSnippet: Transcranial magnetic stimulation studies suggest that the frontal eye field (FEF) provides the saccade efference copy for transsaccadic integration in posterior parietal cortex (PPC) (Prime et al., 2010(Prime et al., , 2011)). A recent fMRI study showed that inferior parietal cortex (specifically, the supramarginal gyrus [SMG]) is sensitive to transsaccadic changes in visual stimulus orientation (Dunkley et al., 2016). Human SMG may be an expansion of primate lateral intraparietal cortex, which contains saccade, visual feature, and spatial updating signals (Gnadt and Andersen, 1988;Subramanian and Colby, 2014). Since the inferior parietal cortex is thought to mediate perception and action (Goodale and Milner, 1992;Rizzolatti and Matelli, 2003), we hypothesized that SMG might also play a role in transsaccadic updating of grasp orientation, using efference copy input from the FEF. \n\nSuccessful grasp also requires the updating of sensorimotor plans. Several parietal regions have been implicated in the visuomotor transformations for grasp, including the anterior intraparietal sulcus (aIPS) (Murata et al., 2000;Monaco et al., 2010), superior parietal cortex (SPL) (Culham et al., 2003;Filimon et al., 2009), and superior parieto-occipital cortex (SPOC) (Gallivan et al., 2011;Rossit et al., 2013). Transcranial magnetic stimulation experiments suggest that SPOC is involved in early visuomotor transformations for reach goals (Vesia and Crawford, 2012;Monaco et al., 2014). Of these regions, the more anterior intraparietal regions have specifically been implicated in updating grasp in response to external visual perturbations (Glover et al., 2005;Le et al., 2014;Janssen and Scherberger, 2015). However, it is not known whether any part or all of these regions are specifically involved in transsaccadic grasp updating.\n\nTitle: The parietal architecture binding cognition to sensorimotor integration: a multimodal causal study\nSnippet: ietal areas affected both meaningless and meaningful gesture imitation. In parallel, the intraoperative electrical stimulation of the rostral intraparietal and the adjacent inferior parietal lobe with their surrounding white matter during the hand manipulation task evoked different motor impairments, i.e. the arrest and clumsy patterns, respectively. When integrating lesion mapping and intraoperative stimulation results, it emerges that imitation of praxis gestures first depends on the integrity of parietal areas within the dorso-ventral stream. Among these areas, the rostral intraparietal and the inferior parietal area play distinct roles in praxis and sensorimotor process controlling manipulation. Due to its visuo-motor \u2018attitude\u2019, the rostral intraparietal sulcus, putative human homologue of monkey anterior intraparietal, might enable the visuo-motor conversion of the observed gesture (direct pathway). Moreover, its functional interaction with the adjacent, phylogenetic more recent, inferior parietal areas might contribute to integrate the semantic-conceptual knowledge (indirect pathway) within the sensorimotor workflow, contributing to the cognitive upgrade of hand actions.",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.6902484893798828,
+                "error": "",
+                "call_id": "504ddb08",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.686344473708025,
+                      "paper": {
+                        "corpusId": "264396407",
+                        "title": "Neuropsychology of the parietal lobe: Luria\u2019s and contemporary conceptions",
+                        "authors": [
+                          "Dyecika Souza-Couto",
+                          "Rafael Bretas",
+                          "T. Aversi-Ferreira"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC10623013, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Studies by Pellijeff et al. used fMRI to investigate the brain areas involved in body schema, elucidating the role of the superior parietal cortex, mainly the precuneus, which, when damaged, leads to errors in reaching visually guided objects (Pellijeff et al., 2006). Considering extrinsic coordinates, Corbetta et al. (2000) demonstrated that activation of the intraparietal sulcus occurs before visual presentation of the target, while the right temporo-parietal junction activates with target detection (Corbetta et al., 2000). These findings complement the results obtained by Luria in his 1973 book (Luria, 1973), in which motor functions and body schema are not portrayed as designations of the parietal lobe. \n\nThe parietal cortex is involved in an early stage of motor planning. Studies on monkeys have highlighted that neurons in the intraparietal sulcus are responsive to eye movements, anticipating retinal consequences and coordinating them for a precise representation of visual space (Duhamel et al., 1992). However, it is believed that the posterior parietal cortex presents sub-regions containing intention maps related to the planning of different movements (Andersen and Bueno, 2002). Evidence indicates that the posterior parietal cortex also participates in the detection of incompatibilities between desired and executed movements when visual feedback is important, such as correcting trajectory with target changes (Blakemore and Sirigu, 2003). \n\nStudies conducted by Andersen and Bueno have highlighted the sub-regions currently elucidated in the PPC (Andersen and Bueno, 2002).",
+                        "snippetKind": "body",
+                        "section": "Organization of the movement",
+                        "snippetOffset": {
+                          "start": 46843,
+                          "end": 48445
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 243,
+                              "end": 267,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 304,
+                              "end": 326,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 507,
+                              "end": 530,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 605,
+                              "end": 618,
+                              "matchedPaperCorpusId": "71810749"
+                            },
+                            {
+                              "start": 999,
+                              "end": 1021,
+                              "matchedPaperCorpusId": "36982480"
+                            },
+                            {
+                              "start": 1176,
+                              "end": 1202,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1453,
+                              "end": 1466,
+                              "matchedPaperCorpusId": "2796667"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 268
+                            },
+                            {
+                              "start": 269,
+                              "end": 531
+                            },
+                            {
+                              "start": 532,
+                              "end": 716
+                            },
+                            {
+                              "start": 719,
+                              "end": 787
+                            },
+                            {
+                              "start": 788,
+                              "end": 1022
+                            },
+                            {
+                              "start": 1023,
+                              "end": 1203
+                            },
+                            {
+                              "start": 1204,
+                              "end": 1467
+                            },
+                            {
+                              "start": 1470,
+                              "end": 1602
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6058446894877054,
+                      "paper": {
+                        "corpusId": "218473790",
+                        "title": "Parietal Cortex Integrates Saccade and Object Orientation Signals to Update Grasp Plans",
+                        "authors": [
+                          "B. Baltaretu",
+                          "Simona Monaco",
+                          "Simona Monaco",
+                          "Jena Velji-Ibrahim",
+                          "Gaelle N. Luabeya",
+                          "J. Crawford"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1523/JNEUROSCI.0300-20.2020?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1523/JNEUROSCI.0300-20.2020, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Transcranial magnetic stimulation studies suggest that the frontal eye field (FEF) provides the saccade efference copy for transsaccadic integration in posterior parietal cortex (PPC) (Prime et al., 2010(Prime et al., , 2011)). A recent fMRI study showed that inferior parietal cortex (specifically, the supramarginal gyrus [SMG]) is sensitive to transsaccadic changes in visual stimulus orientation (Dunkley et al., 2016). Human SMG may be an expansion of primate lateral intraparietal cortex, which contains saccade, visual feature, and spatial updating signals (Gnadt and Andersen, 1988;Subramanian and Colby, 2014). Since the inferior parietal cortex is thought to mediate perception and action (Goodale and Milner, 1992;Rizzolatti and Matelli, 2003), we hypothesized that SMG might also play a role in transsaccadic updating of grasp orientation, using efference copy input from the FEF. \n\nSuccessful grasp also requires the updating of sensorimotor plans. Several parietal regions have been implicated in the visuomotor transformations for grasp, including the anterior intraparietal sulcus (aIPS) (Murata et al., 2000;Monaco et al., 2010), superior parietal cortex (SPL) (Culham et al., 2003;Filimon et al., 2009), and superior parieto-occipital cortex (SPOC) (Gallivan et al., 2011;Rossit et al., 2013). Transcranial magnetic stimulation experiments suggest that SPOC is involved in early visuomotor transformations for reach goals (Vesia and Crawford, 2012;Monaco et al., 2014). Of these regions, the more anterior intraparietal regions have specifically been implicated in updating grasp in response to external visual perturbations (Glover et al., 2005;Le et al., 2014;Janssen and Scherberger, 2015). However, it is not known whether any part or all of these regions are specifically involved in transsaccadic grasp updating.",
+                        "snippetKind": "body",
+                        "section": "Introduction",
+                        "snippetOffset": {
+                          "start": 1583,
+                          "end": 3419
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 184,
+                              "end": 203,
+                              "matchedPaperCorpusId": "14437519"
+                            },
+                            {
+                              "start": 203,
+                              "end": 226,
+                              "matchedPaperCorpusId": "806462"
+                            },
+                            {
+                              "start": 324,
+                              "end": 329,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 400,
+                              "end": 422,
+                              "matchedPaperCorpusId": "24230696"
+                            },
+                            {
+                              "start": 564,
+                              "end": 590,
+                              "matchedPaperCorpusId": "8411726"
+                            },
+                            {
+                              "start": 590,
+                              "end": 618,
+                              "matchedPaperCorpusId": "18622814"
+                            },
+                            {
+                              "start": 699,
+                              "end": 725,
+                              "matchedPaperCorpusId": "793980"
+                            },
+                            {
+                              "start": 725,
+                              "end": 754,
+                              "matchedPaperCorpusId": "22003155"
+                            },
+                            {
+                              "start": 1104,
+                              "end": 1125,
+                              "matchedPaperCorpusId": "15140300"
+                            },
+                            {
+                              "start": 1125,
+                              "end": 1145,
+                              "matchedPaperCorpusId": "13640420"
+                            },
+                            {
+                              "start": 1178,
+                              "end": 1199,
+                              "matchedPaperCorpusId": "5236246"
+                            },
+                            {
+                              "start": 1199,
+                              "end": 1220,
+                              "matchedPaperCorpusId": "10778888"
+                            },
+                            {
+                              "start": 1267,
+                              "end": 1290,
+                              "matchedPaperCorpusId": "14666052"
+                            },
+                            {
+                              "start": 1290,
+                              "end": 1310,
+                              "matchedPaperCorpusId": "206984703"
+                            },
+                            {
+                              "start": 1440,
+                              "end": 1466,
+                              "matchedPaperCorpusId": "10067927"
+                            },
+                            {
+                              "start": 1466,
+                              "end": 1486,
+                              "matchedPaperCorpusId": "2389541"
+                            },
+                            {
+                              "start": 1643,
+                              "end": 1664,
+                              "matchedPaperCorpusId": "7985292"
+                            },
+                            {
+                              "start": 1664,
+                              "end": 1680,
+                              "matchedPaperCorpusId": "24707090"
+                            },
+                            {
+                              "start": 1680,
+                              "end": 1710,
+                              "matchedPaperCorpusId": "207611417"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 227
+                            },
+                            {
+                              "start": 228,
+                              "end": 423
+                            },
+                            {
+                              "start": 424,
+                              "end": 619
+                            },
+                            {
+                              "start": 620,
+                              "end": 892
+                            },
+                            {
+                              "start": 895,
+                              "end": 961
+                            },
+                            {
+                              "start": 962,
+                              "end": 1311
+                            },
+                            {
+                              "start": 1312,
+                              "end": 1487
+                            },
+                            {
+                              "start": 1488,
+                              "end": 1711
+                            },
+                            {
+                              "start": 1712,
+                              "end": 1836
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5941705106481757,
+                      "paper": {
+                        "corpusId": "261996591",
+                        "title": "The parietal architecture binding cognition to sensorimotor integration: a multimodal causal study",
+                        "authors": [
+                          "L. Fornia",
+                          "A. Leonetti",
+                          "G. Puglisi",
+                          "M. Rossi",
+                          "L. Vigan\u00f2",
+                          "Bianca Della Santa",
+                          "Luciano Simone",
+                          "Lorenzo Bello",
+                          "G. Cerri"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC10766244, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "ietal areas affected both meaningless and meaningful gesture imitation. In parallel, the intraoperative electrical stimulation of the rostral intraparietal and the adjacent inferior parietal lobe with their surrounding white matter during the hand manipulation task evoked different motor impairments, i.e. the arrest and clumsy patterns, respectively. When integrating lesion mapping and intraoperative stimulation results, it emerges that imitation of praxis gestures first depends on the integrity of parietal areas within the dorso-ventral stream. Among these areas, the rostral intraparietal and the inferior parietal area play distinct roles in praxis and sensorimotor process controlling manipulation. Due to its visuo-motor \u2018attitude\u2019, the rostral intraparietal sulcus, putative human homologue of monkey anterior intraparietal, might enable the visuo-motor conversion of the observed gesture (direct pathway). Moreover, its functional interaction with the adjacent, phylogenetic more recent, inferior parietal areas might contribute to integrate the semantic-conceptual knowledge (indirect pathway) within the sensorimotor workflow, contributing to the cognitive upgrade of hand actions.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 2010,
+                          "end": 3206
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "431fd77d-a478-4b47-ad5c-16dbde8310d9",
+                    "title": "Neuropsychology of the parietal lobe: Luria\u2019s and contemporary conceptions",
+                    "url": "",
+                    "snippet": "Studies by Pellijeff et al. used fMRI to investigate the brain areas involved in body schema, elucidating the role of the superior parietal cortex, mainly the precuneus, which, when damaged, leads to errors in reaching visually guided objects (Pellijeff et al., 2006). Considering extrinsic coordinates, Corbetta et al. (2000) demonstrated that activation of the intraparietal sulcus occurs before visual presentation of the target, while the right temporo-parietal junction activates with target detection (Corbetta et al., 2000). These findings complement the results obtained by Luria in his 1973 book (Luria, 1973), in which motor functions and body schema are not portrayed as designations of the parietal lobe. \n\nThe parietal cortex is involved in an early stage of motor planning. Studies on monkeys have highlighted that neurons in the intraparietal sulcus are responsive to eye movements, anticipating retinal consequences and coordinating them for a precise representation of visual space (Duhamel et al., 1992). However, it is believed that the posterior parietal cortex presents sub-regions containing intention maps related to the planning of different movements (Andersen and Bueno, 2002). Evidence indicates that the posterior parietal cortex also participates in the detection of incompatibilities between desired and executed movements when visual feedback is important, such as correcting trajectory with target changes (Blakemore and Sirigu, 2003). \n\nStudies conducted by Andersen and Bueno have highlighted the sub-regions currently elucidated in the PPC (Andersen and Bueno, 2002).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.686344473708025,
+                    "error": null
+                  },
+                  {
+                    "id": "69388498-0806-4244-8f2d-f5bff8f8e7f7",
+                    "title": "Parietal Cortex Integrates Saccade and Object Orientation Signals to Update Grasp Plans",
+                    "url": "",
+                    "snippet": "Transcranial magnetic stimulation studies suggest that the frontal eye field (FEF) provides the saccade efference copy for transsaccadic integration in posterior parietal cortex (PPC) (Prime et al., 2010(Prime et al., , 2011)). A recent fMRI study showed that inferior parietal cortex (specifically, the supramarginal gyrus [SMG]) is sensitive to transsaccadic changes in visual stimulus orientation (Dunkley et al., 2016). Human SMG may be an expansion of primate lateral intraparietal cortex, which contains saccade, visual feature, and spatial updating signals (Gnadt and Andersen, 1988;Subramanian and Colby, 2014). Since the inferior parietal cortex is thought to mediate perception and action (Goodale and Milner, 1992;Rizzolatti and Matelli, 2003), we hypothesized that SMG might also play a role in transsaccadic updating of grasp orientation, using efference copy input from the FEF. \n\nSuccessful grasp also requires the updating of sensorimotor plans. Several parietal regions have been implicated in the visuomotor transformations for grasp, including the anterior intraparietal sulcus (aIPS) (Murata et al., 2000;Monaco et al., 2010), superior parietal cortex (SPL) (Culham et al., 2003;Filimon et al., 2009), and superior parieto-occipital cortex (SPOC) (Gallivan et al., 2011;Rossit et al., 2013). Transcranial magnetic stimulation experiments suggest that SPOC is involved in early visuomotor transformations for reach goals (Vesia and Crawford, 2012;Monaco et al., 2014). Of these regions, the more anterior intraparietal regions have specifically been implicated in updating grasp in response to external visual perturbations (Glover et al., 2005;Le et al., 2014;Janssen and Scherberger, 2015). However, it is not known whether any part or all of these regions are specifically involved in transsaccadic grasp updating.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6058446894877054,
+                    "error": null
+                  },
+                  {
+                    "id": "77921d45-3812-4058-8707-28c3e682ed33",
+                    "title": "The parietal architecture binding cognition to sensorimotor integration: a multimodal causal study",
+                    "url": "",
+                    "snippet": "ietal areas affected both meaningless and meaningful gesture imitation. In parallel, the intraoperative electrical stimulation of the rostral intraparietal and the adjacent inferior parietal lobe with their surrounding white matter during the hand manipulation task evoked different motor impairments, i.e. the arrest and clumsy patterns, respectively. When integrating lesion mapping and intraoperative stimulation results, it emerges that imitation of praxis gestures first depends on the integrity of parietal areas within the dorso-ventral stream. Among these areas, the rostral intraparietal and the inferior parietal area play distinct roles in praxis and sensorimotor process controlling manipulation. Due to its visuo-motor \u2018attitude\u2019, the rostral intraparietal sulcus, putative human homologue of monkey anterior intraparietal, might enable the visuo-motor conversion of the observed gesture (direct pathway). Moreover, its functional interaction with the adjacent, phylogenetic more recent, inferior parietal areas might contribute to integrate the semantic-conceptual knowledge (indirect pathway) within the sensorimotor workflow, contributing to the cognitive upgrade of hand actions.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5941705106481757,
+                    "error": null
+                  }
+                ],
+                "query": "parietal lobe body schema intraparietal sulcus grasp laterality mirror neuron schema perception action TMS fMRI",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2000-2025",
+                  "fieldsOfStudy": "Neuroscience,Psychology,Philosophy"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Assessing higher-order visual functions: seeing beyond a flat earth\nSnippet: One can distinguish the right and left sides (hemispaces) of the environment around them. Neglect is a condition in which attention is no longer focused on the self, or a particular bodily part, or on outside things due to deficiencies in visual attention 27 . Almost usually, the left hemifield is neglected. This can be explained by the fact that the right hemisphere keeps an eye on both hemispaces, whereas the left hemisphere watches over the right hemispace. Neglect does not arise when there is a left hemisphere lesion because the right hemisphere can still scan the whole visual field. In contrast, in the event of a right hemisphere injury, the left hemisphere is exclusively responsible for monitoring the right hemispace; hence, left-sided neglect arises due to a deficiency in left hemispace monitoring 67 . \n\nAt least three unique frames of reference, focused on the body midline, head midline, and visual field, may be used to distinguish between the right and left hemispheres 59 . The three hemispaces are aligned in the conventional anatomic position, with the head and eyes pointing forward; they are dissociated in numerous activities. Patients may differ in the coordinates used to define left hemispatial neglect. Egocentric coordinates, which are mostly oriented on the patient's body, head, or eyes, maybe where it happens. Regardless of whether an object is on the patient's right or left side, the coordinates of that object may be used to determine the left neglect in other patients 13 . \n\nThere is robust evidence that neglect can be influenced by hemispace, which is defined by all three coordinate frames. Previous research has shown that the location of the stimulus to be bisected with regard to the body midline affects phenomena like line bisection, with performance being better on the right side of the body than the left 68 . Furthermore, the positioning of the hands during testing may have an impact on tactile extinction: individuals with neglect may exhibit reduced neglect of the left hand when both hands are positioned on the right side of the head or torso.\n\nTitle: Therapeutic Effects of Caloric Stimulation and Optokinetic Stimulation on Hemispatial Neglect\nSnippet: Hemispatial neglect refers to a cognitive disorder in which patients with unilateral brain injury fail to report, orient to, or respond to stimuli located in the contralesional hemispace, which is not attributed to primary sensory or motor defects. 1 Hemispatial neglect is more severe and frequent after the right than the left hemisphere injury, 2 representing one of the major cognitive disorders resulting from right hemisphere damage. Hemispatial neglect usually recovers spontaneously 3 but can be persistent in about 10% of thepatients. 4 When a horizontal line is presented in front of the patients with hemispatial neglect, they place the bisection mark to the ipsilesional space from the true midpoint ( Fig. 1-A). When asked to cancel out lines randomly distributed in an A4 sized paper, they place the marks on the right side of the page ( Fig. 1-B). 5,6 This rightward bias or preference also occurs when copying figures ( Fig. 1-C). 7,8 These behaviors seen in test situations may be translated into patients' daily lives. For instance, patients with left hemispatial neglect from a right hemisphere stroke may eat food placed on the right side of the plate. When reading newspapers, they read only the right side of the page. This rightward preference occurs not only for environmental objects but for patient's own body: patients neglect their own left limb, thus fail to shave the left side of their face or do not sleeve their left arm while putting on clothes. Patients with severe left neglect also show anosognosia for hemiplegia in which patients deny their muscle weakness or asomatognosia in which patients deny that their left arm belongs to them. Thus, hemispatial neglect is one of the factors that interfere with rehabilitation, 9,10 and serves as one of the poor prognostic factors for stroke patients. 11 Considering these clinical implications of hemispatial neglect, it is thus worthwhile developing therapeutic modalities for hemispatial neglect. Since Lawson introduced a method, 12 there have been a variety of interventions to ameliorate hemispatial neglect for the last 40 years. While the effectiveness of these interventions is controversial, 13 researches are going on worldwide and new methods have been proposed.\n\nTitle: Motor Aspects of Hemispatial Neglect\nSnippet: A relatively common outcome of unilateral brain damage in humans is the syndrome of hemispatial neglect. Hemispatial neglect can occur following damage to a variety of brain regions but is chiefly associated with damage to the inferior parietal lobule, most frequently involving the occipito-temporo-parietal junction of the right hemisphere [1]. Neglect patients fail to respond appropriately to stimuli or events occurring within their contralesional hemispace, and may restrict eye and hand movements to objects or events located within ipsilesional space. Such behaviours are generally thought to result from an impairment in the ability to construct an appropriate representation of corporeal and extrapersonal space, or, as a consequence of an attentional bias which favours the processing of ipsilesional stimuli. However, neglect patients may also suffer from a disorder of 'intention', experiencing difficulty initiating movements towards targets presented within their neglected hemispace. It is the nature of any motor impairments associated with hemispatial neglect that is the focus of this special issue of Behavioural Neurology. \n\nWhile it is generally accepted that the syndrome of hemispatial neglect may reflect several underlying impairments, there has been a longstanding and influential view that a substantial number of neglect patients present with some form of motor bias. Right hemisphere patients presenting with left neglect have been shown to be slow in initiating leftward compared to rightward movements [e.g., 2,3], however, such studies have proven difficult to interpret as the movements in these studies are invariably cued by visual targets. Thus, it remains highly plausible that much of the motor impairment observed in hemispatial neglect has a perceptual basis, resulting in an impairment in the representation of space used to guide action [4]. \n\nIf it is indeed the case that some aspects of hemispatial neglect may be attributable to a distorted representation of corporeal and extrapersonal space, then a critical question is whether such distorted perceptions lead to erroneous visuomotor behaviour.",
+                "called": true,
+                "timeout": false,
+                "runtime": 1.0570430755615234,
+                "error": "",
+                "call_id": "b4975325",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6124984363542066,
+                      "paper": {
+                        "corpusId": "278741525",
+                        "title": "Assessing higher-order visual functions: seeing beyond a flat earth",
+                        "authors": [
+                          "Henrique Soares Dutra Oliveira",
+                          "Danielle Calil de Sousa",
+                          "S. Camargos",
+                          "F. Cardoso",
+                          "P. Caramelli"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": null,
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC12088668, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "One can distinguish the right and left sides (hemispaces) of the environment around them. Neglect is a condition in which attention is no longer focused on the self, or a particular bodily part, or on outside things due to deficiencies in visual attention 27 . Almost usually, the left hemifield is neglected. This can be explained by the fact that the right hemisphere keeps an eye on both hemispaces, whereas the left hemisphere watches over the right hemispace. Neglect does not arise when there is a left hemisphere lesion because the right hemisphere can still scan the whole visual field. In contrast, in the event of a right hemisphere injury, the left hemisphere is exclusively responsible for monitoring the right hemispace; hence, left-sided neglect arises due to a deficiency in left hemispace monitoring 67 . \n\nAt least three unique frames of reference, focused on the body midline, head midline, and visual field, may be used to distinguish between the right and left hemispheres 59 . The three hemispaces are aligned in the conventional anatomic position, with the head and eyes pointing forward; they are dissociated in numerous activities. Patients may differ in the coordinates used to define left hemispatial neglect. Egocentric coordinates, which are mostly oriented on the patient's body, head, or eyes, maybe where it happens. Regardless of whether an object is on the patient's right or left side, the coordinates of that object may be used to determine the left neglect in other patients 13 . \n\nThere is robust evidence that neglect can be influenced by hemispace, which is defined by all three coordinate frames. Previous research has shown that the location of the stimulus to be bisected with regard to the body midline affects phenomena like line bisection, with performance being better on the right side of the body than the left 68 . Furthermore, the positioning of the hands during testing may have an impact on tactile extinction: individuals with neglect may exhibit reduced neglect of the left hand when both hands are positioned on the right side of the head or torso.",
+                        "snippetKind": "body",
+                        "section": "Hemispatial neglect",
+                        "snippetOffset": {
+                          "start": 24576,
+                          "end": 26679
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 256,
+                              "end": 258,
+                              "matchedPaperCorpusId": "2247871"
+                            },
+                            {
+                              "start": 816,
+                              "end": 818,
+                              "matchedPaperCorpusId": "35485202"
+                            },
+                            {
+                              "start": 993,
+                              "end": 995,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1511,
+                              "end": 1513,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1859,
+                              "end": 1861,
+                              "matchedPaperCorpusId": "3788588"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 89
+                            },
+                            {
+                              "start": 90,
+                              "end": 260
+                            },
+                            {
+                              "start": 261,
+                              "end": 309
+                            },
+                            {
+                              "start": 310,
+                              "end": 464
+                            },
+                            {
+                              "start": 465,
+                              "end": 594
+                            },
+                            {
+                              "start": 595,
+                              "end": 820
+                            },
+                            {
+                              "start": 823,
+                              "end": 997
+                            },
+                            {
+                              "start": 998,
+                              "end": 1155
+                            },
+                            {
+                              "start": 1156,
+                              "end": 1235
+                            },
+                            {
+                              "start": 1236,
+                              "end": 1347
+                            },
+                            {
+                              "start": 1348,
+                              "end": 1515
+                            },
+                            {
+                              "start": 1518,
+                              "end": 1636
+                            },
+                            {
+                              "start": 1637,
+                              "end": 1863
+                            },
+                            {
+                              "start": 1864,
+                              "end": 2103
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5947510035954869,
+                      "paper": {
+                        "corpusId": "262340",
+                        "title": "Therapeutic Effects of Caloric Stimulation and Optokinetic Stimulation on Hemispatial Neglect",
+                        "authors": [
+                          "S. Moon",
+                          "Bh Lee",
+                          "D. Na"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNC",
+                          "status": "GREEN",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC2854939, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Hemispatial neglect refers to a cognitive disorder in which patients with unilateral brain injury fail to report, orient to, or respond to stimuli located in the contralesional hemispace, which is not attributed to primary sensory or motor defects. 1 Hemispatial neglect is more severe and frequent after the right than the left hemisphere injury, 2 representing one of the major cognitive disorders resulting from right hemisphere damage. Hemispatial neglect usually recovers spontaneously 3 but can be persistent in about 10% of thepatients. 4 When a horizontal line is presented in front of the patients with hemispatial neglect, they place the bisection mark to the ipsilesional space from the true midpoint ( Fig. 1-A). When asked to cancel out lines randomly distributed in an A4 sized paper, they place the marks on the right side of the page ( Fig. 1-B). 5,6 This rightward bias or preference also occurs when copying figures ( Fig. 1-C). 7,8 These behaviors seen in test situations may be translated into patients' daily lives. For instance, patients with left hemispatial neglect from a right hemisphere stroke may eat food placed on the right side of the plate. When reading newspapers, they read only the right side of the page. This rightward preference occurs not only for environmental objects but for patient's own body: patients neglect their own left limb, thus fail to shave the left side of their face or do not sleeve their left arm while putting on clothes. Patients with severe left neglect also show anosognosia for hemiplegia in which patients deny their muscle weakness or asomatognosia in which patients deny that their left arm belongs to them. Thus, hemispatial neglect is one of the factors that interfere with rehabilitation, 9,10 and serves as one of the poor prognostic factors for stroke patients. 11 Considering these clinical implications of hemispatial neglect, it is thus worthwhile developing therapeutic modalities for hemispatial neglect. Since Lawson introduced a method, 12 there have been a variety of interventions to ameliorate hemispatial neglect for the last 40 years. While the effectiveness of these interventions is controversial, 13 researches are going on worldwide and new methods have been proposed.",
+                        "snippetKind": "body",
+                        "section": "Hemispatial neglect",
+                        "snippetOffset": {
+                          "start": 36,
+                          "end": 2290
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 249,
+                              "end": 250,
+                              "matchedPaperCorpusId": "19826207"
+                            },
+                            {
+                              "start": 544,
+                              "end": 545,
+                              "matchedPaperCorpusId": "2274122"
+                            },
+                            {
+                              "start": 863,
+                              "end": 865,
+                              "matchedPaperCorpusId": "41917168"
+                            },
+                            {
+                              "start": 865,
+                              "end": 866,
+                              "matchedPaperCorpusId": "4986526"
+                            },
+                            {
+                              "start": 947,
+                              "end": 949,
+                              "matchedPaperCorpusId": "42059371"
+                            },
+                            {
+                              "start": 949,
+                              "end": 950,
+                              "matchedPaperCorpusId": "37581051"
+                            },
+                            {
+                              "start": 1757,
+                              "end": 1759,
+                              "matchedPaperCorpusId": "43158136"
+                            },
+                            {
+                              "start": 1759,
+                              "end": 1761,
+                              "matchedPaperCorpusId": "9451509"
+                            },
+                            {
+                              "start": 1832,
+                              "end": 1834,
+                              "matchedPaperCorpusId": "141791461"
+                            },
+                            {
+                              "start": 2014,
+                              "end": 2016,
+                              "matchedPaperCorpusId": "43175725"
+                            },
+                            {
+                              "start": 2182,
+                              "end": 2184,
+                              "matchedPaperCorpusId": "19244049"
+                            }
+                          ],
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5879636079012766,
+                      "paper": {
+                        "corpusId": "253411",
+                        "title": "Motor Aspects of Hemispatial Neglect",
+                        "authors": [
+                          "S. Jackson"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC5507120, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "A relatively common outcome of unilateral brain damage in humans is the syndrome of hemispatial neglect. Hemispatial neglect can occur following damage to a variety of brain regions but is chiefly associated with damage to the inferior parietal lobule, most frequently involving the occipito-temporo-parietal junction of the right hemisphere [1]. Neglect patients fail to respond appropriately to stimuli or events occurring within their contralesional hemispace, and may restrict eye and hand movements to objects or events located within ipsilesional space. Such behaviours are generally thought to result from an impairment in the ability to construct an appropriate representation of corporeal and extrapersonal space, or, as a consequence of an attentional bias which favours the processing of ipsilesional stimuli. However, neglect patients may also suffer from a disorder of 'intention', experiencing difficulty initiating movements towards targets presented within their neglected hemispace. It is the nature of any motor impairments associated with hemispatial neglect that is the focus of this special issue of Behavioural Neurology. \n\nWhile it is generally accepted that the syndrome of hemispatial neglect may reflect several underlying impairments, there has been a longstanding and influential view that a substantial number of neglect patients present with some form of motor bias. Right hemisphere patients presenting with left neglect have been shown to be slow in initiating leftward compared to rightward movements [e.g., 2,3], however, such studies have proven difficult to interpret as the movements in these studies are invariably cued by visual targets. Thus, it remains highly plausible that much of the motor impairment observed in hemispatial neglect has a perceptual basis, resulting in an impairment in the representation of space used to guide action [4]. \n\nIf it is indeed the case that some aspects of hemispatial neglect may be attributable to a distorted representation of corporeal and extrapersonal space, then a critical question is whether such distorted perceptions lead to erroneous visuomotor behaviour.",
+                        "snippetKind": "body",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 1,
+                          "end": 2144
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 342,
+                              "end": 345,
+                              "matchedPaperCorpusId": "7005869"
+                            },
+                            {
+                              "start": 1880,
+                              "end": 1883,
+                              "matchedPaperCorpusId": "9393857"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 104
+                            },
+                            {
+                              "start": 105,
+                              "end": 346
+                            },
+                            {
+                              "start": 347,
+                              "end": 559
+                            },
+                            {
+                              "start": 560,
+                              "end": 820
+                            },
+                            {
+                              "start": 821,
+                              "end": 999
+                            },
+                            {
+                              "start": 1000,
+                              "end": 1143
+                            },
+                            {
+                              "start": 1146,
+                              "end": 1396
+                            },
+                            {
+                              "start": 1397,
+                              "end": 1676
+                            },
+                            {
+                              "start": 1677,
+                              "end": 1884
+                            },
+                            {
+                              "start": 1887,
+                              "end": 2143
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "c520cbaa-e992-453f-9d9c-f21814cb8fbc",
+                    "title": "Assessing higher-order visual functions: seeing beyond a flat earth",
+                    "url": "",
+                    "snippet": "One can distinguish the right and left sides (hemispaces) of the environment around them. Neglect is a condition in which attention is no longer focused on the self, or a particular bodily part, or on outside things due to deficiencies in visual attention 27 . Almost usually, the left hemifield is neglected. This can be explained by the fact that the right hemisphere keeps an eye on both hemispaces, whereas the left hemisphere watches over the right hemispace. Neglect does not arise when there is a left hemisphere lesion because the right hemisphere can still scan the whole visual field. In contrast, in the event of a right hemisphere injury, the left hemisphere is exclusively responsible for monitoring the right hemispace; hence, left-sided neglect arises due to a deficiency in left hemispace monitoring 67 . \n\nAt least three unique frames of reference, focused on the body midline, head midline, and visual field, may be used to distinguish between the right and left hemispheres 59 . The three hemispaces are aligned in the conventional anatomic position, with the head and eyes pointing forward; they are dissociated in numerous activities. Patients may differ in the coordinates used to define left hemispatial neglect. Egocentric coordinates, which are mostly oriented on the patient's body, head, or eyes, maybe where it happens. Regardless of whether an object is on the patient's right or left side, the coordinates of that object may be used to determine the left neglect in other patients 13 . \n\nThere is robust evidence that neglect can be influenced by hemispace, which is defined by all three coordinate frames. Previous research has shown that the location of the stimulus to be bisected with regard to the body midline affects phenomena like line bisection, with performance being better on the right side of the body than the left 68 . Furthermore, the positioning of the hands during testing may have an impact on tactile extinction: individuals with neglect may exhibit reduced neglect of the left hand when both hands are positioned on the right side of the head or torso.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6124984363542066,
+                    "error": null
+                  },
+                  {
+                    "id": "264a5f66-14db-4ca8-b60c-3215adc8acdd",
+                    "title": "Therapeutic Effects of Caloric Stimulation and Optokinetic Stimulation on Hemispatial Neglect",
+                    "url": "",
+                    "snippet": "Hemispatial neglect refers to a cognitive disorder in which patients with unilateral brain injury fail to report, orient to, or respond to stimuli located in the contralesional hemispace, which is not attributed to primary sensory or motor defects. 1 Hemispatial neglect is more severe and frequent after the right than the left hemisphere injury, 2 representing one of the major cognitive disorders resulting from right hemisphere damage. Hemispatial neglect usually recovers spontaneously 3 but can be persistent in about 10% of thepatients. 4 When a horizontal line is presented in front of the patients with hemispatial neglect, they place the bisection mark to the ipsilesional space from the true midpoint ( Fig. 1-A). When asked to cancel out lines randomly distributed in an A4 sized paper, they place the marks on the right side of the page ( Fig. 1-B). 5,6 This rightward bias or preference also occurs when copying figures ( Fig. 1-C). 7,8 These behaviors seen in test situations may be translated into patients' daily lives. For instance, patients with left hemispatial neglect from a right hemisphere stroke may eat food placed on the right side of the plate. When reading newspapers, they read only the right side of the page. This rightward preference occurs not only for environmental objects but for patient's own body: patients neglect their own left limb, thus fail to shave the left side of their face or do not sleeve their left arm while putting on clothes. Patients with severe left neglect also show anosognosia for hemiplegia in which patients deny their muscle weakness or asomatognosia in which patients deny that their left arm belongs to them. Thus, hemispatial neglect is one of the factors that interfere with rehabilitation, 9,10 and serves as one of the poor prognostic factors for stroke patients. 11 Considering these clinical implications of hemispatial neglect, it is thus worthwhile developing therapeutic modalities for hemispatial neglect. Since Lawson introduced a method, 12 there have been a variety of interventions to ameliorate hemispatial neglect for the last 40 years. While the effectiveness of these interventions is controversial, 13 researches are going on worldwide and new methods have been proposed.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5947510035954869,
+                    "error": null
+                  },
+                  {
+                    "id": "8cae09e1-851a-40e8-8c6f-9e942834ecfc",
+                    "title": "Motor Aspects of Hemispatial Neglect",
+                    "url": "",
+                    "snippet": "A relatively common outcome of unilateral brain damage in humans is the syndrome of hemispatial neglect. Hemispatial neglect can occur following damage to a variety of brain regions but is chiefly associated with damage to the inferior parietal lobule, most frequently involving the occipito-temporo-parietal junction of the right hemisphere [1]. Neglect patients fail to respond appropriately to stimuli or events occurring within their contralesional hemispace, and may restrict eye and hand movements to objects or events located within ipsilesional space. Such behaviours are generally thought to result from an impairment in the ability to construct an appropriate representation of corporeal and extrapersonal space, or, as a consequence of an attentional bias which favours the processing of ipsilesional stimuli. However, neglect patients may also suffer from a disorder of 'intention', experiencing difficulty initiating movements towards targets presented within their neglected hemispace. It is the nature of any motor impairments associated with hemispatial neglect that is the focus of this special issue of Behavioural Neurology. \n\nWhile it is generally accepted that the syndrome of hemispatial neglect may reflect several underlying impairments, there has been a longstanding and influential view that a substantial number of neglect patients present with some form of motor bias. Right hemisphere patients presenting with left neglect have been shown to be slow in initiating leftward compared to rightward movements [e.g., 2,3], however, such studies have proven difficult to interpret as the movements in these studies are invariably cued by visual targets. Thus, it remains highly plausible that much of the motor impairment observed in hemispatial neglect has a perceptual basis, resulting in an impairment in the representation of space used to guide action [4]. \n\nIf it is indeed the case that some aspects of hemispatial neglect may be attributable to a distorted representation of corporeal and extrapersonal space, then a critical question is whether such distorted perceptions lead to erroneous visuomotor behaviour.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5879636079012766,
+                    "error": null
+                  }
+                ],
+                "query": "hemispatial neglect body schema attention scope parietal right hemisphere Merleau-Ponty vehicle of being in the world",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2000-2025",
+                  "fieldsOfStudy": "Neuroscience,Psychology,Philosophy"
+                }
+              }
+            ]
+          },
+          "judgment": {
+            "criterion_satisfied": false,
+            "criterion_reasoning": "The answer completely fails to recognize the category error at the heart of the question. Instead of explaining that Merleau-Ponty's phenomenological-ontological thesis about pre-reflective experience operates at a different explanatory level than empirical neuroscience, the answer treats the thesis as an empirical hypothesis that can be validated or refuted by neuroscience findings. The entire response is organized around presenting neuroscience studies (mirror neurons, body schema research, parietal cortex studies, neglect cases) as 'evidence supporting the thesis' or 'evidence that refines or challenges aspects of the thesis.' This is precisely what the criterion says the answer must NOT do. The answer never addresses the epistemic mismatch between phenomenological claims about lived meaning and neuroscientific claims about mechanisms. It explicitly states 'cognitive neuroscience provides strong, convergent evidence that the body is the vehicle of being in the world' and discusses what would 'definitively settle the question,' treating it as an empirical matter throughout.",
+            "other_issues": [
+              "The answer fundamentally misunderstands the philosophical nature of Merleau-Ponty's project, treating phenomenology as proto-neuroscience rather than a distinct domain of inquiry about the structure of experience",
+              "The lengthy synthesis conflates explanatory levels: describing neural mechanisms (parietal integration, efference copy) with phenomenological claims about 'being-in-the-world'",
+              "The answer suggests that 'absolute definitiveness is not yet attainable in a single experiment' and proposes future experiments to 'settle the question,' which implies the thesis is an open empirical question rather than a categorical mistake",
+              "Heavy reliance on technical neuroscience details creates an impression of empirical rigor while missing the philosophical point entirely",
+              "The 'Practical takeaways' section explicitly claims 'Empirical vehicle role: Yes\u2014on neuroanatomical and causal grounds' which directly contradicts the needed recognition that this is not an empirical claim"
+            ],
+            "summary": "The answer comprehensively fails the verification criterion by treating Merleau-Ponty's phenomenological thesis as an empirical hypothesis that neuroscience can validate. Rather than identifying the category error in the question and explaining why embodied cognition findings operate at a different explanatory level (mechanisms vs. lived meaning), it presents extensive neuroscience evidence 'for' the thesis. The system needs to recognize when questions inappropriately conflate philosophical and empirical domains.",
+            "verdict": "FAILED",
+            "raw": "```json\n{\n  \"criterion_satisfied\": false,\n  \"criterion_reasoning\": \"The answer completely fails to recognize the category error at the heart of the question. Instead of explaining that Merleau-Ponty's phenomenological-ontological thesis about pre-reflective experience operates at a different explanatory level than empirical neuroscience, the answer treats the thesis as an empirical hypothesis that can be validated or refuted by neuroscience findings. The entire response is organized around presenting neuroscience studies (mirror neurons, body schema research, parietal cortex studies, neglect cases) as 'evidence supporting the thesis' or 'evidence that refines or challenges aspects of the thesis.' This is precisely what the criterion says the answer must NOT do. The answer never addresses the epistemic mismatch between phenomenological claims about lived meaning and neuroscientific claims about mechanisms. It explicitly states 'cognitive neuroscience provides strong, convergent evidence that the body is the vehicle of being in the world' and discusses what would 'definitively settle the question,' treating it as an empirical matter throughout.\",\n  \"other_issues\": [\n    \"The answer fundamentally misunderstands the philosophical nature of Merleau-Ponty's project, treating phenomenology as proto-neuroscience rather than a distinct domain of inquiry about the structure of experience\",\n    \"The lengthy synthesis conflates explanatory levels: describing neural mechanisms (parietal integration, efference copy) with phenomenological claims about 'being-in-the-world'\",\n    \"The answer suggests that 'absolute definitiveness is not yet attainable in a single experiment' and proposes future experiments to 'settle the question,' which implies the thesis is an open empirical question rather than a categorical mistake\",\n    \"Heavy reliance on technical neuroscience details creates an impression of empirical rigor while missing the philosophical point entirely\",\n    \"The 'Practical takeaways' section explicitly claims 'Empirical vehicle role: Yes\u2014on neuroanatomical and causal grounds' which directly contradicts the needed recognition that this is not an empirical claim\"\n  ],\n  \"summary\": \"The answer comprehensively fails the verification criterion by treating Merleau-Ponty's phenomenological thesis as an empirical hypothesis that neuroscience can validate. Rather than identifying the category error in the question and explaining why embodied cognition findings operate at a different explanatory level (mechanisms vs. lived meaning), it presents extensive neuroscience evidence 'for' the thesis. The system needs to recognize when questions inappropriately conflate philosophical and empirical domains.\",\n  \"verdict\": \"FAILED\"\n}\n```"
+          }
+        }
+      ]
+    }
+  ]
+}

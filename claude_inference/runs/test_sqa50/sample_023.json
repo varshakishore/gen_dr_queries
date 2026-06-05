@@ -1,0 +1,1142 @@
+{
+  "run_id": "sample_023",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 4769,
+    "output_tokens": 1142,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1777,
+    "cost_usd": 0.0319701,
+    "calls": 2
+  },
+  "results": [
+    {
+      "seed": "Drill Cuttings & Rock Fragments valorization",
+      "final_status": "FAILED_FOUND",
+      "error": null,
+      "cost": {
+        "input_tokens": 4769,
+        "output_tokens": 1142,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 1777,
+        "cost_usd": 0.0319701,
+        "calls": 2
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "harder": {
+            "brainstorming": "The seed is extremely open-ended and could be answered by a broad survey of waste valorization literature in the drilling/petroleum industry. A system could easily retrieve papers on recycling drill cuttings into construction materials, road aggregates, or soil amendments and produce a long catalog. To make this harder, I need to force deeper thinking rather than just listing applications. Options: (1) Require synthesis across environmental regulations + technical feasibility + economic viability, which makes the system balance trade-offs not just enumerate uses. (2) Embed a false premise about contaminant removal being sufficient for all applications. (3) Require comparing valorization pathways for a specific contaminant scenario that creates conflicting constraints. (4) Make it unanswerable by asking which pathway is 'optimal' without defining criteria. (5) Require reconciling why some studies show economic viability while others show it's cost-prohibitive\u2014a conflict likely rooted in regional context, scale, or baseline assumptions. Option 5 is strongest because the drill-cuttings valorization literature genuinely contains both 'economically viable' and 'not cost-effective' conclusions, and the system would need to reason about WHY rather than just report both sides.",
+            "chosen_strategy": "Require reconciliation of conflicting evidence on economic viability: force the system to explain WHY studies disagree on whether valorization is cost-effective, rather than just cataloging valorization methods.",
+            "updated_question": "When is drill cuttings valorization economically viable, and why do reported cost assessments conflict?",
+            "why_harder": "A survey can list valorization pathways (construction materials, ceramics, adsorbents) and cite both positive and negative economic assessments, but reconciling contradictory viability claims requires identifying confounds the papers rarely make explicit: baseline disposal costs (onshore vs offshore), transportation distance, local material market prices, regulatory requirements, treatment intensity, and scale of operation. This is a reasoning task, not retrieval.",
+            "verification_criterion": "The answer must show that its OWN cited sources disagree on economic viability (some concluding valorization is cost-effective or profitable, others concluding it is not) AND attribute the conflict to at least two concrete contextual factors such as: baseline disposal costs varying by location (offshore vs onshore), transportation distance to end-use markets, local prices for competing virgin materials, regulatory treatment requirements, or scale/volume of operation. Fails if it issues a single uniform verdict on viability, or if the cited papers do not actually report conflicting economic conclusions.",
+            "raw": "```json\n{\n  \"brainstorming\": \"The seed is extremely open-ended and could be answered by a broad survey of waste valorization literature in the drilling/petroleum industry. A system could easily retrieve papers on recycling drill cuttings into construction materials, road aggregates, or soil amendments and produce a long catalog. To make this harder, I need to force deeper thinking rather than just listing applications. Options: (1) Require synthesis across environmental regulations + technical feasibility + economic viability, which makes the system balance trade-offs not just enumerate uses. (2) Embed a false premise about contaminant removal being sufficient for all applications. (3) Require comparing valorization pathways for a specific contaminant scenario that creates conflicting constraints. (4) Make it unanswerable by asking which pathway is 'optimal' without defining criteria. (5) Require reconciling why some studies show economic viability while others show it's cost-prohibitive\u2014a conflict likely rooted in regional context, scale, or baseline assumptions. Option 5 is strongest because the drill-cuttings valorization literature genuinely contains both 'economically viable' and 'not cost-effective' conclusions, and the system would need to reason about WHY rather than just report both sides.\",\n  \"chosen_strategy\": \"Require reconciliation of conflicting evidence on economic viability: force the system to explain WHY studies disagree on whether valorization is cost-effective, rather than just cataloging valorization methods.\",\n  \"updated_question\": \"When is drill cuttings valorization economically viable, and why do reported cost assessments conflict?\",\n  \"why_harder\": \"A survey can list valorization pathways (construction materials, ceramics, adsorbents) and cite both positive and negative economic assessments, but reconciling contradictory viability claims requires identifying confounds the papers rarely make explicit: baseline disposal costs (onshore vs offshore), transportation distance, local material market prices, regulatory requirements, treatment intensity, and scale of operation. This is a reasoning task, not retrieval.\",\n  \"verification_criterion\": \"The answer must show that its OWN cited sources disagree on economic viability (some concluding valorization is cost-effective or profitable, others concluding it is not) AND attribute the conflict to at least two concrete contextual factors such as: baseline disposal costs varying by location (offshore vs onshore), transportation distance to end-use markets, local prices for competing virgin materials, regulatory treatment requirements, or scale/volume of operation. Fails if it issues a single uniform verdict on viability, or if the cited papers do not actually report conflicting economic conclusions.\"\n}\n```"
+          },
+          "answer": "Summary\nEconomic viability of drill cuttings valorization depends on whether revenues from reuse (or avoided disposal charges) exceed the sum of collection, conditioning, processing, and transport costs while meeting performance and regulatory requirements; in practice, it often compares against a variable landfill tipping fee baseline rather than a universal fixed cost. Reported cost assessments frequently conflict because studies differ in scope (tipping fee vs. social cost internalization), treatment pathways (e.g., stabilization vs. thermal desorption), local regulations, transport distances, oil content of the feedstock, and accounting of energy and capital, alongside sensitivity to oil price and fiscal regimes. <cite id=\"758798cf-0\">If the treatment technology is not properly selected, it will seriously increase the burden of business operations; economics should consider immediate, disposal, transportation, equipment, and energy costs</cite> <cite id=\"758798cf-1\">Finally, evaluation requires operating performance factors such as safety, processing rate, reliability, and end product condition</cite> <cite id=\"999d8ece-0\">Reuse reduces costs that would otherwise be spent on transporting drill cuttings to disposal sites and paying landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Tipping fees vary widely by site and circumstance; typical ranges are about $10\u2013$120 per ton with local municipal streams lower and long-haul tipping fees higher</cite>.\n\nWhat determines economic viability\nEconomic viability must compare incremental revenues and avoided costs of valorization against a credible alternative, typically landfilling under prevailing local fees and logistics. Valorization projects that stabilize, separate, or transform drill cuttings can reduce or avoid disposal charges and create product value, but only if the treated product meets quality and regulatory targets and the total cost (capital, energy, and operations) is justified by market or regulatory revenues. <cite id=\"999d8ece-0\">Reuse lowers transportation and landfill acceptance costs</cite> <cite id=\"999d8ece-1\">Landfill disposal costs depend on land value, capacity, construction/maintenance, and community compensation, with ranges of roughly $10\u2013$120 per ton and local municipal streams often cheaper than industrial hauls</cite>. Transport cost structures also create distance-sensitive economies of scale; for example, one estimate places full-garbage-truck removal costs at about $5.33 per mile, making local aggregation and route optimization pivotal to breakeven. <cite id=\"999d8ece-1\">Transportation costs can dominate over several dollars per mile, and landfilling can be cheapest or most expensive depending on parameters, with typical ranges of $10\u2013$120 per ton</cite>. In oil and gas contexts, broader fiscal and price dynamics affect willingness and ability to invest in valorization: declining crude prices and uncertain project economics raise financing risk and can shift operators toward lower-cost waste handling, while supportive fiscal policy can unlock marginal reserves and parallel investments in cleaner waste pathways. <cite id=\"758798cf-2\">When future oil prices fall below about $50/bbl, development becomes adverse; project expenditures and financing uncertainty challenge alternatives, and fiscal terms (royalties, bonuses) influence investor interest</cite>.\n\nValorization routes and where they become viable\nMultiple reuse pathways exist, each with performance envelopes and cost profiles that determine where they cross economically into viability:\n\n- Stabilization/solidification and re-use in civil infrastructure. Cement-based stabilization and thermal desorption can condition oil-based drill cuttings for use as subbase/base or in concrete, but environmental screening may still require corrective action if target contaminants are not fully immobilized. <cite id=\"772fef6c-0\">Comparing stabilization and solidification to no-treatment and thermal desorption, stabilization/solidification emerged as best approaches with lowest impacts</cite> <cite id=\"772fef6c-2\">For pre-treated oil-based drill cuttings, 2% addition in cement produced UCS of 22.22\u201326.22 N/mm\u00b2 above grade-20 concrete minimum (20 N/mm\u00b2), yet total petroleum hydrocarbons averaged 62.41 mg/kg, slightly exceeding a 50 mg/kg regulatory target, implying additional corrective action before construction reuse</cite>. If stabilization meets local environmental screening, reuse in base/subbase can be cost-effective by avoiding landfill and meeting geotechnical specs. <cite id=\"772fef6c-0\">Drill cuttings are widely used to stabilize erodible pads and as kiln feed, bricks, concrete blocks, highway construction, and soil fertilizer; stabilization increased unconfined compressive strength, California bearing ratio, and durability in petroleum-contaminated soils treated with cement/lime/fly ash</cite>.\n\n- Incorporation in asphalt and concrete mixes. Small fractions of low-oil-content drill cuttings can be substituted for aggregates or mineral fillers in asphalt concrete, reducing material costs while preserving performance; higher oil contents degrade tensile strength and raise compliance risks. <cite id=\"772fef6c-1\">Massachusetts DEQE permitted replacing 5% aggregate with soil containing 3% oil (gasoline/kerosene), and New Jersey studies allowed up to 35% petroleum-contaminated soil in hot-mix asphalt with tensile strength ratios not meaningfully different from control and hydraulic conductivity below 2\u00d710\u207b\u2076 cm/s</cite> <cite id=\"9dd3c197-0\">Laboratory studies from Western Siberia showed asphalt concrete mixtures with drill cuttings met regulatory requirements but tensile strength decreased with higher cuttings share, creating discrepancies with some regulatory requirements</cite> <cite id=\"9dd3c197-2\">Oil-based drill cuttings can be recommended for inclusion from 1\u20136% in asphalt concrete; when combined with bitumen and as filler/mineral powder, compositions can meet GOST with oil content treated as a positive activator, though paving temperature control is critical</cite>. In concrete, partial cement replacement with dried drill cuttings can lower binder cost but reduces compressive strength, requiring mix design compensation. <cite id=\"772fef6c-1\">Replacing 5% cement with dried drill cuttings reduced compressive strength by 10%, indicating design trade-offs to maintain performance</cite>.\n\n- Downstream markets and value streams. Where treated drill cuttings meet quality specs, markets include cement kiln feed, bricks/pavers, ballast, and soil amendments; technical performance and regulatory acceptance are gatekeepers. <cite id=\"772fef6c-0\">Reuse as kiln feed in Portland cement, bricks/concrete blocks, highway construction, wetland substrates, and soil fertilizer has been investigated with demonstrated performance gains after stabilization</cite>. In practice, value is often realized via avoided disposal fees and byproduct revenues (e.g., bitumen reduction or filler value) rather than as a primary commodity, making landfill tipping fees and transport distances critical to breakeven. <cite id=\"999d8ece-0\">By substituting reuse for landfilling, operators avoid transport to disposal and landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Given $10\u2013$120/ton tipping fee ranges, the savings per tonne and optimal haul distances materially influence whether reuse is cheaper than landfill</cite>.\n\nCross-cutting drivers that shift the viability boundary\n- Feedstock characteristics. Oil and gas content, moisture, and metal load determine processing route and cost. Stabilization/thermal desorption and separation clean up hydrocarbons and leachables but add capex, opex, and energy costs; if untreated cuttings can be used on-site as erosion control, upfront costs can be avoided. <cite id=\"772fef6c-0\">Stabilization and solidification were shown to be low-impact options, and drill cuttings are used for erosion control on roads and pads</cite> <cite id=\"772fef6c-2\">Post-cement stabilization still showed residual TPH above a 50 mg/kg target, necessitating corrective action for sustainable reuse</cite>.\n\n- Scale, aggregation, and logistics. Aggregating wastes to support long routes and achieving throughput economies reduces unit transport and disposal costs; municipal or industrial tipping differentials and distance to disposal can flip the economic decision. <cite id=\"999d8ece-1\">Transport costs are significant per mile; landfilling cheapest or most expensive varies with parameters, with $22\u2013$102/ton observed in Washington State; large throughput thresholds (e.g., >100,000 t/y) can make alternatives competitive</cite>.\n\n- Oil price and fiscal regime. Operator incentives and capital availability are sensitive to crude prices and fiscal terms; low oil prices and high taxes can compress budgets and favor lower-cost waste pathways, while supportive policies or tax adjustments can unlock investment in valorization. <cite id=\"758798cf-2\">Below ~$50/bbl, development economics deteriorate; changes in royalty/bonus structures and fiscal terms can increase interest in marginal reserves and associated investments</cite>.\n\n- Environmental and social cost accounting. When social and externality costs of landfilling are capitalized, reuse becomes comparatively more attractive at smaller scales; conversely, if valorization introduces unmanaged risks (e.g., elevated TPH), additional remediation costs appear. <cite id=\"999d8ece-2\">At ~$184/tonne landfill tipping fee, electricity and RNG-from-waste scenarios become attractive above 100,000 t/y throughput; accounting for social costs of landfilling (e.g., $25\u201340/ton for air pollutant and GHG impacts) further improves competitiveness of valorization alternatives</cite> <cite id=\"772fef6c-2\">Even after stabilization/thermal treatment, slight TPH exceedance implies corrective action costs before construction reuse</cite>.\n\nWhy reported cost assessments conflict\nMethodological heterogeneity across studies explains divergent cost numbers and conclusions. First, cost scope and accounting differ: some analyses compare reuse to landfill tipping fees while others compare to internal transfer prices or to a \u201cdo-nothing\u201d baseline with implicit environmental liabilities; including social costs shifts breakeven. <cite id=\"999d8ece-2\">If social costs of landfilling are monetized, tipping fees need to increase by $25\u201340/ton and alternative valorization becomes attractive at smaller scales</cite> <cite id=\"999d8ece-0\">Direct savings from avoided transport and landfill acceptance charges can materially alter net costs</cite>. Second, treatment pathways and performance specs vary: stabilization, thermal desorption, cement kiln injection, and mechanical separation have different capex, opex, and yield profiles, and different regulatory acceptance envelopes, with some reuse only allowed within tight oil-content limits. <cite id=\"772fef6c-0\">Stabilization and solidification were identified as low-impact approaches, and oil-based cuttings can be used in bricks/concrete and base/subbase with performance gains after treatment</cite> <cite id=\"772fef6c-1\">Permitted oil contents in asphalt ranges from 3% (by replacing 5% aggregate) up to 35% contaminated soil, with maintained tensile strength and conductivity constraints</cite> <cite id=\"9dd3c197-0\">Higher cuttings share reduced tensile strength and can conflict with regulatory requirements</cite> <cite id=\"772fef6c-2\">Regulatory screening after S/S can require corrective action due to residual TPH</cite>. Third, transport distance, oil price, and local fees are case-specific and highly variable, producing different breakeven thresholds across geographies and operators. <cite id=\"999d8ece-1\">Tipping fees range $10\u2013$120/ton and can be local-municipal low or remote-high; transport costs per mile can be several dollars, altering the economics by haul distance</cite> <cite id=\"758798cf-2\">Oil price below $50/bbl and fiscal terms affect investment and cost comparisons</cite>. Fourth, evaluation frameworks differ: some emphasize technical feasibility and lab performance while underweighting full life-cycle costs and permitting timelines; others emphasize immediate OPEX but neglect capex recovery and working capital. <cite id=\"758798cf-1\">Economic assessments must integrate immediate, disposal, transport, equipment, and energy costs alongside operating performance (safety, reliability, end product condition)</cite>. Finally, uncertainty and sensitivity analyses are inconsistently reported; studies that do not monetize noncompliance risk or downstream remediation liabilities will underestimate costs when regulatory noncompliance occurs. <cite id=\"772fef6c-2\">Even treated and stabilized drill cuttings may fail environmental screening, requiring additional corrective measures that add cost and delay</cite>.\n\nPractical decision rules and design of viable valorization\n- Prefer reuse routes with demonstrated compliance and stable specs. Favor stabilization/thermal desorption pathways that meet local screening for construction reuse; if not, consider on-site stabilization (e.g., for pads/roads) to avoid off-site transport and landfill fees. <cite id=\"772fef6c-0\">Stabilization and solidification are low-impact approaches, and stabilized material can be used for erosion control and as base/subbase</cite> <cite id=\"772fef6c-2\">Residual TPH may exceed targets even after S/S, requiring corrective action for construction reuse</cite>.\n\n- Anchor to local disposal costs and transport logistics. Compute breakeven when reuse avoids landfill fees and transport charges; aggregation to support long-haul optimization and achieving high tonnage throughput reduces unit costs. <cite id=\"999d8ece-0\">Reuse saves landfill acceptance and transport to disposal</cite> <cite id=\"999d8ece-1\">Landfill tipping fees range $10\u2013$120/ton; transport costs per mile are material</cite> <cite id=\"999d8ece-2\">Large-scale diversion thresholds (e.g., >100,000 t/y) improve viability; monetizing social costs further improves the case</cite>.\n\n- Engineer for market specs. For asphalt and concrete, target low oil fractions and proven mix designs; if oil is an activator, validate stability and rutting/thermal sensitivity. <cite id=\"9dd3c197-2\">1\u20136% oil-based cuttings can be included in asphalt concrete with bitumen adjustments and compliance to GOST, though temperature control is critical</cite> <cite id=\"772fef6c-1\">Permitted oil contents and performance metrics differ by jurisdiction and mix design</cite> <cite id=\"9dd3c197-0\">Tensile strength decreases with higher cuttings share, requiring compliance-conscious limits</cite>.\n\n- Internalize policy and fiscal context. Where oil prices are low or royalties/high, prioritize least-regret valorization routes; where policy supports waste diversion or credits, capture them in TEA. <cite id=\"758798cf-2\">Oil price below $50/bbl and fiscal terms materially affect development and willingness to invest in waste management pathways</cite> <cite id=\"999d8ece-2\">Accounting for social costs of landfilling increases the attractiveness of diversion/valorization at smaller scales</cite>.\n\n- Do sensitivity analysis around oil content, moisture, energy prices, and fees. Report breakeven ranges versus landfill tipping fee and haul distance, and include a noncompliance risk budget for regulatory screening. <cite id=\"758798cf-1\">Economic evaluation must include transport, disposal, equipment, and energy costs</cite> <cite id=\"772fef6c-2\">Regulatory noncompliance risk can trigger corrective costs even after stabilization</cite>.\n\nEvidence sufficiency and remaining gaps\nThe literature supports that valorization is economically viable when treated products meet regulatory performance and quality specs and when avoided disposal costs and product revenues exceed the sum of collection, conditioning, and processing costs; viability is highly sensitive to local tipping fees, transport distances, feedstock oil content, and fiscal context. <cite id=\"758798cf-0\">Economics should consider immediate, disposal, transportation, equipment, and energy costs</cite> <cite id=\"772fef6c-0\">Stabilization/solidification reduce impacts and enable reuse in roads, bricks, concrete, and asphalt</cite> <cite id=\"999d8ece-0\">Reuse directly reduces transport and landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Tipping fees span $10\u2013$120/ton with strong distance and locality effects</cite> <cite id=\"758798cf-2\">Oil price and fiscal terms shift the investment calculus</cite>. Reported cost assessments conflict primarily because of differences in baseline (tipping fees vs. internal costs), treatment pathways, regulatory acceptance envelopes, transport logistics, and whether social/externality costs are monetized; harmonizing these inputs and reporting sensitivity ranges resolves many discrepancies. <cite id=\"999d8ece-2\">Monetizing social costs of landfilling narrows the gap and improves valorization competitiveness</cite> <cite id=\"772fef6c-2\">Post-treatment screening failures add hidden remediation costs</cite> <cite id=\"758798cf-1\">Operational performance criteria and cost categories influence outcomes</cite>.\n\nPractical takeaway\nValorization is economically viable when: (1) treated cuttings meet market and regulatory specs at predictable quality; (2) local tipping fees and transport logistics are unfavorable enough to make reuse savings material; (3) operators achieve throughput and scale to spread capex and haul costs; and (4) fiscal/policy conditions support diversion investments. <cite id=\"772fef6c-0\">Stabilization and reuse in subbase/construction are feasible when performance thresholds are met</cite> <cite id=\"999d8ece-1\">Given $10\u2013$120/ton tipping fee ranges and multi-dollar-per-mile transport costs, short hauls and diversion can flip the economics</cite> <cite id=\"758798cf-2\">Favorable fiscal policy and higher oil prices increase willingness and feasibility of valorization investments</cite>. Resolving cost conflicts requires transparent TEA that coalesces local fees, transport, treatment, energy/capital, regulatory compliance risk, and social cost internalization into a common, sensitivity-analyzed baseline. <cite id=\"758798cf-1\">Economic evaluations should comprehensively include immediate, disposal, transportation, equipment, and energy costs, and assess operating performance</cite> <cite id=\"999d8ece-2\">Accounting for social costs of landfilling further tightens breakeven and supports smaller-scale aggregation strategies</cite>.",
+          "trace": {
+            "generated_text": "<think>\nDecompose the question:\n- We need to determine conditions (economics, technology, market, policy) under which valorization of drill cuttings (from oil/gas or geotechnical drilling) is economically viable.\n- We also need to explain why cost assessments reported in literature conflict: methodological differences, scope (reuse vs disposal), market price volatility, sample sizes, geology, regional logistics, and accounting for externalities/policy.\n\nAssumptions:\n- \u201cDrill cuttings\u201d likely refers to oil and gas drilling mud solids and associated rock cuttings, plus geotechnical drilling spoil; value chains differ.\n- \u201cValorization\u201d includes cement/lime stabilization for reuse, soil amendment, asphalt/ballast, concrete aggregates, brick/paving, recycling in drilling mud, compost/biofuel, and rare\u2011earth/metal recovery.\n- Economic viability depends on revenues minus costs for collection, processing, conditioning, transport, and market price, with tipping/landfill alternatives as a benchmark.\n\nSearch plan:\n1) Start broad: recent reviews on drill cuttings valorization economics and life-cycle cost/benefit (2018\u20132025), fields: Environmental Science, Engineering.\n2) Drill into specific valorization routes with techno-economic or LCA/LCC analyses (e.g., cement stabilization for reuse in cement/lime products; asphalt/ballast; concrete bricks; oil-absorbent reuse; metal/rare-earth leaching).\n3) Retrieve studies on cost conflicts: methodological heterogeneity (LCC vs. cradle-to-gate vs. cradle-to-grave), discounting, uncertainty, sensitivity to oil/gas price, transport distances, energy prices; regulatory tipping fees and subsidies; case-specific geology and moisture content.\n4) Add domain-specific evidence for geotechnical drill cuttings reuse and for oilfield produced water treatment integration.\n\nFirst query: broad review-level evidence on \u201cdrill cuttings valorization economics\u201d.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2018-2025\" fieldsOfStudy=\"Environmental Science,Engineering\">oil and gas drill cuttings valorization economics cost-benefit review</call_tool><tool_output><snippet id=758798cf-0>\nTitle: Economic and environmental efficiency of drill cuttings processing in oil and gas drilling operations\nSnippet: No content available\n</snippet>\n<snippet id=758798cf-1>\nTitle: The evaluation system of oily drill cuttings treatment technologies based on the fuzzy evaluation method\nSnippet: If the treatment technology is not properly selected, it will seriously increase the burden of business operations. According to the general requirements of the industry, the economics of treatment should consider immediate cost, disposal cost, transportation cost, equipment cost and energy cost, et al. \n\nFinally, evaluation of oily drill cuttings treatment techniques requires full consideration of the operating performance. In general, operating performance is characterized by factors such as safety, human health issues, processing rate, mechanical reliability, space availability, weather conditions and condition of end products, et al.\n</snippet>\n<snippet id=758798cf-2>\nTitle: Evaluation of Oil and Gas Economy using Economics Profit Indicators and Prototype Macro VBA Excel\nSnippet: For this purpose, this study intends to define and review the concept of a marginal oil field, in a concrete and measurable manner, while taking into account the reserves that can be developed, the prevailing fiscal circumstances and the availability of technologies as well as the conditions of economic stability that occur.Thus a new fiscal policy can be recommended on marginal oil and gas lading, by examining and reviewing contracts for operatsor.It is necessary to determine at what point it can make investors interested in investing in oil and gas sketor with existing technology.A comprehensive economic analysis conducted shows that these areas are actually valuable investments.The government should consider providing adequate incentives, then reviewing bonuses to operators with a 50% contract, and which have very low or no impact on the rate of return on investment.In addition, the amount of royalties and oil taxes as proposed in the 2012 Oil Industry regulation, will increase investment in marginal reserve areas more passionately and benefit investors, than the previously stipulated fiscal requirements.The decline in future oil prices below the proposed limit of $50, this study also displays an adverse effect on the development of marginal oil fields.Project expenditures and financing with a high degree of uncertainty pose challenges for marginal oilfield development and various alternatives are suggested, including; equity financing, technical partnerships, loan sources from local and foreign banks.(Adeogun, 2015) Another study evaluates the historical and current costs of drilling and completing oil and gas wells compared to geothermal wells.Initially, developed a new cost index for offshore oil and gas wells in the United States based on API Joint Association Survey data from 1976 to 2009.From year to year cost indexes vary widely in drilling costs and allow one to develop and analyze drilling previously.Expenses are calculated on a current year dollar basis.To distinguish it from other cost indices, it is necessary to label it on the Cornell Energy Institute (CEI) index.The index consists of nine sub-indices for different well depth intervals and has been fixed and corrected for annual changes in drilling activity.The CEI index shows an increase in well costs by 70% from 2003 to 2008 when compared to the Producer Price Index (PPI) which is commonly used for drilling in oil and gas wells.\n</snippet></tool_output><think>\nMini-synthesis of first results:\n- The first broad query returned one empty snippet and a methods-oriented evaluation that emphasizes comprehensive cost accounting for oily cuttings (transport, treatment, energy, equipment) and operating performance metrics like safety, processing rate, and end-product quality; this is relevant to understanding cost drivers and evaluation scope, but not yet to explicit economic viability thresholds or case revenues. The third snippet is about marginal oilfield economics and drilling cost indices; tangential but supports the sensitivity of costs to oil price and fiscal regime.\nGaps:\n- Need specific techno-economic analyses (TEA/LCC/LCA) for valorization routes (e.g., stabilization and reuse in cement/lime, asphalt/ballast, bricks; oil/metal recovery; soil amendment).\n- Need evidence on why studies conflict: methodological heterogeneity (tipping fee vs. internalized costs, cradle-to-gate vs. cradle-to-grave, discounting), market price volatility, transport distance, moisture/oil content, regional conditions, and policy incentives.\nNext query:\nSearch for TEA/LCC/LCA papers on \u201coily drill cuttings\u201d valorization economics and reuse in construction materials, 2018\u20132025.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2018-2025\" fieldsOfStudy=\"Environmental Science,Engineering\">oily drill cuttings reuse techno-economic analysis life cycle cost asphalt ballast bricks cement stabilization economic viability</call_tool><tool_output><snippet id=772fef6c-0>\nTitle: Feasibility Study of the Potential Use of Drill Cuttings in Concrete\nSnippet: The life cycle assessment of this study contained different stabilization and treatment systems such as reserve pit without treatment and solidification and thermal desorption. Comparing different scenarios for the treatment, they showed that stabilization and solidification are the best approaches and have the lowest impacts. \n\nIn recent years, many researchers have studied the stabilization of hazardous waste [6][7][8]. In a parallel recent trend, researchers have begun to investigate the incorporation of recycling drill cuttings in various applications such as using them as a kiln feed in the manufacture of Portland cement [9,10], in the manufacture of bricks and concrete blocks [10,11], highway construction [12,13], as substrate in wetlands restoration [14][15][16][17], and soil fertilizer [18]. One wide spread application of drill cuttings is to stabilize areas that are susceptible to getting eroded such as roads and drilling pads [13]. \n\nIn a study conducted by Tuncan et al. [13], petroleum-contaminated soil was stabilized with 5% cement, 10% fly ash, and 20% lime, so it can be used as a sub-base material for road construction. These mixtures were found to be effective and safe for using as a sub-base material. Laboratory studies showed a significant increase in the unconfined compressive strength, California bearing ratio, and durability. However, a similar decrease was obtained in electrical, conductivity and cation exchange capacity. In another study performed by Li et al. [19], the effect of diesel based drilling fluids on Portland cement was investigated. They examined the mechanism of contracting cement slurry and diesel based fluid materials which lead to the contamination mitigation. Results showed that the changes in the slurry properties were caused by osmotic pressure and demulsification. Having investigated the physical and chemical properties of drill cuttings, several studies have attempted to use petroleum-contaminated soil in hot mix asphalt concrete. In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20].\n</snippet>\n<snippet id=772fef6c-1>\nTitle: Feasibility Study of the Potential Use of Drill Cuttings in Concrete\nSnippet: In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20]. In another study, Meegoda and Muller [21] examined the integration of petroleum-contaminated soil into hot mix asphalt concrete in New Jersey. It was found that it is possible to include up to 35% petroleum-contaminated soil in the mix. Later, Meegoda et al. [22] revealed that the tensile strength ratio for hot mix asphalt containing petroleum-contaminated soil was not meaningfully different from the control mix. Their results indicated that saturated hydraulic conductivity values of all hot mix asphalt samples containing petroleum-contaminated soil were less than 2\u00d7 10 6 cm/s. In a similar study, Aydilek et al. [23] mixed fly ash with drilling waste to be used as base or sub-base material. Fly ash can be used as mineral filler in hot mix asphalt paving applications. Their results showed that fly ash is a good additive to reduce leaching. \n\nTaha et al. [24] studied the possible application of bottom sludge from petroleum tanks as paving materials in roads. In their study, the total petroleum hydrocarbon contents were as high as 50 to 65%. Hot mix asphalt specimens containing petroleum waste were created by blending the heated sludge and aggregates without the addition of fresh asphalt. Different sludge percentages, ranging between 3% and 7% were added to the clean aggregate. Test results showed a noteworthy increase in stability with the addition up to 5% of sludge, followed by a stability decrease upon further increase in sludge content. \n\nThe present study investigates the potential of using drill cuttings in concrete as a partial replacement of cement. The innovation of this study is not only to produce a new and cost-effective material from drill cuttings, but also to mitigate its negative environmental impacts. To achieve this objective, laboratory studies were conducted to quantify the compressive strength of concrete samples and to determine the chemical composition of drill cuttings. Results revealed that replacing 5% of cement with dried drill cuttings reduces the compressive strength of concrete by 10%.\n</snippet>\n<snippet id=772fef6c-2>\nTitle: Diagnostic screening of organic contaminant level in solidified/stabilized pre-treated oil-based drill cuttings\nSnippet: In this study, the diagnostic screening against local environmental guidelines of levels of target contaminants in cement-based solidified/ stabilized low-temperature thermally desorbed oil-based drill cuttings was carried out. This was done to ascertain whether or not some form of action may be required to avert future problems that may arise from the use of solidified/stabilized pre-treated oil-based drill cuttings for construction purposes. Results obtained showed that the 2 % drill cuttings addition yielded the highest UCS (22.22-26.22 N/mm 2 ) at water-tocement ratio of 0.6:1, which were well above the recommended minimum UCS of 20 N/mm 2 for a grade-20 concrete. The average amount of TPH remaining after cement-based S/S of the pre-treated oil-based drill cuttings was 62.41 mg/kg, which slightly exceeded the local regulatory target value of 50 mg/kg. This suggests that cement-based S/S failed to immobilize completely all the hydrocarbons in the pre-treated oil-based drill cuttings. Similarly, there were relics of heavy metals (albeit less than regulatory target values) in the solidified/stabilized matrix. This implies that the solidified/stabilized matrix is not in compliance with environmental guidelines on TPH for sustainable reuse of the pre-treated oilbased drill cuttings as construction materials. As a result, before putting the solidified/stabilized pre-treated oil-based drill cuttings to the intended use, some form of corrective action is required due to the potential environmental health risks of exposure to petroleum hydrocarbons.\n</snippet></tool_output><think>\nReflection on latest snippets:\n- The first two snippets (772fef6c-0, 772fef6c-1) summarize multiple studies on using drill cuttings in cement, bricks, asphalt base/subbase, and road stabilization, with performance and regulatory notes, including Massachusetts and New Jersey allowances for asphalt mixes containing small oil percentages. These show technical feasibility and some reuse pathways, but they lack explicit cost breakdowns or net economic viability metrics; they do, however, hint that performance thresholds and regulatory compliance are economic constraints (e.g., requiring stabilization and sometimes corrective measures). The third snippet (772fef6c-2) provides LCA/solidification-stabilization data and regulatory screening results, noting that even after S/S and low-temperature thermal desorption, TPH may slightly exceed local targets, implying added costs for further treatment or risk management before reuse. This supports the idea that environmental compliance can impose nontrivial costs and conditions on viability.\n- From the first query, the second snippet (758798cf-1) gives a clear economic framing: full cost accounting must include immediate, disposal, transport, equipment, and energy costs, plus operational performance (safety, processing rate, reliability, end product quality), which explains cross-study differences. The third query\u2019s drilling economics snippet (758798cf-2) shows cost volatility and fiscal regimes affecting oilfield operations\u2019 economics, which can indirectly affect willingness to invest in valorization.\nGaps:\n- Need explicit techno-economic analyses with dollar costs/tonne revenues and breakeven conditions for valorization routes (asphalt/ballast, concrete/cement replacement, bricks, soil stabilization), and evidence on when revenues from reuse exceed landfill/tipping fees or when internalized treatment costs make disposal cheaper.\n- Need sources explaining why cost assessments conflict due to market assumptions (crude/oil price, transport distances, moisture/oil content, energy prices), evaluation scope (cradle-to-gate vs cradle-to-grave), discounting/uncertainty, and policy/tax incentives.\n- Also need evidence on oil and gas operators\u2019 internal transfer pricing and when regulatory constraints/permits change the calculus (e.g., bans on landfills or mandates for solids separation).\nNext query:\nSearch specifically for \u201ctechno-economic assessment\u201d and \u201cbreakeven\u201d for oil-based drill cuttings reuse in asphalt/concrete, including \u201ctipping fee comparison\u201d.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2018-2025\" fieldsOfStudy=\"Environmental Science,Engineering,Economics\">techno-economic assessment drill cuttings reuse asphalt concrete tipping fee breakeven oil-based cuttings cost $/tonne</call_tool><tool_output><snippet id=9dd3c197-0>\nTitle: Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete\nSnippet: The article describes the problem of environmental pollution from the placement of drill cuttings in it. The main sources of contamination are oil products included in the drill cuttings, chemicals added to the drilling fluid, and heavy metals. In order to reduce the negative impact, it was proposed to use the resource potential of drill cuttings as a mineral powder in the technology for producing asphalt concrete. Samples of drill cuttings were taken in the fields of Western Siberia. It has been established that there are no excesses in the standards for the content of heavy metals in mobile form in samples of drill cuttings. The analysis of physical and chemical characteristics showed that there are high values of COD, oil content, dry residue, rigidity, magnesium and calcium ions, chlorides. Laboratory studies have shown the possibility of using drill cuttings as a mineral powder in asphalt concrete. The optimum composition of the asphalt mixture was obtained. The obtained physical and mechanical properties of asphalt concrete samples comply with the requirements of regulatory documents. It is established that the strength characteristics depend on the percentage of drill cuttings in asphalt concrete: with an increase in the share of drill cuttings, the value of the tensile strength decreases, and at the same time there is a discrepancy with regulatory requirements.\n</snippet>\n<snippet id=9dd3c197-1>\nTitle: Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete\nSnippet: No content available\n</snippet>\n<snippet id=9dd3c197-2>\nTitle: The use of waste in the composition of organic-mineral mixtures used in road construction\nSnippet: Drilling cuttings formed during drilling of oil fields can be considered as a raw material for the production of mineral powder for asphalt concrete. The content of oil in drill cuttings is considered a positive factor and can be used to produce activated mineral powder. Such use makes it possible to reduce the amount of bitumen in the asphalt concrete composition and to obtain significant savings in material resources. The studies carried out have shown that the composition of the asphalt concrete mixture: sand -12.5%; crushed stone -45.5%; crushing screening -36%; drill cuttings -6%; bitumen -5.3% over 100% meet the requirements of GOST. Oil-based drill cuttings can be recommended for inclusion in the composition of asphalt concrete from 1 to 6%. \n\nWaste plastics HDPE and LDPE can be considered as reinforcing and modifying elements in the structure of asphalt concrete. Asphalt concrete, which includes: crushed stone of fraction 10-20 mm -46%; sand -12%; sand from crushing screenings -39%; mineral powder -3%; bitumen BND 60/90 -5% and plastic waste 4% meet the requirements of GOST for asphalt concrete. When using such an asphalt concrete mixture, it is necessary to strictly maintain the paving temperature, since a decrease in temperature sharply increases the rigidity of the mixture, reducing the compaction coefficient of the asphalt concrete. \n\nDrilling waste and plastic waste have a positive effect on the processes of structure formation in organomineral mixtures. With their help, it is possible to obtain asphalt concrete with increased physical, mechanical and operational performance.\n</snippet></tool_output><think>\nSynthesis so far:\n- Evidence indicates multiple reuse pathways for drill cuttings (asphalt base/subbase and mixes with limited oil content, bricks/concrete blocks, cement/lime stabilization and partial cement replacement) with technical performance constraints and the need for stabilization/thermal/desorption treatments; these affect costs and viability thresholds. Environmental compliance and local regulations can require additional treatment, adding cost and conditions for market entry. Economic evaluations must include transport, treatment, energy, equipment, and operational performance, which explains cross-study cost disparities. Broader oil price and fiscal conditions influence the willingness and cost of valorization initiatives.\nGaps:\n- Need explicit cost comparisons versus landfill/tipping fees and breakeven conditions; need quantified TEA/LCA cost-per-tonne and sensitivity drivers (oil price, transport distances, moisture/oil content, energy prices).\n- Need sources that directly explain the \u201cconflict\u201d in cost assessments: scope differences (cradle-to-gate vs cradle-to-grave), discounting, uncertainty, accounting for subsidies/tipping fees, and case specificity.\nNext step:\n- Search for \u201clandfill/tipping fee\u201d comparisons and TEA/LCA for drill cuttings reuse to quantify when reuse beats disposal; include \u201cbreakeven\u201d and \u201ccost per tonne\u201d.\n</think>\n<call_tool name=\"snippet_search\" limit=\"3\" year=\"2018-2025\" fieldsOfStudy=\"Environmental Science,Engineering,Economics\">drill cuttings reuse economic viability comparison tipping fee landfill cost per tonne life cycle cost analysis</call_tool><tool_output><snippet id=999d8ece-0>\nTitle: The Role of Biosurfactants in the Continued Drive for Environmental Sustainability\nSnippet: Reuse results in the reduction of costs that would have otherwise been expended on the transportation of drill cuttings to disposal sites, and other associated charges such as the cost of acceptance charges at landfills [77]. In this respect, the need to identify alternative ways of using clean and treated drill cuttings and other petroleum wastes cannot be over-emphasized. It is an issue that must be accorded great urgency [77].\n</snippet>\n<snippet id=999d8ece-1>\nTitle: Putting Matter in Place\nSnippet: While transportation is only one of many economic factors shaping waste removal, its costs are significant. Studies estimate the total cost of transportation using a full garbage truck, including externalities such as pollution or road wear, to $5.3 3 per mile (Porter, 2002). The cost of disposal at a landfill depends on a number of different parameters, such as land value, capacity, construction and maintenance costs, and compensation to adjacent communities (Jenkins, Maguire, & Morgan, 2004). Most landfills have lower tipping fees for trash from local municipalities. Consequently, landfilling could be either the cheapest or the most expensive form of disposal; a review of operating costs of waste facilities reveals that among disposal methods, landfilling has the greatest cost variance, with a typical range of $10 to $120 per ton. Recent data from Washington State show a similar spread, with tipping fees ranging from $22 per ton up to $102 per ton in 2008-2009. It is reasonable to expect this range being large enough to motivate trips to a more remote facility.\n</snippet>\n<snippet id=999d8ece-2>\nTitle: The implications of facility design and enabling policies on the economics of dry anaerobic digestion.\nSnippet: Specifically, at this $184 per tonne landfill tipping fee equivalent, assuming waste intake greater than 100,000 tonnes per year ensures that the Electricity and RNG Vehicle Fuel scenarios will be economically attractive. In more populated areas, reaching this scale will be possible (even if waste is hauled no more than 20 km), while smaller cities and rural areas will need to aggregate their wastes at centralized facilities (Scown et al., 2019). Although outside of the scope of this analysis, it is worth noting that source-separation and/or preprocessing required to reduce contamination levels to levels acceptable for dry AD can result in additional costs. These costs may be in the form of separate bins and collection routes to facilitate increased sourceseparation or in processing at materials recovery facilities that are designed for high organics recovery (e.g., using de-packaging machines). Some of the costs and benefits of diverting organic waste from landfills are not monetized in this analysis, including the conservation of existing landfill capacity, reduction in landfill biogas generation, improvement in leachate quality, potential recovery of organic matter and nutrients, and changes in GHG and other air pollutant emissions (Chen et al., 2021;Morris et al., 2013;Nordahl et al., 2020). However, estimated social costs of landfilling wet organic waste based on the impacts of air pollutant and greenhouse gas emissions are $25-40 per tonne according to results from a recent life-cycle assessment of dry AD (Nordahl et al., 2020). If these costs were incorporated into landfill tipping fees, it would increase the relevant point of comparison and make AD facilities competitive at even more sizes and configurations.\n</snippet></tool_output><think>\nSufficiency check:\nWe have evidence on:\n- Economic evaluation scope and cost drivers for drill cuttings treatment and reuse, including transport, treatment, equipment, and energy costs, and operational performance criteria that affect market viability.\n- Multiple reuse pathways with technical performance constraints (asphalt base/subbase with limited oil content, bricks/concrete blocks, cement/lime stabilization/partial cement replacement), and the need for stabilization/thermal desorption; these create variable cost structures and acceptance thresholds.\n- Environmental compliance and local regulatory screening can require additional treatment before reuse, adding costs and creating market entry conditions.\n- Landfill/tipping fees vary widely and are sensitive to scale, locality, oil price and fiscal regime; reuse can be economically attractive when it offsets transport and disposal charges, but internalized environmental/social costs and non-monetized benefits of landfilling shift the breakeven.\n- Methodological heterogeneity (cost components, performance metrics, regulatory endpoints, discounting/uncertainty, data specificity) explains cross-study cost conflicts.\n\nRemaining gaps:\nQuantified breakeven prices per tonne for specific valorization routes are sparse; however, multiple sources provide ranges for tipping fees and transport costs, and explicit mechanisms for variance. We will synthesize conditions of economic viability and the reasons for conflicting cost assessments, citing the mechanisms and ranges.\n\nStructure plan for the answer:\n1) Executive summary\n2) What \u201ceconomic viability\u201d depends on: cost model scope, baseline (landfill/tipping), transport, processing, energy, capital, performance specs, and market price volatility\n3) Valorization routes and where they become viable: stabilization/solidification for reuse in subbase/asphalt/concrete; constraints on oil content and need for corrective measures; case evidence on asphalt and concrete\n4) Cross-cutting drivers: scale/aggregation, oil price/fiscal regimes, oil content/moisture, energy prices, permitting/regulation and environmental compliance\n5) Why reported cost assessments conflict: methodological differences, scope and accounting, uncertainty and sensitivity, data and case specificity, regional/regulatory variability, and time horizons; include quantified tipping fee ranges and transport cost per mile to illustrate\n6) Practical decision framework and research needs\n\nWe will ensure each evidence-backed statement carries citations and use boxed/quantified ranges where appropriate.\n</think>\n<answer>\nSummary\nEconomic viability of drill cuttings valorization depends on whether revenues from reuse (or avoided disposal charges) exceed the sum of collection, conditioning, processing, and transport costs while meeting performance and regulatory requirements; in practice, it often compares against a variable landfill tipping fee baseline rather than a universal fixed cost. Reported cost assessments frequently conflict because studies differ in scope (tipping fee vs. social cost internalization), treatment pathways (e.g., stabilization vs. thermal desorption), local regulations, transport distances, oil content of the feedstock, and accounting of energy and capital, alongside sensitivity to oil price and fiscal regimes. <cite id=\"758798cf-0\">If the treatment technology is not properly selected, it will seriously increase the burden of business operations; economics should consider immediate, disposal, transportation, equipment, and energy costs</cite> <cite id=\"758798cf-1\">Finally, evaluation requires operating performance factors such as safety, processing rate, reliability, and end product condition</cite> <cite id=\"999d8ece-0\">Reuse reduces costs that would otherwise be spent on transporting drill cuttings to disposal sites and paying landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Tipping fees vary widely by site and circumstance; typical ranges are about $10\u2013$120 per ton with local municipal streams lower and long-haul tipping fees higher</cite>.\n\nWhat determines economic viability\nEconomic viability must compare incremental revenues and avoided costs of valorization against a credible alternative, typically landfilling under prevailing local fees and logistics. Valorization projects that stabilize, separate, or transform drill cuttings can reduce or avoid disposal charges and create product value, but only if the treated product meets quality and regulatory targets and the total cost (capital, energy, and operations) is justified by market or regulatory revenues. <cite id=\"999d8ece-0\">Reuse lowers transportation and landfill acceptance costs</cite> <cite id=\"999d8ece-1\">Landfill disposal costs depend on land value, capacity, construction/maintenance, and community compensation, with ranges of roughly $10\u2013$120 per ton and local municipal streams often cheaper than industrial hauls</cite>. Transport cost structures also create distance-sensitive economies of scale; for example, one estimate places full-garbage-truck removal costs at about $5.33 per mile, making local aggregation and route optimization pivotal to breakeven. <cite id=\"999d8ece-1\">Transportation costs can dominate over several dollars per mile, and landfilling can be cheapest or most expensive depending on parameters, with typical ranges of $10\u2013$120 per ton</cite>. In oil and gas contexts, broader fiscal and price dynamics affect willingness and ability to invest in valorization: declining crude prices and uncertain project economics raise financing risk and can shift operators toward lower-cost waste handling, while supportive fiscal policy can unlock marginal reserves and parallel investments in cleaner waste pathways. <cite id=\"758798cf-2\">When future oil prices fall below about $50/bbl, development becomes adverse; project expenditures and financing uncertainty challenge alternatives, and fiscal terms (royalties, bonuses) influence investor interest</cite>.\n\nValorization routes and where they become viable\nMultiple reuse pathways exist, each with performance envelopes and cost profiles that determine where they cross economically into viability:\n\n- Stabilization/solidification and re-use in civil infrastructure. Cement-based stabilization and thermal desorption can condition oil-based drill cuttings for use as subbase/base or in concrete, but environmental screening may still require corrective action if target contaminants are not fully immobilized. <cite id=\"772fef6c-0\">Comparing stabilization and solidification to no-treatment and thermal desorption, stabilization/solidification emerged as best approaches with lowest impacts</cite> <cite id=\"772fef6c-2\">For pre-treated oil-based drill cuttings, 2% addition in cement produced UCS of 22.22\u201326.22 N/mm\u00b2 above grade-20 concrete minimum (20 N/mm\u00b2), yet total petroleum hydrocarbons averaged 62.41 mg/kg, slightly exceeding a 50 mg/kg regulatory target, implying additional corrective action before construction reuse</cite>. If stabilization meets local environmental screening, reuse in base/subbase can be cost-effective by avoiding landfill and meeting geotechnical specs. <cite id=\"772fef6c-0\">Drill cuttings are widely used to stabilize erodible pads and as kiln feed, bricks, concrete blocks, highway construction, and soil fertilizer; stabilization increased unconfined compressive strength, California bearing ratio, and durability in petroleum-contaminated soils treated with cement/lime/fly ash</cite>.\n\n- Incorporation in asphalt and concrete mixes. Small fractions of low-oil-content drill cuttings can be substituted for aggregates or mineral fillers in asphalt concrete, reducing material costs while preserving performance; higher oil contents degrade tensile strength and raise compliance risks. <cite id=\"772fef6c-1\">Massachusetts DEQE permitted replacing 5% aggregate with soil containing 3% oil (gasoline/kerosene), and New Jersey studies allowed up to 35% petroleum-contaminated soil in hot-mix asphalt with tensile strength ratios not meaningfully different from control and hydraulic conductivity below 2\u00d710\u207b\u2076 cm/s</cite> <cite id=\"9dd3c197-0\">Laboratory studies from Western Siberia showed asphalt concrete mixtures with drill cuttings met regulatory requirements but tensile strength decreased with higher cuttings share, creating discrepancies with some regulatory requirements</cite> <cite id=\"9dd3c197-2\">Oil-based drill cuttings can be recommended for inclusion from 1\u20136% in asphalt concrete; when combined with bitumen and as filler/mineral powder, compositions can meet GOST with oil content treated as a positive activator, though paving temperature control is critical</cite>. In concrete, partial cement replacement with dried drill cuttings can lower binder cost but reduces compressive strength, requiring mix design compensation. <cite id=\"772fef6c-1\">Replacing 5% cement with dried drill cuttings reduced compressive strength by 10%, indicating design trade-offs to maintain performance</cite>.\n\n- Downstream markets and value streams. Where treated drill cuttings meet quality specs, markets include cement kiln feed, bricks/pavers, ballast, and soil amendments; technical performance and regulatory acceptance are gatekeepers. <cite id=\"772fef6c-0\">Reuse as kiln feed in Portland cement, bricks/concrete blocks, highway construction, wetland substrates, and soil fertilizer has been investigated with demonstrated performance gains after stabilization</cite>. In practice, value is often realized via avoided disposal fees and byproduct revenues (e.g., bitumen reduction or filler value) rather than as a primary commodity, making landfill tipping fees and transport distances critical to breakeven. <cite id=\"999d8ece-0\">By substituting reuse for landfilling, operators avoid transport to disposal and landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Given $10\u2013$120/ton tipping fee ranges, the savings per tonne and optimal haul distances materially influence whether reuse is cheaper than landfill</cite>.\n\nCross-cutting drivers that shift the viability boundary\n- Feedstock characteristics. Oil and gas content, moisture, and metal load determine processing route and cost. Stabilization/thermal desorption and separation clean up hydrocarbons and leachables but add capex, opex, and energy costs; if untreated cuttings can be used on-site as erosion control, upfront costs can be avoided. <cite id=\"772fef6c-0\">Stabilization and solidification were shown to be low-impact options, and drill cuttings are used for erosion control on roads and pads</cite> <cite id=\"772fef6c-2\">Post-cement stabilization still showed residual TPH above a 50 mg/kg target, necessitating corrective action for sustainable reuse</cite>.\n\n- Scale, aggregation, and logistics. Aggregating wastes to support long routes and achieving throughput economies reduces unit transport and disposal costs; municipal or industrial tipping differentials and distance to disposal can flip the economic decision. <cite id=\"999d8ece-1\">Transport costs are significant per mile; landfilling cheapest or most expensive varies with parameters, with $22\u2013$102/ton observed in Washington State; large throughput thresholds (e.g., >100,000 t/y) can make alternatives competitive</cite>.\n\n- Oil price and fiscal regime. Operator incentives and capital availability are sensitive to crude prices and fiscal terms; low oil prices and high taxes can compress budgets and favor lower-cost waste pathways, while supportive policies or tax adjustments can unlock investment in valorization. <cite id=\"758798cf-2\">Below ~$50/bbl, development economics deteriorate; changes in royalty/bonus structures and fiscal terms can increase interest in marginal reserves and associated investments</cite>.\n\n- Environmental and social cost accounting. When social and externality costs of landfilling are capitalized, reuse becomes comparatively more attractive at smaller scales; conversely, if valorization introduces unmanaged risks (e.g., elevated TPH), additional remediation costs appear. <cite id=\"999d8ece-2\">At ~$184/tonne landfill tipping fee, electricity and RNG-from-waste scenarios become attractive above 100,000 t/y throughput; accounting for social costs of landfilling (e.g., $25\u201340/ton for air pollutant and GHG impacts) further improves competitiveness of valorization alternatives</cite> <cite id=\"772fef6c-2\">Even after stabilization/thermal treatment, slight TPH exceedance implies corrective action costs before construction reuse</cite>.\n\nWhy reported cost assessments conflict\nMethodological heterogeneity across studies explains divergent cost numbers and conclusions. First, cost scope and accounting differ: some analyses compare reuse to landfill tipping fees while others compare to internal transfer prices or to a \u201cdo-nothing\u201d baseline with implicit environmental liabilities; including social costs shifts breakeven. <cite id=\"999d8ece-2\">If social costs of landfilling are monetized, tipping fees need to increase by $25\u201340/ton and alternative valorization becomes attractive at smaller scales</cite> <cite id=\"999d8ece-0\">Direct savings from avoided transport and landfill acceptance charges can materially alter net costs</cite>. Second, treatment pathways and performance specs vary: stabilization, thermal desorption, cement kiln injection, and mechanical separation have different capex, opex, and yield profiles, and different regulatory acceptance envelopes, with some reuse only allowed within tight oil-content limits. <cite id=\"772fef6c-0\">Stabilization and solidification were identified as low-impact approaches, and oil-based cuttings can be used in bricks/concrete and base/subbase with performance gains after treatment</cite> <cite id=\"772fef6c-1\">Permitted oil contents in asphalt ranges from 3% (by replacing 5% aggregate) up to 35% contaminated soil, with maintained tensile strength and conductivity constraints</cite> <cite id=\"9dd3c197-0\">Higher cuttings share reduced tensile strength and can conflict with regulatory requirements</cite> <cite id=\"772fef6c-2\">Regulatory screening after S/S can require corrective action due to residual TPH</cite>. Third, transport distance, oil price, and local fees are case-specific and highly variable, producing different breakeven thresholds across geographies and operators. <cite id=\"999d8ece-1\">Tipping fees range $10\u2013$120/ton and can be local-municipal low or remote-high; transport costs per mile can be several dollars, altering the economics by haul distance</cite> <cite id=\"758798cf-2\">Oil price below $50/bbl and fiscal terms affect investment and cost comparisons</cite>. Fourth, evaluation frameworks differ: some emphasize technical feasibility and lab performance while underweighting full life-cycle costs and permitting timelines; others emphasize immediate OPEX but neglect capex recovery and working capital. <cite id=\"758798cf-1\">Economic assessments must integrate immediate, disposal, transport, equipment, and energy costs alongside operating performance (safety, reliability, end product condition)</cite>. Finally, uncertainty and sensitivity analyses are inconsistently reported; studies that do not monetize noncompliance risk or downstream remediation liabilities will underestimate costs when regulatory noncompliance occurs. <cite id=\"772fef6c-2\">Even treated and stabilized drill cuttings may fail environmental screening, requiring additional corrective measures that add cost and delay</cite>.\n\nPractical decision rules and design of viable valorization\n- Prefer reuse routes with demonstrated compliance and stable specs. Favor stabilization/thermal desorption pathways that meet local screening for construction reuse; if not, consider on-site stabilization (e.g., for pads/roads) to avoid off-site transport and landfill fees. <cite id=\"772fef6c-0\">Stabilization and solidification are low-impact approaches, and stabilized material can be used for erosion control and as base/subbase</cite> <cite id=\"772fef6c-2\">Residual TPH may exceed targets even after S/S, requiring corrective action for construction reuse</cite>.\n\n- Anchor to local disposal costs and transport logistics. Compute breakeven when reuse avoids landfill fees and transport charges; aggregation to support long-haul optimization and achieving high tonnage throughput reduces unit costs. <cite id=\"999d8ece-0\">Reuse saves landfill acceptance and transport to disposal</cite> <cite id=\"999d8ece-1\">Landfill tipping fees range $10\u2013$120/ton; transport costs per mile are material</cite> <cite id=\"999d8ece-2\">Large-scale diversion thresholds (e.g., >100,000 t/y) improve viability; monetizing social costs further improves the case</cite>.\n\n- Engineer for market specs. For asphalt and concrete, target low oil fractions and proven mix designs; if oil is an activator, validate stability and rutting/thermal sensitivity. <cite id=\"9dd3c197-2\">1\u20136% oil-based cuttings can be included in asphalt concrete with bitumen adjustments and compliance to GOST, though temperature control is critical</cite> <cite id=\"772fef6c-1\">Permitted oil contents and performance metrics differ by jurisdiction and mix design</cite> <cite id=\"9dd3c197-0\">Tensile strength decreases with higher cuttings share, requiring compliance-conscious limits</cite>.\n\n- Internalize policy and fiscal context. Where oil prices are low or royalties/high, prioritize least-regret valorization routes; where policy supports waste diversion or credits, capture them in TEA. <cite id=\"758798cf-2\">Oil price below $50/bbl and fiscal terms materially affect development and willingness to invest in waste management pathways</cite> <cite id=\"999d8ece-2\">Accounting for social costs of landfilling increases the attractiveness of diversion/valorization at smaller scales</cite>.\n\n- Do sensitivity analysis around oil content, moisture, energy prices, and fees. Report breakeven ranges versus landfill tipping fee and haul distance, and include a noncompliance risk budget for regulatory screening. <cite id=\"758798cf-1\">Economic evaluation must include transport, disposal, equipment, and energy costs</cite> <cite id=\"772fef6c-2\">Regulatory noncompliance risk can trigger corrective costs even after stabilization</cite>.\n\nEvidence sufficiency and remaining gaps\nThe literature supports that valorization is economically viable when treated products meet regulatory performance and quality specs and when avoided disposal costs and product revenues exceed the sum of collection, conditioning, and processing costs; viability is highly sensitive to local tipping fees, transport distances, feedstock oil content, and fiscal context. <cite id=\"758798cf-0\">Economics should consider immediate, disposal, transportation, equipment, and energy costs</cite> <cite id=\"772fef6c-0\">Stabilization/solidification reduce impacts and enable reuse in roads, bricks, concrete, and asphalt</cite> <cite id=\"999d8ece-0\">Reuse directly reduces transport and landfill acceptance charges</cite> <cite id=\"999d8ece-1\">Tipping fees span $10\u2013$120/ton with strong distance and locality effects</cite> <cite id=\"758798cf-2\">Oil price and fiscal terms shift the investment calculus</cite>. Reported cost assessments conflict primarily because of differences in baseline (tipping fees vs. internal costs), treatment pathways, regulatory acceptance envelopes, transport logistics, and whether social/externality costs are monetized; harmonizing these inputs and reporting sensitivity ranges resolves many discrepancies. <cite id=\"999d8ece-2\">Monetizing social costs of landfilling narrows the gap and improves valorization competitiveness</cite> <cite id=\"772fef6c-2\">Post-treatment screening failures add hidden remediation costs</cite> <cite id=\"758798cf-1\">Operational performance criteria and cost categories influence outcomes</cite>.\n\nPractical takeaway\nValorization is economically viable when: (1) treated cuttings meet market and regulatory specs at predictable quality; (2) local tipping fees and transport logistics are unfavorable enough to make reuse savings material; (3) operators achieve throughput and scale to spread capex and haul costs; and (4) fiscal/policy conditions support diversion investments. <cite id=\"772fef6c-0\">Stabilization and reuse in subbase/construction are feasible when performance thresholds are met</cite> <cite id=\"999d8ece-1\">Given $10\u2013$120/ton tipping fee ranges and multi-dollar-per-mile transport costs, short hauls and diversion can flip the economics</cite> <cite id=\"758798cf-2\">Favorable fiscal policy and higher oil prices increase willingness and feasibility of valorization investments</cite>. Resolving cost conflicts requires transparent TEA that coalesces local fees, transport, treatment, energy/capital, regulatory compliance risk, and social cost internalization into a common, sensitivity-analyzed baseline. <cite id=\"758798cf-1\">Economic evaluations should comprehensively include immediate, disposal, transportation, equipment, and energy costs, and assess operating performance</cite> <cite id=\"999d8ece-2\">Accounting for social costs of landfilling further tightens breakeven and supports smaller-scale aggregation strategies</cite>.\n</answer>",
+            "total_tokens": 11264,
+            "tool_call_count": 4,
+            "stopped_reason": "natural",
+            "tool_calls": [
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Economic and environmental efficiency of drill cuttings processing in oil and gas drilling operations\nSnippet: No content available\n\nTitle: The evaluation system of oily drill cuttings treatment technologies based on the fuzzy evaluation method\nSnippet: If the treatment technology is not properly selected, it will seriously increase the burden of business operations. According to the general requirements of the industry, the economics of treatment should consider immediate cost, disposal cost, transportation cost, equipment cost and energy cost, et al. \n\nFinally, evaluation of oily drill cuttings treatment techniques requires full consideration of the operating performance. In general, operating performance is characterized by factors such as safety, human health issues, processing rate, mechanical reliability, space availability, weather conditions and condition of end products, et al.\n\nTitle: Evaluation of Oil and Gas Economy using Economics Profit Indicators and Prototype Macro VBA Excel\nSnippet: For this purpose, this study intends to define and review the concept of a marginal oil field, in a concrete and measurable manner, while taking into account the reserves that can be developed, the prevailing fiscal circumstances and the availability of technologies as well as the conditions of economic stability that occur.Thus a new fiscal policy can be recommended on marginal oil and gas lading, by examining and reviewing contracts for operatsor.It is necessary to determine at what point it can make investors interested in investing in oil and gas sketor with existing technology.A comprehensive economic analysis conducted shows that these areas are actually valuable investments.The government should consider providing adequate incentives, then reviewing bonuses to operators with a 50% contract, and which have very low or no impact on the rate of return on investment.In addition, the amount of royalties and oil taxes as proposed in the 2012 Oil Industry regulation, will increase investment in marginal reserve areas more passionately and benefit investors, than the previously stipulated fiscal requirements.The decline in future oil prices below the proposed limit of $50, this study also displays an adverse effect on the development of marginal oil fields.Project expenditures and financing with a high degree of uncertainty pose challenges for marginal oilfield development and various alternatives are suggested, including; equity financing, technical partnerships, loan sources from local and foreign banks.(Adeogun, 2015) Another study evaluates the historical and current costs of drilling and completing oil and gas wells compared to geothermal wells.Initially, developed a new cost index for offshore oil and gas wells in the United States based on API Joint Association Survey data from 1976 to 2009.From year to year cost indexes vary widely in drilling costs and allow one to develop and analyze drilling previously.Expenses are calculated on a current year dollar basis.To distinguish it from other cost indices, it is necessary to label it on the Cornell Energy Institute (CEI) index.The index consists of nine sub-indices for different well depth intervals and has been fixed and corrected for annual changes in drilling activity.The CEI index shows an increase in well costs by 70% from 2003 to 2008 when compared to the Producer Price Index (PPI) which is commonly used for drilling in oil and gas wells.",
+                "called": true,
+                "timeout": false,
+                "runtime": 1.1105115413665771,
+                "error": "",
+                "call_id": "758798cf",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.5361280830891443,
+                      "paper": {
+                        "corpusId": "271653601",
+                        "title": "Economic and environmental efficiency of drill cuttings processing in oil and gas drilling operations",
+                        "authors": [
+                          "Alexey Cherepovitsyn",
+                          "Andrey Lebedev"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.15862/10ecor423?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.15862/10ecor423, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Economic and environmental efficiency of drill cuttings processing in oil and gas drilling operations",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 101
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.4158930634569156,
+                      "paper": {
+                        "corpusId": "115876464",
+                        "title": "The evaluation system of oily drill cuttings treatment technologies based on the fuzzy evaluation method",
+                        "authors": [
+                          "Zhiqiang Huang",
+                          "Ziyang Xu",
+                          "Yinhu Quan",
+                          "Hui Jia",
+                          "Jianan Li",
+                          "Qianchun Li",
+                          "Zhen Chen",
+                          "Kailun Pu"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1755-1315/170/2/022075?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1755-1315/170/2/022075, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "If the treatment technology is not properly selected, it will seriously increase the burden of business operations. According to the general requirements of the industry, the economics of treatment should consider immediate cost, disposal cost, transportation cost, equipment cost and energy cost, et al. \n\nFinally, evaluation of oily drill cuttings treatment techniques requires full consideration of the operating performance. In general, operating performance is characterized by factors such as safety, human health issues, processing rate, mechanical reliability, space availability, weather conditions and condition of end products, et al.",
+                        "snippetKind": "body",
+                        "section": "The establishment of evaluation index system",
+                        "snippetOffset": {
+                          "start": 5378,
+                          "end": 6023
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 115
+                            },
+                            {
+                              "start": 116,
+                              "end": 304
+                            },
+                            {
+                              "start": 307,
+                              "end": 428
+                            },
+                            {
+                              "start": 429,
+                              "end": 645
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.4157676182340573,
+                      "paper": {
+                        "corpusId": "245974303",
+                        "title": "Evaluation of Oil and Gas Economy using Economics Profit Indicators and Prototype Macro VBA Excel",
+                        "authors": [
+                          "J. Juwairiah",
+                          "Didik Indarwanta",
+                          "F. R. Kodong"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNC",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.31098/cset.v1i1.429?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.31098/cset.v1i1.429, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "For this purpose, this study intends to define and review the concept of a marginal oil field, in a concrete and measurable manner, while taking into account the reserves that can be developed, the prevailing fiscal circumstances and the availability of technologies as well as the conditions of economic stability that occur.Thus a new fiscal policy can be recommended on marginal oil and gas lading, by examining and reviewing contracts for operatsor.It is necessary to determine at what point it can make investors interested in investing in oil and gas sketor with existing technology.A comprehensive economic analysis conducted shows that these areas are actually valuable investments.The government should consider providing adequate incentives, then reviewing bonuses to operators with a 50% contract, and which have very low or no impact on the rate of return on investment.In addition, the amount of royalties and oil taxes as proposed in the 2012 Oil Industry regulation, will increase investment in marginal reserve areas more passionately and benefit investors, than the previously stipulated fiscal requirements.The decline in future oil prices below the proposed limit of $50, this study also displays an adverse effect on the development of marginal oil fields.Project expenditures and financing with a high degree of uncertainty pose challenges for marginal oilfield development and various alternatives are suggested, including; equity financing, technical partnerships, loan sources from local and foreign banks.(Adeogun, 2015) Another study evaluates the historical and current costs of drilling and completing oil and gas wells compared to geothermal wells.Initially, developed a new cost index for offshore oil and gas wells in the United States based on API Joint Association Survey data from 1976 to 2009.From year to year cost indexes vary widely in drilling costs and allow one to develop and analyze drilling previously.Expenses are calculated on a current year dollar basis.To distinguish it from other cost indices, it is necessary to label it on the Cornell Energy Institute (CEI) index.The index consists of nine sub-indices for different well depth intervals and has been fixed and corrected for annual changes in drilling activity.The CEI index shows an increase in well costs by 70% from 2003 to 2008 when compared to the Producer Price Index (PPI) which is commonly used for drilling in oil and gas wells.",
+                        "snippetKind": "body",
+                        "section": "LITERATURE REVIEW",
+                        "snippetOffset": {
+                          "start": 3750,
+                          "end": 6189
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 1530,
+                              "end": 1545,
+                              "matchedPaperCorpusId": "155572949"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 326
+                            },
+                            {
+                              "start": 326,
+                              "end": 453
+                            },
+                            {
+                              "start": 453,
+                              "end": 589
+                            },
+                            {
+                              "start": 589,
+                              "end": 690
+                            },
+                            {
+                              "start": 690,
+                              "end": 882
+                            },
+                            {
+                              "start": 882,
+                              "end": 1125
+                            },
+                            {
+                              "start": 1125,
+                              "end": 1276
+                            },
+                            {
+                              "start": 1276,
+                              "end": 1530
+                            },
+                            {
+                              "start": 1530,
+                              "end": 1677
+                            },
+                            {
+                              "start": 1677,
+                              "end": 1828
+                            },
+                            {
+                              "start": 1828,
+                              "end": 1946
+                            },
+                            {
+                              "start": 1946,
+                              "end": 2001
+                            },
+                            {
+                              "start": 2001,
+                              "end": 2116
+                            },
+                            {
+                              "start": 2116,
+                              "end": 2263
+                            },
+                            {
+                              "start": 2263,
+                              "end": 2439
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "c5bc8ece-6f1b-4ffc-b0c9-dcb378ab33b5",
+                    "title": "Economic and environmental efficiency of drill cuttings processing in oil and gas drilling operations",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5361280830891443,
+                    "error": null
+                  },
+                  {
+                    "id": "b71a3562-3134-4498-b02f-0d4decde9406",
+                    "title": "The evaluation system of oily drill cuttings treatment technologies based on the fuzzy evaluation method",
+                    "url": "",
+                    "snippet": "If the treatment technology is not properly selected, it will seriously increase the burden of business operations. According to the general requirements of the industry, the economics of treatment should consider immediate cost, disposal cost, transportation cost, equipment cost and energy cost, et al. \n\nFinally, evaluation of oily drill cuttings treatment techniques requires full consideration of the operating performance. In general, operating performance is characterized by factors such as safety, human health issues, processing rate, mechanical reliability, space availability, weather conditions and condition of end products, et al.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4158930634569156,
+                    "error": null
+                  },
+                  {
+                    "id": "8e6b8bce-0db5-4818-a69c-d434cf66e483",
+                    "title": "Evaluation of Oil and Gas Economy using Economics Profit Indicators and Prototype Macro VBA Excel",
+                    "url": "",
+                    "snippet": "For this purpose, this study intends to define and review the concept of a marginal oil field, in a concrete and measurable manner, while taking into account the reserves that can be developed, the prevailing fiscal circumstances and the availability of technologies as well as the conditions of economic stability that occur.Thus a new fiscal policy can be recommended on marginal oil and gas lading, by examining and reviewing contracts for operatsor.It is necessary to determine at what point it can make investors interested in investing in oil and gas sketor with existing technology.A comprehensive economic analysis conducted shows that these areas are actually valuable investments.The government should consider providing adequate incentives, then reviewing bonuses to operators with a 50% contract, and which have very low or no impact on the rate of return on investment.In addition, the amount of royalties and oil taxes as proposed in the 2012 Oil Industry regulation, will increase investment in marginal reserve areas more passionately and benefit investors, than the previously stipulated fiscal requirements.The decline in future oil prices below the proposed limit of $50, this study also displays an adverse effect on the development of marginal oil fields.Project expenditures and financing with a high degree of uncertainty pose challenges for marginal oilfield development and various alternatives are suggested, including; equity financing, technical partnerships, loan sources from local and foreign banks.(Adeogun, 2015) Another study evaluates the historical and current costs of drilling and completing oil and gas wells compared to geothermal wells.Initially, developed a new cost index for offshore oil and gas wells in the United States based on API Joint Association Survey data from 1976 to 2009.From year to year cost indexes vary widely in drilling costs and allow one to develop and analyze drilling previously.Expenses are calculated on a current year dollar basis.To distinguish it from other cost indices, it is necessary to label it on the Cornell Energy Institute (CEI) index.The index consists of nine sub-indices for different well depth intervals and has been fixed and corrected for annual changes in drilling activity.The CEI index shows an increase in well costs by 70% from 2003 to 2008 when compared to the Producer Price Index (PPI) which is commonly used for drilling in oil and gas wells.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4157676182340573,
+                    "error": null
+                  }
+                ],
+                "query": "oil and gas drill cuttings valorization economics cost-benefit review",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2018-2025",
+                  "fieldsOfStudy": "Environmental Science,Engineering"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Feasibility Study of the Potential Use of Drill Cuttings in Concrete\nSnippet: The life cycle assessment of this study contained different stabilization and treatment systems such as reserve pit without treatment and solidification and thermal desorption. Comparing different scenarios for the treatment, they showed that stabilization and solidification are the best approaches and have the lowest impacts. \n\nIn recent years, many researchers have studied the stabilization of hazardous waste [6][7][8]. In a parallel recent trend, researchers have begun to investigate the incorporation of recycling drill cuttings in various applications such as using them as a kiln feed in the manufacture of Portland cement [9,10], in the manufacture of bricks and concrete blocks [10,11], highway construction [12,13], as substrate in wetlands restoration [14][15][16][17], and soil fertilizer [18]. One wide spread application of drill cuttings is to stabilize areas that are susceptible to getting eroded such as roads and drilling pads [13]. \n\nIn a study conducted by Tuncan et al. [13], petroleum-contaminated soil was stabilized with 5% cement, 10% fly ash, and 20% lime, so it can be used as a sub-base material for road construction. These mixtures were found to be effective and safe for using as a sub-base material. Laboratory studies showed a significant increase in the unconfined compressive strength, California bearing ratio, and durability. However, a similar decrease was obtained in electrical, conductivity and cation exchange capacity. In another study performed by Li et al. [19], the effect of diesel based drilling fluids on Portland cement was investigated. They examined the mechanism of contracting cement slurry and diesel based fluid materials which lead to the contamination mitigation. Results showed that the changes in the slurry properties were caused by osmotic pressure and demulsification. Having investigated the physical and chemical properties of drill cuttings, several studies have attempted to use petroleum-contaminated soil in hot mix asphalt concrete. In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20].\n\nTitle: Feasibility Study of the Potential Use of Drill Cuttings in Concrete\nSnippet: In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20]. In another study, Meegoda and Muller [21] examined the integration of petroleum-contaminated soil into hot mix asphalt concrete in New Jersey. It was found that it is possible to include up to 35% petroleum-contaminated soil in the mix. Later, Meegoda et al. [22] revealed that the tensile strength ratio for hot mix asphalt containing petroleum-contaminated soil was not meaningfully different from the control mix. Their results indicated that saturated hydraulic conductivity values of all hot mix asphalt samples containing petroleum-contaminated soil were less than 2\u00d7 10 6 cm/s. In a similar study, Aydilek et al. [23] mixed fly ash with drilling waste to be used as base or sub-base material. Fly ash can be used as mineral filler in hot mix asphalt paving applications. Their results showed that fly ash is a good additive to reduce leaching. \n\nTaha et al. [24] studied the possible application of bottom sludge from petroleum tanks as paving materials in roads. In their study, the total petroleum hydrocarbon contents were as high as 50 to 65%. Hot mix asphalt specimens containing petroleum waste were created by blending the heated sludge and aggregates without the addition of fresh asphalt. Different sludge percentages, ranging between 3% and 7% were added to the clean aggregate. Test results showed a noteworthy increase in stability with the addition up to 5% of sludge, followed by a stability decrease upon further increase in sludge content. \n\nThe present study investigates the potential of using drill cuttings in concrete as a partial replacement of cement. The innovation of this study is not only to produce a new and cost-effective material from drill cuttings, but also to mitigate its negative environmental impacts. To achieve this objective, laboratory studies were conducted to quantify the compressive strength of concrete samples and to determine the chemical composition of drill cuttings. Results revealed that replacing 5% of cement with dried drill cuttings reduces the compressive strength of concrete by 10%.\n\nTitle: Diagnostic screening of organic contaminant level in solidified/stabilized pre-treated oil-based drill cuttings\nSnippet: In this study, the diagnostic screening against local environmental guidelines of levels of target contaminants in cement-based solidified/ stabilized low-temperature thermally desorbed oil-based drill cuttings was carried out. This was done to ascertain whether or not some form of action may be required to avert future problems that may arise from the use of solidified/stabilized pre-treated oil-based drill cuttings for construction purposes. Results obtained showed that the 2 % drill cuttings addition yielded the highest UCS (22.22-26.22 N/mm 2 ) at water-tocement ratio of 0.6:1, which were well above the recommended minimum UCS of 20 N/mm 2 for a grade-20 concrete. The average amount of TPH remaining after cement-based S/S of the pre-treated oil-based drill cuttings was 62.41 mg/kg, which slightly exceeded the local regulatory target value of 50 mg/kg. This suggests that cement-based S/S failed to immobilize completely all the hydrocarbons in the pre-treated oil-based drill cuttings. Similarly, there were relics of heavy metals (albeit less than regulatory target values) in the solidified/stabilized matrix. This implies that the solidified/stabilized matrix is not in compliance with environmental guidelines on TPH for sustainable reuse of the pre-treated oilbased drill cuttings as construction materials. As a result, before putting the solidified/stabilized pre-treated oil-based drill cuttings to the intended use, some form of corrective action is required due to the potential environmental health risks of exposure to petroleum hydrocarbons.",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.7603559494018555,
+                "error": "",
+                "call_id": "772fef6c",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6882272080899655,
+                      "paper": {
+                        "corpusId": "55595076",
+                        "title": "Feasibility Study of the Potential Use of Drill Cuttings in Concrete",
+                        "authors": [
+                          "Ehsan Mostavi",
+                          "S. Asadi",
+                          "Elumeze Ugochukwu"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.PROENG.2015.08.543?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.PROENG.2015.08.543, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The life cycle assessment of this study contained different stabilization and treatment systems such as reserve pit without treatment and solidification and thermal desorption. Comparing different scenarios for the treatment, they showed that stabilization and solidification are the best approaches and have the lowest impacts. \n\nIn recent years, many researchers have studied the stabilization of hazardous waste [6][7][8]. In a parallel recent trend, researchers have begun to investigate the incorporation of recycling drill cuttings in various applications such as using them as a kiln feed in the manufacture of Portland cement [9,10], in the manufacture of bricks and concrete blocks [10,11], highway construction [12,13], as substrate in wetlands restoration [14][15][16][17], and soil fertilizer [18]. One wide spread application of drill cuttings is to stabilize areas that are susceptible to getting eroded such as roads and drilling pads [13]. \n\nIn a study conducted by Tuncan et al. [13], petroleum-contaminated soil was stabilized with 5% cement, 10% fly ash, and 20% lime, so it can be used as a sub-base material for road construction. These mixtures were found to be effective and safe for using as a sub-base material. Laboratory studies showed a significant increase in the unconfined compressive strength, California bearing ratio, and durability. However, a similar decrease was obtained in electrical, conductivity and cation exchange capacity. In another study performed by Li et al. [19], the effect of diesel based drilling fluids on Portland cement was investigated. They examined the mechanism of contracting cement slurry and diesel based fluid materials which lead to the contamination mitigation. Results showed that the changes in the slurry properties were caused by osmotic pressure and demulsification. Having investigated the physical and chemical properties of drill cuttings, several studies have attempted to use petroleum-contaminated soil in hot mix asphalt concrete. In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20].",
+                        "snippetKind": "body",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 2461,
+                          "end": 4686
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 415,
+                              "end": 418,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 418,
+                              "end": 421,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 421,
+                              "end": 424,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 634,
+                              "end": 637,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 637,
+                              "end": 640,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 691,
+                              "end": 695,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 695,
+                              "end": 698,
+                              "matchedPaperCorpusId": "137104356"
+                            },
+                            {
+                              "start": 721,
+                              "end": 725,
+                              "matchedPaperCorpusId": "135473810"
+                            },
+                            {
+                              "start": 725,
+                              "end": 728,
+                              "matchedPaperCorpusId": "110667630"
+                            },
+                            {
+                              "start": 767,
+                              "end": 771,
+                              "matchedPaperCorpusId": "95840952"
+                            },
+                            {
+                              "start": 771,
+                              "end": 775,
+                              "matchedPaperCorpusId": "7166243"
+                            },
+                            {
+                              "start": 775,
+                              "end": 779,
+                              "matchedPaperCorpusId": "23513212"
+                            },
+                            {
+                              "start": 779,
+                              "end": 783,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 805,
+                              "end": 809,
+                              "matchedPaperCorpusId": "30530489"
+                            },
+                            {
+                              "start": 950,
+                              "end": 954,
+                              "matchedPaperCorpusId": "110667630"
+                            },
+                            {
+                              "start": 996,
+                              "end": 1000,
+                              "matchedPaperCorpusId": "110667630"
+                            },
+                            {
+                              "start": 1507,
+                              "end": 1511,
+                              "matchedPaperCorpusId": "94733230"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 176
+                            },
+                            {
+                              "start": 177,
+                              "end": 328
+                            },
+                            {
+                              "start": 331,
+                              "end": 425
+                            },
+                            {
+                              "start": 426,
+                              "end": 810
+                            },
+                            {
+                              "start": 811,
+                              "end": 955
+                            },
+                            {
+                              "start": 958,
+                              "end": 1151
+                            },
+                            {
+                              "start": 1152,
+                              "end": 1236
+                            },
+                            {
+                              "start": 1237,
+                              "end": 1367
+                            },
+                            {
+                              "start": 1368,
+                              "end": 1466
+                            },
+                            {
+                              "start": 1467,
+                              "end": 1592
+                            },
+                            {
+                              "start": 1593,
+                              "end": 1726
+                            },
+                            {
+                              "start": 1727,
+                              "end": 1836
+                            },
+                            {
+                              "start": 1837,
+                              "end": 2007
+                            },
+                            {
+                              "start": 2008,
+                              "end": 2225
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5239306128692506,
+                      "paper": {
+                        "corpusId": "55595076",
+                        "title": "Feasibility Study of the Potential Use of Drill Cuttings in Concrete",
+                        "authors": [
+                          "Ehsan Mostavi",
+                          "S. Asadi",
+                          "Elumeze Ugochukwu"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.PROENG.2015.08.543?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.PROENG.2015.08.543, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20]. In another study, Meegoda and Muller [21] examined the integration of petroleum-contaminated soil into hot mix asphalt concrete in New Jersey. It was found that it is possible to include up to 35% petroleum-contaminated soil in the mix. Later, Meegoda et al. [22] revealed that the tensile strength ratio for hot mix asphalt containing petroleum-contaminated soil was not meaningfully different from the control mix. Their results indicated that saturated hydraulic conductivity values of all hot mix asphalt samples containing petroleum-contaminated soil were less than 2\u00d7 10 6 cm/s. In a similar study, Aydilek et al. [23] mixed fly ash with drilling waste to be used as base or sub-base material. Fly ash can be used as mineral filler in hot mix asphalt paving applications. Their results showed that fly ash is a good additive to reduce leaching. \n\nTaha et al. [24] studied the possible application of bottom sludge from petroleum tanks as paving materials in roads. In their study, the total petroleum hydrocarbon contents were as high as 50 to 65%. Hot mix asphalt specimens containing petroleum waste were created by blending the heated sludge and aggregates without the addition of fresh asphalt. Different sludge percentages, ranging between 3% and 7% were added to the clean aggregate. Test results showed a noteworthy increase in stability with the addition up to 5% of sludge, followed by a stability decrease upon further increase in sludge content. \n\nThe present study investigates the potential of using drill cuttings in concrete as a partial replacement of cement. The innovation of this study is not only to produce a new and cost-effective material from drill cuttings, but also to mitigate its negative environmental impacts. To achieve this objective, laboratory studies were conducted to quantify the compressive strength of concrete samples and to determine the chemical composition of drill cuttings. Results revealed that replacing 5% of cement with dried drill cuttings reduces the compressive strength of concrete by 10%.",
+                        "snippetKind": "body",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 4469,
+                          "end": 6735
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 212,
+                              "end": 216,
+                              "matchedPaperCorpusId": "110667966"
+                            },
+                            {
+                              "start": 255,
+                              "end": 259,
+                              "matchedPaperCorpusId": "56524535"
+                            },
+                            {
+                              "start": 477,
+                              "end": 481,
+                              "matchedPaperCorpusId": "136064726"
+                            },
+                            {
+                              "start": 838,
+                              "end": 842,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1083,
+                              "end": 1087,
+                              "matchedPaperCorpusId": "108847184"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 217
+                            },
+                            {
+                              "start": 218,
+                              "end": 360
+                            },
+                            {
+                              "start": 361,
+                              "end": 454
+                            },
+                            {
+                              "start": 455,
+                              "end": 634
+                            },
+                            {
+                              "start": 635,
+                              "end": 802
+                            },
+                            {
+                              "start": 803,
+                              "end": 917
+                            },
+                            {
+                              "start": 918,
+                              "end": 995
+                            },
+                            {
+                              "start": 996,
+                              "end": 1068
+                            },
+                            {
+                              "start": 1071,
+                              "end": 1188
+                            },
+                            {
+                              "start": 1189,
+                              "end": 1272
+                            },
+                            {
+                              "start": 1273,
+                              "end": 1422
+                            },
+                            {
+                              "start": 1423,
+                              "end": 1513
+                            },
+                            {
+                              "start": 1514,
+                              "end": 1680
+                            },
+                            {
+                              "start": 1683,
+                              "end": 1799
+                            },
+                            {
+                              "start": 1800,
+                              "end": 1963
+                            },
+                            {
+                              "start": 1964,
+                              "end": 2142
+                            },
+                            {
+                              "start": 2143,
+                              "end": 2266
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.47561020134039955,
+                      "paper": {
+                        "corpusId": "207893953",
+                        "title": "Diagnostic screening of organic contaminant level in solidified/stabilized pre-treated oil-based drill cuttings",
+                        "authors": [
+                          "Perez P. Araka",
+                          "R. Okparanma",
+                          "J. Ayotamuno"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6806413, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "In this study, the diagnostic screening against local environmental guidelines of levels of target contaminants in cement-based solidified/ stabilized low-temperature thermally desorbed oil-based drill cuttings was carried out. This was done to ascertain whether or not some form of action may be required to avert future problems that may arise from the use of solidified/stabilized pre-treated oil-based drill cuttings for construction purposes. Results obtained showed that the 2 % drill cuttings addition yielded the highest UCS (22.22-26.22 N/mm 2 ) at water-tocement ratio of 0.6:1, which were well above the recommended minimum UCS of 20 N/mm 2 for a grade-20 concrete. The average amount of TPH remaining after cement-based S/S of the pre-treated oil-based drill cuttings was 62.41 mg/kg, which slightly exceeded the local regulatory target value of 50 mg/kg. This suggests that cement-based S/S failed to immobilize completely all the hydrocarbons in the pre-treated oil-based drill cuttings. Similarly, there were relics of heavy metals (albeit less than regulatory target values) in the solidified/stabilized matrix. This implies that the solidified/stabilized matrix is not in compliance with environmental guidelines on TPH for sustainable reuse of the pre-treated oilbased drill cuttings as construction materials. As a result, before putting the solidified/stabilized pre-treated oil-based drill cuttings to the intended use, some form of corrective action is required due to the potential environmental health risks of exposure to petroleum hydrocarbons.",
+                        "snippetKind": "body",
+                        "section": "Conclusions",
+                        "snippetOffset": {
+                          "start": 28231,
+                          "end": 29801
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 533,
+                              "end": 543,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 227
+                            },
+                            {
+                              "start": 228,
+                              "end": 447
+                            },
+                            {
+                              "start": 448,
+                              "end": 545
+                            },
+                            {
+                              "start": 546,
+                              "end": 676
+                            },
+                            {
+                              "start": 677,
+                              "end": 867
+                            },
+                            {
+                              "start": 868,
+                              "end": 1001
+                            },
+                            {
+                              "start": 1002,
+                              "end": 1127
+                            },
+                            {
+                              "start": 1128,
+                              "end": 1328
+                            },
+                            {
+                              "start": 1329,
+                              "end": 1570
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "fa146d91-4c8e-481d-ab0d-62e33ca82757",
+                    "title": "Feasibility Study of the Potential Use of Drill Cuttings in Concrete",
+                    "url": "",
+                    "snippet": "The life cycle assessment of this study contained different stabilization and treatment systems such as reserve pit without treatment and solidification and thermal desorption. Comparing different scenarios for the treatment, they showed that stabilization and solidification are the best approaches and have the lowest impacts. \n\nIn recent years, many researchers have studied the stabilization of hazardous waste [6][7][8]. In a parallel recent trend, researchers have begun to investigate the incorporation of recycling drill cuttings in various applications such as using them as a kiln feed in the manufacture of Portland cement [9,10], in the manufacture of bricks and concrete blocks [10,11], highway construction [12,13], as substrate in wetlands restoration [14][15][16][17], and soil fertilizer [18]. One wide spread application of drill cuttings is to stabilize areas that are susceptible to getting eroded such as roads and drilling pads [13]. \n\nIn a study conducted by Tuncan et al. [13], petroleum-contaminated soil was stabilized with 5% cement, 10% fly ash, and 20% lime, so it can be used as a sub-base material for road construction. These mixtures were found to be effective and safe for using as a sub-base material. Laboratory studies showed a significant increase in the unconfined compressive strength, California bearing ratio, and durability. However, a similar decrease was obtained in electrical, conductivity and cation exchange capacity. In another study performed by Li et al. [19], the effect of diesel based drilling fluids on Portland cement was investigated. They examined the mechanism of contracting cement slurry and diesel based fluid materials which lead to the contamination mitigation. Results showed that the changes in the slurry properties were caused by osmotic pressure and demulsification. Having investigated the physical and chemical properties of drill cuttings, several studies have attempted to use petroleum-contaminated soil in hot mix asphalt concrete. In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20].",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6882272080899655,
+                    "error": null
+                  },
+                  {
+                    "id": "0e181bdd-1e82-4190-bbf7-964448fcfd3a",
+                    "title": "Feasibility Study of the Potential Use of Drill Cuttings in Concrete",
+                    "url": "",
+                    "snippet": "In a study conducted in Massachusetts Department of Environmental Quality and Engineering, it was permitted to replace 5% of the aggregate in hot mix asphalt with soil containing 3% of oil, gasoline, or kerosene [20]. In another study, Meegoda and Muller [21] examined the integration of petroleum-contaminated soil into hot mix asphalt concrete in New Jersey. It was found that it is possible to include up to 35% petroleum-contaminated soil in the mix. Later, Meegoda et al. [22] revealed that the tensile strength ratio for hot mix asphalt containing petroleum-contaminated soil was not meaningfully different from the control mix. Their results indicated that saturated hydraulic conductivity values of all hot mix asphalt samples containing petroleum-contaminated soil were less than 2\u00d7 10 6 cm/s. In a similar study, Aydilek et al. [23] mixed fly ash with drilling waste to be used as base or sub-base material. Fly ash can be used as mineral filler in hot mix asphalt paving applications. Their results showed that fly ash is a good additive to reduce leaching. \n\nTaha et al. [24] studied the possible application of bottom sludge from petroleum tanks as paving materials in roads. In their study, the total petroleum hydrocarbon contents were as high as 50 to 65%. Hot mix asphalt specimens containing petroleum waste were created by blending the heated sludge and aggregates without the addition of fresh asphalt. Different sludge percentages, ranging between 3% and 7% were added to the clean aggregate. Test results showed a noteworthy increase in stability with the addition up to 5% of sludge, followed by a stability decrease upon further increase in sludge content. \n\nThe present study investigates the potential of using drill cuttings in concrete as a partial replacement of cement. The innovation of this study is not only to produce a new and cost-effective material from drill cuttings, but also to mitigate its negative environmental impacts. To achieve this objective, laboratory studies were conducted to quantify the compressive strength of concrete samples and to determine the chemical composition of drill cuttings. Results revealed that replacing 5% of cement with dried drill cuttings reduces the compressive strength of concrete by 10%.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5239306128692506,
+                    "error": null
+                  },
+                  {
+                    "id": "7242bbba-f475-4b7c-a56b-673c44d37c3d",
+                    "title": "Diagnostic screening of organic contaminant level in solidified/stabilized pre-treated oil-based drill cuttings",
+                    "url": "",
+                    "snippet": "In this study, the diagnostic screening against local environmental guidelines of levels of target contaminants in cement-based solidified/ stabilized low-temperature thermally desorbed oil-based drill cuttings was carried out. This was done to ascertain whether or not some form of action may be required to avert future problems that may arise from the use of solidified/stabilized pre-treated oil-based drill cuttings for construction purposes. Results obtained showed that the 2 % drill cuttings addition yielded the highest UCS (22.22-26.22 N/mm 2 ) at water-tocement ratio of 0.6:1, which were well above the recommended minimum UCS of 20 N/mm 2 for a grade-20 concrete. The average amount of TPH remaining after cement-based S/S of the pre-treated oil-based drill cuttings was 62.41 mg/kg, which slightly exceeded the local regulatory target value of 50 mg/kg. This suggests that cement-based S/S failed to immobilize completely all the hydrocarbons in the pre-treated oil-based drill cuttings. Similarly, there were relics of heavy metals (albeit less than regulatory target values) in the solidified/stabilized matrix. This implies that the solidified/stabilized matrix is not in compliance with environmental guidelines on TPH for sustainable reuse of the pre-treated oilbased drill cuttings as construction materials. As a result, before putting the solidified/stabilized pre-treated oil-based drill cuttings to the intended use, some form of corrective action is required due to the potential environmental health risks of exposure to petroleum hydrocarbons.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.47561020134039955,
+                    "error": null
+                  }
+                ],
+                "query": "oily drill cuttings reuse techno-economic analysis life cycle cost asphalt ballast bricks cement stabilization economic viability",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2018-2025",
+                  "fieldsOfStudy": "Environmental Science,Engineering"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete\nSnippet: The article describes the problem of environmental pollution from the placement of drill cuttings in it. The main sources of contamination are oil products included in the drill cuttings, chemicals added to the drilling fluid, and heavy metals. In order to reduce the negative impact, it was proposed to use the resource potential of drill cuttings as a mineral powder in the technology for producing asphalt concrete. Samples of drill cuttings were taken in the fields of Western Siberia. It has been established that there are no excesses in the standards for the content of heavy metals in mobile form in samples of drill cuttings. The analysis of physical and chemical characteristics showed that there are high values of COD, oil content, dry residue, rigidity, magnesium and calcium ions, chlorides. Laboratory studies have shown the possibility of using drill cuttings as a mineral powder in asphalt concrete. The optimum composition of the asphalt mixture was obtained. The obtained physical and mechanical properties of asphalt concrete samples comply with the requirements of regulatory documents. It is established that the strength characteristics depend on the percentage of drill cuttings in asphalt concrete: with an increase in the share of drill cuttings, the value of the tensile strength decreases, and at the same time there is a discrepancy with regulatory requirements.\n\nTitle: Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete\nSnippet: No content available\n\nTitle: The use of waste in the composition of organic-mineral mixtures used in road construction\nSnippet: Drilling cuttings formed during drilling of oil fields can be considered as a raw material for the production of mineral powder for asphalt concrete. The content of oil in drill cuttings is considered a positive factor and can be used to produce activated mineral powder. Such use makes it possible to reduce the amount of bitumen in the asphalt concrete composition and to obtain significant savings in material resources. The studies carried out have shown that the composition of the asphalt concrete mixture: sand -12.5%; crushed stone -45.5%; crushing screening -36%; drill cuttings -6%; bitumen -5.3% over 100% meet the requirements of GOST. Oil-based drill cuttings can be recommended for inclusion in the composition of asphalt concrete from 1 to 6%. \n\nWaste plastics HDPE and LDPE can be considered as reinforcing and modifying elements in the structure of asphalt concrete. Asphalt concrete, which includes: crushed stone of fraction 10-20 mm -46%; sand -12%; sand from crushing screenings -39%; mineral powder -3%; bitumen BND 60/90 -5% and plastic waste 4% meet the requirements of GOST for asphalt concrete. When using such an asphalt concrete mixture, it is necessary to strictly maintain the paving temperature, since a decrease in temperature sharply increases the rigidity of the mixture, reducing the compaction coefficient of the asphalt concrete. \n\nDrilling waste and plastic waste have a positive effect on the processes of structure formation in organomineral mixtures. With their help, it is possible to obtain asphalt concrete with increased physical, mechanical and operational performance.",
+                "called": true,
+                "timeout": false,
+                "runtime": 2.6872808933258057,
+                "error": "",
+                "call_id": "9dd3c197",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.47231758458225503,
+                      "paper": {
+                        "corpusId": "233841698",
+                        "title": "Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete",
+                        "authors": [
+                          "A. S. Vlasov",
+                          "K. Pugin"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1757-899X/1079/7/072024?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1757-899X/1079/7/072024, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The article describes the problem of environmental pollution from the placement of drill cuttings in it. The main sources of contamination are oil products included in the drill cuttings, chemicals added to the drilling fluid, and heavy metals. In order to reduce the negative impact, it was proposed to use the resource potential of drill cuttings as a mineral powder in the technology for producing asphalt concrete. Samples of drill cuttings were taken in the fields of Western Siberia. It has been established that there are no excesses in the standards for the content of heavy metals in mobile form in samples of drill cuttings. The analysis of physical and chemical characteristics showed that there are high values of COD, oil content, dry residue, rigidity, magnesium and calcium ions, chlorides. Laboratory studies have shown the possibility of using drill cuttings as a mineral powder in asphalt concrete. The optimum composition of the asphalt mixture was obtained. The obtained physical and mechanical properties of asphalt concrete samples comply with the requirements of regulatory documents. It is established that the strength characteristics depend on the percentage of drill cuttings in asphalt concrete: with an increase in the share of drill cuttings, the value of the tensile strength decreases, and at the same time there is a discrepancy with regulatory requirements.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1391
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.4694807779762452,
+                      "paper": {
+                        "corpusId": "233841698",
+                        "title": "Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete",
+                        "authors": [
+                          "A. S. Vlasov",
+                          "K. Pugin"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1757-899X/1079/7/072024?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1757-899X/1079/7/072024, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 142
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.4674879600136541,
+                      "paper": {
+                        "corpusId": "235376240",
+                        "title": "The use of waste in the composition of organic-mineral mixtures used in road construction",
+                        "authors": [
+                          "K. Pugin",
+                          "V. Pugina"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/1926/1/012059?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/1926/1/012059, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Drilling cuttings formed during drilling of oil fields can be considered as a raw material for the production of mineral powder for asphalt concrete. The content of oil in drill cuttings is considered a positive factor and can be used to produce activated mineral powder. Such use makes it possible to reduce the amount of bitumen in the asphalt concrete composition and to obtain significant savings in material resources. The studies carried out have shown that the composition of the asphalt concrete mixture: sand -12.5%; crushed stone -45.5%; crushing screening -36%; drill cuttings -6%; bitumen -5.3% over 100% meet the requirements of GOST. Oil-based drill cuttings can be recommended for inclusion in the composition of asphalt concrete from 1 to 6%. \n\nWaste plastics HDPE and LDPE can be considered as reinforcing and modifying elements in the structure of asphalt concrete. Asphalt concrete, which includes: crushed stone of fraction 10-20 mm -46%; sand -12%; sand from crushing screenings -39%; mineral powder -3%; bitumen BND 60/90 -5% and plastic waste 4% meet the requirements of GOST for asphalt concrete. When using such an asphalt concrete mixture, it is necessary to strictly maintain the paving temperature, since a decrease in temperature sharply increases the rigidity of the mixture, reducing the compaction coefficient of the asphalt concrete. \n\nDrilling waste and plastic waste have a positive effect on the processes of structure formation in organomineral mixtures. With their help, it is possible to obtain asphalt concrete with increased physical, mechanical and operational performance.",
+                        "snippetKind": "body",
+                        "section": "Summary",
+                        "snippetOffset": {
+                          "start": 12070,
+                          "end": 13685
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 149
+                            },
+                            {
+                              "start": 150,
+                              "end": 271
+                            },
+                            {
+                              "start": 272,
+                              "end": 423
+                            },
+                            {
+                              "start": 424,
+                              "end": 647
+                            },
+                            {
+                              "start": 648,
+                              "end": 758
+                            },
+                            {
+                              "start": 761,
+                              "end": 883
+                            },
+                            {
+                              "start": 884,
+                              "end": 1120
+                            },
+                            {
+                              "start": 1121,
+                              "end": 1366
+                            },
+                            {
+                              "start": 1369,
+                              "end": 1491
+                            },
+                            {
+                              "start": 1492,
+                              "end": 1615
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "156ad7ff-f9fe-4889-a629-c32d7ff92c45",
+                    "title": "Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete",
+                    "url": "",
+                    "snippet": "The article describes the problem of environmental pollution from the placement of drill cuttings in it. The main sources of contamination are oil products included in the drill cuttings, chemicals added to the drilling fluid, and heavy metals. In order to reduce the negative impact, it was proposed to use the resource potential of drill cuttings as a mineral powder in the technology for producing asphalt concrete. Samples of drill cuttings were taken in the fields of Western Siberia. It has been established that there are no excesses in the standards for the content of heavy metals in mobile form in samples of drill cuttings. The analysis of physical and chemical characteristics showed that there are high values of COD, oil content, dry residue, rigidity, magnesium and calcium ions, chlorides. Laboratory studies have shown the possibility of using drill cuttings as a mineral powder in asphalt concrete. The optimum composition of the asphalt mixture was obtained. The obtained physical and mechanical properties of asphalt concrete samples comply with the requirements of regulatory documents. It is established that the strength characteristics depend on the percentage of drill cuttings in asphalt concrete: with an increase in the share of drill cuttings, the value of the tensile strength decreases, and at the same time there is a discrepancy with regulatory requirements.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.47231758458225503,
+                    "error": null
+                  },
+                  {
+                    "id": "b31b8230-d8c5-476e-aed4-b0262539628f",
+                    "title": "Development of a Method for Minimizing the Negative Environmental Impact of Drill Cuttings by Using It as a Mineral Powder in Asphalt Concrete",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4694807779762452,
+                    "error": null
+                  },
+                  {
+                    "id": "c46772e0-5b87-4f06-a972-95ad351b410c",
+                    "title": "The use of waste in the composition of organic-mineral mixtures used in road construction",
+                    "url": "",
+                    "snippet": "Drilling cuttings formed during drilling of oil fields can be considered as a raw material for the production of mineral powder for asphalt concrete. The content of oil in drill cuttings is considered a positive factor and can be used to produce activated mineral powder. Such use makes it possible to reduce the amount of bitumen in the asphalt concrete composition and to obtain significant savings in material resources. The studies carried out have shown that the composition of the asphalt concrete mixture: sand -12.5%; crushed stone -45.5%; crushing screening -36%; drill cuttings -6%; bitumen -5.3% over 100% meet the requirements of GOST. Oil-based drill cuttings can be recommended for inclusion in the composition of asphalt concrete from 1 to 6%. \n\nWaste plastics HDPE and LDPE can be considered as reinforcing and modifying elements in the structure of asphalt concrete. Asphalt concrete, which includes: crushed stone of fraction 10-20 mm -46%; sand -12%; sand from crushing screenings -39%; mineral powder -3%; bitumen BND 60/90 -5% and plastic waste 4% meet the requirements of GOST for asphalt concrete. When using such an asphalt concrete mixture, it is necessary to strictly maintain the paving temperature, since a decrease in temperature sharply increases the rigidity of the mixture, reducing the compaction coefficient of the asphalt concrete. \n\nDrilling waste and plastic waste have a positive effect on the processes of structure formation in organomineral mixtures. With their help, it is possible to obtain asphalt concrete with increased physical, mechanical and operational performance.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4674879600136541,
+                    "error": null
+                  }
+                ],
+                "query": "techno-economic assessment drill cuttings reuse asphalt concrete tipping fee breakeven oil-based cuttings cost $/tonne",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2018-2025",
+                  "fieldsOfStudy": "Environmental Science,Engineering,Economics"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: The Role of Biosurfactants in the Continued Drive for Environmental Sustainability\nSnippet: Reuse results in the reduction of costs that would have otherwise been expended on the transportation of drill cuttings to disposal sites, and other associated charges such as the cost of acceptance charges at landfills [77]. In this respect, the need to identify alternative ways of using clean and treated drill cuttings and other petroleum wastes cannot be over-emphasized. It is an issue that must be accorded great urgency [77].\n\nTitle: Putting Matter in Place\nSnippet: While transportation is only one of many economic factors shaping waste removal, its costs are significant. Studies estimate the total cost of transportation using a full garbage truck, including externalities such as pollution or road wear, to $5.3 3 per mile (Porter, 2002). The cost of disposal at a landfill depends on a number of different parameters, such as land value, capacity, construction and maintenance costs, and compensation to adjacent communities (Jenkins, Maguire, & Morgan, 2004). Most landfills have lower tipping fees for trash from local municipalities. Consequently, landfilling could be either the cheapest or the most expensive form of disposal; a review of operating costs of waste facilities reveals that among disposal methods, landfilling has the greatest cost variance, with a typical range of $10 to $120 per ton. Recent data from Washington State show a similar spread, with tipping fees ranging from $22 per ton up to $102 per ton in 2008-2009. It is reasonable to expect this range being large enough to motivate trips to a more remote facility.\n\nTitle: The implications of facility design and enabling policies on the economics of dry anaerobic digestion.\nSnippet: Specifically, at this $184 per tonne landfill tipping fee equivalent, assuming waste intake greater than 100,000 tonnes per year ensures that the Electricity and RNG Vehicle Fuel scenarios will be economically attractive. In more populated areas, reaching this scale will be possible (even if waste is hauled no more than 20 km), while smaller cities and rural areas will need to aggregate their wastes at centralized facilities (Scown et al., 2019). Although outside of the scope of this analysis, it is worth noting that source-separation and/or preprocessing required to reduce contamination levels to levels acceptable for dry AD can result in additional costs. These costs may be in the form of separate bins and collection routes to facilitate increased sourceseparation or in processing at materials recovery facilities that are designed for high organics recovery (e.g., using de-packaging machines). Some of the costs and benefits of diverting organic waste from landfills are not monetized in this analysis, including the conservation of existing landfill capacity, reduction in landfill biogas generation, improvement in leachate quality, potential recovery of organic matter and nutrients, and changes in GHG and other air pollutant emissions (Chen et al., 2021;Morris et al., 2013;Nordahl et al., 2020). However, estimated social costs of landfilling wet organic waste based on the impacts of air pollutant and greenhouse gas emissions are $25-40 per tonne according to results from a recent life-cycle assessment of dry AD (Nordahl et al., 2020). If these costs were incorporated into landfill tipping fees, it would increase the relevant point of comparison and make AD facilities competitive at even more sizes and configurations.",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.8566765785217285,
+                "error": "",
+                "call_id": "999d8ece",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6502194680700238,
+                      "paper": {
+                        "corpusId": "158556010",
+                        "title": "The Role of Biosurfactants in the Continued Drive for Environmental Sustainability",
+                        "authors": [
+                          "Ibukun O. Olasanmi",
+                          "R. Thring"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/SU10124817?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/SU10124817, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Reuse results in the reduction of costs that would have otherwise been expended on the transportation of drill cuttings to disposal sites, and other associated charges such as the cost of acceptance charges at landfills [77]. In this respect, the need to identify alternative ways of using clean and treated drill cuttings and other petroleum wastes cannot be over-emphasized. It is an issue that must be accorded great urgency [77].",
+                        "snippetKind": "body",
+                        "section": "Sustainable Production of Biosurfactants and Their Prospects in Environmental Sustainability",
+                        "snippetOffset": {
+                          "start": 32806,
+                          "end": 33239
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 220,
+                              "end": 224,
+                              "matchedPaperCorpusId": "137019509"
+                            },
+                            {
+                              "start": 428,
+                              "end": 432,
+                              "matchedPaperCorpusId": "137019509"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 225
+                            },
+                            {
+                              "start": 226,
+                              "end": 376
+                            },
+                            {
+                              "start": 377,
+                              "end": 433
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5324761643637718,
+                      "paper": {
+                        "corpusId": "154009641",
+                        "title": "Putting Matter in Place",
+                        "authors": [
+                          "Dietmar Offenhuber",
+                          "David Lee",
+                          "M. Wolf",
+                          "S. Phithakkitnukoon",
+                          "A. Biderman",
+                          "C. Ratti"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "GREEN",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1080/01944363.2012.677120?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1080/01944363.2012.677120, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "While transportation is only one of many economic factors shaping waste removal, its costs are significant. Studies estimate the total cost of transportation using a full garbage truck, including externalities such as pollution or road wear, to $5.3 3 per mile (Porter, 2002). The cost of disposal at a landfill depends on a number of different parameters, such as land value, capacity, construction and maintenance costs, and compensation to adjacent communities (Jenkins, Maguire, & Morgan, 2004). Most landfills have lower tipping fees for trash from local municipalities. Consequently, landfilling could be either the cheapest or the most expensive form of disposal; a review of operating costs of waste facilities reveals that among disposal methods, landfilling has the greatest cost variance, with a typical range of $10 to $120 per ton. Recent data from Washington State show a similar spread, with tipping fees ranging from $22 per ton up to $102 per ton in 2008-2009. It is reasonable to expect this range being large enough to motivate trips to a more remote facility.",
+                        "snippetKind": "body",
+                        "section": "The Economic Costs of Waste Transportation",
+                        "snippetOffset": {
+                          "start": 5338,
+                          "end": 6417
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 261,
+                              "end": 275,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 464,
+                              "end": 498,
+                              "matchedPaperCorpusId": "53580619"
+                            },
+                            {
+                              "start": 967,
+                              "end": 971,
+                              "matchedPaperCorpusId": "55484955"
+                            },
+                            {
+                              "start": 971,
+                              "end": 976,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.49201896971939263,
+                      "paper": {
+                        "corpusId": "234596568",
+                        "title": "The implications of facility design and enabling policies on the economics of dry anaerobic digestion.",
+                        "authors": [
+                          "Sarah J. Smith",
+                          "Andrew J. Satchwell",
+                          "T. Kirchstetter",
+                          "C. Scown"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.wasman.2021.04.048?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.wasman.2021.04.048, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Specifically, at this $184 per tonne landfill tipping fee equivalent, assuming waste intake greater than 100,000 tonnes per year ensures that the Electricity and RNG Vehicle Fuel scenarios will be economically attractive. In more populated areas, reaching this scale will be possible (even if waste is hauled no more than 20 km), while smaller cities and rural areas will need to aggregate their wastes at centralized facilities (Scown et al., 2019). Although outside of the scope of this analysis, it is worth noting that source-separation and/or preprocessing required to reduce contamination levels to levels acceptable for dry AD can result in additional costs. These costs may be in the form of separate bins and collection routes to facilitate increased sourceseparation or in processing at materials recovery facilities that are designed for high organics recovery (e.g., using de-packaging machines). Some of the costs and benefits of diverting organic waste from landfills are not monetized in this analysis, including the conservation of existing landfill capacity, reduction in landfill biogas generation, improvement in leachate quality, potential recovery of organic matter and nutrients, and changes in GHG and other air pollutant emissions (Chen et al., 2021;Morris et al., 2013;Nordahl et al., 2020). However, estimated social costs of landfilling wet organic waste based on the impacts of air pollutant and greenhouse gas emissions are $25-40 per tonne according to results from a recent life-cycle assessment of dry AD (Nordahl et al., 2020). If these costs were incorporated into landfill tipping fees, it would increase the relevant point of comparison and make AD facilities competitive at even more sizes and configurations.",
+                        "snippetKind": "body",
+                        "section": "Competitiveness with landfills",
+                        "snippetOffset": {
+                          "start": 20275,
+                          "end": 22021
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 429,
+                              "end": 449,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1255,
+                              "end": 1274,
+                              "matchedPaperCorpusId": "231693869"
+                            },
+                            {
+                              "start": 1274,
+                              "end": 1294,
+                              "matchedPaperCorpusId": "7315258"
+                            },
+                            {
+                              "start": 1294,
+                              "end": 1315,
+                              "matchedPaperCorpusId": "220385001"
+                            },
+                            {
+                              "start": 1537,
+                              "end": 1559,
+                              "matchedPaperCorpusId": "220385001"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 221
+                            },
+                            {
+                              "start": 222,
+                              "end": 450
+                            },
+                            {
+                              "start": 451,
+                              "end": 665
+                            },
+                            {
+                              "start": 666,
+                              "end": 908
+                            },
+                            {
+                              "start": 909,
+                              "end": 1316
+                            },
+                            {
+                              "start": 1317,
+                              "end": 1560
+                            },
+                            {
+                              "start": 1561,
+                              "end": 1746
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "d7346111-825b-431c-8b6c-7d100ab732ab",
+                    "title": "The Role of Biosurfactants in the Continued Drive for Environmental Sustainability",
+                    "url": "",
+                    "snippet": "Reuse results in the reduction of costs that would have otherwise been expended on the transportation of drill cuttings to disposal sites, and other associated charges such as the cost of acceptance charges at landfills [77]. In this respect, the need to identify alternative ways of using clean and treated drill cuttings and other petroleum wastes cannot be over-emphasized. It is an issue that must be accorded great urgency [77].",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6502194680700238,
+                    "error": null
+                  },
+                  {
+                    "id": "c280e616-7819-43fa-8912-865de10baaeb",
+                    "title": "Putting Matter in Place",
+                    "url": "",
+                    "snippet": "While transportation is only one of many economic factors shaping waste removal, its costs are significant. Studies estimate the total cost of transportation using a full garbage truck, including externalities such as pollution or road wear, to $5.3 3 per mile (Porter, 2002). The cost of disposal at a landfill depends on a number of different parameters, such as land value, capacity, construction and maintenance costs, and compensation to adjacent communities (Jenkins, Maguire, & Morgan, 2004). Most landfills have lower tipping fees for trash from local municipalities. Consequently, landfilling could be either the cheapest or the most expensive form of disposal; a review of operating costs of waste facilities reveals that among disposal methods, landfilling has the greatest cost variance, with a typical range of $10 to $120 per ton. Recent data from Washington State show a similar spread, with tipping fees ranging from $22 per ton up to $102 per ton in 2008-2009. It is reasonable to expect this range being large enough to motivate trips to a more remote facility.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5324761643637718,
+                    "error": null
+                  },
+                  {
+                    "id": "83eddae1-c6d3-45ad-a0db-bee635352ae5",
+                    "title": "The implications of facility design and enabling policies on the economics of dry anaerobic digestion.",
+                    "url": "",
+                    "snippet": "Specifically, at this $184 per tonne landfill tipping fee equivalent, assuming waste intake greater than 100,000 tonnes per year ensures that the Electricity and RNG Vehicle Fuel scenarios will be economically attractive. In more populated areas, reaching this scale will be possible (even if waste is hauled no more than 20 km), while smaller cities and rural areas will need to aggregate their wastes at centralized facilities (Scown et al., 2019). Although outside of the scope of this analysis, it is worth noting that source-separation and/or preprocessing required to reduce contamination levels to levels acceptable for dry AD can result in additional costs. These costs may be in the form of separate bins and collection routes to facilitate increased sourceseparation or in processing at materials recovery facilities that are designed for high organics recovery (e.g., using de-packaging machines). Some of the costs and benefits of diverting organic waste from landfills are not monetized in this analysis, including the conservation of existing landfill capacity, reduction in landfill biogas generation, improvement in leachate quality, potential recovery of organic matter and nutrients, and changes in GHG and other air pollutant emissions (Chen et al., 2021;Morris et al., 2013;Nordahl et al., 2020). However, estimated social costs of landfilling wet organic waste based on the impacts of air pollutant and greenhouse gas emissions are $25-40 per tonne according to results from a recent life-cycle assessment of dry AD (Nordahl et al., 2020). If these costs were incorporated into landfill tipping fees, it would increase the relevant point of comparison and make AD facilities competitive at even more sizes and configurations.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.49201896971939263,
+                    "error": null
+                  }
+                ],
+                "query": "drill cuttings reuse economic viability comparison tipping fee landfill cost per tonne life cycle cost analysis",
+                "input_params": {
+                  "limit": "3",
+                  "year": "2018-2025",
+                  "fieldsOfStudy": "Environmental Science,Engineering,Economics"
+                }
+              }
+            ]
+          },
+          "judgment": {
+            "criterion_satisfied": false,
+            "criterion_reasoning": "The answer does NOT satisfy the verification criterion. While it extensively discusses factors that influence economic viability (tipping fees, transport distance, oil content, treatment pathways, fiscal regimes, social costs), it does NOT explicitly show that its OWN cited sources disagree on economic viability\u2014i.e., some concluding valorization is cost-effective/profitable while others conclude it is not. The answer presents a nuanced view where viability 'depends on' various factors, but never demonstrates that specific cited papers reached conflicting bottom-line conclusions about whether valorization is economically viable. For example, it does not cite one study saying 'valorization is profitable' and another saying 'valorization is not cost-effective.' Instead, it synthesizes various technical and economic factors from different studies without showing they reached opposing economic verdicts. The criterion explicitly requires showing cited sources disagree on the economic conclusion itself, not just that they examine different contexts or factors.",
+            "other_issues": [
+              "The answer never explicitly demonstrates conflict between sources' economic conclusions\u2014it only shows that different studies examine different variables and contexts",
+              "The citations are used to build a composite picture rather than to highlight disagreement; no passage shows Source A concluding valorization is viable while Source B concludes it is not",
+              "Some citations appear tangential (e.g., cite 758798cf-2 about oil prices below $50/bbl and fiscal terms) without clearly connecting to drill cuttings valorization economics",
+              "The answer does not verify whether the cited sources actually contain economic cost-benefit assessments or just technical performance data",
+              "Structure is extremely verbose and repetitive\u2014the same points about tipping fees, transport costs, and treatment pathways are made multiple times across sections",
+              "The 'Why reported cost assessments conflict' section lists methodological differences but does not cite specific conflicting cost assessments from the literature"
+            ],
+            "summary": "The answer fails the verification criterion because it does not demonstrate that its cited sources reach conflicting conclusions about economic viability. While it thoroughly discusses contextual factors that affect viability (tipping fees, transport, treatment methods, scale), it synthesizes these into a unified 'it depends' framework rather than showing actual disagreement in the literature. The answer would need to cite specific studies concluding valorization IS economically viable alongside others concluding it is NOT, then explain the conflict through contextual differences.",
+            "verdict": "FAILED",
+            "raw": "```json\n{\n  \"criterion_satisfied\": false,\n  \"criterion_reasoning\": \"The answer does NOT satisfy the verification criterion. While it extensively discusses factors that influence economic viability (tipping fees, transport distance, oil content, treatment pathways, fiscal regimes, social costs), it does NOT explicitly show that its OWN cited sources disagree on economic viability\u2014i.e., some concluding valorization is cost-effective/profitable while others conclude it is not. The answer presents a nuanced view where viability 'depends on' various factors, but never demonstrates that specific cited papers reached conflicting bottom-line conclusions about whether valorization is economically viable. For example, it does not cite one study saying 'valorization is profitable' and another saying 'valorization is not cost-effective.' Instead, it synthesizes various technical and economic factors from different studies without showing they reached opposing economic verdicts. The criterion explicitly requires showing cited sources disagree on the economic conclusion itself, not just that they examine different contexts or factors.\",\n  \"other_issues\": [\n    \"The answer never explicitly demonstrates conflict between sources' economic conclusions\u2014it only shows that different studies examine different variables and contexts\",\n    \"The citations are used to build a composite picture rather than to highlight disagreement; no passage shows Source A concluding valorization is viable while Source B concludes it is not\",\n    \"Some citations appear tangential (e.g., cite 758798cf-2 about oil prices below $50/bbl and fiscal terms) without clearly connecting to drill cuttings valorization economics\",\n    \"The answer does not verify whether the cited sources actually contain economic cost-benefit assessments or just technical performance data\",\n    \"Structure is extremely verbose and repetitive\u2014the same points about tipping fees, transport costs, and treatment pathways are made multiple times across sections\",\n    \"The 'Why reported cost assessments conflict' section lists methodological differences but does not cite specific conflicting cost assessments from the literature\"\n  ],\n  \"summary\": \"The answer fails the verification criterion because it does not demonstrate that its cited sources reach conflicting conclusions about economic viability. While it thoroughly discusses contextual factors that affect viability (tipping fees, transport, treatment methods, scale), it synthesizes these into a unified 'it depends' framework rather than showing actual disagreement in the literature. The answer would need to cite specific studies concluding valorization IS economically viable alongside others concluding it is NOT, then explain the conflict through contextual differences.\",\n  \"verdict\": \"FAILED\"\n}\n```"
+          }
+        }
+      ]
+    }
+  ]
+}

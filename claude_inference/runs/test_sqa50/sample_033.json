@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_033",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.0,
+    "calls": 0
+  },
+  "results": [
+    {
+      "seed": "Chitosan nanoparticle and rosmarinic acid encapsulation cure cancer drug delivery and MTT",
+      "final_status": "ERROR",
+      "error": "Making harder question failed: list index out of range",
+      "cost": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.0,
+        "calls": 0
+      },
+      "attempts": []
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+Run ID: sample_042
+Logging every call to: runs/test_sqa50/run-sample_042.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0125, 1 Claude calls) plant based surfactants and its preparation or extraction methods
+    error: Judging failed: list index out of range
+
+Total cost: $0.0125 (1 Claude calls, 20 input + 795 output tokens, 1,777 cache reads)
+Run log written to: runs/test_sqa50/run-sample_042.jsonl
+Final results written to: runs/test_sqa50/sample_042.json
