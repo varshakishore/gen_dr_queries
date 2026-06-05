@@ -6,19 +6,25 @@ Each seed is processed by its own `research_pipeline.py` subprocess, N at a time
 (default 5). For seed i (1-based) the wrapper writes, inside --out-dir:
   - sample_NNN.json        the pipeline's --output result for that seed
   - run-sample_NNN.jsonl   the pipeline's per-call JSONL log for that seed
-  - sample_NNN.console.txt the subprocess's stdout/stderr
+  - sample_NNN.console.txt the subprocess's stdout/stderr, ONLY if the run failed
+                           (non-zero exit or non FAILED_FOUND/EXHAUSTED status)
 and an index.json mapping each index -> seed -> status (since the numbered
-filenames are not self-describing).
+filenames are not self-describing), plus per-seed cost/attempts and run totals.
 
-Seeds whose sample_NNN.json already exists are skipped, so an interrupted run
-can be resumed by re-running the same command (use --no-skip-existing to force).
+Seeds come from CLI args, a .txt --seeds-file, or (if neither is given) the HF
+dataset allenai/asta-user-interactions (optin_queries/train, tool=sqa), capped
+at --limit. Seeds whose sample_NNN.json already exists are skipped, so an
+interrupted run resumes by re-running the same command (--no-skip-existing forces).
 
 Examples:
-  # one seed (behaves like a single pipeline run, output goes to the folder)
-  python run_parallel.py "external memory in LLMs" --out-dir runs/exp1
+  # seeds from the HF dataset (default source), 10 seeds, 5 in parallel
+  python research_pipeline_parallel.py --out-dir runs/exp1 --limit 10 --concurrency 5
 
-  # a list of seeds, 5 at a time
-  python run_parallel.py --seeds-file seeds.txt --out-dir runs/exp1 --concurrency 5
+  # one explicit seed
+  python research_pipeline_parallel.py "external memory in LLMs" --out-dir runs/exp1
+
+  # a list of seeds from a file
+  python research_pipeline_parallel.py --seeds-file seeds.txt --out-dir runs/exp1
 """
 
 import argparse

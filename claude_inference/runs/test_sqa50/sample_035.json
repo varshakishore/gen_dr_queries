@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_035",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.0,
+    "calls": 0
+  },
+  "results": [
+    {
+      "seed": "\u62df\u9664\u866b\u83ca\u916f\u964d\u89e3\u916f\u9176\u7684\u8bf1\u5bfc\u8868\u8fbe\u65b9\u6848",
+      "final_status": "ERROR",
+      "error": "Making harder question failed: list index out of range",
+      "cost": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.0,
+        "calls": 0
+      },
+      "attempts": []
+    }
+  ]
+}

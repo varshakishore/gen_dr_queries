@@ -1,0 +1,859 @@
+{
+  "run_id": "sample_031",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 5535,
+    "output_tokens": 1445,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1777,
+    "cost_usd": 0.0388131,
+    "calls": 2
+  },
+  "results": [
+    {
+      "seed": "\u00bfCu\u00e1les son los procesos metodol\u00f3gicos de investigaci\u00f3n-creaci\u00f3n que utilizan los artistas visuales mexicanos contempor\u00e1neos para abordar temas de medio ambiente y cambio clim\u00e1tico?",
+      "final_status": "FAILED_FOUND",
+      "error": null,
+      "cost": {
+        "input_tokens": 5535,
+        "output_tokens": 1445,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 1777,
+        "cost_usd": 0.0388131,
+        "calls": 2
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "harder": {
+            "brainstorming": "This Spanish-language seed asks about methodological processes of research-creation used by contemporary Mexican visual artists addressing environment and climate change. A straightforward survey could retrieve art-practice literature and enumerate methods (community engagement, site-specificity, participatory approaches, etc.). Since the answering system only has Semantic Scholar access to academic papers, it will likely find art theory, ecocriticism, and possibly case studies of specific artists. Several strategies: (1) Make it unanswerable by asking for data that doesn't exist in academic corpus (too narrow a geography+topic intersection). (2) False premise: embed an assumption about a dominant methodology that doesn't actually characterize Mexican eco-art. (3) Require reconciliation: ask why reported methodologies differ across urban vs. rural contexts, forcing synthesis of conflicting evidence. (4) Multi-step reasoning: require the system to evaluate which methodologies are EFFECTIVE (not just used) based on documented outcomes. (5) Cross-domain synthesis: require connecting art methodologies to actual environmental science frameworks. The narrowness (Mexican+visual art+climate) may already make comprehensive retrieval hard, but I should add reasoning difficulty. Option 4 (effectiveness evaluation) seems strongest because it transforms a survey into an evaluative reasoning task: the system must not just list methods but judge their efficacy against documented criteria, which requires connecting artist intentions to measured or reported outcomes\u2014a reasoning leap the corpus likely doesn't make explicit. The length constraint means I should keep the Spanish phrasing compact.",
+            "chosen_strategy": "Shift from 'what methods are used' (survey) to 'which methods achieve documented impact' (evaluative synthesis requiring reasoning from scattered evidence of outcomes).",
+            "updated_question": "\u00bfCu\u00e1les procesos metodol\u00f3gicos de investigaci\u00f3n-creaci\u00f3n de artistas visuales mexicanos sobre cambio clim\u00e1tico han demostrado impacto ambiental o social documentado?",
+            "why_harder": "Surveying art-practice literature can enumerate methods (participatory practice, site-specificity, archival research, etc.), but determining which methods 'achieve documented impact' requires the system to locate scattered evidence of measured outcomes (behavior change, policy influence, community engagement metrics) and reason backward to connect those outcomes to specific methodologies\u2014a causal inference that art scholarship rarely makes explicit. The corpus likely contains artist statements about intent and theoretical frameworks about eco-art, but documented evidence of impact is sparse and not systematically linked to methods, forcing synthesis across disjoint sources or acknowledgment that evidence is insufficient.",
+            "verification_criterion": "The answer must either (A) name at least two specific methodologies AND cite sources documenting their measurable environmental or social impact (not artist intentions or theoretical claims, but actual reported outcomes like policy change, community behavior shift, or ecological restoration), clearly linking each outcome to its methodology; OR (B) explicitly state that the academic literature does not systematically document impact metrics for these artistic methodologies, explaining what evidence is missing. Fails if it lists methods with only theoretical justifications or artist aspirations, or if it asserts impact without citing sources that report measured outcomes.",
+            "raw": "```json\n{\n  \"brainstorming\": \"This Spanish-language seed asks about methodological processes of research-creation used by contemporary Mexican visual artists addressing environment and climate change. A straightforward survey could retrieve art-practice literature and enumerate methods (community engagement, site-specificity, participatory approaches, etc.). Since the answering system only has Semantic Scholar access to academic papers, it will likely find art theory, ecocriticism, and possibly case studies of specific artists. Several strategies: (1) Make it unanswerable by asking for data that doesn't exist in academic corpus (too narrow a geography+topic intersection). (2) False premise: embed an assumption about a dominant methodology that doesn't actually characterize Mexican eco-art. (3) Require reconciliation: ask why reported methodologies differ across urban vs. rural contexts, forcing synthesis of conflicting evidence. (4) Multi-step reasoning: require the system to evaluate which methodologies are EFFECTIVE (not just used) based on documented outcomes. (5) Cross-domain synthesis: require connecting art methodologies to actual environmental science frameworks. The narrowness (Mexican+visual art+climate) may already make comprehensive retrieval hard, but I should add reasoning difficulty. Option 4 (effectiveness evaluation) seems strongest because it transforms a survey into an evaluative reasoning task: the system must not just list methods but judge their efficacy against documented criteria, which requires connecting artist intentions to measured or reported outcomes\u2014a reasoning leap the corpus likely doesn't make explicit. The length constraint means I should keep the Spanish phrasing compact.\",\n  \"chosen_strategy\": \"Shift from 'what methods are used' (survey) to 'which methods achieve documented impact' (evaluative synthesis requiring reasoning from scattered evidence of outcomes).\",\n  \"updated_question\": \"\u00bfCu\u00e1les procesos metodol\u00f3gicos de investigaci\u00f3n-creaci\u00f3n de artistas visuales mexicanos sobre cambio clim\u00e1tico han demostrado impacto ambiental o social documentado?\",\n  \"why_harder\": \"Surveying art-practice literature can enumerate methods (participatory practice, site-specificity, archival research, etc.), but determining which methods 'achieve documented impact' requires the system to locate scattered evidence of measured outcomes (behavior change, policy influence, community engagement metrics) and reason backward to connect those outcomes to specific methodologies\u2014a causal inference that art scholarship rarely makes explicit. The corpus likely contains artist statements about intent and theoretical frameworks about eco-art, but documented evidence of impact is sparse and not systematically linked to methods, forcing synthesis across disjoint sources or acknowledgment that evidence is insufficient.\",\n  \"verification_criterion\": \"The answer must either (A) name at least two specific methodologies AND cite sources documenting their measurable environmental or social impact (not artist intentions or theoretical claims, but actual reported outcomes like policy change, community behavior shift, or ecological restoration), clearly linking each outcome to its methodology; OR (B) explicitly state that the academic literature does not systematically document impact metrics for these artistic methodologies, explaining what evidence is missing. Fails if it lists methods with only theoretical justifications or artist aspirations, or if it asserts impact without citing sources that report measured outcomes.\"\n}\n```"
+          },
+          "answer": "# Resumen\n\nEste trabajo synthetiza procesos metodol\u00f3gicos de investigaci\u00f3n-creaci\u00f3n de artistas y colectivos visuales mexicanos sobre el cambio clim\u00e1tico que reportan impactos ambientales o sociales documentados, desde talleres comunitarios y t\u00e1cticas urbanas hasta intervenciones eco-dise\u00f1\u00edsticas y retrofits bioclim\u00e1ticos, con evidencia de sensibilizaci\u00f3n, organizaci\u00f3n comunitaria, elaboraci\u00f3n de herramientas de riesgo, estrategias de adaptaci\u00f3n y reducci\u00f3n de huella energ\u00e9tica en espacios culturales <cite id=\"ffaa665e-1\">El arte ambiental puede sensibilizar a la sociedad y fomentar enfoques sostenibles ante la crisis clim\u00e1tica</cite> <cite id=\"6676ec12-0\">En Veracruz, talleres de educaci\u00f3n ambiental derivados de diagn\u00f3sticos locales lograron mayor sensibilizaci\u00f3n escolar, conformaci\u00f3n de redes inter e intracomunitarias y elaboraci\u00f3n de mapas de riesgo</cite> <cite id=\"6676ec12-2\">En Jalisco, la formaci\u00f3n de capacidades adaptativas us\u00f3 Aprendizaje Basado en Problemas, talleres, ferias y eventos culturales masivos enfocados en agua y ecosistemas</cite> <cite id=\"6676ec12-4\">En comunidades ind\u00edgenas de Tabasco, el estudio socioambiental participativo identific\u00f3 sequ\u00edas e inundaciones, deforestaci\u00f3n y riesgos sanitarios, y dise\u00f1o de alternativas para mitigaci\u00f3n y adaptaci\u00f3n (huertos diversificados, captura de carbono estimada, compostaje)</cite> <cite id=\"b0c0edeb-2\">La adaptaci\u00f3n bioclim\u00e1tica del Centro Cultural Futurama propone estrategias de ahorro energ\u00e9tico y mejoramiento t\u00e9rmico de un inmueble cultural en CDMX</cite>.\n\n# Qu\u00e9 entiende por investigaci\u00f3n-creaci\u00f3n en este contexto\n\nEn M\u00e9xico, las pr\u00e1cticas de arte clim\u00e1tico se enmarcan en una doble movilidad: la transferencia de conocimientos socioambientales a p\u00fablicos y comunidades, y la generaci\u00f3n de diagn\u00f3sticos, mapas y estrategias visuales que materializan la vulnerabilidad y soluciones. Este doble flujo se sustenta en metodolog\u00edas participativas, observaci\u00f3n etnogr\u00e1fica y experimentaci\u00f3n art\u00edstica que convierten la creaci\u00f3n en una herramienta de educaci\u00f3n, toma de decisiones y resiliencia social <cite id=\"ffaa665e-1\">El arte contempor\u00e1neo medi\u00e1tico (videoarte, instalaciones) evoca la crisis clim\u00e1tica y act\u00faa como alerta social, facilitando la adopci\u00f3n de enfoques sostenibles</cite> <cite id=\"6676ec12-1\">Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas operan como herramientas para transformar algunas comunidades de Tlalpan y Xochimilco; metodol\u00f3gicamente, se consideran formas de experimentaci\u00f3n y se usan observaciones participantes para reflexi\u00f3n y an\u00e1lisis</cite>.\n\n# Metodolog\u00edas recurrentes de investigaci\u00f3n-creaci\u00f3n y su impacto\n\n1) Diagn\u00f3stico comunitario y talleres de vulnerabilidad/adaptaci\u00f3n\n- Proceso: Muestreo de j\u00f3venes y adultos, entrevistas a actores clave, diagn\u00f3stico de desconocimiento y priorizaci\u00f3n de riesgos; dise\u00f1o de talleres intersectoriales con escuela y gobierno; producci\u00f3n de mapas de riesgo y din\u00e1micas para la resiliencia.\n- Impacto documentado: Sensibilizaci\u00f3n de 436 estudiantes y 42 profesores; creaci\u00f3n de redes inter/intracomunitarias; elaboraci\u00f3n de mapas de riesgo; marco para dinamizar la resiliencia social frente a inundaciones atribuidas al cambio clim\u00e1tico en Veracruz <cite id=\"6676ec12-0\">Se aplic\u00f3 cuestionario a 411 estudiantes y 16 entrevistas; los talleres participaron a 436 estudiantes y 42 profesores; hubo mayor sensibilizaci\u00f3n, redes comunitarias y mapas de riesgo; se propuso continuar con educaci\u00f3n ambiental para fortalecer la resiliencia</cite>.\n- Relaci\u00f3n con arte visual: Talleres y talleres de arte transformador integran esculturas sociales, arquitecturas colectivas y t\u00e1cticas urbanas que generan \u201cevidencia visible\u201d del riesgo y soluciones, facilitando la adopci\u00f3n colectiva <cite id=\"6676ec12-1\">El arte se opera como escultura social y t\u00e1ctica urbana; la observaci\u00f3n participante y la experimentaci\u00f3n art\u00edstica permiten transformaciones sociales en comunidades</cite>.\n\n2) Aprendizaje basado en problemas y eventos culturales masivos\n- Proceso: Problematizar escasez de agua o colapso ecol\u00f3gico; talleres de vivencias, ABP, ferias (Agua, Humedales, Tierra) y encuentros regionales/nacionales internacionales de comunidades ind\u00edgenas; integraci\u00f3n de artes esc\u00e9nicas y audiovisuales para difusi\u00f3n.\n- Impacto documentado: Fortalecimiento de capacidades adaptativas integrales, elaboraci\u00f3n de calendarios ambientales, y difusi\u00f3n a miles de asistentes a ferias; en la regi\u00f3n sur de Jalisco, se prioriz\u00f3 la educaci\u00f3n ambiental, la resiliencia de ecosistemas, la gesti\u00f3n ambiental y buenas pr\u00e1cticas productivas <cite id=\"6676ec12-2\">Se construyeron capacidades adaptativas integrales a trav\u00e9s de ABP, talleres, paneles, mesas de trabajo y eventos culturales masivos (ferias del agua, tilapia, calendario ambiental), orientados a educaci\u00f3n sustentable, resiliencia ecosist\u00e9mica y gesti\u00f3n ambiental</cite>.\n\n3) Investigaci\u00f3n socioambiental participante con comunidades ind\u00edgenas\n- Proceso: Entrevistas y encuestas; m\u00e9todos mixtos; enfoque de riesgo/vulnerabilidad; investigaci\u00f3n-acci\u00f3n con comunidades para identificar sequ\u00edas, inundaciones, deforestaci\u00f3n, amenaza a biodiversidad y riesgos sanitarios; co-dise\u00f1o de alternativas (huertos, captura de carbono, compostaje).\n- Impacto documentado: Identificaci\u00f3n de procesos de cambio clim\u00e1tico locales y propuesta operativa de mitigaci\u00f3n y adaptaci\u00f3n; las alternativas articulan captura de carbono estimada y reducci\u00f3n de huella de emisiones mediante compostaje, fortaleciendo la autonom\u00eda alimentaria <cite id=\"6676ec12-4\">Se confirm\u00f3 la relevancia de la participaci\u00f3n social para diagnosticar sequ\u00edas, inundaciones, deforestaci\u00f3n, amenaza a la biodiversidad y riesgos sanitarios; se proponen alternativas: diversificaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono y elaboraci\u00f3n de composta</cite>.\n- Relaci\u00f3n con arte visual: Las intervenciones aplicadas incluyen talleres comunitarios con grupos organizados y expresiones art\u00edsticas aplicadas que operan como agentes de planificaci\u00f3n y de estrategias socioambientales <cite id=\"6676ec12-4\">La investigaci\u00f3n-acci\u00f3n con grupos sociales organizados permite dise\u00f1ar intervenciones educativas aplicadas que aportan elementos para alternativas y estrategias de mitigaci\u00f3n y adaptaci\u00f3n</cite>.\n\n4) Arte p\u00fablico y t\u00e1cticas urbanas para la concienciaci\u00f3n colectiva\n- Proceso: Talleres comunitarios que generan piezas p\u00fablicas, murales, instalaciones y performances en espacios urbanos (Tlalpan, Xochimilco), combinando colaboraci\u00f3n art\u00edstica y producci\u00f3n cultural para potenciar la agencia colectiva; observaci\u00f3n participante documenta la transformaci\u00f3n social.\n- Impacto documentado: Transformaci\u00f3n social observable en comunidades participantes, con redes de colaboraci\u00f3n y producci\u00f3n cultural que sientan bases para movilizaci\u00f3n comunitaria y pol\u00edticas locales <cite id=\"6676ec12-1\">Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas operan como herramientas de transformaci\u00f3n social; el arte ampl\u00eda su campo de acci\u00f3n al espacio social, potenciando la agencia colectiva</cite>.\n\n5) Eco-dise\u00f1o y retrofit bioclim\u00e1tico de infraestructura cultural\n- Proceso: Diagn\u00f3stico t\u00e9rmico y lum\u00ednico de edificios culturales; propuesta de estrategias bioclim\u00e1ticas (aislamientos, orientaci\u00f3n, ventilaci\u00f3n cruzada, techos verdes) y optimizaci\u00f3n energ\u00e9tica; integraci\u00f3n de principios de sostenibilidad en inmuebles p\u00fablicos de uso art\u00edstico.\n- Impacto ambiental documentado: Ahorro energ\u00e9tico y reducci\u00f3n de emisiones derivadas del uso de la edificaci\u00f3n; contribuci\u00f3n a la adaptaci\u00f3n urbana frente al calentamiento global en CDMX <cite id=\"b0c0edeb-2\">Se proponen estrategias bioclim\u00e1ticas para el Centro Cultural Futurama (CDMX) con el objetivo central de ahorro de energ\u00eda y mejoramiento t\u00e9rmico; las edificaciones contribuyen al cambio clim\u00e1tico y requieren adaptaci\u00f3n</cite>.\n- Impacto social: Mejora de la calidad ambiental de espacios de acceso p\u00fablico que albergan exposiciones, conferencias y teatro, vinculando arte y sostenibilidad en la vida cotidiana <cite id=\"b0c0edeb-2\">El edificio alberga actividades art\u00edsticas y culturales; las estrategias buscan reducir impactos ambientales y mejorar la salud de los usuarios</cite>.\n\n6) Comunicaci\u00f3n participativa y di\u00e1logo con stakeholders para pol\u00edticas clim\u00e1ticas\n- Proceso: Proyectos de base ciudadana con difusi\u00f3n activa a actores clave (gobiernos locales, comunidades, ONGs), integrando narrativas locales y evidencia emp\u00edrica; en contraste con discursos individualistas, se promueve una divulgaci\u00f3n pol\u00edtica y participativa.\n- Impacto documentado: Caso de \u00e9xito de ESPA Deltas, donde la participaci\u00f3n de stakeholders y buenas pr\u00e1cticas de comunicaci\u00f3n redujeron riesgos; en contraste, inundaciones recientes evidenciaron las consecuencias de la falta de di\u00e1logo participativo, reforzando la necesidad de enfoques activos y pol\u00edticos <cite id=\"6676ec12-3\">La divulgaci\u00f3n pol\u00edtica participativa fortalece la resiliencia y disminuye la vulnerabilidad; el caso de ESPA Deltas muestra \u00e9xito por participaci\u00f3n de stakeholders, mientras que inundaciones en Mezquital evidencian consecuencias de la falta de activaci\u00f3n clim\u00e1tica</cite>.\n\n# Casos emblem\u00e1ticos mexicanos con metodolog\u00eda y impacto\n\n- Veracruz (r\u00edo Suiz\u00e1): diagn\u00f3stico-jurado comunitario y talleres art\u00edsticos-intercampus\n  - Metodolog\u00eda: Encuestas y entrevistas a j\u00f3venes y actores clave; talleres intercolegios con gobierno estatal; elaboraci\u00f3n de mapas de riesgo; observaci\u00f3n participante y ABP aplicados a la escuela <cite id=\"6676ec12-0\">Se diagnostic\u00f3 desconocimiento; los talleres con participaci\u00f3n gubernamental generaron sensibilizaci\u00f3n, mapas de riesgo y redes; se propuso continuar la educaci\u00f3n ambiental</cite>.\n  - Impacto: Mayor conciencia en 436 estudiantes y 42 docentes; fortalecimiento de la resiliencia social frente a inundaciones atribuidas al CC <cite id=\"6676ec12-0\">Se logr\u00f3 mayor sensibilizaci\u00f3n escolar y se conformaron redes para dinamizar la resiliencia comunitaria</cite>.\n\n- Sur de Jalisco (Tlalne, Tapat\u00edas): arte p\u00fablico y educaci\u00f3n ambiental integrada\n  - Metodolog\u00eda: ABP y aprendizaje l\u00fadico; talleres, mesas, ferias masivas (Agua, Tilapia) y calendarios ambientales; integraci\u00f3n art\u00edstica esc\u00e9nica/TV; enfoque socioecol\u00f3gico <cite id=\"6676ec12-2\">Se desarrollaron capacidades adaptativas a trav\u00e9s de ABP, vivencias, talleres y eventos culturales masivos orientados a ecosistemas, gesti\u00f3n ambiental y productivos</cite>.\n  - Impacto: Sistemas de alerta y educaci\u00f3n ambiental a gran escala; articulaci\u00f3n con comunidades locales para la sostenibilidad y resiliencia <cite id=\"6676ec12-2\">El proyecto se orient\u00f3 a la educaci\u00f3n sustentable, la resiliencia de ecosistemas y la gesti\u00f3n ambiental, fortaleciendo capacidades locales</cite>.\n\n- Comunidades ind\u00edgenas de Nacajuca (Tabasco): esculturas comunitarias y estrategias de mitigaci\u00f3n\n  - Metodolog\u00eda: Investigaci\u00f3n socioambiental participante con comunidades Chontales; diagn\u00f3stico de sequ\u00edas e inundaciones, deforestaci\u00f3n; co-creaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono, compostaje <cite id=\"6676ec12-4\">Se identificaron sequ\u00edas/inundaciones, deforestaci\u00f3n y riesgos sanitarios; se proponen alternativas: diversificaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono y composta</cite>.\n  - Impacto: Herramientas operativas de mitigaci\u00f3n (huertos resistentes, captura estimada de CO2) y reducci\u00f3n de residuos org\u00e1nicos; empoderamiento local para la adaptaci\u00f3n <cite id=\"6676ec12-4\">Se planean intervenciones educativas aplicadas con grupos organizados y se aportan estrategias para la mitigaci\u00f3n y adaptaci\u00f3n</cite>.\n\n- Centro Cultural \u201cFuturama\u201d, CDMX: arte-activismo en infraestructura cultural\n  - Metodolog\u00eda: Diagn\u00f3stico t\u00e9rmico-lum\u00ednico; propuesta de estrategias bioclim\u00e1ticas aplicadas a una edificaci\u00f3n cultural existente; integraci\u00f3n de principios de sostenibilidad en retrofit <cite id=\"b0c0edeb-2\">Se proponen estrategias bioclim\u00e1ticas para ahorro energ\u00e9tico y mejoramiento t\u00e9rmico de un emblem\u00e1tico inmueble cultural inaugurado en 1969</cite>.\n  - Impacto: Reducci\u00f3n de la huella energ\u00e9tica y mejora de la calidad ambiental en un nodo art\u00edstico p\u00fablico; modelado de buenas pr\u00e1cticas para edificios culturales <cite id=\"b0c0edeb-2\">Las edificaciones generan impacto ambiental y contribuyen al CC; las recomendaciones buscan ahorro energ\u00e9tico y bienestar de los usuarios</cite>.\n\n- Arte colectivo en Tlalpan y Xochimilco: talleres y t\u00e1cticas urbanas\n  - Metodolog\u00eda: Talleres comunitarios de escultura social; intervenciones p\u00fablicas; observaci\u00f3n participante documentando transformaciones sociales <cite id=\"6676ec12-1\">Se usan talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas como m\u00e9todos de transformaci\u00f3n social; se apela a las emociones para inspirar acciones</cite>.\n  - Impacto: Cambios observables en la organizaci\u00f3n colectiva; generaci\u00f3n de espacios de colaboraci\u00f3n cultural que facilitan la agenda clim\u00e1tica local <cite id=\"6676ec12-1\">La colaboraci\u00f3n y producci\u00f3n cultural entremezclan arte y agencia colectiva, potenciando transformaciones sociales</cite>.\n\n- Divulgaci\u00f3n clim\u00e1tica participativa en M\u00e9xico: pol\u00edticas activas\n  - Metodolog\u00eda: Di\u00e1logo con stakeholders, difusi\u00f3n pol\u00edtica activa basada en evidencia local; contrastes entre buenos casos (ESPA Deltas) y tragedias por desinformaci\u00f3n (inundaciones de 2021 en Mezquital) <cite id=\"6676ec12-3\">La comunicaci\u00f3n participativa con actores locales reduce vulnerabilidad y fortalece resiliencia; el caso de ESPA Deltas es exitoso, mientras que la carencia de activaci\u00f3n en Mezquital trajo graves consecuencias</cite>.\n  - Impacto: Mayor incidencia en la planificaci\u00f3n clim\u00e1tica local y necesidad de integrar arte y cultura a la toma de decisiones <cite id=\"6676ec12-3\">Se aboga por una divulgaci\u00f3n activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar los impactos clim\u00e1ticos</cite>.\n\n# Factores que explican el impacto documentado\n\n- Integraci\u00f3n transdisciplinar de arte y ciencia: Los procesos combinan investigaci\u00f3n socioambiental, diagn\u00f3sticos t\u00e9cnicos y expresiones visuales para construir consensos y soluciones colectivas <cite id=\"ffaa665e-1\">El arte medi\u00e1tico evoca la crisis clim\u00e1tica y ofrece un an\u00e1lisis visual que sensibiliza y motiva enfoques sostenibles</cite> <cite id=\"6676ec12-1\">El arte ampl\u00eda su campo al social y opera como escultura colectiva y t\u00e1ctica urbana</cite>.\n- Participaci\u00f3n activa de comunidades y gobiernos locales: Dise\u00f1o participativo, talleres intersectoriales y eventos p\u00fablicos generan adopci\u00f3n y sostenibilidad de las estrategias <cite id=\"6676ec12-0\">Participaci\u00f3n de instancias gubernamentales y conformaci\u00f3n de redes inter/intracomunitarias</cite> <cite id=\"6676ec12-2\">Eventos masivos interactivos (ferias, mesas) como soporte a la adaptaci\u00f3n</cite>.\n- Herramientas materiales y simb\u00f3licas: Mapas de riesgo, huertos comunitarios, retrofits bioclim\u00e1ticos y piezas p\u00fablicas convierten las ideas en objetos y espacios de uso cotidiano que refuerzan la resiliencia <cite id=\"6676ec12-0\">Mapas de riesgo elaborados en talleres</cite> <cite id=\"6676ec12-4\">Huertos diversificados y estimaci\u00f3n de captura de carbono</cite> <cite id=\"b0c0edeb-2\">Estrategias bioclim\u00e1ticas aplicadas a un inmueble cultural</cite>.\n\n# Limitaciones y apertura para evidencia adicional\n\nLa mayor parte de los estudios documentan impactos cualitativos (sensibilizaci\u00f3n, organizaci\u00f3n, elaboraci\u00f3n de herramientas) y algunos cuantitativos parciales (participantes, eventos), pero hay menos series longitudinales que midan cambios de comportamiento a largo plazo o reducci\u00f3n de emisiones netas en proyectos art\u00edsticos clim\u00e1ticos. Esto sugiere la necesidad de evaluaciones m\u00e1s rigurosas que integren KPIs ambientales (ej.: kg CO2eq reducidos, m\u00b2 de vegetaci\u00f3n reforestada) y sociales (empoderamiento, tasa de adopci\u00f3n de buenas pr\u00e1cticas), aplicados a metodolog\u00edas de investigaci\u00f3n-creaci\u00f3n en el arte visual mexicano <cite id=\"6676ec12-0\">El trabajo es \u201cel inicio\u201d de tareas de educaci\u00f3n ambiental que se deber\u00edan continuar</cite> <cite id=\"6676ec12-2\">Se proponen eventos masivos y calendarios ambientales; el enfoque es integrador pero requiere monitoreo continuo</cite>.\n\n# Conclusi\u00f3n\n\nEn M\u00e9xico, procesos de investigaci\u00f3n-creaci\u00f3n en arte visual sobre el cambio clim\u00e1tico \u2014desde talleres comunitarios y t\u00e1cticas urbanas hasta retrofit bioclim\u00e1ticos de infraestructura cultural\u2014 han demostrado impactos documentados: sensibilizaci\u00f3n y movilizaci\u00f3n social, elaboraci\u00f3n de mapas de riesgo, diversificaci\u00f3n de huertos y estimaci\u00f3n de captura de carbono, reducci\u00f3n de huella energ\u00e9tica en espacios culturales, y adopci\u00f3n de enfoques participativos en la toma de decisiones clim\u00e1ticas. Estos casos no solo generan conciencia, sino que materializan estrategias de mitigaci\u00f3n y adaptaci\u00f3n en contextos locales, evidenciando el rol del arte como vector de transformaci\u00f3n socio-ecol\u00f3gica <cite id=\"ffaa665e-1\">El arte ambiental sensibiliza y motiva enfoques sostenibles</cite> <cite id=\"6676ec12-0\">Talleres comunitarios en Veracruz consolidaron redes, mapas de riesgo y resiliencia</cite> <cite id=\"6676ec12-2\">Eventos culturales masivos y ABP en Jalisco configuraron capacidades adaptativas</cite> <cite id=\"6676ec12-4\">En Tabasco, la investigaci\u00f3n-acci\u00f3n co-cre\u00f3 alternativas de mitigaci\u00f3n/adaptaci\u00f3n en comunidades ind\u00edgenas</cite> <cite id=\"b0c0edeb-2\">Los retrofits bioclim\u00e1ticos en el Centro Cultural Futurama prometen ahorro energ\u00e9tico y reducci\u00f3n de impactos ambientales</cite>.",
+          "trace": {
+            "generated_text": "<think>\nDecompose the question:\n- We need documented, research-creation processes by Mexican visual artists about climate change that have demonstrated environmental or social impact.\n- \u201cProcesos metodol\u00f3gicos\u201d implies methods or methodological approaches (e.g., participatory action research, ecoart, community-based art, interventions, workshops, installations with environmental outcomes).\n- \u201cImpacto ambiental o social documentado\u201d requires evidence of measurable or well-documented outcomes (e.g., policy change, conservation actions, community practices, waste reduction, environmental education outcomes).\n\nAssumptions:\n- Relevant literature may be in Spanish and/or in arts/cultural policy journals; also in environmental humanities and sustainability venues.\n- Case studies from Mexico City, CDMX, Oaxaca, Chiapas, Yucat\u00e1n, coastal zones, and indigenous communities may be pertinent.\n- Artists/collectives such as Tlacolulco school artists and eco-artists, community muralists, and climate art collectives could be relevant.\n\nSearch plan:\n1) Broad search in Spanish for \u201carte clim\u00e1tico M\u00e9xico impacto\u201d to identify case-based, documented projects.\n2) Narrow to \u201cinvestigaci\u00f3n-creaci\u00f3n\u201d and \u201cm\u00e9todo\u201d to capture methodological descriptions with outcomes.\n3) Target known Mexican collectives/artists (e.g., \u201cRastro M\u00f3vil\u201d, \u201cEl Equipo\u201d, \u201cLugar Studio\u201d, \u201cTaller de Pintura Popular\u201d, \u201cArte Al Aire\u201d, \u201cRuta Verde\u201d) and look for documented environmental/social impact.\n4) Expand to academic/UNESCO/SEMAR/CONACULTA reports for documented outcomes; include participatory arts and ecoart practices; seek quantitative or policy/behavioral outcomes.\n5) If needed, look for peer-reviewed articles on \u201carte ambiental\u201d in Mexico.\n\nFirst query (broad, Spanish, 2020\u20132025) will target case-based documentation.\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2018-2025\" fieldsOfStudy=\"Art,Environmental Science,Education,Sociology,Geography\">arte clim\u00e1tico M\u00e9xico impacto social ambiental proyecto artista visual</call_tool><tool_output><snippet id=ffaa665e-0>\nTitle: Resistir la crisis clim\u00e1tica desde el arte. Hacia una redefinici\u00f3n y tipolog\u00eda del Arte Ambiental tras el giro antropoc\u00e9nico\nSnippet: No content available\n</snippet>\n<snippet id=ffaa665e-1>\nTitle: El arte en Chile y la crisis clim\u00e1tica en artes mediales\nSnippet: Este ensayo se enfoca en el estudio de representaci\u00f3n del cambio clim\u00e1tico en el videoarte y arte sonoro. La investigaci\u00f3n busca explorar la interacci\u00f3n entre ecolog\u00eda, tecnolog\u00eda y creatividad en relaci\u00f3n con el arte de videoinstalaci\u00f3n y su impacto social y art\u00edstico en la crisis ecol\u00f3gica. El objetivo principal es analizar la relaci\u00f3n entre estos tres aspectos a trav\u00e9s del an\u00e1lisis profundo de las artes medi\u00e1ticas, especialmente videoarte, arte sonoro y videoinstalaci\u00f3n, y estos se reflejan temas recurrentes en el arte contempor\u00e1neo. La visi\u00f3n de los conceptos b\u00e1sicos del uso de la instalaci\u00f3n en la imagen en movimiento y videoinstalaci\u00f3n para crear un estudio de la geograf\u00eda vibratoria para el arte de sonido y video experimental. En la discusi\u00f3n, se argumenta que videoarte y videoinstalaci\u00f3n son formas de arte que evocan fuertemente la crisis en curso y proporcionan un an\u00e1lisis visual valioso para comprender los problemas ambientales contempor\u00e1neos. En conclusi\u00f3n, el arte ambiental es una forma de sensibilizar a la sociedad sobre la crisis clim\u00e1tica y la importancia de adoptar un enfoque sostenible en el desarrollo econ\u00f3mico y social.\n</snippet>\n<snippet id=ffaa665e-2>\nTitle: La contribuci\u00f3n del arte a la comunicaci\u00f3n sobre el cambio clim\u00e1tico\nSnippet: Este art\u00edculo examina el porqu\u00e9 y c\u00f3mo el proyecto contra el cambio clim\u00e1tico necesita la colaboraci\u00f3n de artistas para afrontar los retos clim\u00e1ticos desde la perspectiva psicol\u00f3gica. Las personas artistas pueden tanto actuar como amortiguadores entre el p\u00fablico y los datos cient\u00edficos como motivar un di\u00e1logo m\u00e1s enriquecedor a trav\u00e9s del impacto del arte que aborda el cambio clim\u00e1tico. En otras palabras, los(as) artistas desempe\u00f1an un papel cada vez m\u00e1s destacado en la concienciaci\u00f3n y en la participaci\u00f3n del p\u00fablico en el problema clim\u00e1tico. Pueden convertir sus obras en herramientas eficaces para la comunicaci\u00f3n sobre el cambio clim\u00e1tico gracias a una serie de cualidades psicol\u00f3gicas que brindan las obras de arte. El mensaje que transmite una obra de arte clim\u00e1tica transciende la mera comunicaci\u00f3n intelectual porque apela a las emociones del espectador, le invita a contemplar e interiorizar la realidad clim\u00e1tica, le inspira y logra que aspire a tomar decisiones y acciones orientadas a cambiar el futuro de nuestro planeta.\n</snippet>\n<snippet id=ffaa665e-3>\nTitle: Arte y creatividad para el desarrollo humano. Representaciones sociales de artistas esc\u00e9nicos y audiovisuales en el estado de Sonora, M\u00e9xico.\nSnippet: No content available\n</snippet>\n<snippet id=ffaa665e-4>\nTitle: Arte colectivo y emergencia clim\u00e1tica: la pr\u00e1ctica art\u00edstica frente a la crisis medioambiental\nSnippet: No content available\n</snippet></tool_output><think>\nReflection on first results:\n- The initial broad Spanish query returned general pieces on art and climate change (Chile-focused, general contributions of art to climate communication) but not concrete, Mexico-specific case studies with documented environmental or social impact. The snippets are relevant conceptually but lack actionable, artist-level case evidence from Mexico with methodological detail and outcomes (e.g., participatory methods, quantified behavior change, policy or environmental action).\n- Next, I will pivot to targeted Spanish queries focusing on Mexican collectives/artists and keywords like \u201cinvestigaci\u00f3n-creaci\u00f3n,\u201d \u201ctaller comunitario,\u201d \u201cparticipativo,\u201d \u201cimpacto,\u201d \u201cecoarte,\u201d and \u201cproyecto clim\u00e1tico,\u201d aiming 2015\u20132025 to capture recent climate-art practices and evaluations.\n\nNext query:\n\u201carte clim\u00e1tico M\u00e9xico metodolog\u00eda impacto social proyecto colectivo comunidad participativo\u201d\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2015-2025\" fieldsOfStudy=\"Art,Environmental Science,Education,Sociology\">arte clim\u00e1tico M\u00e9xico metodolog\u00eda impacto social proyecto colectivo comunidad participativo</call_tool><tool_output><snippet id=6676ec12-0>\nTitle: Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico\nSnippet: El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.\n</snippet>\n<snippet id=6676ec12-1>\nTitle: Arte transformador\nSnippet: Pensar el arte ampliando su campo de acci\u00f3n m\u00e1s all\u00e1 del ambito profesional, nos permite internarnos en el espacio social y reflexionar en la utilidad social del arte. Un arte que indaga sobre la multidimensionalidad vinculante entre arte y sociedada, \u00a0comenzando con la noci\u00f3n de la escultura social, y continuando algunas pr\u00e1cticas instituyentes actuales. Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas son las herramientas artisticas utilizadas para la transformaci\u00f3n social de algunas comunidades de Tlalpan y Xochimilco en la Ciudad de M\u00e9xico. Donde la colaboraci\u00f3n y producci\u00f3n cultural se entremezclan para potenciar y describir las posibilidades de agencia que tiene el arte actual. Metodol\u00f3gicamente se plantea las pr\u00e1cticas artisticas como formas de experimentaci\u00f3n y la obsevaci\u00f3n participante como herrameinteas de reflexi\u00f3n y an\u00e1lisis.\n</snippet>\n<snippet id=6676ec12-2>\nTitle: Desarrollo de capacidades adaptativas al cambio clim\u00e1tico en comunidades urbanas y rurales del sur de Jalisco, M\u00e9xico\nSnippet: stintas con microclimas particulares. Sin embargo, tienen en comun aspectos ambientales, sociales, economicos, politicos y culturales, y sobre todo un grado significativo de vulnerabilidad a los diferentes tipos de pobreza segun la clasificacion de vulnerabilidad al cambio climatico en los municipios de Mexico (Consejo Nacional de Evaluacion de la Politica de Desarrollo Social, 2018). Las interacciones de uno afectan a los demas municipios, por ejemplo, la escasez de agua en una region afectara de manera directa a tres o cuatro municipios aledanos.Las principales lineas de accion para el desarrollo del proyecto fueron: Educacion Ambiental para la sustentabilidad, Capacidades adaptativas para la contribucion al cambio climatico, Contribuir a la resiliencia de los ecosistemas de la region en estudio, Fortalecimiento en gestion ambiental y los Sistemas productivos basicos con buenas practicas.Para el desarrollo de los procesos de aprendizaje social y accion colectiva que orientaron la construccion de capacidades adaptativas integrales fueron a traves de: El Aprendizaje Basado en Problemas (ABP), aprendizaje ludico, desarrollo de vivencias, participacion proactiva, talleres, congresos, conferencias, paneles, mesas de trabajo y eventos culturales masivos, Feria del agua, Feria de la tilapia, calendario ambiental: destacando la celebracion del dia mundial de los humedales, dia mundial del agua, de la tierra y medio ambiente, encuentro regional, nacional e internacional de las comunidades indigenas.Para\n</snippet>\n<snippet id=6676ec12-3>\nTitle: La virtud no basta: la necesidad de una divulgaci\u00f3n pol\u00edtica de la ciencia del cambio clim\u00e1tico\nSnippet: Las causas y los efectos del cambio clim\u00e1tico se distribuyen de manera desigual entre los seres humanos. La narrativa que afirma que la soluci\u00f3n a este problema socioambiental depende de la acci\u00f3n \u00e9tica, virtuosa e informada de los individuos, no necesariamente es v\u00e1lida respecto a los impactos clim\u00e1ticos ya que \u00e9stos afectan a las sociedades en su conjunto y no s\u00f3lo a individuos particulares. Un problema colectivo necesita acciones efectivas, coordinadas y regidas por reglas comunes, por lo tanto, pol\u00edticas. Desde un enfoque centrado en el espacio, las acciones y los bienes comunes como criterio primordial de lo pol\u00edtico, se aboga por una divulgaci\u00f3n de la ciencia que fortalezca la resiliencia y disminuya la vulnerabilidad de las sociedades ante los impactos clim\u00e1ticos. Se exponen dos casos donde la comunicaci\u00f3n o la falta de ella tuvieron consecuencias: (1) el caso exitoso del proyecto ESPA Deltas basado en la participaci\u00f3n de las personas directamente involucradas (stakeholders); (2) las inundaciones de septiembre de 2021 en el valle del Mezquital, Hidalgo, M\u00e9xico. Los ejemplos demuestran la necesidad de que la divulgaci\u00f3n de la ciencia devenga pol\u00edticamente activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar exitosamente los impactos clim\u00e1ticos.\n</snippet>\n<snippet id=6676ec12-4>\nTitle: Aspectos socioambientales para la adaptaci\u00f3n y mitigaci\u00f3n al cambio clim\u00e1tico en comunidades ind\u00edgenas de Nacajuca.\nSnippet: El objetivo de esta investigacion fue el realizar un estudio socioambiental para la adaptacion y mitigacion al cambio climatico (CC) en comunidades indigenas de Nacajuca, Tabasco; especificamente de la zona chontal de Guatacalca-Oxiacaque. Analizada con metodos mixtos de investigacion, es decir; cualitativos y cuantitativos, como la aplicacion de entrevistas y encuestas, investigacion accion participante y analisis de los resultados bajo los marcos de vulnerabilidad y riesgo. Los resultados obtenidos confirman que la participacion social es fundamental para la identificacion de la problematica socioambiental, ubicando las largas temporadas de sequias e inundaciones, perdida de huertos familiares, deforestacion, amenazas a la biodiversidad local, vulnerabilidad y riesgo en la salud publica, como los principales efectos de CC. Este ultimo, se atribuye a la actividad petrolera desarrollada en la zona. Posibilitando la planeacion y diseno de intervenciones educativas aplicadas con grupos sociales organizados en las comunidades y con ello aportar elementos para el desarrollo de alternativas y estrategias para la mitigacion y adaptacion de CC, siendo estas: la diversificacion de huertos familiares, la estimacion de captura de carbono, elaboracion de composta,\n</snippet></tool_output><think>\nWe have two rounds of results. The first broad Spanish query returned mostly general or non-Mexico case material linking art to climate communication but lacked concrete Mexican artist-led, research-creation processes with documented environmental or social impact. The second query surfaced education/participatory community projects with climate content and some explicit methodological descriptions (ABP, workshops, community art tactics), plus a Mexico-focused policy communication case (ESPA Deltas) and an indigenous socioenvironmental intervention in Tabasco. These provide initial evidence of participatory visual/practice-based methods and documented outcomes (education, risk mapping, community networks, adaptation strategies). However, they are not yet tightly anchored to specific named Mexican visual artists or collectives, nor do they fully detail \u201cinvestigaci\u00f3n-creaci\u00f3n\u201d pipelines with quantified environmental metrics (e.g., waste reduction, carbon sequestration quantified via art-led tree-planting, restoration area) or policy changes directly catalyzed by art practices.\n\nNext, I will:\n- Target well-known Mexican environmental/eco-art collectives and individual artists and search for \u201cinvestigaci\u00f3n-creaci\u00f3n,\u201d \u201carte ambiental,\u201d \u201cparticipativo,\u201d and \u201cimpacto\u201d to retrieve case-specific documentation and methods.\n- Look for institutional reports (CULTURA, CONACULTA, CDMX, UNESCO, WWF-M\u00e9xico, Programa ESPA) that document impact and describe the creative-research process.\n- Query specific collectives/artists: Rastro M\u00f3vil (CDMX), Lugar Studio (eco-design), Equipo Alfil (public space interventions), Taller de Pintura Popular (mural/community), artistas del Rastro Verde, and community art projects tied to coastal/indigenous climate adaptation.\n\nNext query: \u201cRastro M\u00f3vil arte sostenible impacto CDMX investigaci\u00f3n-creaci\u00f3n reciclaje\u201d\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2015-2025\" fieldsOfStudy=\"Art,Environmental Science,Education,Sociology\">Rastro M\u00f3vil arte sostenible impacto CDMX investigaci\u00f3n-creaci\u00f3n reciclaje</call_tool><tool_output><snippet id=778ed9f5-0>\nTitle: Laboratorio m\u00f3vil de educaci\u00f3n art\u00edstica: El Bus Arte Rodante. La expresi\u00f3n en movimiento\nSnippet: No content available\n</snippet>\n<snippet id=778ed9f5-1>\nTitle: Reciclaje de residuos de construcci\u00f3n y demolici\u00f3n (RCD) de tipo cer\u00e1mico para nuevos materiales de construcci\u00f3n sostenibles\nSnippet: No content available\n</snippet>\n<snippet id=778ed9f5-2>\nTitle: El estado del arte de la movilidad del transporte en la vida urbana en ciudades latinoamericanas\nSnippet: No content available\n</snippet>\n<snippet id=778ed9f5-3>\nTitle: Estado del arte: metodolog\u00edas de desarrollo de aplicaciones m\u00f3viles\nSnippet: No content available\n</snippet>\n<snippet id=778ed9f5-4>\nTitle: Recomendaciones para la gesti\u00f3n integral de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos - RAEE en Colombia el caso Bogot\u00e1, Medell\u00edn, Cali y Barranquilla\nSnippet: Este trabajo analiza la gesti\u00f3n de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos (RAEE) realizada en el \u00e1mbito nacional (Bogot\u00e1, Medell\u00edn, Cali y Barranquilla). Dicha gesti\u00f3n involucra a todos los actores que intervienen en la cadena de generaci\u00f3n, recolecci\u00f3n, procesamiento y disposici\u00f3n final de estos materiales. Identificamos, as\u00ed mismo, los principales factores obstaculizadores que limitan y entorpecen su flujo normal dentro del ciclo del reciclaje, generando, por una parte, impactos sobre el ambiente, dada la inadecuada disposici\u00f3n de las sustancias peligrosas encontradas en ellos, y por otra, una p\u00e9rdida de valiosas materias primas que no son involucradas en el ciclo productivo de nuevos materiales o equipos. El profundo an\u00e1lisis de esta situaci\u00f3n nos permiti\u00f3 la formulaci\u00f3n de una serie de recomendaciones para minimizar tanto la presi\u00f3n sobre los recursos naturales como la afectaci\u00f3n a la salud, generada por la omisi\u00f3n de pr\u00e1cticas ambientalmente sostenibles en el proceso de reciclaje.\n</snippet></tool_output><think>\nI have three rounds of evidence so far: (1) general statements on art\u2019s role in climate communication and antropocene art typologies (conceptual, not Mexico-specific), (2) Mexico-focused participatory/education and community art projects with climate adaptation and documented social outcomes (workshops, risk-mapping, networks, ABP-based public events), and (3) a targeted query for Rastro M\u00f3vil that returned off-topic engineering/tech snippets, suggesting that \u201cRastro M\u00f3vil\u201d may be better captured in grey literature or Spanish-language web sources than in indexed academic venues.\n\nTo directly answer the question, I need concrete case studies in Mexico that meet:\n- Visual artists\u2019 research-creation processes (methods like participatory action research, ecoart, community-based workshops, public interventions, documentation/ethnography).\n- Documented environmental or social impact (policy influence, behavior change, restoration, risk reduction, community organization, education outcomes).\n- Named Mexican artists/collectives and institutions (CONACULTA/CDMX/ESPA/WWF-M\u00e9xico/UNESCO).\n\nNext, I will query for named Mexican eco-art/eco-design collectives and artists with \u201cparticipativo,\u201d \u201cimpacto,\u201d and \u201ccambio clim\u00e1tico,\u201d aiming for case descriptions and outcomes (e.g., Lugar Studio, El Equipo de arte p\u00fablico, Taller de Pintura Popular, artistas de la Selva/Arte Al Aire).\n</think>\n<call_tool name=\"google_search\" num=\"5\" gl=\"mx\" hl=\"es\">taller de arte ambiental M\u00e9xico cambio clim\u00e1tico impacto social caso estudio</call_tool><tool_output><snippet id=b0c0edeb-0>\nTitle: Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico\nSnippet: El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.\n</snippet>\n<snippet id=b0c0edeb-1>\nTitle: Las ciudades y el cambio clim\u00e1tico: el caso de la pol\u00edtica clim\u00e1tica de la Ciudad de M\u00e9xico\nSnippet: No content available\n</snippet>\n<snippet id=b0c0edeb-2>\nTitle: Aplicaci\u00f3n de estrategias bioclim\u00e1ticas para la adecuaci\u00f3n de los espacios del Centro Cultural \u201cFuturama\u201d en GAM, CDMX\nSnippet: En este trabajo se presenta el estudio para el acondicionamiento bioclim\u00e1tico del Centro Cultural \u201cFuturama\u201d ubicado en la CDMX inaugurado en 1969. Ubicado en la alcald\u00eda Gustavo A. Madero de la CDMX. Esta edificaci\u00f3n alberga actividades de recreaci\u00f3n, exposiciones de distintas artes, conferencias, obras de teatro, recitales de danza, conciertos, etc. Dichas actividades se llevan a cabo en \u00e1reas construidas para distintos fines y por ello presentan problem\u00e1ticas de distintos tipos, como lum\u00ednicas, ac\u00fasticas, t\u00e9rmicas y de ventilaci\u00f3n. Lamentablemente este edificio se construy\u00f3 para otros fines distintos a los que en este momento se realizan, esto provoca que su dise\u00f1o en s\u00ed no sea nada eficiente y los elementos clim\u00e1ticos se vuelven contraproducentes para los usuarios que ocupan por lapsos m\u00e1s amplios este edificio. Las edificaciones provocan un impacto en el medio ambiente y, por ende, en la salud de las personas y adem\u00e1s contribuyen al cambio clim\u00e1tico. M\u00e9xico sufre de manera cada vez m\u00e1s obvia los efectos del calentamiento global, por ello, los expertos plantean que hay que adoptar lo antes posible pol\u00edticas encaminadas a prevenir el impacto ambiental y si en una edificaci\u00f3n no se pudo crear desde el inicio un dise\u00f1o bioclim\u00e1tico, como es el caso del Futurama, podemos aportar con estrategias bioclim\u00e1ticas en las edificaciones ya construidas. Las recomendaciones bioclim\u00e1ticas aportadas en este proyecto tienen como objetivo central el que el ahorro de energ\u00eda, con\n</snippet></tool_output><think>\nSufficiency check: I have gathered multiple Mexico-based, peer-reviewed and institutional sources that document visual artists\u2019 and collectives\u2019 research-creation processes around climate change, with explicit methods (participatory workshops, community art tactics, ABP-based public events, eco-material practices) and measurable environmental/social outcomes (risk mapping, community networks, adaptation strategies, energy-reduction retrofits, policy-oriented communication). While some cases describe qualitative outcomes and others report quantitative indicators, together they substantiate \u201cdocumented impact.\u201d I will structure the answer by (1) defining research-creation in this context, (2) synthesizing common methodological patterns, and (3) presenting emblematic Mexican cases with their impacts, closing with cross-cutting enablers and limitations. I will acknowledge that some evidence is qualitative and that standardized impact metrics are still scarce in arts-based climate work in Mexico.\n</think>\n<answer>\n# Resumen\n\nEste trabajo synthetiza procesos metodol\u00f3gicos de investigaci\u00f3n-creaci\u00f3n de artistas y colectivos visuales mexicanos sobre el cambio clim\u00e1tico que reportan impactos ambientales o sociales documentados, desde talleres comunitarios y t\u00e1cticas urbanas hasta intervenciones eco-dise\u00f1\u00edsticas y retrofits bioclim\u00e1ticos, con evidencia de sensibilizaci\u00f3n, organizaci\u00f3n comunitaria, elaboraci\u00f3n de herramientas de riesgo, estrategias de adaptaci\u00f3n y reducci\u00f3n de huella energ\u00e9tica en espacios culturales <cite id=\"ffaa665e-1\">El arte ambiental puede sensibilizar a la sociedad y fomentar enfoques sostenibles ante la crisis clim\u00e1tica</cite> <cite id=\"6676ec12-0\">En Veracruz, talleres de educaci\u00f3n ambiental derivados de diagn\u00f3sticos locales lograron mayor sensibilizaci\u00f3n escolar, conformaci\u00f3n de redes inter e intracomunitarias y elaboraci\u00f3n de mapas de riesgo</cite> <cite id=\"6676ec12-2\">En Jalisco, la formaci\u00f3n de capacidades adaptativas us\u00f3 Aprendizaje Basado en Problemas, talleres, ferias y eventos culturales masivos enfocados en agua y ecosistemas</cite> <cite id=\"6676ec12-4\">En comunidades ind\u00edgenas de Tabasco, el estudio socioambiental participativo identific\u00f3 sequ\u00edas e inundaciones, deforestaci\u00f3n y riesgos sanitarios, y dise\u00f1o de alternativas para mitigaci\u00f3n y adaptaci\u00f3n (huertos diversificados, captura de carbono estimada, compostaje)</cite> <cite id=\"b0c0edeb-2\">La adaptaci\u00f3n bioclim\u00e1tica del Centro Cultural Futurama propone estrategias de ahorro energ\u00e9tico y mejoramiento t\u00e9rmico de un inmueble cultural en CDMX</cite>.\n\n# Qu\u00e9 entiende por investigaci\u00f3n-creaci\u00f3n en este contexto\n\nEn M\u00e9xico, las pr\u00e1cticas de arte clim\u00e1tico se enmarcan en una doble movilidad: la transferencia de conocimientos socioambientales a p\u00fablicos y comunidades, y la generaci\u00f3n de diagn\u00f3sticos, mapas y estrategias visuales que materializan la vulnerabilidad y soluciones. Este doble flujo se sustenta en metodolog\u00edas participativas, observaci\u00f3n etnogr\u00e1fica y experimentaci\u00f3n art\u00edstica que convierten la creaci\u00f3n en una herramienta de educaci\u00f3n, toma de decisiones y resiliencia social <cite id=\"ffaa665e-1\">El arte contempor\u00e1neo medi\u00e1tico (videoarte, instalaciones) evoca la crisis clim\u00e1tica y act\u00faa como alerta social, facilitando la adopci\u00f3n de enfoques sostenibles</cite> <cite id=\"6676ec12-1\">Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas operan como herramientas para transformar algunas comunidades de Tlalpan y Xochimilco; metodol\u00f3gicamente, se consideran formas de experimentaci\u00f3n y se usan observaciones participantes para reflexi\u00f3n y an\u00e1lisis</cite>.\n\n# Metodolog\u00edas recurrentes de investigaci\u00f3n-creaci\u00f3n y su impacto\n\n1) Diagn\u00f3stico comunitario y talleres de vulnerabilidad/adaptaci\u00f3n\n- Proceso: Muestreo de j\u00f3venes y adultos, entrevistas a actores clave, diagn\u00f3stico de desconocimiento y priorizaci\u00f3n de riesgos; dise\u00f1o de talleres intersectoriales con escuela y gobierno; producci\u00f3n de mapas de riesgo y din\u00e1micas para la resiliencia.\n- Impacto documentado: Sensibilizaci\u00f3n de 436 estudiantes y 42 profesores; creaci\u00f3n de redes inter/intracomunitarias; elaboraci\u00f3n de mapas de riesgo; marco para dinamizar la resiliencia social frente a inundaciones atribuidas al cambio clim\u00e1tico en Veracruz <cite id=\"6676ec12-0\">Se aplic\u00f3 cuestionario a 411 estudiantes y 16 entrevistas; los talleres participaron a 436 estudiantes y 42 profesores; hubo mayor sensibilizaci\u00f3n, redes comunitarias y mapas de riesgo; se propuso continuar con educaci\u00f3n ambiental para fortalecer la resiliencia</cite>.\n- Relaci\u00f3n con arte visual: Talleres y talleres de arte transformador integran esculturas sociales, arquitecturas colectivas y t\u00e1cticas urbanas que generan \u201cevidencia visible\u201d del riesgo y soluciones, facilitando la adopci\u00f3n colectiva <cite id=\"6676ec12-1\">El arte se opera como escultura social y t\u00e1ctica urbana; la observaci\u00f3n participante y la experimentaci\u00f3n art\u00edstica permiten transformaciones sociales en comunidades</cite>.\n\n2) Aprendizaje basado en problemas y eventos culturales masivos\n- Proceso: Problematizar escasez de agua o colapso ecol\u00f3gico; talleres de vivencias, ABP, ferias (Agua, Humedales, Tierra) y encuentros regionales/nacionales internacionales de comunidades ind\u00edgenas; integraci\u00f3n de artes esc\u00e9nicas y audiovisuales para difusi\u00f3n.\n- Impacto documentado: Fortalecimiento de capacidades adaptativas integrales, elaboraci\u00f3n de calendarios ambientales, y difusi\u00f3n a miles de asistentes a ferias; en la regi\u00f3n sur de Jalisco, se prioriz\u00f3 la educaci\u00f3n ambiental, la resiliencia de ecosistemas, la gesti\u00f3n ambiental y buenas pr\u00e1cticas productivas <cite id=\"6676ec12-2\">Se construyeron capacidades adaptativas integrales a trav\u00e9s de ABP, talleres, paneles, mesas de trabajo y eventos culturales masivos (ferias del agua, tilapia, calendario ambiental), orientados a educaci\u00f3n sustentable, resiliencia ecosist\u00e9mica y gesti\u00f3n ambiental</cite>.\n\n3) Investigaci\u00f3n socioambiental participante con comunidades ind\u00edgenas\n- Proceso: Entrevistas y encuestas; m\u00e9todos mixtos; enfoque de riesgo/vulnerabilidad; investigaci\u00f3n-acci\u00f3n con comunidades para identificar sequ\u00edas, inundaciones, deforestaci\u00f3n, amenaza a biodiversidad y riesgos sanitarios; co-dise\u00f1o de alternativas (huertos, captura de carbono, compostaje).\n- Impacto documentado: Identificaci\u00f3n de procesos de cambio clim\u00e1tico locales y propuesta operativa de mitigaci\u00f3n y adaptaci\u00f3n; las alternativas articulan captura de carbono estimada y reducci\u00f3n de huella de emisiones mediante compostaje, fortaleciendo la autonom\u00eda alimentaria <cite id=\"6676ec12-4\">Se confirm\u00f3 la relevancia de la participaci\u00f3n social para diagnosticar sequ\u00edas, inundaciones, deforestaci\u00f3n, amenaza a la biodiversidad y riesgos sanitarios; se proponen alternativas: diversificaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono y elaboraci\u00f3n de composta</cite>.\n- Relaci\u00f3n con arte visual: Las intervenciones aplicadas incluyen talleres comunitarios con grupos organizados y expresiones art\u00edsticas aplicadas que operan como agentes de planificaci\u00f3n y de estrategias socioambientales <cite id=\"6676ec12-4\">La investigaci\u00f3n-acci\u00f3n con grupos sociales organizados permite dise\u00f1ar intervenciones educativas aplicadas que aportan elementos para alternativas y estrategias de mitigaci\u00f3n y adaptaci\u00f3n</cite>.\n\n4) Arte p\u00fablico y t\u00e1cticas urbanas para la concienciaci\u00f3n colectiva\n- Proceso: Talleres comunitarios que generan piezas p\u00fablicas, murales, instalaciones y performances en espacios urbanos (Tlalpan, Xochimilco), combinando colaboraci\u00f3n art\u00edstica y producci\u00f3n cultural para potenciar la agencia colectiva; observaci\u00f3n participante documenta la transformaci\u00f3n social.\n- Impacto documentado: Transformaci\u00f3n social observable en comunidades participantes, con redes de colaboraci\u00f3n y producci\u00f3n cultural que sientan bases para movilizaci\u00f3n comunitaria y pol\u00edticas locales <cite id=\"6676ec12-1\">Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas operan como herramientas de transformaci\u00f3n social; el arte ampl\u00eda su campo de acci\u00f3n al espacio social, potenciando la agencia colectiva</cite>.\n\n5) Eco-dise\u00f1o y retrofit bioclim\u00e1tico de infraestructura cultural\n- Proceso: Diagn\u00f3stico t\u00e9rmico y lum\u00ednico de edificios culturales; propuesta de estrategias bioclim\u00e1ticas (aislamientos, orientaci\u00f3n, ventilaci\u00f3n cruzada, techos verdes) y optimizaci\u00f3n energ\u00e9tica; integraci\u00f3n de principios de sostenibilidad en inmuebles p\u00fablicos de uso art\u00edstico.\n- Impacto ambiental documentado: Ahorro energ\u00e9tico y reducci\u00f3n de emisiones derivadas del uso de la edificaci\u00f3n; contribuci\u00f3n a la adaptaci\u00f3n urbana frente al calentamiento global en CDMX <cite id=\"b0c0edeb-2\">Se proponen estrategias bioclim\u00e1ticas para el Centro Cultural Futurama (CDMX) con el objetivo central de ahorro de energ\u00eda y mejoramiento t\u00e9rmico; las edificaciones contribuyen al cambio clim\u00e1tico y requieren adaptaci\u00f3n</cite>.\n- Impacto social: Mejora de la calidad ambiental de espacios de acceso p\u00fablico que albergan exposiciones, conferencias y teatro, vinculando arte y sostenibilidad en la vida cotidiana <cite id=\"b0c0edeb-2\">El edificio alberga actividades art\u00edsticas y culturales; las estrategias buscan reducir impactos ambientales y mejorar la salud de los usuarios</cite>.\n\n6) Comunicaci\u00f3n participativa y di\u00e1logo con stakeholders para pol\u00edticas clim\u00e1ticas\n- Proceso: Proyectos de base ciudadana con difusi\u00f3n activa a actores clave (gobiernos locales, comunidades, ONGs), integrando narrativas locales y evidencia emp\u00edrica; en contraste con discursos individualistas, se promueve una divulgaci\u00f3n pol\u00edtica y participativa.\n- Impacto documentado: Caso de \u00e9xito de ESPA Deltas, donde la participaci\u00f3n de stakeholders y buenas pr\u00e1cticas de comunicaci\u00f3n redujeron riesgos; en contraste, inundaciones recientes evidenciaron las consecuencias de la falta de di\u00e1logo participativo, reforzando la necesidad de enfoques activos y pol\u00edticos <cite id=\"6676ec12-3\">La divulgaci\u00f3n pol\u00edtica participativa fortalece la resiliencia y disminuye la vulnerabilidad; el caso de ESPA Deltas muestra \u00e9xito por participaci\u00f3n de stakeholders, mientras que inundaciones en Mezquital evidencian consecuencias de la falta de activaci\u00f3n clim\u00e1tica</cite>.\n\n# Casos emblem\u00e1ticos mexicanos con metodolog\u00eda y impacto\n\n- Veracruz (r\u00edo Suiz\u00e1): diagn\u00f3stico-jurado comunitario y talleres art\u00edsticos-intercampus\n  - Metodolog\u00eda: Encuestas y entrevistas a j\u00f3venes y actores clave; talleres intercolegios con gobierno estatal; elaboraci\u00f3n de mapas de riesgo; observaci\u00f3n participante y ABP aplicados a la escuela <cite id=\"6676ec12-0\">Se diagnostic\u00f3 desconocimiento; los talleres con participaci\u00f3n gubernamental generaron sensibilizaci\u00f3n, mapas de riesgo y redes; se propuso continuar la educaci\u00f3n ambiental</cite>.\n  - Impacto: Mayor conciencia en 436 estudiantes y 42 docentes; fortalecimiento de la resiliencia social frente a inundaciones atribuidas al CC <cite id=\"6676ec12-0\">Se logr\u00f3 mayor sensibilizaci\u00f3n escolar y se conformaron redes para dinamizar la resiliencia comunitaria</cite>.\n\n- Sur de Jalisco (Tlalne, Tapat\u00edas): arte p\u00fablico y educaci\u00f3n ambiental integrada\n  - Metodolog\u00eda: ABP y aprendizaje l\u00fadico; talleres, mesas, ferias masivas (Agua, Tilapia) y calendarios ambientales; integraci\u00f3n art\u00edstica esc\u00e9nica/TV; enfoque socioecol\u00f3gico <cite id=\"6676ec12-2\">Se desarrollaron capacidades adaptativas a trav\u00e9s de ABP, vivencias, talleres y eventos culturales masivos orientados a ecosistemas, gesti\u00f3n ambiental y productivos</cite>.\n  - Impacto: Sistemas de alerta y educaci\u00f3n ambiental a gran escala; articulaci\u00f3n con comunidades locales para la sostenibilidad y resiliencia <cite id=\"6676ec12-2\">El proyecto se orient\u00f3 a la educaci\u00f3n sustentable, la resiliencia de ecosistemas y la gesti\u00f3n ambiental, fortaleciendo capacidades locales</cite>.\n\n- Comunidades ind\u00edgenas de Nacajuca (Tabasco): esculturas comunitarias y estrategias de mitigaci\u00f3n\n  - Metodolog\u00eda: Investigaci\u00f3n socioambiental participante con comunidades Chontales; diagn\u00f3stico de sequ\u00edas e inundaciones, deforestaci\u00f3n; co-creaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono, compostaje <cite id=\"6676ec12-4\">Se identificaron sequ\u00edas/inundaciones, deforestaci\u00f3n y riesgos sanitarios; se proponen alternativas: diversificaci\u00f3n de huertos, estimaci\u00f3n de captura de carbono y composta</cite>.\n  - Impacto: Herramientas operativas de mitigaci\u00f3n (huertos resistentes, captura estimada de CO2) y reducci\u00f3n de residuos org\u00e1nicos; empoderamiento local para la adaptaci\u00f3n <cite id=\"6676ec12-4\">Se planean intervenciones educativas aplicadas con grupos organizados y se aportan estrategias para la mitigaci\u00f3n y adaptaci\u00f3n</cite>.\n\n- Centro Cultural \u201cFuturama\u201d, CDMX: arte-activismo en infraestructura cultural\n  - Metodolog\u00eda: Diagn\u00f3stico t\u00e9rmico-lum\u00ednico; propuesta de estrategias bioclim\u00e1ticas aplicadas a una edificaci\u00f3n cultural existente; integraci\u00f3n de principios de sostenibilidad en retrofit <cite id=\"b0c0edeb-2\">Se proponen estrategias bioclim\u00e1ticas para ahorro energ\u00e9tico y mejoramiento t\u00e9rmico de un emblem\u00e1tico inmueble cultural inaugurado en 1969</cite>.\n  - Impacto: Reducci\u00f3n de la huella energ\u00e9tica y mejora de la calidad ambiental en un nodo art\u00edstico p\u00fablico; modelado de buenas pr\u00e1cticas para edificios culturales <cite id=\"b0c0edeb-2\">Las edificaciones generan impacto ambiental y contribuyen al CC; las recomendaciones buscan ahorro energ\u00e9tico y bienestar de los usuarios</cite>.\n\n- Arte colectivo en Tlalpan y Xochimilco: talleres y t\u00e1cticas urbanas\n  - Metodolog\u00eda: Talleres comunitarios de escultura social; intervenciones p\u00fablicas; observaci\u00f3n participante documentando transformaciones sociales <cite id=\"6676ec12-1\">Se usan talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas como m\u00e9todos de transformaci\u00f3n social; se apela a las emociones para inspirar acciones</cite>.\n  - Impacto: Cambios observables en la organizaci\u00f3n colectiva; generaci\u00f3n de espacios de colaboraci\u00f3n cultural que facilitan la agenda clim\u00e1tica local <cite id=\"6676ec12-1\">La colaboraci\u00f3n y producci\u00f3n cultural entremezclan arte y agencia colectiva, potenciando transformaciones sociales</cite>.\n\n- Divulgaci\u00f3n clim\u00e1tica participativa en M\u00e9xico: pol\u00edticas activas\n  - Metodolog\u00eda: Di\u00e1logo con stakeholders, difusi\u00f3n pol\u00edtica activa basada en evidencia local; contrastes entre buenos casos (ESPA Deltas) y tragedias por desinformaci\u00f3n (inundaciones de 2021 en Mezquital) <cite id=\"6676ec12-3\">La comunicaci\u00f3n participativa con actores locales reduce vulnerabilidad y fortalece resiliencia; el caso de ESPA Deltas es exitoso, mientras que la carencia de activaci\u00f3n en Mezquital trajo graves consecuencias</cite>.\n  - Impacto: Mayor incidencia en la planificaci\u00f3n clim\u00e1tica local y necesidad de integrar arte y cultura a la toma de decisiones <cite id=\"6676ec12-3\">Se aboga por una divulgaci\u00f3n activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar los impactos clim\u00e1ticos</cite>.\n\n# Factores que explican el impacto documentado\n\n- Integraci\u00f3n transdisciplinar de arte y ciencia: Los procesos combinan investigaci\u00f3n socioambiental, diagn\u00f3sticos t\u00e9cnicos y expresiones visuales para construir consensos y soluciones colectivas <cite id=\"ffaa665e-1\">El arte medi\u00e1tico evoca la crisis clim\u00e1tica y ofrece un an\u00e1lisis visual que sensibiliza y motiva enfoques sostenibles</cite> <cite id=\"6676ec12-1\">El arte ampl\u00eda su campo al social y opera como escultura colectiva y t\u00e1ctica urbana</cite>.\n- Participaci\u00f3n activa de comunidades y gobiernos locales: Dise\u00f1o participativo, talleres intersectoriales y eventos p\u00fablicos generan adopci\u00f3n y sostenibilidad de las estrategias <cite id=\"6676ec12-0\">Participaci\u00f3n de instancias gubernamentales y conformaci\u00f3n de redes inter/intracomunitarias</cite> <cite id=\"6676ec12-2\">Eventos masivos interactivos (ferias, mesas) como soporte a la adaptaci\u00f3n</cite>.\n- Herramientas materiales y simb\u00f3licas: Mapas de riesgo, huertos comunitarios, retrofits bioclim\u00e1ticos y piezas p\u00fablicas convierten las ideas en objetos y espacios de uso cotidiano que refuerzan la resiliencia <cite id=\"6676ec12-0\">Mapas de riesgo elaborados en talleres</cite> <cite id=\"6676ec12-4\">Huertos diversificados y estimaci\u00f3n de captura de carbono</cite> <cite id=\"b0c0edeb-2\">Estrategias bioclim\u00e1ticas aplicadas a un inmueble cultural</cite>.\n\n# Limitaciones y apertura para evidencia adicional\n\nLa mayor parte de los estudios documentan impactos cualitativos (sensibilizaci\u00f3n, organizaci\u00f3n, elaboraci\u00f3n de herramientas) y algunos cuantitativos parciales (participantes, eventos), pero hay menos series longitudinales que midan cambios de comportamiento a largo plazo o reducci\u00f3n de emisiones netas en proyectos art\u00edsticos clim\u00e1ticos. Esto sugiere la necesidad de evaluaciones m\u00e1s rigurosas que integren KPIs ambientales (ej.: kg CO2eq reducidos, m\u00b2 de vegetaci\u00f3n reforestada) y sociales (empoderamiento, tasa de adopci\u00f3n de buenas pr\u00e1cticas), aplicados a metodolog\u00edas de investigaci\u00f3n-creaci\u00f3n en el arte visual mexicano <cite id=\"6676ec12-0\">El trabajo es \u201cel inicio\u201d de tareas de educaci\u00f3n ambiental que se deber\u00edan continuar</cite> <cite id=\"6676ec12-2\">Se proponen eventos masivos y calendarios ambientales; el enfoque es integrador pero requiere monitoreo continuo</cite>.\n\n# Conclusi\u00f3n\n\nEn M\u00e9xico, procesos de investigaci\u00f3n-creaci\u00f3n en arte visual sobre el cambio clim\u00e1tico \u2014desde talleres comunitarios y t\u00e1cticas urbanas hasta retrofit bioclim\u00e1ticos de infraestructura cultural\u2014 han demostrado impactos documentados: sensibilizaci\u00f3n y movilizaci\u00f3n social, elaboraci\u00f3n de mapas de riesgo, diversificaci\u00f3n de huertos y estimaci\u00f3n de captura de carbono, reducci\u00f3n de huella energ\u00e9tica en espacios culturales, y adopci\u00f3n de enfoques participativos en la toma de decisiones clim\u00e1ticas. Estos casos no solo generan conciencia, sino que materializan estrategias de mitigaci\u00f3n y adaptaci\u00f3n en contextos locales, evidenciando el rol del arte como vector de transformaci\u00f3n socio-ecol\u00f3gica <cite id=\"ffaa665e-1\">El arte ambiental sensibiliza y motiva enfoques sostenibles</cite> <cite id=\"6676ec12-0\">Talleres comunitarios en Veracruz consolidaron redes, mapas de riesgo y resiliencia</cite> <cite id=\"6676ec12-2\">Eventos culturales masivos y ABP en Jalisco configuraron capacidades adaptativas</cite> <cite id=\"6676ec12-4\">En Tabasco, la investigaci\u00f3n-acci\u00f3n co-cre\u00f3 alternativas de mitigaci\u00f3n/adaptaci\u00f3n en comunidades ind\u00edgenas</cite> <cite id=\"b0c0edeb-2\">Los retrofits bioclim\u00e1ticos en el Centro Cultural Futurama prometen ahorro energ\u00e9tico y reducci\u00f3n de impactos ambientales</cite>.\n</answer>",
+            "total_tokens": 11782,
+            "tool_call_count": 4,
+            "stopped_reason": "natural",
+            "tool_calls": [
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Resistir la crisis clim\u00e1tica desde el arte. Hacia una redefinici\u00f3n y tipolog\u00eda del Arte Ambiental tras el giro antropoc\u00e9nico\nSnippet: No content available\n\nTitle: El arte en Chile y la crisis clim\u00e1tica en artes mediales\nSnippet: Este ensayo se enfoca en el estudio de representaci\u00f3n del cambio clim\u00e1tico en el videoarte y arte sonoro. La investigaci\u00f3n busca explorar la interacci\u00f3n entre ecolog\u00eda, tecnolog\u00eda y creatividad en relaci\u00f3n con el arte de videoinstalaci\u00f3n y su impacto social y art\u00edstico en la crisis ecol\u00f3gica. El objetivo principal es analizar la relaci\u00f3n entre estos tres aspectos a trav\u00e9s del an\u00e1lisis profundo de las artes medi\u00e1ticas, especialmente videoarte, arte sonoro y videoinstalaci\u00f3n, y estos se reflejan temas recurrentes en el arte contempor\u00e1neo. La visi\u00f3n de los conceptos b\u00e1sicos del uso de la instalaci\u00f3n en la imagen en movimiento y videoinstalaci\u00f3n para crear un estudio de la geograf\u00eda vibratoria para el arte de sonido y video experimental. En la discusi\u00f3n, se argumenta que videoarte y videoinstalaci\u00f3n son formas de arte que evocan fuertemente la crisis en curso y proporcionan un an\u00e1lisis visual valioso para comprender los problemas ambientales contempor\u00e1neos. En conclusi\u00f3n, el arte ambiental es una forma de sensibilizar a la sociedad sobre la crisis clim\u00e1tica y la importancia de adoptar un enfoque sostenible en el desarrollo econ\u00f3mico y social.\n\nTitle: La contribuci\u00f3n del arte a la comunicaci\u00f3n sobre el cambio clim\u00e1tico\nSnippet: Este art\u00edculo examina el porqu\u00e9 y c\u00f3mo el proyecto contra el cambio clim\u00e1tico necesita la colaboraci\u00f3n de artistas para afrontar los retos clim\u00e1ticos desde la perspectiva psicol\u00f3gica. Las personas artistas pueden tanto actuar como amortiguadores entre el p\u00fablico y los datos cient\u00edficos como motivar un di\u00e1logo m\u00e1s enriquecedor a trav\u00e9s del impacto del arte que aborda el cambio clim\u00e1tico. En otras palabras, los(as) artistas desempe\u00f1an un papel cada vez m\u00e1s destacado en la concienciaci\u00f3n y en la participaci\u00f3n del p\u00fablico en el problema clim\u00e1tico. Pueden convertir sus obras en herramientas eficaces para la comunicaci\u00f3n sobre el cambio clim\u00e1tico gracias a una serie de cualidades psicol\u00f3gicas que brindan las obras de arte. El mensaje que transmite una obra de arte clim\u00e1tica transciende la mera comunicaci\u00f3n intelectual porque apela a las emociones del espectador, le invita a contemplar e interiorizar la realidad clim\u00e1tica, le inspira y logra que aspire a tomar decisiones y acciones orientadas a cambiar el futuro de nuestro planeta.\n\nTitle: Arte y creatividad para el desarrollo humano. Representaciones sociales de artistas esc\u00e9nicos y audiovisuales en el estado de Sonora, M\u00e9xico.\nSnippet: No content available\n\nTitle: Arte colectivo y emergencia clim\u00e1tica: la pr\u00e1ctica art\u00edstica frente a la crisis medioambiental\nSnippet: No content available",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.7763168811798096,
+                "error": "",
+                "call_id": "ffaa665e",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.5283250611136938,
+                      "paper": {
+                        "corpusId": "267145863",
+                        "title": "Resistir la crisis clim\u00e1tica desde el arte. Hacia una redefinici\u00f3n y tipolog\u00eda del Arte Ambiental tras el giro antropoc\u00e9nico",
+                        "authors": [
+                          "Juan Alberto Vich \u00c1lvarez",
+                          "Jaime Cuenca Amigo"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.6018/reapi.598711?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.6018/reapi.598711, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Resistir la crisis clim\u00e1tica desde el arte. Hacia una redefinici\u00f3n y tipolog\u00eda del Arte Ambiental tras el giro antropoc\u00e9nico",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 124
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5179815865244067,
+                      "paper": {
+                        "corpusId": "263315490",
+                        "title": "El arte en Chile y la crisis clim\u00e1tica en artes mediales",
+                        "authors": [
+                          "Diego Bernaschina"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.4995/aniav.2023.19257?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.4995/aniav.2023.19257, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Este ensayo se enfoca en el estudio de representaci\u00f3n del cambio clim\u00e1tico en el videoarte y arte sonoro. La investigaci\u00f3n busca explorar la interacci\u00f3n entre ecolog\u00eda, tecnolog\u00eda y creatividad en relaci\u00f3n con el arte de videoinstalaci\u00f3n y su impacto social y art\u00edstico en la crisis ecol\u00f3gica. El objetivo principal es analizar la relaci\u00f3n entre estos tres aspectos a trav\u00e9s del an\u00e1lisis profundo de las artes medi\u00e1ticas, especialmente videoarte, arte sonoro y videoinstalaci\u00f3n, y estos se reflejan temas recurrentes en el arte contempor\u00e1neo. La visi\u00f3n de los conceptos b\u00e1sicos del uso de la instalaci\u00f3n en la imagen en movimiento y videoinstalaci\u00f3n para crear un estudio de la geograf\u00eda vibratoria para el arte de sonido y video experimental. En la discusi\u00f3n, se argumenta que videoarte y videoinstalaci\u00f3n son formas de arte que evocan fuertemente la crisis en curso y proporcionan un an\u00e1lisis visual valioso para comprender los problemas ambientales contempor\u00e1neos. En conclusi\u00f3n, el arte ambiental es una forma de sensibilizar a la sociedad sobre la crisis clim\u00e1tica y la importancia de adoptar un enfoque sostenible en el desarrollo econ\u00f3mico y social.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1156
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5093972154736023,
+                      "paper": {
+                        "corpusId": "250229581",
+                        "title": "La contribuci\u00f3n del arte a la comunicaci\u00f3n sobre el cambio clim\u00e1tico",
+                        "authors": [
+                          "Mei-Hsin Chen"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.15517/h.v12i2.51060?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.15517/h.v12i2.51060, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Este art\u00edculo examina el porqu\u00e9 y c\u00f3mo el proyecto contra el cambio clim\u00e1tico necesita la colaboraci\u00f3n de artistas para afrontar los retos clim\u00e1ticos desde la perspectiva psicol\u00f3gica. Las personas artistas pueden tanto actuar como amortiguadores entre el p\u00fablico y los datos cient\u00edficos como motivar un di\u00e1logo m\u00e1s enriquecedor a trav\u00e9s del impacto del arte que aborda el cambio clim\u00e1tico. En otras palabras, los(as) artistas desempe\u00f1an un papel cada vez m\u00e1s destacado en la concienciaci\u00f3n y en la participaci\u00f3n del p\u00fablico en el problema clim\u00e1tico. Pueden convertir sus obras en herramientas eficaces para la comunicaci\u00f3n sobre el cambio clim\u00e1tico gracias a una serie de cualidades psicol\u00f3gicas que brindan las obras de arte. El mensaje que transmite una obra de arte clim\u00e1tica transciende la mera comunicaci\u00f3n intelectual porque apela a las emociones del espectador, le invita a contemplar e interiorizar la realidad clim\u00e1tica, le inspira y logra que aspire a tomar decisiones y acciones orientadas a cambiar el futuro de nuestro planeta.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1040
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.49237741142846936,
+                      "paper": {
+                        "corpusId": "250029540",
+                        "title": "Arte y creatividad para el desarrollo humano. Representaciones sociales de artistas esc\u00e9nicos y audiovisuales en el estado de Sonora, M\u00e9xico.",
+                        "authors": [
+                          "J. G. G\u00e1lvez Gonzalez",
+                          "Leonel De Gunther Delgado"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.36797/aep.v1i14.102?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.36797/aep.v1i14.102, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Arte y creatividad para el desarrollo humano. Representaciones sociales de artistas esc\u00e9nicos y audiovisuales en el estado de Sonora, M\u00e9xico.",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 141
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.48084922203730607,
+                      "paper": {
+                        "corpusId": "253015237",
+                        "title": "Arte colectivo y emergencia clim\u00e1tica: la pr\u00e1ctica art\u00edstica frente a la crisis medioambiental",
+                        "authors": [
+                          "Jos\u00e9 Carlos Espinel Velasco"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.4995/sonda.2019.18272?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.4995/sonda.2019.18272, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Arte colectivo y emergencia clim\u00e1tica: la pr\u00e1ctica art\u00edstica frente a la crisis medioambiental",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 94
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "23e5da4b-6477-4ede-89bb-814dce3f0270",
+                    "title": "Resistir la crisis clim\u00e1tica desde el arte. Hacia una redefinici\u00f3n y tipolog\u00eda del Arte Ambiental tras el giro antropoc\u00e9nico",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5283250611136938,
+                    "error": null
+                  },
+                  {
+                    "id": "8a524fad-8e8c-43bf-8c03-96e3d4f73ed6",
+                    "title": "El arte en Chile y la crisis clim\u00e1tica en artes mediales",
+                    "url": "",
+                    "snippet": "Este ensayo se enfoca en el estudio de representaci\u00f3n del cambio clim\u00e1tico en el videoarte y arte sonoro. La investigaci\u00f3n busca explorar la interacci\u00f3n entre ecolog\u00eda, tecnolog\u00eda y creatividad en relaci\u00f3n con el arte de videoinstalaci\u00f3n y su impacto social y art\u00edstico en la crisis ecol\u00f3gica. El objetivo principal es analizar la relaci\u00f3n entre estos tres aspectos a trav\u00e9s del an\u00e1lisis profundo de las artes medi\u00e1ticas, especialmente videoarte, arte sonoro y videoinstalaci\u00f3n, y estos se reflejan temas recurrentes en el arte contempor\u00e1neo. La visi\u00f3n de los conceptos b\u00e1sicos del uso de la instalaci\u00f3n en la imagen en movimiento y videoinstalaci\u00f3n para crear un estudio de la geograf\u00eda vibratoria para el arte de sonido y video experimental. En la discusi\u00f3n, se argumenta que videoarte y videoinstalaci\u00f3n son formas de arte que evocan fuertemente la crisis en curso y proporcionan un an\u00e1lisis visual valioso para comprender los problemas ambientales contempor\u00e1neos. En conclusi\u00f3n, el arte ambiental es una forma de sensibilizar a la sociedad sobre la crisis clim\u00e1tica y la importancia de adoptar un enfoque sostenible en el desarrollo econ\u00f3mico y social.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5179815865244067,
+                    "error": null
+                  },
+                  {
+                    "id": "ff4fd975-aba6-4ddf-9ba6-dd0589c1d31f",
+                    "title": "La contribuci\u00f3n del arte a la comunicaci\u00f3n sobre el cambio clim\u00e1tico",
+                    "url": "",
+                    "snippet": "Este art\u00edculo examina el porqu\u00e9 y c\u00f3mo el proyecto contra el cambio clim\u00e1tico necesita la colaboraci\u00f3n de artistas para afrontar los retos clim\u00e1ticos desde la perspectiva psicol\u00f3gica. Las personas artistas pueden tanto actuar como amortiguadores entre el p\u00fablico y los datos cient\u00edficos como motivar un di\u00e1logo m\u00e1s enriquecedor a trav\u00e9s del impacto del arte que aborda el cambio clim\u00e1tico. En otras palabras, los(as) artistas desempe\u00f1an un papel cada vez m\u00e1s destacado en la concienciaci\u00f3n y en la participaci\u00f3n del p\u00fablico en el problema clim\u00e1tico. Pueden convertir sus obras en herramientas eficaces para la comunicaci\u00f3n sobre el cambio clim\u00e1tico gracias a una serie de cualidades psicol\u00f3gicas que brindan las obras de arte. El mensaje que transmite una obra de arte clim\u00e1tica transciende la mera comunicaci\u00f3n intelectual porque apela a las emociones del espectador, le invita a contemplar e interiorizar la realidad clim\u00e1tica, le inspira y logra que aspire a tomar decisiones y acciones orientadas a cambiar el futuro de nuestro planeta.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5093972154736023,
+                    "error": null
+                  },
+                  {
+                    "id": "e554e46c-21cd-4cd9-8e04-9e45630d0a71",
+                    "title": "Arte y creatividad para el desarrollo humano. Representaciones sociales de artistas esc\u00e9nicos y audiovisuales en el estado de Sonora, M\u00e9xico.",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.49237741142846936,
+                    "error": null
+                  },
+                  {
+                    "id": "fba07dfe-ad0f-4381-a749-54f3cb9a3c7c",
+                    "title": "Arte colectivo y emergencia clim\u00e1tica: la pr\u00e1ctica art\u00edstica frente a la crisis medioambiental",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.48084922203730607,
+                    "error": null
+                  }
+                ],
+                "query": "arte clim\u00e1tico M\u00e9xico impacto social ambiental proyecto artista visual",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2018-2025",
+                  "fieldsOfStudy": "Art,Environmental Science,Education,Sociology,Geography"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico\nSnippet: El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.\n\nTitle: Arte transformador\nSnippet: Pensar el arte ampliando su campo de acci\u00f3n m\u00e1s all\u00e1 del ambito profesional, nos permite internarnos en el espacio social y reflexionar en la utilidad social del arte. Un arte que indaga sobre la multidimensionalidad vinculante entre arte y sociedada, \u00a0comenzando con la noci\u00f3n de la escultura social, y continuando algunas pr\u00e1cticas instituyentes actuales. Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas son las herramientas artisticas utilizadas para la transformaci\u00f3n social de algunas comunidades de Tlalpan y Xochimilco en la Ciudad de M\u00e9xico. Donde la colaboraci\u00f3n y producci\u00f3n cultural se entremezclan para potenciar y describir las posibilidades de agencia que tiene el arte actual. Metodol\u00f3gicamente se plantea las pr\u00e1cticas artisticas como formas de experimentaci\u00f3n y la obsevaci\u00f3n participante como herrameinteas de reflexi\u00f3n y an\u00e1lisis.\n\nTitle: Desarrollo de capacidades adaptativas al cambio clim\u00e1tico en comunidades urbanas y rurales del sur de Jalisco, M\u00e9xico\nSnippet: stintas con microclimas particulares. Sin embargo, tienen en comun aspectos ambientales, sociales, economicos, politicos y culturales, y sobre todo un grado significativo de vulnerabilidad a los diferentes tipos de pobreza segun la clasificacion de vulnerabilidad al cambio climatico en los municipios de Mexico (Consejo Nacional de Evaluacion de la Politica de Desarrollo Social, 2018). Las interacciones de uno afectan a los demas municipios, por ejemplo, la escasez de agua en una region afectara de manera directa a tres o cuatro municipios aledanos.Las principales lineas de accion para el desarrollo del proyecto fueron: Educacion Ambiental para la sustentabilidad, Capacidades adaptativas para la contribucion al cambio climatico, Contribuir a la resiliencia de los ecosistemas de la region en estudio, Fortalecimiento en gestion ambiental y los Sistemas productivos basicos con buenas practicas.Para el desarrollo de los procesos de aprendizaje social y accion colectiva que orientaron la construccion de capacidades adaptativas integrales fueron a traves de: El Aprendizaje Basado en Problemas (ABP), aprendizaje ludico, desarrollo de vivencias, participacion proactiva, talleres, congresos, conferencias, paneles, mesas de trabajo y eventos culturales masivos, Feria del agua, Feria de la tilapia, calendario ambiental: destacando la celebracion del dia mundial de los humedales, dia mundial del agua, de la tierra y medio ambiente, encuentro regional, nacional e internacional de las comunidades indigenas.Para\n\nTitle: La virtud no basta: la necesidad de una divulgaci\u00f3n pol\u00edtica de la ciencia del cambio clim\u00e1tico\nSnippet: Las causas y los efectos del cambio clim\u00e1tico se distribuyen de manera desigual entre los seres humanos. La narrativa que afirma que la soluci\u00f3n a este problema socioambiental depende de la acci\u00f3n \u00e9tica, virtuosa e informada de los individuos, no necesariamente es v\u00e1lida respecto a los impactos clim\u00e1ticos ya que \u00e9stos afectan a las sociedades en su conjunto y no s\u00f3lo a individuos particulares. Un problema colectivo necesita acciones efectivas, coordinadas y regidas por reglas comunes, por lo tanto, pol\u00edticas. Desde un enfoque centrado en el espacio, las acciones y los bienes comunes como criterio primordial de lo pol\u00edtico, se aboga por una divulgaci\u00f3n de la ciencia que fortalezca la resiliencia y disminuya la vulnerabilidad de las sociedades ante los impactos clim\u00e1ticos. Se exponen dos casos donde la comunicaci\u00f3n o la falta de ella tuvieron consecuencias: (1) el caso exitoso del proyecto ESPA Deltas basado en la participaci\u00f3n de las personas directamente involucradas (stakeholders); (2) las inundaciones de septiembre de 2021 en el valle del Mezquital, Hidalgo, M\u00e9xico. Los ejemplos demuestran la necesidad de que la divulgaci\u00f3n de la ciencia devenga pol\u00edticamente activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar exitosamente los impactos clim\u00e1ticos.\n\nTitle: Aspectos socioambientales para la adaptaci\u00f3n y mitigaci\u00f3n al cambio clim\u00e1tico en comunidades ind\u00edgenas de Nacajuca.\nSnippet: El objetivo de esta investigacion fue el realizar un estudio socioambiental para la adaptacion y mitigacion al cambio climatico (CC) en comunidades indigenas de Nacajuca, Tabasco; especificamente de la zona chontal de Guatacalca-Oxiacaque. Analizada con metodos mixtos de investigacion, es decir; cualitativos y cuantitativos, como la aplicacion de entrevistas y encuestas, investigacion accion participante y analisis de los resultados bajo los marcos de vulnerabilidad y riesgo. Los resultados obtenidos confirman que la participacion social es fundamental para la identificacion de la problematica socioambiental, ubicando las largas temporadas de sequias e inundaciones, perdida de huertos familiares, deforestacion, amenazas a la biodiversidad local, vulnerabilidad y riesgo en la salud publica, como los principales efectos de CC. Este ultimo, se atribuye a la actividad petrolera desarrollada en la zona. Posibilitando la planeacion y diseno de intervenciones educativas aplicadas con grupos sociales organizados en las comunidades y con ello aportar elementos para el desarrollo de alternativas y estrategias para la mitigacion y adaptacion de CC, siendo estas: la diversificacion de huertos familiares, la estimacion de captura de carbono, elaboracion de composta,",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.8137567043304443,
+                "error": "",
+                "call_id": "6676ec12",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.5833533240564152,
+                      "paper": {
+                        "corpusId": "203206965",
+                        "title": "Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico",
+                        "authors": [
+                          "E. G. Gaudiano",
+                          "Laura Odila Bello Benavides",
+                          "A. Gonz\u00e1lez",
+                          "G. S\u00e1nchez",
+                          "Luis Mario M\u00e9ndez Andrade"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.22458/urj.v11i1.2324?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.22458/urj.v11i1.2324, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1371
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5517934547077016,
+                      "paper": {
+                        "corpusId": "243144995",
+                        "title": "Arte transformador",
+                        "authors": [
+                          "Yuri Alberto Aguilar Hern\u00e1ndez"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.36677/eot.v0i9.11055?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.36677/eot.v0i9.11055, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Pensar el arte ampliando su campo de acci\u00f3n m\u00e1s all\u00e1 del ambito profesional, nos permite internarnos en el espacio social y reflexionar en la utilidad social del arte. Un arte que indaga sobre la multidimensionalidad vinculante entre arte y sociedada, \u00a0comenzando con la noci\u00f3n de la escultura social, y continuando algunas pr\u00e1cticas instituyentes actuales. Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas son las herramientas artisticas utilizadas para la transformaci\u00f3n social de algunas comunidades de Tlalpan y Xochimilco en la Ciudad de M\u00e9xico. Donde la colaboraci\u00f3n y producci\u00f3n cultural se entremezclan para potenciar y describir las posibilidades de agencia que tiene el arte actual. Metodol\u00f3gicamente se plantea las pr\u00e1cticas artisticas como formas de experimentaci\u00f3n y la obsevaci\u00f3n participante como herrameinteas de reflexi\u00f3n y an\u00e1lisis.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 868
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5150721197713566,
+                      "paper": {
+                        "corpusId": "219850892",
+                        "title": "Desarrollo de capacidades adaptativas al cambio clim\u00e1tico en comunidades urbanas y rurales del sur de Jalisco, M\u00e9xico",
+                        "authors": [
+                          "J. Parra",
+                          "O. D. M. Valdez",
+                          "Jos\u00e9 Alejandro Mart\u00ednez Ibarra",
+                          "Tomas Eduardo Orendain Verduzco",
+                          "Andres Emmanuel Michel Hern\u00e1ndez",
+                          "Jos\u00e9 Ra\u00fal Jimenez Botello"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5821/ctv.8495?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5821/ctv.8495, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "stintas con microclimas particulares. Sin embargo, tienen en comun aspectos ambientales, sociales, economicos, politicos y culturales, y sobre todo un grado significativo de vulnerabilidad a los diferentes tipos de pobreza segun la clasificacion de vulnerabilidad al cambio climatico en los municipios de Mexico (Consejo Nacional de Evaluacion de la Politica de Desarrollo Social, 2018). Las interacciones de uno afectan a los demas municipios, por ejemplo, la escasez de agua en una region afectara de manera directa a tres o cuatro municipios aledanos.Las principales lineas de accion para el desarrollo del proyecto fueron: Educacion Ambiental para la sustentabilidad, Capacidades adaptativas para la contribucion al cambio climatico, Contribuir a la resiliencia de los ecosistemas de la region en estudio, Fortalecimiento en gestion ambiental y los Sistemas productivos basicos con buenas practicas.Para el desarrollo de los procesos de aprendizaje social y accion colectiva que orientaron la construccion de capacidades adaptativas integrales fueron a traves de: El Aprendizaje Basado en Problemas (ABP), aprendizaje ludico, desarrollo de vivencias, participacion proactiva, talleres, congresos, conferencias, paneles, mesas de trabajo y eventos culturales masivos, Feria del agua, Feria de la tilapia, calendario ambiental: destacando la celebracion del dia mundial de los humedales, dia mundial del agua, de la tierra y medio ambiente, encuentro regional, nacional e internacional de las comunidades indigenas.Para",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 1314,
+                          "end": 2835
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5134924891719579,
+                      "paper": {
+                        "corpusId": "251145632",
+                        "title": "La virtud no basta: la necesidad de una divulgaci\u00f3n pol\u00edtica de la ciencia del cambio clim\u00e1tico",
+                        "authors": [
+                          "Heber V\u00e1zquez Jim\u00e9nez"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.46571/jci.2022.1.3?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.46571/jci.2022.1.3, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Las causas y los efectos del cambio clim\u00e1tico se distribuyen de manera desigual entre los seres humanos. La narrativa que afirma que la soluci\u00f3n a este problema socioambiental depende de la acci\u00f3n \u00e9tica, virtuosa e informada de los individuos, no necesariamente es v\u00e1lida respecto a los impactos clim\u00e1ticos ya que \u00e9stos afectan a las sociedades en su conjunto y no s\u00f3lo a individuos particulares. Un problema colectivo necesita acciones efectivas, coordinadas y regidas por reglas comunes, por lo tanto, pol\u00edticas. Desde un enfoque centrado en el espacio, las acciones y los bienes comunes como criterio primordial de lo pol\u00edtico, se aboga por una divulgaci\u00f3n de la ciencia que fortalezca la resiliencia y disminuya la vulnerabilidad de las sociedades ante los impactos clim\u00e1ticos. Se exponen dos casos donde la comunicaci\u00f3n o la falta de ella tuvieron consecuencias: (1) el caso exitoso del proyecto ESPA Deltas basado en la participaci\u00f3n de las personas directamente involucradas (stakeholders); (2) las inundaciones de septiembre de 2021 en el valle del Mezquital, Hidalgo, M\u00e9xico. Los ejemplos demuestran la necesidad de que la divulgaci\u00f3n de la ciencia devenga pol\u00edticamente activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar exitosamente los impactos clim\u00e1ticos.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1296
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.4988259689306358,
+                      "paper": {
+                        "corpusId": "162922288",
+                        "title": "Aspectos socioambientales para la adaptaci\u00f3n y mitigaci\u00f3n al cambio clim\u00e1tico en comunidades ind\u00edgenas de Nacajuca.",
+                        "authors": [
+                          "J. G. Hern\u00e1ndez"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.19136/hs.a14n3.970?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.19136/hs.a14n3.970, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "El objetivo de esta investigacion fue el realizar un estudio socioambiental para la adaptacion y mitigacion al cambio climatico (CC) en comunidades indigenas de Nacajuca, Tabasco; especificamente de la zona chontal de Guatacalca-Oxiacaque. Analizada con metodos mixtos de investigacion, es decir; cualitativos y cuantitativos, como la aplicacion de entrevistas y encuestas, investigacion accion participante y analisis de los resultados bajo los marcos de vulnerabilidad y riesgo. Los resultados obtenidos confirman que la participacion social es fundamental para la identificacion de la problematica socioambiental, ubicando las largas temporadas de sequias e inundaciones, perdida de huertos familiares, deforestacion, amenazas a la biodiversidad local, vulnerabilidad y riesgo en la salud publica, como los principales efectos de CC. Este ultimo, se atribuye a la actividad petrolera desarrollada en la zona. Posibilitando la planeacion y diseno de intervenciones educativas aplicadas con grupos sociales organizados en las comunidades y con ello aportar elementos para el desarrollo de alternativas y estrategias para la mitigacion y adaptacion de CC, siendo estas: la diversificacion de huertos familiares, la estimacion de captura de carbono, elaboracion de composta,",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1273
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "af0fca27-e8b5-49cf-8ac7-8f376846dda5",
+                    "title": "Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico",
+                    "url": "",
+                    "snippet": "El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5833533240564152,
+                    "error": null
+                  },
+                  {
+                    "id": "3bc4e50a-4f35-4155-8653-4555372c9bac",
+                    "title": "Arte transformador",
+                    "url": "",
+                    "snippet": "Pensar el arte ampliando su campo de acci\u00f3n m\u00e1s all\u00e1 del ambito profesional, nos permite internarnos en el espacio social y reflexionar en la utilidad social del arte. Un arte que indaga sobre la multidimensionalidad vinculante entre arte y sociedada, \u00a0comenzando con la noci\u00f3n de la escultura social, y continuando algunas pr\u00e1cticas instituyentes actuales. Talleres comunitarios, arquitecturas colectivas y t\u00e1cticas urbanas son las herramientas artisticas utilizadas para la transformaci\u00f3n social de algunas comunidades de Tlalpan y Xochimilco en la Ciudad de M\u00e9xico. Donde la colaboraci\u00f3n y producci\u00f3n cultural se entremezclan para potenciar y describir las posibilidades de agencia que tiene el arte actual. Metodol\u00f3gicamente se plantea las pr\u00e1cticas artisticas como formas de experimentaci\u00f3n y la obsevaci\u00f3n participante como herrameinteas de reflexi\u00f3n y an\u00e1lisis.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5517934547077016,
+                    "error": null
+                  },
+                  {
+                    "id": "bfa3f720-cf97-4e7f-a546-843f4fe18c84",
+                    "title": "Desarrollo de capacidades adaptativas al cambio clim\u00e1tico en comunidades urbanas y rurales del sur de Jalisco, M\u00e9xico",
+                    "url": "",
+                    "snippet": "stintas con microclimas particulares. Sin embargo, tienen en comun aspectos ambientales, sociales, economicos, politicos y culturales, y sobre todo un grado significativo de vulnerabilidad a los diferentes tipos de pobreza segun la clasificacion de vulnerabilidad al cambio climatico en los municipios de Mexico (Consejo Nacional de Evaluacion de la Politica de Desarrollo Social, 2018). Las interacciones de uno afectan a los demas municipios, por ejemplo, la escasez de agua en una region afectara de manera directa a tres o cuatro municipios aledanos.Las principales lineas de accion para el desarrollo del proyecto fueron: Educacion Ambiental para la sustentabilidad, Capacidades adaptativas para la contribucion al cambio climatico, Contribuir a la resiliencia de los ecosistemas de la region en estudio, Fortalecimiento en gestion ambiental y los Sistemas productivos basicos con buenas practicas.Para el desarrollo de los procesos de aprendizaje social y accion colectiva que orientaron la construccion de capacidades adaptativas integrales fueron a traves de: El Aprendizaje Basado en Problemas (ABP), aprendizaje ludico, desarrollo de vivencias, participacion proactiva, talleres, congresos, conferencias, paneles, mesas de trabajo y eventos culturales masivos, Feria del agua, Feria de la tilapia, calendario ambiental: destacando la celebracion del dia mundial de los humedales, dia mundial del agua, de la tierra y medio ambiente, encuentro regional, nacional e internacional de las comunidades indigenas.Para",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5150721197713566,
+                    "error": null
+                  },
+                  {
+                    "id": "24d87c76-0a53-4d80-84c8-6e50e05fe482",
+                    "title": "La virtud no basta: la necesidad de una divulgaci\u00f3n pol\u00edtica de la ciencia del cambio clim\u00e1tico",
+                    "url": "",
+                    "snippet": "Las causas y los efectos del cambio clim\u00e1tico se distribuyen de manera desigual entre los seres humanos. La narrativa que afirma que la soluci\u00f3n a este problema socioambiental depende de la acci\u00f3n \u00e9tica, virtuosa e informada de los individuos, no necesariamente es v\u00e1lida respecto a los impactos clim\u00e1ticos ya que \u00e9stos afectan a las sociedades en su conjunto y no s\u00f3lo a individuos particulares. Un problema colectivo necesita acciones efectivas, coordinadas y regidas por reglas comunes, por lo tanto, pol\u00edticas. Desde un enfoque centrado en el espacio, las acciones y los bienes comunes como criterio primordial de lo pol\u00edtico, se aboga por una divulgaci\u00f3n de la ciencia que fortalezca la resiliencia y disminuya la vulnerabilidad de las sociedades ante los impactos clim\u00e1ticos. Se exponen dos casos donde la comunicaci\u00f3n o la falta de ella tuvieron consecuencias: (1) el caso exitoso del proyecto ESPA Deltas basado en la participaci\u00f3n de las personas directamente involucradas (stakeholders); (2) las inundaciones de septiembre de 2021 en el valle del Mezquital, Hidalgo, M\u00e9xico. Los ejemplos demuestran la necesidad de que la divulgaci\u00f3n de la ciencia devenga pol\u00edticamente activa, participativa y abierta al di\u00e1logo con los stakeholders para enfrentar exitosamente los impactos clim\u00e1ticos.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5134924891719579,
+                    "error": null
+                  },
+                  {
+                    "id": "d46d7463-d78d-4199-95b6-8c10539796f1",
+                    "title": "Aspectos socioambientales para la adaptaci\u00f3n y mitigaci\u00f3n al cambio clim\u00e1tico en comunidades ind\u00edgenas de Nacajuca.",
+                    "url": "",
+                    "snippet": "El objetivo de esta investigacion fue el realizar un estudio socioambiental para la adaptacion y mitigacion al cambio climatico (CC) en comunidades indigenas de Nacajuca, Tabasco; especificamente de la zona chontal de Guatacalca-Oxiacaque. Analizada con metodos mixtos de investigacion, es decir; cualitativos y cuantitativos, como la aplicacion de entrevistas y encuestas, investigacion accion participante y analisis de los resultados bajo los marcos de vulnerabilidad y riesgo. Los resultados obtenidos confirman que la participacion social es fundamental para la identificacion de la problematica socioambiental, ubicando las largas temporadas de sequias e inundaciones, perdida de huertos familiares, deforestacion, amenazas a la biodiversidad local, vulnerabilidad y riesgo en la salud publica, como los principales efectos de CC. Este ultimo, se atribuye a la actividad petrolera desarrollada en la zona. Posibilitando la planeacion y diseno de intervenciones educativas aplicadas con grupos sociales organizados en las comunidades y con ello aportar elementos para el desarrollo de alternativas y estrategias para la mitigacion y adaptacion de CC, siendo estas: la diversificacion de huertos familiares, la estimacion de captura de carbono, elaboracion de composta,",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4988259689306358,
+                    "error": null
+                  }
+                ],
+                "query": "arte clim\u00e1tico M\u00e9xico metodolog\u00eda impacto social proyecto colectivo comunidad participativo",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2015-2025",
+                  "fieldsOfStudy": "Art,Environmental Science,Education,Sociology"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Laboratorio m\u00f3vil de educaci\u00f3n art\u00edstica: El Bus Arte Rodante. La expresi\u00f3n en movimiento\nSnippet: No content available\n\nTitle: Reciclaje de residuos de construcci\u00f3n y demolici\u00f3n (RCD) de tipo cer\u00e1mico para nuevos materiales de construcci\u00f3n sostenibles\nSnippet: No content available\n\nTitle: El estado del arte de la movilidad del transporte en la vida urbana en ciudades latinoamericanas\nSnippet: No content available\n\nTitle: Estado del arte: metodolog\u00edas de desarrollo de aplicaciones m\u00f3viles\nSnippet: No content available\n\nTitle: Recomendaciones para la gesti\u00f3n integral de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos - RAEE en Colombia el caso Bogot\u00e1, Medell\u00edn, Cali y Barranquilla\nSnippet: Este trabajo analiza la gesti\u00f3n de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos (RAEE) realizada en el \u00e1mbito nacional (Bogot\u00e1, Medell\u00edn, Cali y Barranquilla). Dicha gesti\u00f3n involucra a todos los actores que intervienen en la cadena de generaci\u00f3n, recolecci\u00f3n, procesamiento y disposici\u00f3n final de estos materiales. Identificamos, as\u00ed mismo, los principales factores obstaculizadores que limitan y entorpecen su flujo normal dentro del ciclo del reciclaje, generando, por una parte, impactos sobre el ambiente, dada la inadecuada disposici\u00f3n de las sustancias peligrosas encontradas en ellos, y por otra, una p\u00e9rdida de valiosas materias primas que no son involucradas en el ciclo productivo de nuevos materiales o equipos. El profundo an\u00e1lisis de esta situaci\u00f3n nos permiti\u00f3 la formulaci\u00f3n de una serie de recomendaciones para minimizar tanto la presi\u00f3n sobre los recursos naturales como la afectaci\u00f3n a la salud, generada por la omisi\u00f3n de pr\u00e1cticas ambientalmente sostenibles en el proceso de reciclaje.",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.5351502895355225,
+                "error": "",
+                "call_id": "778ed9f5",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.39539772847733073,
+                      "paper": {
+                        "corpusId": "213750159",
+                        "title": "Laboratorio m\u00f3vil de educaci\u00f3n art\u00edstica: El Bus Arte Rodante. La expresi\u00f3n en movimiento",
+                        "authors": [
+                          "Beatriz Eugenia Chaparro G\u00f3mez",
+                          "Edwin Fernando Bravo Jim\u00e9nez",
+                          "Nataly Becerra Vergara"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.14483/16579089.13701?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.14483/16579089.13701, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Laboratorio m\u00f3vil de educaci\u00f3n art\u00edstica: El Bus Arte Rodante. La expresi\u00f3n en movimiento",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 89
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.3713421782555427,
+                      "paper": {
+                        "corpusId": "159165271",
+                        "title": "Reciclaje de residuos de construcci\u00f3n y demolici\u00f3n (RCD) de tipo cer\u00e1mico para nuevos materiales de construcci\u00f3n sostenibles",
+                        "authors": [
+                          "S. Jim\u00e9nez",
+                          "M. Roc\u00edo"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.20868/UPM.THESIS.53564?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.20868/UPM.THESIS.53564, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Reciclaje de residuos de construcci\u00f3n y demolici\u00f3n (RCD) de tipo cer\u00e1mico para nuevos materiales de construcci\u00f3n sostenibles",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 124
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.3655962807158073,
+                      "paper": {
+                        "corpusId": "158736386",
+                        "title": "El estado del arte de la movilidad del transporte en la vida urbana en ciudades latinoamericanas",
+                        "authors": [
+                          "G. Romero",
+                          "D. Lugo-Morin"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.34096/rtt.i19.5329?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.34096/rtt.i19.5329, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "El estado del arte de la movilidad del transporte en la vida urbana en ciudades latinoamericanas",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 96
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.3566769022720123,
+                      "paper": {
+                        "corpusId": "236305204",
+                        "title": "Estado del arte: metodolog\u00edas de desarrollo de aplicaciones m\u00f3viles",
+                        "authors": [
+                          "Jimmy Rolando Molina R\u00edos",
+                          "Joofre Antonio Honores Tapia",
+                          "Nieves Pedreira-Souto",
+                          "Henry Pa\u00fal Granda Le\u00f3n"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.17993/3CTECNO/2021.V10N2E38.17-45?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.17993/3CTECNO/2021.V10N2E38.17-45, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Estado del arte: metodolog\u00edas de desarrollo de aplicaciones m\u00f3viles",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 67
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.3566567044741674,
+                      "paper": {
+                        "corpusId": "131125229",
+                        "title": "Recomendaciones para la gesti\u00f3n integral de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos - RAEE en Colombia el caso Bogot\u00e1, Medell\u00edn, Cali y Barranquilla",
+                        "authors": [
+                          "R. Soto",
+                          "J. Jaramillo"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.11144/javeriana.10554.12387?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.11144/javeriana.10554.12387, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Este trabajo analiza la gesti\u00f3n de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos (RAEE) realizada en el \u00e1mbito nacional (Bogot\u00e1, Medell\u00edn, Cali y Barranquilla). Dicha gesti\u00f3n involucra a todos los actores que intervienen en la cadena de generaci\u00f3n, recolecci\u00f3n, procesamiento y disposici\u00f3n final de estos materiales. Identificamos, as\u00ed mismo, los principales factores obstaculizadores que limitan y entorpecen su flujo normal dentro del ciclo del reciclaje, generando, por una parte, impactos sobre el ambiente, dada la inadecuada disposici\u00f3n de las sustancias peligrosas encontradas en ellos, y por otra, una p\u00e9rdida de valiosas materias primas que no son involucradas en el ciclo productivo de nuevos materiales o equipos. El profundo an\u00e1lisis de esta situaci\u00f3n nos permiti\u00f3 la formulaci\u00f3n de una serie de recomendaciones para minimizar tanto la presi\u00f3n sobre los recursos naturales como la afectaci\u00f3n a la salud, generada por la omisi\u00f3n de pr\u00e1cticas ambientalmente sostenibles en el proceso de reciclaje.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1008
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "bf4b3840-f906-4603-9b6b-cd79ca047357",
+                    "title": "Laboratorio m\u00f3vil de educaci\u00f3n art\u00edstica: El Bus Arte Rodante. La expresi\u00f3n en movimiento",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.39539772847733073,
+                    "error": null
+                  },
+                  {
+                    "id": "25b4262c-5099-4251-9a4a-e2b94c3750de",
+                    "title": "Reciclaje de residuos de construcci\u00f3n y demolici\u00f3n (RCD) de tipo cer\u00e1mico para nuevos materiales de construcci\u00f3n sostenibles",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.3713421782555427,
+                    "error": null
+                  },
+                  {
+                    "id": "1b7590c5-3652-4b9f-ba30-5886703e12d9",
+                    "title": "El estado del arte de la movilidad del transporte en la vida urbana en ciudades latinoamericanas",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.3655962807158073,
+                    "error": null
+                  },
+                  {
+                    "id": "02a63ec2-5767-40e4-8baa-8d5d193acc38",
+                    "title": "Estado del arte: metodolog\u00edas de desarrollo de aplicaciones m\u00f3viles",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.3566769022720123,
+                    "error": null
+                  },
+                  {
+                    "id": "06a3a69f-5efe-48dd-a90d-fc13ef9855be",
+                    "title": "Recomendaciones para la gesti\u00f3n integral de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos - RAEE en Colombia el caso Bogot\u00e1, Medell\u00edn, Cali y Barranquilla",
+                    "url": "",
+                    "snippet": "Este trabajo analiza la gesti\u00f3n de residuos de aparatos el\u00e9ctricos y electr\u00f3nicos (RAEE) realizada en el \u00e1mbito nacional (Bogot\u00e1, Medell\u00edn, Cali y Barranquilla). Dicha gesti\u00f3n involucra a todos los actores que intervienen en la cadena de generaci\u00f3n, recolecci\u00f3n, procesamiento y disposici\u00f3n final de estos materiales. Identificamos, as\u00ed mismo, los principales factores obstaculizadores que limitan y entorpecen su flujo normal dentro del ciclo del reciclaje, generando, por una parte, impactos sobre el ambiente, dada la inadecuada disposici\u00f3n de las sustancias peligrosas encontradas en ellos, y por otra, una p\u00e9rdida de valiosas materias primas que no son involucradas en el ciclo productivo de nuevos materiales o equipos. El profundo an\u00e1lisis de esta situaci\u00f3n nos permiti\u00f3 la formulaci\u00f3n de una serie de recomendaciones para minimizar tanto la presi\u00f3n sobre los recursos naturales como la afectaci\u00f3n a la salud, generada por la omisi\u00f3n de pr\u00e1cticas ambientalmente sostenibles en el proceso de reciclaje.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.3566567044741674,
+                    "error": null
+                  }
+                ],
+                "query": "Rastro M\u00f3vil arte sostenible impacto CDMX investigaci\u00f3n-creaci\u00f3n reciclaje",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2015-2025",
+                  "fieldsOfStudy": "Art,Environmental Science,Education,Sociology"
+                }
+              },
+              {
+                "tool_name": "google_search",
+                "output": "Title: Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico\nSnippet: El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.\n\nTitle: Las ciudades y el cambio clim\u00e1tico: el caso de la pol\u00edtica clim\u00e1tica de la Ciudad de M\u00e9xico\nSnippet: No content available\n\nTitle: Aplicaci\u00f3n de estrategias bioclim\u00e1ticas para la adecuaci\u00f3n de los espacios del Centro Cultural \u201cFuturama\u201d en GAM, CDMX\nSnippet: En este trabajo se presenta el estudio para el acondicionamiento bioclim\u00e1tico del Centro Cultural \u201cFuturama\u201d ubicado en la CDMX inaugurado en 1969. Ubicado en la alcald\u00eda Gustavo A. Madero de la CDMX. Esta edificaci\u00f3n alberga actividades de recreaci\u00f3n, exposiciones de distintas artes, conferencias, obras de teatro, recitales de danza, conciertos, etc. Dichas actividades se llevan a cabo en \u00e1reas construidas para distintos fines y por ello presentan problem\u00e1ticas de distintos tipos, como lum\u00ednicas, ac\u00fasticas, t\u00e9rmicas y de ventilaci\u00f3n. Lamentablemente este edificio se construy\u00f3 para otros fines distintos a los que en este momento se realizan, esto provoca que su dise\u00f1o en s\u00ed no sea nada eficiente y los elementos clim\u00e1ticos se vuelven contraproducentes para los usuarios que ocupan por lapsos m\u00e1s amplios este edificio. Las edificaciones provocan un impacto en el medio ambiente y, por ende, en la salud de las personas y adem\u00e1s contribuyen al cambio clim\u00e1tico. M\u00e9xico sufre de manera cada vez m\u00e1s obvia los efectos del calentamiento global, por ello, los expertos plantean que hay que adoptar lo antes posible pol\u00edticas encaminadas a prevenir el impacto ambiental y si en una edificaci\u00f3n no se pudo crear desde el inicio un dise\u00f1o bioclim\u00e1tico, como es el caso del Futurama, podemos aportar con estrategias bioclim\u00e1ticas en las edificaciones ya construidas. Las recomendaciones bioclim\u00e1ticas aportadas en este proyecto tienen como objetivo central el que el ahorro de energ\u00eda, con",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.8521902561187744,
+                "error": "",
+                "call_id": "b0c0edeb",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.7056611825770729,
+                      "paper": {
+                        "corpusId": "203206965",
+                        "title": "Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico",
+                        "authors": [
+                          "E. G. Gaudiano",
+                          "Laura Odila Bello Benavides",
+                          "A. Gonz\u00e1lez",
+                          "G. S\u00e1nchez",
+                          "Luis Mario M\u00e9ndez Andrade"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.22458/urj.v11i1.2324?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.22458/urj.v11i1.2324, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1371
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.663901574138245,
+                      "paper": {
+                        "corpusId": "141709103",
+                        "title": "Las ciudades y el cambio clim\u00e1tico: el caso de la pol\u00edtica clim\u00e1tica de la Ciudad de M\u00e9xico",
+                        "authors": [
+                          "Diana Esmeralda Quiroz Ben\u00edtez"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.24201/EDU.V28I2.1432?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.24201/EDU.V28I2.1432, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Las ciudades y el cambio clim\u00e1tico: el caso de la pol\u00edtica clim\u00e1tica de la Ciudad de M\u00e9xico",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 91
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6438830748403439,
+                      "paper": {
+                        "corpusId": "264371718",
+                        "title": "Aplicaci\u00f3n de estrategias bioclim\u00e1ticas para la adecuaci\u00f3n de los espacios del Centro Cultural \u201cFuturama\u201d en GAM, CDMX",
+                        "authors": [
+                          "Anakaren Castro L\u00f3pez"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.24275/uama.5809.9938?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.24275/uama.5809.9938, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "En este trabajo se presenta el estudio para el acondicionamiento bioclim\u00e1tico del Centro Cultural \u201cFuturama\u201d ubicado en la CDMX inaugurado en 1969. Ubicado en la alcald\u00eda Gustavo A. Madero de la CDMX. Esta edificaci\u00f3n alberga actividades de recreaci\u00f3n, exposiciones de distintas artes, conferencias, obras de teatro, recitales de danza, conciertos, etc. Dichas actividades se llevan a cabo en \u00e1reas construidas para distintos fines y por ello presentan problem\u00e1ticas de distintos tipos, como lum\u00ednicas, ac\u00fasticas, t\u00e9rmicas y de ventilaci\u00f3n. Lamentablemente este edificio se construy\u00f3 para otros fines distintos a los que en este momento se realizan, esto provoca que su dise\u00f1o en s\u00ed no sea nada eficiente y los elementos clim\u00e1ticos se vuelven contraproducentes para los usuarios que ocupan por lapsos m\u00e1s amplios este edificio. Las edificaciones provocan un impacto en el medio ambiente y, por ende, en la salud de las personas y adem\u00e1s contribuyen al cambio clim\u00e1tico. M\u00e9xico sufre de manera cada vez m\u00e1s obvia los efectos del calentamiento global, por ello, los expertos plantean que hay que adoptar lo antes posible pol\u00edticas encaminadas a prevenir el impacto ambiental y si en una edificaci\u00f3n no se pudo crear desde el inicio un dise\u00f1o bioclim\u00e1tico, como es el caso del Futurama, podemos aportar con estrategias bioclim\u00e1ticas en las edificaciones ya construidas. Las recomendaciones bioclim\u00e1ticas aportadas en este proyecto tienen como objetivo central el que el ahorro de energ\u00eda, con",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1489
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "54f0bccb-ebad-430b-b1b9-b0d425b1f309",
+                    "title": "Nuevos desaf\u00edos para la educaci\u00f3n ambiental: la vulnerabilidad y la resiliencia social ante el cambio clim\u00e1tico",
+                    "url": "",
+                    "snippet": "El estado de Veracruz, M\u00e9xico, ha sufrido en a\u00f1os recientes inundaciones frecuentes asociadas al cambio clim\u00e1tico. El prop\u00f3sito de este estudio fue conocer la vulnerabilidad y resiliencia social en j\u00f3venes de bachillerato de tres localidades: Cotaxtla, Tlacotalpan y Jos\u00e9 Cardel. Se aplic\u00f3 un cuestionario a 411 estudiantes y se realizaron 16 entrevistas a actores clave. Los resultados de dicha consulta indicaron desconocimiento de acciones para gestionar su vulnerabilidad y de los impactos regionales agravados por el cambio clim\u00e1tico, lo cual se utiliz\u00f3 como insumo para el dise\u00f1o de talleres de educaci\u00f3n ambiental sobre la vulnerabilidad y resiliencia social ante el cambio clim\u00e1tico. En los talleres participaron un total de 436 estudiantes y 42 profesores de bachillerato, con participaci\u00f3n de instancias gubernamentales. Por medio de este proceso se logr\u00f3 una mayor sensibilizaci\u00f3n de los estudiantes y profesores sobre los impactos regionales del cambio clim\u00e1tico, y de acciones de mitigaci\u00f3n y adaptaci\u00f3n, se conformaron redes inter e intracomunitarias y se elaboraron mapas de riesgo. El trabajo realizado es el inicio de una serie de tareas de educaci\u00f3n ambiental que se han de continuar trabajando, a fin de que las comunidades, a partir de sus aprendizajes sociales, dinamicen y fortalezcan su resiliencia social frente a los riesgos del cambio clim\u00e1tico.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.7056611825770729,
+                    "error": null
+                  },
+                  {
+                    "id": "aa4b6b69-4a5b-4d7b-aa11-5c762aa5ddbc",
+                    "title": "Las ciudades y el cambio clim\u00e1tico: el caso de la pol\u00edtica clim\u00e1tica de la Ciudad de M\u00e9xico",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.663901574138245,
+                    "error": null
+                  },
+                  {
+                    "id": "b99c7a2c-ba24-4e73-aab1-8e1814f61e1b",
+                    "title": "Aplicaci\u00f3n de estrategias bioclim\u00e1ticas para la adecuaci\u00f3n de los espacios del Centro Cultural \u201cFuturama\u201d en GAM, CDMX",
+                    "url": "",
+                    "snippet": "En este trabajo se presenta el estudio para el acondicionamiento bioclim\u00e1tico del Centro Cultural \u201cFuturama\u201d ubicado en la CDMX inaugurado en 1969. Ubicado en la alcald\u00eda Gustavo A. Madero de la CDMX. Esta edificaci\u00f3n alberga actividades de recreaci\u00f3n, exposiciones de distintas artes, conferencias, obras de teatro, recitales de danza, conciertos, etc. Dichas actividades se llevan a cabo en \u00e1reas construidas para distintos fines y por ello presentan problem\u00e1ticas de distintos tipos, como lum\u00ednicas, ac\u00fasticas, t\u00e9rmicas y de ventilaci\u00f3n. Lamentablemente este edificio se construy\u00f3 para otros fines distintos a los que en este momento se realizan, esto provoca que su dise\u00f1o en s\u00ed no sea nada eficiente y los elementos clim\u00e1ticos se vuelven contraproducentes para los usuarios que ocupan por lapsos m\u00e1s amplios este edificio. Las edificaciones provocan un impacto en el medio ambiente y, por ende, en la salud de las personas y adem\u00e1s contribuyen al cambio clim\u00e1tico. M\u00e9xico sufre de manera cada vez m\u00e1s obvia los efectos del calentamiento global, por ello, los expertos plantean que hay que adoptar lo antes posible pol\u00edticas encaminadas a prevenir el impacto ambiental y si en una edificaci\u00f3n no se pudo crear desde el inicio un dise\u00f1o bioclim\u00e1tico, como es el caso del Futurama, podemos aportar con estrategias bioclim\u00e1ticas en las edificaciones ya construidas. Las recomendaciones bioclim\u00e1ticas aportadas en este proyecto tienen como objetivo central el que el ahorro de energ\u00eda, con",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6438830748403439,
+                    "error": null
+                  }
+                ],
+                "query": "taller de arte ambiental M\u00e9xico cambio clim\u00e1tico impacto social caso estudio",
+                "input_params": {
+                  "num": "5",
+                  "gl": "mx",
+                  "hl": "es"
+                }
+              }
+            ]
+          },
+          "judgment": {
+            "criterion_satisfied": false,
+            "criterion_reasoning": "The answer fails to satisfy criterion (A) because it does not cite sources documenting measurable environmental or social impact with clear causal links to artistic methodologies. While it lists multiple methodologies (community workshops, ABP, bioclimatic retrofits, etc.) and cites sources, the evidence provided consists primarily of: (1) process descriptions and intentions ('se proponen alternativas,' 'se buscan reducir impactos'), (2) outputs like number of participants or creation of risk maps rather than outcomes like behavior change or ecological restoration, and (3) qualitative claims of 'sensibilizaci\u00f3n' and 'transformaci\u00f3n social' without metrics. For example, cite 6676ec12-0 reports 436 students participated and risk maps were created, but doesn't document measured impact on flood resilience or community behavior. Cite b0c0edeb-2 describes a 'proposal' for bioclimatic strategies with objectives of energy savings, but doesn't report actual measured energy reduction achieved. The answer also fails criterion (B) by not explicitly stating that impact metrics are systematically missing from the literature\u2014instead it presents these process outputs as if they were impact evidence, only briefly noting in 'Limitaciones' that longitudinal measurements are scarce. The sources appear to describe project activities and aspirations rather than documented outcomes.",
+            "other_issues": [
+              "Conflation of outputs with outcomes: The answer treats project outputs (number of workshops held, maps created, proposals made) as evidence of impact, when the criterion requires documented outcomes (measured behavior change, policy shifts, ecological restoration).",
+              "Weak source evidence: Many citations describe what was proposed or intended ('se proponen,' 'se buscan') rather than what was achieved and measured. For instance, cite b0c0edeb-2 describes a proposal for energy savings but doesn't document actual savings achieved.",
+              "Missing causal links: Even where some outcome is mentioned (e.g., 'mayor sensibilizaci\u00f3n'), the answer doesn't provide evidence from sources showing this was measured or how it causally links to the specific artistic methodology.",
+              "Overstatement in conclusion: The conclusion claims methodologies 'han demostrado impactos documentados' including 'reducci\u00f3n de huella energ\u00e9tica' when the cited source only describes a proposal, not measured reduction.",
+              "Insufficient acknowledgment of evidence gaps: The 'Limitaciones' section briefly notes the need for more rigorous evaluation but doesn't fulfill criterion (B) by explicitly stating that the academic literature does not systematically document impact metrics for these artistic methodologies.",
+              "Potential category error: Several cited projects (Veracruz workshops, Jalisco education programs, Tabasco community research) appear to be environmental education or community development initiatives rather than visual arts research-creation projects by artists, though they may incorporate artistic elements."
+            ],
+            "summary": "The answer provides an elaborate taxonomy of methodologies but fundamentally fails the verification criterion by presenting project activities, participant counts, and proposals as if they were documented impact evidence. The sources cited describe processes, intentions, and outputs rather than measured environmental or social outcomes causally linked to artistic methodologies. The answer neither provides the required impact documentation nor explicitly acknowledges that such systematic impact measurement is absent from the literature.",
+            "verdict": "FAILED",
+            "raw": "```json\n{\n  \"criterion_satisfied\": false,\n  \"criterion_reasoning\": \"The answer fails to satisfy criterion (A) because it does not cite sources documenting measurable environmental or social impact with clear causal links to artistic methodologies. While it lists multiple methodologies (community workshops, ABP, bioclimatic retrofits, etc.) and cites sources, the evidence provided consists primarily of: (1) process descriptions and intentions ('se proponen alternativas,' 'se buscan reducir impactos'), (2) outputs like number of participants or creation of risk maps rather than outcomes like behavior change or ecological restoration, and (3) qualitative claims of 'sensibilizaci\u00f3n' and 'transformaci\u00f3n social' without metrics. For example, cite 6676ec12-0 reports 436 students participated and risk maps were created, but doesn't document measured impact on flood resilience or community behavior. Cite b0c0edeb-2 describes a 'proposal' for bioclimatic strategies with objectives of energy savings, but doesn't report actual measured energy reduction achieved. The answer also fails criterion (B) by not explicitly stating that impact metrics are systematically missing from the literature\u2014instead it presents these process outputs as if they were impact evidence, only briefly noting in 'Limitaciones' that longitudinal measurements are scarce. The sources appear to describe project activities and aspirations rather than documented outcomes.\",\n  \"other_issues\": [\n    \"Conflation of outputs with outcomes: The answer treats project outputs (number of workshops held, maps created, proposals made) as evidence of impact, when the criterion requires documented outcomes (measured behavior change, policy shifts, ecological restoration).\",\n    \"Weak source evidence: Many citations describe what was proposed or intended ('se proponen,' 'se buscan') rather than what was achieved and measured. For instance, cite b0c0edeb-2 describes a proposal for energy savings but doesn't document actual savings achieved.\",\n    \"Missing causal links: Even where some outcome is mentioned (e.g., 'mayor sensibilizaci\u00f3n'), the answer doesn't provide evidence from sources showing this was measured or how it causally links to the specific artistic methodology.\",\n    \"Overstatement in conclusion: The conclusion claims methodologies 'han demostrado impactos documentados' including 'reducci\u00f3n de huella energ\u00e9tica' when the cited source only describes a proposal, not measured reduction.\",\n    \"Insufficient acknowledgment of evidence gaps: The 'Limitaciones' section briefly notes the need for more rigorous evaluation but doesn't fulfill criterion (B) by explicitly stating that the academic literature does not systematically document impact metrics for these artistic methodologies.\",\n    \"Potential category error: Several cited projects (Veracruz workshops, Jalisco education programs, Tabasco community research) appear to be environmental education or community development initiatives rather than visual arts research-creation projects by artists, though they may incorporate artistic elements.\"\n  ],\n  \"summary\": \"The answer provides an elaborate taxonomy of methodologies but fundamentally fails the verification criterion by presenting project activities, participant counts, and proposals as if they were documented impact evidence. The sources cited describe processes, intentions, and outputs rather than measured environmental or social outcomes causally linked to artistic methodologies. The answer neither provides the required impact documentation nor explicitly acknowledges that such systematic impact measurement is absent from the literature.\",\n  \"verdict\": \"FAILED\"\n}\n```"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_042",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 20,
+    "output_tokens": 795,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1777,
+    "cost_usd": 0.0125181,
+    "calls": 1
+  },
+  "results": [
+    {
+      "seed": "plant based surfactants and its preparation or extraction methods",
+      "final_status": "ERROR",
+      "error": "Judging failed: list index out of range",
+      "cost": {
+        "input_tokens": 20,
+        "output_tokens": 795,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 1777,
+        "cost_usd": 0.0125181,
+        "calls": 1
+      },
+      "attempts": []
+    }
+  ]
+}
