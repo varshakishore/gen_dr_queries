@@ -58,6 +58,7 @@ Thumbs.db
 
 # Secrets (never commit real keys)
 secrets.env
+.env
 
 #folder
 /analysis/*.json
