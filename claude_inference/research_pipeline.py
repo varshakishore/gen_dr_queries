@@ -121,15 +121,19 @@ RULES:
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main 
+  component (no "and" or multiple sub-questions). It is better to keep it simple.
 
 EXAMPLE STRATEGIES TO CONSIDER:
-1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., science + economics).
+1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
 2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
 3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
 4. Require handling conflicting, incomplete, or low-quality evidence.
-5. Require correcting a hidden misconception or establishing key knowns before answering.
-6. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
-7. Make a question that is unanswerable by current research.
+5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions.
+6. Require correcting a hidden misconception or establishing key knowns before answering.
+7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+8. Make a question that is unanswerable by current research, no existing work is available.
+9. Something else you think of that would be effective at exposing weaknesses in research systems!
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -233,6 +237,21 @@ Seed Question: How does brown adipose tissue produce heat?
 }
 
 Reminder: Do not use the same strategies as the examples above.
+"""
+
+PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research systems.
+
+Given a research question, produce a simple, ATOMIC verification criteria. The criterion must test
+exactly ONE concrete property of a good answer — not a combination.
+
+QUESTION:
+{question}
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{
+  "verification_criteria": "<one concrete, testable criterion for checking whether the answer is good>"
+}
+
 """
 
 JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system outputs.
