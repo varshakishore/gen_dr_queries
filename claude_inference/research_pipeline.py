@@ -3,6 +3,8 @@
 Pipeline for generating hard research questions, evaluating answers, and iterating.
 
 Flow per seed question:
+  0. Test the seed question as-is against the research server. If the answer
+     already FAILS the judge, stop and report the seed is already difficult.
   1. Use Claude to create a harder version of the seed question (with prior attempts as context after round 1).
   2. Send the harder question to a local research server at localhost:8007/ask.
   3. Use Claude to judge the answer against the verification criterion.
@@ -84,15 +86,19 @@ RULES:
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main 
+  component (no "and" or multiple sub-questions). It is better to keep it simple.
 
 EXAMPLE STRATEGIES TO CONSIDER:
-1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., science + economics).
+1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
 2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
 3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
 4. Require handling conflicting, incomplete, or low-quality evidence.
-5. Require correcting a hidden misconception or establishing key knowns before answering.
-6. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
-7. Make a question that is unanswerable by current research.
+5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions.
+6. Require correcting a hidden misconception or establishing key knowns before answering.
+7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+8. Make a question that is unanswerable by current research, no existing work is available.
+9. Something else you think of that would be effective at exposing weaknesses in research systems!
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -123,6 +129,21 @@ Seed Question: How does brown adipose tissue produce heat?
 }
 """
 
+PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research systems.
+
+Given a research question, produce a simple, ATOMIC verification criteria. The criterion must test
+exactly ONE concrete property of a good answer — not a combination.
+
+QUESTION:
+{question}
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{
+  "verification_criteria": "<one concrete, testable criterion for checking whether the answer is good>"
+}
+
+"""
+
 JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system outputs.
 
 You will be given:
@@ -135,8 +156,8 @@ Your job is to judge whether the answer satisfies the verification criterion, an
 QUESTION:
 {question}
 
-VERIFICATION CRITERION:
-{criterion}
+VERIFICATION CRITERIA:
+{criteria}
 
 ANSWER:
 {answer}
@@ -322,14 +343,14 @@ class HarderQuestion:
     chosen_strategy: str
     updated_question: str
     why_harder: str
-    verification_criterion: str
+    verification_criteria: list  # up to 3 atomic criteria
     raw: str = ""
 
 
 @dataclass
 class Judgment:
-    criterion_satisfied: bool
-    criterion_reasoning: str
+    criterion_results: list  # list of {criterion, satisfied, reasoning}
+    criteria_failed_count: int
     other_issues: list
     summary: str
     verdict: str
@@ -455,6 +476,26 @@ def _call_claude(
     return response_text, bucket
 
 
+def generate_seed_criterion(
+    client: Anthropic,
+    model: str,
+    seed: str,
+    logger: RunLogger,
+) -> tuple[list, CostBucket]:
+    """Generate up to 3 atomic verification criteria for the seed question (round 0)."""
+    prompt = PROMPT_FOR_SEED_CRITERION.format(question=seed)
+    messages = [{"role": "user", "content": prompt}]
+    raw, bucket = _call_claude(
+        client, model=model, system=None, messages=messages,
+        max_tokens=800, logger=logger, seed=seed, attempt=0, purpose="seed_criterion",
+    )
+    data = extract_json(raw)
+    criteria = data.get("verification_criteria") or []
+    if not isinstance(criteria, list):
+        criteria = [str(criteria)]
+    return [c for c in criteria if c], bucket
+
+
 def harder_question_gen(
     client: Anthropic,
     model: str,
@@ -471,8 +512,9 @@ def harder_question_gen(
                 f"--- Previous attempt {rec.attempt} ---\n"
                 f"Question tried: {rec.harder.updated_question}\n"
                 f"Strategy: {rec.harder.chosen_strategy}\n"
-                f"Verification criterion: {rec.harder.verification_criterion}\n"
+                f"Verification criteria: {rec.harder.verification_criteria}\n"
                 f"Judge verdict: {rec.judgment.verdict}\n"
+                f"Criteria failed: {rec.judgment.criteria_failed_count}\n"
                 f"Judge summary: {rec.judgment.summary}\n"
                 f"Other issues flagged: {rec.judgment.other_issues}\n"
             )
@@ -491,13 +533,17 @@ def harder_question_gen(
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)
+    criteria = data.get("verification_criteria") or []
+    if not isinstance(criteria, list):
+        criteria = [str(criteria)]
+    criteria = [c for c in criteria if c]
     return (
         HarderQuestion(
             brainstorming=data.get("brainstorming", ""),
             chosen_strategy=data.get("chosen_strategy", ""),
             updated_question=data["updated_question"],
             why_harder=data.get("why_harder", ""),
-            verification_criterion=data["verification_criterion"],
+            verification_criteria=criteria,
             raw=raw,
         ),
         bucket,
@@ -508,14 +554,15 @@ def judge_answer(
     client: Anthropic,
     model: str,
     question: str,
-    criterion: str,
+    criteria: list,
     answer: str,
     logger: RunLogger,
     seed: str,
     attempt: int,
 ) -> tuple[Judgment, CostBucket]:
+    criteria_block = "\n".join(f"{i+1}. {c}" for i, c in enumerate(criteria)) or "(none)"
     prompt = JUDGE_PROMPT_TEMPLATE.format(
-        question=question, criterion=criterion, answer=answer
+        question=question, criteria=criteria_block, answer=answer
     )
     messages = [{"role": "user", "content": prompt}]
     # Log the prompt with the (bulky) answer redacted; it lives in the results file.
@@ -530,13 +577,22 @@ def judge_answer(
         log_messages=log_messages,
     )
     data = extract_json(raw)
+
+    criterion_results = data.get("criterion_results") or []
+    if not isinstance(criterion_results, list):
+        criterion_results = []
+    failed_count = data.get("criteria_failed_count")
+    if not isinstance(failed_count, int):
+        failed_count = sum(1 for r in criterion_results if not r.get("satisfied", True))
+
     verdict = str(data.get("verdict", "")).upper()
     if verdict not in ("PASSED", "FAILED"):
-        verdict = "PASSED" if data.get("criterion_satisfied") else "FAILED"
+        verdict = "FAILED" if failed_count > 0 else "PASSED"
+
     return (
         Judgment(
-            criterion_satisfied=bool(data.get("criterion_satisfied", False)),
-            criterion_reasoning=data.get("criterion_reasoning", ""),
+            criterion_results=criterion_results,
+            criteria_failed_count=int(failed_count),
             other_issues=data.get("other_issues", []),
             summary=data.get("summary", ""),
             verdict=verdict,
@@ -636,29 +692,52 @@ def process_seed(
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
-    for attempt in range(1, max_attempts + 1):
+    # Round 0 tests the seed as-is; rounds 1..N test harder rewrites.
+    for attempt in range(0, max_attempts + 1):
         if verbose:
             print(f"\n{'=' * 70}")
-            print(f"SEED: {seed!r}  |  Attempt {attempt}/{max_attempts}")
+            label = "Round 0 (testing seed as-is)" if attempt == 0 else f"Attempt {attempt}/{max_attempts}"
+            print(f"SEED: {seed!r}  |  {label}")
             print("=" * 70)
 
-        # Step 1 — make harder
+        # Step 1 — produce the question + criterion to test.
+        # Round 0: use the seed and generate a criterion for it.
+        # Round 1+: ask Claude to rewrite the seed into a harder question,
+        #           using only the prior harder attempts (not round 0) as feedback.
         try:
-            harder, bucket = harder_question_gen(
-                client, model, seed, result.attempts, logger, attempt
-            )
-            result.cost.add(bucket)
+            if attempt == 0:
+                criteria, bucket = generate_seed_criterion(client, model, seed, logger)
+                result.cost.add(bucket)
+                harder = HarderQuestion(
+                    brainstorming="",
+                    chosen_strategy="seed (no modification)",
+                    updated_question=seed,
+                    why_harder="",
+                    verification_criteria=criteria,
+                )
+            else:
+                prior_harder = [a for a in result.attempts if a.attempt > 0]
+                harder, bucket = harder_question_gen(
+                    client, model, seed, prior_harder, logger, attempt
+                )
+                result.cost.add(bucket)
         except Exception as e:
             result.final_status = "ERROR"
-            result.error = f"Making harder question failed: {e}"
+            result.error = (
+                f"Generating seed criterion failed: {e}" if attempt == 0
+                else f"Making harder question failed: {e}"
+            )
             if verbose:
-                print(f"[ERROR] Making harder question failed: {e}")
+                print(f"[ERROR] {result.error}")
             return result
 
         if verbose:
-            print(f"[1] Harder question: {harder.updated_question}")
-            print(f"    Strategy: {harder.chosen_strategy}")
-            print(f"    Criterion: {harder.verification_criterion}")
+            print(f"[1] Question: {harder.updated_question}")
+            if attempt > 0:
+                print(f"    Strategy: {harder.chosen_strategy}")
+            print(f"    Criteria ({len(harder.verification_criteria)}):")
+            for i, c in enumerate(harder.verification_criteria, 1):
+                print(f"      {i}. {c}")
 
         # Step 2 — query research system
         try:
@@ -681,7 +760,7 @@ def process_seed(
         try:
             judgment, bucket = judge_answer(
                 client, model, harder.updated_question,
-                harder.verification_criterion, answer, logger, seed, attempt,
+                harder.verification_criteria, answer, logger, seed, attempt,
             )
             result.cost.add(bucket)
         except Exception as e:
@@ -697,7 +776,11 @@ def process_seed(
         )
 
         if verbose:
-            print(f"[3] Verdict: {judgment.verdict}")
+            total_criteria = len(harder.verification_criteria)
+            print(
+                f"[3] Verdict: {judgment.verdict} "
+                f"({judgment.criteria_failed_count}/{total_criteria} criteria failed)"
+            )
             print(f"    Summary: {judgment.summary}")
             if judgment.other_issues:
                 print(f"    Other issues: {judgment.other_issues}")
@@ -714,9 +797,22 @@ def process_seed(
         )
 
         if judgment.verdict == "FAILED":
-            result.final_status = "FAILED_FOUND"
-            if verbose:
-                print(f"\n>>> FAILED answer found on attempt {attempt}. Stopping.")
+            total = len(harder.verification_criteria)
+            failed = judgment.criteria_failed_count
+            if attempt == 0:
+                result.final_status = "ALREADY_HARD"
+                if verbose:
+                    print(
+                        f"\n>>> Seed question is already difficult — the research system "
+                        f"failed {failed}/{total} criteria without any modification. Stopping."
+                    )
+            else:
+                result.final_status = "FAILED_FOUND"
+                if verbose:
+                    print(
+                        f"\n>>> FAILED answer found on attempt {attempt} "
+                        f"({failed}/{total} criteria failed). Stopping."
+                    )
             return result
 
     result.final_status = "EXHAUSTED"
