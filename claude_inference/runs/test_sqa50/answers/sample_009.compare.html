@@ -1,0 +1,209 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Comparison — sample_009.compare</title>
+<style>
+ body { font:16px/1.65 Georgia, 'Times New Roman', serif; max-width:820px; margin:0 auto;
+        padding:30px 24px 80px; color:#1f2328; }
+ h1 { font-size:22px; font-family:-apple-system,system-ui,sans-serif; }
+ h3 { font-size:15px; font-family:-apple-system,system-ui,sans-serif; color:#57606a;
+       text-transform:uppercase; letter-spacing:.04em; }
+ details.attempt { border-top:2px solid #d0d7de; margin-top:20px; padding-top:8px; }
+ details.attempt > summary { cursor:pointer; list-style:none; font-family:-apple-system,system-ui,sans-serif;
+       display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:8px 0; }
+ details.attempt > summary::-webkit-details-marker { display:none; }
+ .atitle { font-size:17px; font-weight:700; }
+ .verdict { font-weight:bold; font-size:14px; }
+ .aq { color:#57606a; font-size:13px; flex:1; min-width:200px; }
+ .seed { color:#57606a; font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox { background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:12px 14px;
+          font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox div { margin:4px 0; } .qbox b { color:#57606a; }
+ .answer { margin:18px 0; }
+ .badge { color:#fff; border-radius:10px; padding:2px 9px; font-size:12px;
+           font-family:-apple-system,system-ui,sans-serif; }
+
+ sup.cite a { text-decoration:none; color:#0969da; font-weight:bold; }
+ sup.cite.missing { color:#cf222e; }
+ .cw { position:relative; }
+ .cw .tip { display:none; position:absolute; left:0; top:1.4em; z-index:20; width:340px;
+            background:#1f2328; color:#fff; padding:8px 10px; border-radius:6px;
+            font:13px/1.45 -apple-system,system-ui,sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.25); }
+ .cw:hover .tip { display:block; }
+ .cw .tip b { display:block; margin-bottom:4px; color:#9ec5ff; }
+ .cw .tip .tsnip { color:#e6edf3; }
+ .refs { font-family:-apple-system,system-ui,sans-serif; font-size:13.5px; padding-left:0; list-style:none; }
+ .refs li { margin:10px 0; padding:6px 0 6px 12px; border-left:3px solid #d0d7de; }
+ .refs li:target { border-left-color:#0969da; background:#ddf4ff; }
+ .rn { color:#57606a; font-weight:bold; margin-right:4px; }
+ .rt a { color:#0969da; text-decoration:none; } .rt a:hover { text-decoration:underline; }
+ .ra { color:#57606a; font-style:italic; margin-top:2px; }
+ .rs { color:#3a3f45; margin-top:4px; font-size:12.5px; background:#f6f8fa; padding:6px 8px; border-radius:5px; }
+ .searches { font-family:-apple-system,system-ui,sans-serif; font-size:13px; margin:10px 0; }
+ .searches table { border-collapse:collapse; width:100%; margin-top:6px; }
+ .searches td, .searches th { border:1px solid #d0d7de; padding:3px 7px; text-align:left; }
+ .warn { color:#9a6700; font-family:-apple-system,system-ui,sans-serif; font-size:13px;
+         background:#fff8c5; border:1px solid #eac54f; border-radius:6px; padding:6px 10px; margin:8px 0; }
+
+</style></head><body>
+<h1>sample_009 · DR-Tulu vs Claude+web-search</h1>
+<div class="seed">Seed: Reinforcement learning chain of thought for vision-language multimodal models</div>
+
+<section class="attempt" open>
+  <div class="qbox">
+    <div><b>Question</b> When does reinforcement learning chain-of-thought fail for vision-language tasks, and why do results conflict across visual question answering versus image captioning?</div>
+    <div><b>Criterion</b> The answer must show that its OWN cited sources report divergent RL-CoT outcomes across task categories (e.g., gains on VQA-style tasks with verifiable answers vs failures or minimal gains on open-ended captioning/description tasks) AND attribute this divergence to at least one concrete structural difference in reward specification or credit assignment, such as: VQA enables sparse terminal rewards from answer correctness while captioning lacks ground-truth targets, or VQA allows verification of reasoning steps against question constraints while captioning reasoning is unconstrained. Fails if it reports uniform success/failure across all VL tasks, or if the cited papers do not actually show conflicting outcomes across different task types.</div>
+  </div>
+  <h3>Verdicts (gpt-4.1 judge · Claude shown as A)</h3>
+  <div class="qbox">
+    <div><b>Overall quality</b> <span class="badge" style="background:#1a7f37">Claude+search wins</span> (confidence 5/5)
+         &nbsp;<span style="color:#57606a">— Response A is superior to Response B in most rubric criteria:
+
+- **Completeness:** Response A provides a far more detailed enumeration of failure modes, covering a broader array of subtle phenomena (thought collapse, visual attention decay, language shortcutting, faithfulness issues, reward hacking, generalization degradation, etc.) — all with clear definitions and explanations. It also covers the differences between VQA and image captioning across multiple angles (reward verifiability, reward hacking, granularity, shortcutting, label structure), giving a rich answer to why the conflicts arise.
+
+- **Relevance:** All points in A are tightly tied to the RL CoT training limitations for VLMs and specifically how they manifest differently in VQA vs captioning. B is accurate but more general and omits several critical details; it also focuses more on captioning RL literature-practicalities (e.g., SCST), without integrating as rigorously with CoT-specific failures or the structural reasons for VQA/captioning divergence.
+
+- **Clarity and support:** Response A is broken up into clear sections, with a summary table, and every technical claim is backed by specific, detailed and precise citations (including URLs). The references are real and, where possible, they point to concrete examples or data. B too uses citations, but several lack detail or are from secondary sources less directly relevant; B does not tie references to specific error patterns as systematically as A.
+
+- **Organization:** A benefits from numbered sections, subheadings, summary tables, and a clear logical flow that first outlines core failures, then addresses the cross-task differences with fine granularity. B, while concise and mostly accurate, is more summary-like without as much structure or depth.
+
+- **Coverage of &#x27;why results conflict&#x27;:** A gives a much richer multi-factor analysis (reward verifiability, granularity, shortcutting, task structure, error propagation) that makes clear why VQA and captioning RL-CoT results diverge. B addresses some of these but with less nuance or technical depth.
+
+Overall, Response A is much richer, more rigorous, and more clearly organized, with deep technical insight and excellent citation practice.</span></div>
+    <div><b>Criterion satisfaction</b> <span class="badge" style="background:#1a7f37">Claude+search wins</span> (confidence 5/5)
+         &nbsp;<span style="color:#57606a">— The verification criterion requires the answer to demonstrate through its own cited sources that RL-CoT yields divergent outcomes across task types (clear gains in VQA-style tasks with verifiable answers, minimal or no gains or even failures in open-ended captioning/description tasks), and to attribute this divergence to at least one concrete structural factor like reward specification or credit assignment (e.g., VQA&#x27;s sparse terminal rewards vs captioning&#x27;s lack of ground-truth, or VQA&#x27;s ability to verify reasoning vs unconstrained reasoning in captioning). 
+
+Response A explicitly and repeatedly states and cites sources showing that RL-CoT has divergent effects: RL improves VQA on verifiable short-answer tasks but fails or produces minimal or negative effects on open-ended captioning. It deeply discusses the reward verifiability asymmetry (closed-ended ground-truth in VQA vs. open-ended, subjective captions), and gives several structural causes tied to reward granularity and credit assignment—each claim supported with references (e.g., [14], [15], [16]). The response thoroughly fulfills both requirements.
+
+Response B provides high-level evidence that these effects exist (e.g., noting that VQA benefits from explicit grounding and answer correctness while captioning is sensitive to reward alignment and exposure bias; step-level rewards are better than outcome-only, etc). It mentions that VQA uses explicit accuracy rewards while captioning relies on sequence-level metrics which misassign credit and mask errors. There are references to teacher-critical approaches for per-word rewards in captioning. However, B does not clearly or explicitly assert, with direct citation, that its cited sources show divergent RL-CoT effects (i.e., that RL-CoT gives conflicting results for VQA vs captioning tasks), nor does it clearly highlight sources directly showing success in one and failure or minimal gains in the other. Much of the discussion is about generic mechanisms rather than reported empirical divergence. It instead relies more on logical inference about what should happen, rather than demonstrating that what is cited shows the contrast as required.
+
+Thus, Response A better satisfies the letter and spirit of the verification criterion.</span></div>
+  </div>
+  <h3>Claude + web-search answer
+      <span style="font-weight:400;color:#57606a">(10 searches · $0.7591)</span></h3>
+  <div class="answer">Here is a comprehensive, research-backed analysis of when and why reinforcement learning (RL) chain-of-thought (CoT) fails for vision-language tasks, and the specific structural tensions that cause divergent results between VQA and image captioning.<br>
+<br>
+---<br>
+<br>
+## 1. The Foundation: Why RL CoT Works at All<br>
+<br>
+Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought reasoning in large language models (LLMs); however, its efficacy in training vision-language model (VLM) agents for goal-directed action reasoning in visual environments is less established. <span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</b><span class="tsnip">#### Abstract Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought (CoT) reasoning in large langu...</span></span></span> The core challenge is that the multimodal setting introduces a series of failure modes absent in pure-text RL.<br>
+<br>
+---<br>
+<br>
+## 2. Core Failure Mode 1: Thought Collapse Under Outcome-Only Rewards<br>
+<br>
+One of the most catastrophic phenomena specific to visual RL is **thought collapse**. When rewards are based solely on action outcomes, RL fails to incentivize CoT reasoning in VLMs, instead leading to a phenomenon termed &quot;thought collapse,&quot; characterized by a rapid loss of diversity in the agent&#x27;s thoughts, state-irrelevant and incomplete reasoning, and subsequent invalid actions, resulting in negative rewards. <span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</b><span class="tsnip">#### Abstract Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought (CoT) reasoning in large langu...</span></span></span><br>
+<br>
+The agent&#x27;s thought process often becomes irrational or templated during RL training, significantly impairing its decision-making abilities. Instead of improving, the agent generates fragmented thoughts and degenerates into a strategy of producing similar outputs for different states. Although the agent continues to output thoughts and action decisions, it has clearly lost its ability to engage in meaningful reasoning and decision-making. This is termed &quot;thought collapse.&quot; <span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</b><span class="tsnip">#### Abstract Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought (CoT) reasoning in large langu...</span></span></span><span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</b><span class="tsnip">#### Abstract Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought (CoT) reasoning in large langu...</span></span></span><br>
+<br>
+Critically, this is **not a capacity problem** — it scales badly. Thought collapse persists for larger model scales and training budgets: even training LLaVA 7B and 13B models for 30K RL steps still shows degraded performance. <span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</b><span class="tsnip">#### Abstract Reinforcement learning with verifiable outcome rewards (RLVR) has effectively scaled up chain-of-thought (CoT) reasoning in large langu...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 3. Core Failure Mode 2: Visual Attention Decay During Long Reasoning<br>
+<br>
+Even when CoT reasoning superficially &quot;works,&quot; a structural bottleneck causes models to progressively stop looking at the image as reasoning chains grow longer.<br>
+<br>
+Both the mean visual dependency measure on MMMU and the layer-wise attention from response tokens to visual tokens decline sharply as generation proceeds: after roughly 300 tokens, visual attention falls to only 20–30% of its initial level. This reveals that vision reasoning models typically lack visual reflection ability in long-chain reasoning, as they rarely refer back to visual tokens when performing reflective checking of the reasoning process. <span class="cw"><sup class="cite"><a href="#cref2">[2]</a></sup><span class="tip"><b>Look Again, Think Slowly: Enhancing Visual Reflection in Vision-Language Models</b><span class="tsnip"># 2.3 Diminishing Visual Attention and Dependency As Figure 2 illustrates, both the mean Visual Dependency Measure on MMMU (Yue et al., 2024a) and th...</span></span></span><br>
+<br>
+Worryingly, standard RL training makes this **worse, not better**: although widely used RL boosts reasoning performance, it fails to equip models with visual reflection capability and instead further reinforces over-reliance on previously generated text. For example, OpenVLThinker, an RL-tuned model based on Qwen2.5-VL, exhibits even lower focus and dependence on visual tokens during reasoning than the base model. <span class="cw"><sup class="cite"><a href="#cref2">[2]</a></sup><span class="tip"><b>Look Again, Think Slowly: Enhancing Visual Reflection in Vision-Language Models</b><span class="tsnip"># 2.3 Diminishing Visual Attention and Dependency As Figure 2 illustrates, both the mean Visual Dependency Measure on MMMU (Yue et al., 2024a) and th...</span></span></span><br>
+<br>
+This is a structural bottleneck: in Qwen2.5-VL, while early layers capture more visual signals, the progressive decay in deep layers remains unavoidable, suggesting that visual fading is a structural bottleneck inherent to current Transformer-based MLLMs, independent of parameter scale or training data. <span class="cw"><sup class="cite"><a href="#cref3">[3]</a></sup><span class="tip"><b>SPD-Faith Bench: Diagnosing and Improving Faithfulness in Chain-of-Thought for Multimodal Large Language Models</b><span class="tsnip">In Qwen2.5-VL (Figures 17 to 18), while early layers capture more visual signals, the progressive decay in deep layers remains unavoidable. This sugge...</span></span></span><br>
+<br>
+This also manifests as **&quot;evidence collapse&quot;**: reasoning VLMs reason over fixed visual tokens; the image is encoded once and does not change as the reasoning chain grows token by token. As text accumulates, attention to the growing text context competes with attention to the fixed visual context, creating systematic pressure for visual attention to decay over the course of generation. A model answering a diagram-dependent question may generate a fluent, low-entropy response while having stopped attending to the diagram midway through reasoning — confident but visually disengaged. <span class="cw"><sup class="cite"><a href="#cref4">[4]</a></sup><span class="tip"><b>Don&#x27;t Blink: Evidence Collapse during Multimodal Reasoning</b><span class="tsnip">RVLMs reason over fixed visual tokens: the image is encoded once and does not change as the reasoning chain grows token by token. As text accumulates,...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 4. Core Failure Mode 3: Language Shortcuts and Text Bias<br>
+<br>
+Related to visual attention decay is the well-documented tendency of RL-trained VLMs to exploit **language shortcuts** rather than genuinely grounding in the image. RL methods often encourage &quot;thinking over seeing,&quot; leaning heavily on language reasoning while underutilizing visual perception. This imbalance makes VLMs susceptible to reward hacking and spurious effects observed in RL training. Although VLMs trained with RL often have apparent improvements, they can largely reflect probability shifts toward the style of training and test data, leading to language shortcut answers from prior knowledge and overlooking hallucination risks. <span class="cw"><sup class="cite"><a href="#cref5">[5]</a></sup><span class="tip"><b>Self-Rewarding Vision-Language Model via Reasoning Decomposition</b><span class="tsnip">However, these methods often encourage &quot;thinking over seeing&quot; that lean heavily on language reasoning while underutilize visual perception (Liu et al....</span></span></span><br>
+<br>
+Most existing post-training methods for VLMs rely on simple verifiable answer matching and thus lack explicit supervision of visual information. As a result, VLMs receive sparse visual signals and often learn to prioritize language-based reasoning over visual perception. <span class="cw"><sup class="cite"><a href="#cref5">[5]</a></sup><span class="tip"><b>Self-Rewarding Vision-Language Model via Reasoning Decomposition</b><span class="tsnip">However, these methods often encourage &quot;thinking over seeing&quot; that lean heavily on language reasoning while underutilize visual perception (Liu et al....</span></span></span><br>
+<br>
+An especially clear demonstration of this comes from medical imaging. RL variants can achieve the same accuracy through distinct failure modes: one variant maintains 51% accuracy even with blank images — 81% of its real-image performance — despite having no visual input. This is definitive evidence that VQA benchmarks can contain exploitable text-only solution paths, and that the model has learned question-answer patterns that require minimal visual grounding. <span class="cw"><sup class="cite"><a href="#cref6">[6]</a></sup><span class="tip"><b>Beyond Accuracy: Evaluating Visual Grounding In Multimodal Medical Reasoning</b><span class="tsnip">#### 4.3.1 SAME ACCURACY, DIFFERENT MECHANISMS Despite reaching the same accuracy endpoint, RL(text) and RL(image) achieve this through distinct fail...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 5. Core Failure Mode 4: The Accuracy–Faithfulness Tradeoff<br>
+<br>
+RL fine-tuning reveals a deep disconnect: benchmark numbers go up while the quality of the reasoning chains goes down. RL fine-tuning dynamics uncover an accuracy–faithfulness trade-off: fine-tuning raises benchmark accuracy, but can simultaneously erode the reliability of the accompanying CoT and its robustness to contextual shifts. Specifically, models improve headline accuracy — particularly with more fine-tuning steps — yet become increasingly inconsistent in their reasoning. <span class="cw"><sup class="cite"><a href="#cref7">[7]</a></sup><span class="tip"><b>On Robustness and Chain-of-Thought consistency of RL-Finetuned VLMs</b><span class="tsnip">To better understand these vulnerabilities, we further analyze RL fine-tuning dynamics and uncover an accuracy–faithfulness trade-off: fine-tuning rai...</span></span></span><br>
+<br>
+This manifests as CoT traces that contradict the model&#x27;s own answers. Two fatal flaws exist in current multimodal reasoning models: (1) Logical Inconsistency — the CoT trace fails to entail the final answer, and (2) Visual Ungroundedness — reasoning steps describe objects or spatial relations that simply do not exist in the image. <span class="cw"><sup class="cite"><a href="#cref8">[8]</a></sup><span class="tip"><b>Faithful GRPO: Improving Visual Spatial Reasoning in Multimodal Language Models via Constrained Policy Optimization</b><span class="tsnip">The authors identify two fatal flaws in current Multimodal Reasoning Models (MRMs): Logical Inconsistency: The CoT trace fails to entail the final ans...</span></span></span><br>
+<br>
+In other cases the model fully accepts a misleading caption and generates unfaithful reasoning that describes the scene according to incorrect text. This inconsistency highlights how models can oscillate between two brittle strategies — caption neglect versus caption anchoring — rather than consistently grounding their reasoning in visual evidence. <span class="cw"><sup class="cite"><a href="#cref9">[9]</a></sup><span class="tip"><b>On Robustness and Chain-of-Thought Consistency of RL-Finetuned VLMs</b><span class="tsnip">However, this behavior is unreliable: in other cases the model fully accepts the misleading caption and generates unfaithful reasoning that describes ...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 6. Core Failure Mode 5: Sparse Rewards and Small-Scale Model Breakdown<br>
+<br>
+Applying GRPO directly to baseline models often results in performance degradation, primarily due to the sparse reward issue. The baseline models exhibit limited reasoning capability, leading to very few reasoning paths receiving rewards, which negatively impacts the reasoning capability. <span class="cw"><sup class="cite"><a href="#cref10">[10]</a></sup><span class="tip"><b>R1-VL: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization</b><span class="tsnip">From Table 1, we observe that applying GRPO directly to baseline models often results in performance degradation, primarily due to the sparse reward i...</span></span></span><br>
+<br>
+Furthermore, a critical &quot;Brick Wall&quot; phenomenon exists in small-scale VLMs: models show rapid improvement on simple tasks but struggle with complex examples requiring simultaneous visual understanding and reasoning capabilities. More concerningly, when confronted with challenging cases, models experience performance degradation on previously mastered tasks. <span class="cw"><sup class="cite"><a href="#cref11">[11]</a></sup><span class="tip"><b>Boosting the Generalization and Reasoning of Vision Language Models with Curriculum Reinforcement Learning</b><span class="tsnip">However, our experiments also identify a critical “Brick Wall” phenomenon in small-scale VLMs: models show rapid improvement on simple tasks but strug...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 7. Core Failure Mode 6: Generalization Degradation<br>
+<br>
+A consistent finding is that RL training on specific visual tasks **catastrophically hurts performance on others**. Most RL-based approaches collect CoT data to perform a cold start and then train using strategies like GRPO. While this achieves performance improvements on specific tasks, it significantly degrades the model&#x27;s general performance. Moreover, current methods remain limited to visual math or segmentation tasks, failing to generalize to broader general VQA tasks. <span class="cw"><sup class="cite"><a href="#cref12">[12]</a></sup><span class="tip"><b>VisionThink: Smart and Efficient Vision Language Model via Reinforcement Learning</b><span class="tsnip">Most of these efforts, by collecting CoT data to perform a cold start and then training the model using a reinforcement learning strategy such as GRPO...</span></span></span><br>
+<br>
+The in-distribution vs. out-of-distribution picture is especially paradoxical: GRPO recovers in-distribution performance (23% improvement on CheXpert) but degrades cross-dataset transferability (19% drop on NIH). This mirrors high-resource models, suggesting the issue stems from the RL paradigm rather than scale. There is a generalization paradox where the SFT checkpoint uniquely improves on out-of-distribution data before optimization, indicating teacher-guided reasoning captures more institution-agnostic features. <span class="cw"><sup class="cite"><a href="#cref13">[13]</a></sup><span class="tip"><b>Benchmark Success, Clinical Failure: When Reinforcement Learning Optimizes for Benchmarks, Not Patients</b><span class="tsnip">Evaluations on CheXpert and NIH benchmarks reveal a fundamental tension: GRPO recovers in-distribution performance (23% improvement on CheXpert, macro...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 8. Why VQA and Image Captioning Produce Conflicting Results<br>
+<br>
+### 8a. The Reward Verifiability Asymmetry<br>
+<br>
+This is the **core structural reason** results conflict. VQA is a *closed* task — a short, verifiable answer can be rewarded with a binary signal. Image captioning is fundamentally *open-ended*. Applying RLVR to open-ended tasks like image captioning is challenging, primarily due to the difficulty of designing an objective reward function: a good caption can be subjective, with multiple valid descriptions possible for the same image. <span class="cw"><sup class="cite"><a href="#cref14">[14]</a></sup><span class="tip"><b>CapRL: Stimulating Dense Image Caption Capabilities via Reinforcement Learning</b><span class="tsnip">However, applying RLVR to open-ended tasks like image captioning is challenging, primarily due to the difficulty of designing an *objective* reward fu...</span></span></span><br>
+<br>
+The design of the reward function is a pivotal factor in the success of RLVR-based approaches. Although designing reward functions for objective tasks is straightforward, developing the reward function for the subjective visual captioning task is challenging. While reward models or the &quot;LLM-as-a-judge&quot; approach have been explored, these models are still vulnerable to exploitation in the captioning task, primarily owing to their intrinsic biases, which may unintentionally encourage the captioning model to produce verbose or brief results. <span class="cw"><sup class="cite"><a href="#cref15">[15]</a></sup><span class="tip"><b>CapRL++: Unified Reinforcement Learning with Verifiable Rewards for Dense Image and Video Captioning</b><span class="tsnip">The design of the reward function is a pivotal factor in the success of RLVR-based approaches, since the reward function directly guides the optimizat...</span></span></span><br>
+<br>
+### 8b. Reward Hacking Is Structural, Not Incidental, for Captioning<br>
+<br>
+Using reward models or LLM-as-a-judge to provide feedback is vulnerable to reward hacking: the captioning model learns to exploit weaknesses in the reward models (e.g., verbosity or brevity outputs) rather than producing a high-quality response. Moreover, it is difficult to create effective rubrics or evaluation prompts for LVLM-as-a-judge methods because captions are free-form and encode substantial information. <span class="cw"><sup class="cite"><a href="#cref14">[14]</a></sup><span class="tip"><b>CapRL: Stimulating Dense Image Caption Capabilities via Reinforcement Learning</b><span class="tsnip">However, applying RLVR to open-ended tasks like image captioning is challenging, primarily due to the difficulty of designing an *objective* reward fu...</span></span></span><br>
+<br>
+### 8c. Reward Granularity Problem in Captioning<br>
+<br>
+Long-form image captioning exposes a reward granularity problem in RL for open-ended generation. Unlike tasks where correctness can be summarized by a single answer, a dense caption is composed of many local visual claims about objects, attributes, counts, spatial relations, OCR text, identities, and fine-grained scene details. <span class="cw"><sup class="cite"><a href="#cref16">[16]</a></sup><span class="tip"><b>ClaimDiff-RL: Fine-Grained Caption Reinforcement Learning through Visual Claim Comparison</b><span class="tsnip">Long-form image captioning exposes a reward granularity problem in RL for open-ended generation. Unlike tasks where correctness can be summarized by a...</span></span></span><br>
+<br>
+Long-form captioning requires a more delicate objective than reference similarity alone. A caption can avoid hallucination by becoming overly conservative, or it can improve coverage by adding details that introduce unsupported claims. This tension is closely related to the hallucination problem studied in image captioning and LVLM evaluation. <span class="cw"><sup class="cite"><a href="#cref16">[16]</a></sup><span class="tip"><b>ClaimDiff-RL: Fine-Grained Caption Reinforcement Learning through Visual Claim Comparison</b><span class="tsnip">Long-form image captioning exposes a reward granularity problem in RL for open-ended generation. Unlike tasks where correctness can be summarized by a...</span></span></span><br>
+<br>
+### 8d. VQA Can Be Gamed by Text Shortcuts That Have No Analog in Captioning<br>
+<br>
+Because VQA answers are short and benchmarks have biased answer distributions, learning systems excel at finding shortcuts in terms of gaming the biases in answer distributions and giveaway correlations, leading to doubts about the level of visuo-linguistic intelligence implied by current results. <span class="cw"><sup class="cite"><a href="#cref17">[17]</a></sup><span class="tip"><b>Inverse Visual Question Answering: A New Benchmark and VQA Diagnosis   Tool</b><span class="tsnip">However increasing scrutiny has shown that learning systems excel at finding shortcuts in terms of gaming the biases in answer distributions, and giv...</span></span></span> This means RL-trained VQA accuracy *overstates* genuine visual reasoning. Image captioning metrics like CIDEr are less gameable in this way, but they impose their own ceiling via reference-caption bias.<br>
+<br>
+### 8e. CoT Training Data Mismatches Task Structure Differently<br>
+<br>
+Training VLMs on short answers leads to poor generalization on reasoning tasks that require more detailed explanations. Current training recipes often rely on datasets dominated by short annotations with minimal rationales, causing poor generalization to tasks requiring detailed explanations. <span class="cw"><sup class="cite"><a href="#cref18">[18]</a></sup><span class="tip"><b>Improve Vision Language Model Chain-of-thought Reasoning - ACL Anthology</b><span class="tsnip">In this work, we show that training VLM on short answers leads to poor generalization on reasoning tasks that require more detailed explanations.</span></span></span><span class="cw"><sup class="cite"><a href="#cref18">[18]</a></sup><span class="tip"><b>Improve Vision Language Model Chain-of-thought Reasoning - ACL Anthology</b><span class="tsnip">In this work, we show that training VLM on short answers leads to poor generalization on reasoning tasks that require more detailed explanations.</span></span></span> In VQA, short answers are the norm and RL rewards them naturally. In captioning, the ground truth is already long-form, so RL&#x27;s preference for brief, easily-rewarded outputs creates a direct tension with the task objective.<br>
+<br>
+---<br>
+<br>
+## 9. Long-Chain Reasoning Causes Different Failure Patterns Across Tasks<br>
+<br>
+Long CoT reasoning places a much higher demand on visual grounding than short, single-step QA. To answer correctly, a VLM must repeatedly return to the image, recovering the right object, attribute, relation, or numeric evidence at each step. This makes long CoT inherently fragile: multiple error types can emerge along the chain, including perception, reasoning, knowledge, and hallucination errors. Once any such error appears at an intermediate step, the remaining reasoning can still look coherent while operating on flawed intermediate evidence, eventually producing an incorrect final answer. <span class="cw"><sup class="cite"><a href="#cref19">[19]</a></sup><span class="tip"><b>HopChain: Multi-Hop Data Synthesis for Generalizable Vision-Language Reasoning</b><span class="tsnip"># 3 Diverse Failure Modes in Long Chain-of-Thought Reasoning Long CoT reasoning places a much higher demand on visual grounding than short, single-st...</span></span></span><br>
+<br>
+In VQA, a wrong intermediate step can sometimes be &quot;recovered&quot; by lucky pattern matching to the correct short answer. In captioning, every flawed intermediate claim survives visibly into the final output, making long-chain failure far more damaging.<br>
+<br>
+---<br>
+<br>
+## 10. The Overthinking–Underseeing Tension<br>
+<br>
+Finally, RL training triggers a counterintuitive dynamic: unlike in text domains, RL in multimodal settings often exhibits a collapse. As accuracy improves during training, the reasoning process gradually shortens, suggesting that models tend to favor brief, less structured responses. <span class="cw"><sup class="cite"><a href="#cref20">[20]</a></sup><span class="tip"><b>More Thought, Less Accuracy? On the Dual Nature of Reasoning in Vision-Language Models</b><span class="tsnip">(2025) observe a counter-intuitive trend: unlike in text domains, RL in multimodal settings often exhibits a collapse. As accuracy improves during tra...</span></span></span> This creates a lose-lose tension: longer reasoning chains improve complex VQA but destroy visual grounding; shorter ones preserve grounding but fail on tasks that genuinely need multi-step deliberation. The very ability to &quot;think more&quot; often coincides with &quot;seeing less.&quot; <span class="cw"><sup class="cite"><a href="#cref21">[21]</a></sup><span class="tip"><b>See It, Say It, Sorted: An Iterative Training-Free Framework for Visually-Grounded Multimodal Reasoning in LVLMs</b><span class="tsnip">Yet, the very ability to &quot;think more&quot; often coincides with &quot;seeing less&quot;.</span></span></span><br>
+<br>
+---<br>
+<br>
+## Summary Table<br>
+<br>
+| Failure Mode | Hits VQA? | Hits Captioning? | Why it conflicts |<br>
+|---|---|---|---|<br>
+| Thought collapse | ✓ (complex tasks) | ✓✓ | Captioning has no single correct terminal state to reward |<br>
+| Visual attention decay | ✓ | ✓✓ | Captioning requires sustained multi-claim visual fidelity |<br>
+| Language shortcuts / text bias | ✓✓ (benchmark-gameable) | ✓ (hallucination risk) | VQA shortcuts inflate metrics; captioning metrics measure them differently |<br>
+| Accuracy–faithfulness tradeoff | ✓✓ | ✓ | CoT inconsistency is invisible in short VQA answers |<br>
+| Reward verifiability gap | Low (binary reward works) | ✓✓✓ | No ground-truth caption signal is objectively verifiable |<br>
+| Reward hacking | Low | ✓✓✓ | Verbosity/brevity exploitation has no VQA analog |<br>
+| Generalization degradation | ✓ | ✓✓ | RL compresses general capability toward narrow task distribution |<br>
+<br>
+The overarching conclusion is that RL CoT fails most acutely in vision-language tasks **wherever the reward signal cannot be made objective and fine-grained**, and **wherever the visual grounding requirement is sustained rather than single-shot** — which is precisely where image captioning diverges structurally from VQA.</div>
+  <h3>References (21)</h3>
+  <ol class="refs"><li id="cref1"><span class="rn">[1]</span> <span class="rt"><a href="https://arxiv.org/pdf/2503.08525" target="_blank">GTR: Guided Thought Reinforcement Prevents Thought Collapse in RL-based VLM Agent Training</a></span></li><li id="cref2"><span class="rn">[2]</span> <span class="rt"><a href="https://arxiv.org/pdf/2509.12132" target="_blank">Look Again, Think Slowly: Enhancing Visual Reflection in Vision-Language Models</a></span></li><li id="cref3"><span class="rn">[3]</span> <span class="rt"><a href="https://arxiv.org/pdf/2602.07833" target="_blank">SPD-Faith Bench: Diagnosing and Improving Faithfulness in Chain-of-Thought for Multimodal Large Language Models</a></span></li><li id="cref4"><span class="rn">[4]</span> <span class="rt"><a href="https://arxiv.org/pdf/2604.04207" target="_blank">Don&#x27;t Blink: Evidence Collapse during Multimodal Reasoning</a></span></li><li id="cref5"><span class="rn">[5]</span> <span class="rt"><a href="https://arxiv.org/pdf/2508.19652" target="_blank">Self-Rewarding Vision-Language Model via Reasoning Decomposition</a></span></li><li id="cref6"><span class="rn">[6]</span> <span class="rt"><a href="https://arxiv.org/pdf/2603.03437" target="_blank">Beyond Accuracy: Evaluating Visual Grounding In Multimodal Medical Reasoning</a></span></li><li id="cref7"><span class="rn">[7]</span> <span class="rt"><a href="https://arxiv.org/html/2602.12506v1" target="_blank">On Robustness and Chain-of-Thought consistency of RL-Finetuned VLMs</a></span></li><li id="cref8"><span class="rn">[8]</span> <span class="rt"><a href="https://www.wispaper.ai/en/blog/faithful-grpo-improving-visual-spatial-reasoning-multimodal-language-models-constrained-policy-optimization-20260414/eng" target="_blank">Faithful GRPO: Improving Visual Spatial Reasoning in Multimodal Language Models via Constrained Policy Optimization</a></span></li><li id="cref9"><span class="rn">[9]</span> <span class="rt"><a href="https://arxiv.org/pdf/2602.12506" target="_blank">On Robustness and Chain-of-Thought Consistency of RL-Finetuned VLMs</a></span></li><li id="cref10"><span class="rn">[10]</span> <span class="rt"><a href="https://arxiv.org/html/2503.12937v1" target="_blank">R1-VL: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization</a></span></li><li id="cref11"><span class="rn">[11]</span> <span class="rt"><a href="https://arxiv.org/html/2503.07065v1" target="_blank">Boosting the Generalization and Reasoning of Vision Language Models with Curriculum Reinforcement Learning</a></span></li><li id="cref12"><span class="rn">[12]</span> <span class="rt"><a href="https://arxiv.org/pdf/2507.13348" target="_blank">VisionThink: Smart and Efficient Vision Language Model via Reinforcement Learning</a></span></li><li id="cref13"><span class="rn">[13]</span> <span class="rt"><a href="https://arxiv.org/html/2512.23090v1" target="_blank">Benchmark Success, Clinical Failure: When Reinforcement Learning Optimizes for Benchmarks, Not Patients</a></span></li><li id="cref14"><span class="rn">[14]</span> <span class="rt"><a href="https://arxiv.org/pdf/2509.22647" target="_blank">CapRL: Stimulating Dense Image Caption Capabilities via Reinforcement Learning</a></span></li><li id="cref15"><span class="rn">[15]</span> <span class="rt"><a href="https://arxiv.org/html/2606.09393" target="_blank">CapRL++: Unified Reinforcement Learning with Verifiable Rewards for Dense Image and Video Captioning</a></span></li><li id="cref16"><span class="rn">[16]</span> <span class="rt"><a href="https://arxiv.org/html/2605.20278" target="_blank">ClaimDiff-RL: Fine-Grained Caption Reinforcement Learning through Visual Claim Comparison</a></span></li><li id="cref17"><span class="rn">[17]</span> <span class="rt"><a href="https://arxiv.org/pdf/1803.06936" target="_blank">Inverse Visual Question Answering: A New Benchmark and VQA Diagnosis   Tool</a></span></li><li id="cref18"><span class="rn">[18]</span> <span class="rt"><a href="https://aclanthology.org/2025.acl-long.82/" target="_blank">Improve Vision Language Model Chain-of-thought Reasoning - ACL Anthology</a></span></li><li id="cref19"><span class="rn">[19]</span> <span class="rt"><a href="https://arxiv.org/pdf/2603.17024" target="_blank">HopChain: Multi-Hop Data Synthesis for Generalizable Vision-Language Reasoning</a></span></li><li id="cref20"><span class="rn">[20]</span> <span class="rt"><a href="https://arxiv.org/pdf/2509.25848" target="_blank">More Thought, Less Accuracy? On the Dual Nature of Reasoning in Vision-Language Models</a></span></li><li id="cref21"><span class="rn">[21]</span> <span class="rt"><a href="https://arxiv.org/pdf/2602.21497" target="_blank">See It, Say It, Sorted: An Iterative Training-Free Framework for Visually-Grounded Multimodal Reasoning in LVLMs</a></span></li></ol>
+</section>
+</body></html>

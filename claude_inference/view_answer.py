@@ -18,8 +18,10 @@ import argparse
 import json
 from pathlib import Path
 
+import re
+
 from cite_utils import (
-    CITE_CSS, build_doc_index, esc, render_answer, render_refs, render_searches,
+    CITE_CSS, abridge, build_doc_index, esc, render_answer, render_refs, render_searches,
 )
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title>
@@ -41,6 +43,8 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title
           font-family:-apple-system,system-ui,sans-serif; font-size:14px; }}
  .qbox div {{ margin:4px 0; }} .qbox b {{ color:#57606a; }}
  .answer {{ margin:18px 0; }}
+ .badge {{ color:#fff; border-radius:10px; padding:2px 9px; font-size:12px;
+           font-family:-apple-system,system-ui,sans-serif; }}
 {cite_css}
 </style></head><body>
 <h1>{heading}</h1>
@@ -93,6 +97,113 @@ def render_sample(sample_path: Path, only_attempt=None) -> str:
         title=f"Answer viewer — {sample_path.stem}",
         heading=f"{sample_path.stem} · {res.get('final_status', '')}",
         seed=esc(res.get("seed", "")), attempts=bodies, cite_css=CITE_CSS,
+    )
+
+
+VERDICT_COLOR = {"claude": "#1a7f37", "dr_tulu": "#cf222e", "tie": "#9a6700",
+                 "both_bad": "#6e7781", "inconsistent": "#57606a"}
+VERDICT_LABEL = {"claude": "Claude+search wins", "dr_tulu": "DR-Tulu wins",
+                 "tie": "Tie", "both_bad": "Both bad",
+                 "inconsistent": "Inconsistent (position bias)"}
+
+
+def _verdict_chip(v) -> str:
+    return (f'<span class="badge" style="background:{VERDICT_COLOR.get(v, "#57606a")}">'
+            f'{esc(VERDICT_LABEL.get(v, v))}</span>')
+
+
+_MARK_RE = re.compile(r"\[(\d+)\]")
+
+
+def _source_snippet(snippet: str, norm_answer: str) -> str:
+    """Hover preview text: the cited source passage, but only when it is NOT just a copy
+    of the answer (we don't echo the answer's own text back as a 'source snippet')."""
+    s = " ".join((snippet or "").split())
+    return s if s and s.lower() not in norm_answer else ""
+
+
+def _render_marked_answer(marked: str, sources: list, answer_text: str):
+    """Render Claude's inline-[n] answer with hover cite links + a numbered References
+    list — mirroring the DR-Tulu viewer. `sources[n-1]` is reference [n]. The references
+    list shows Title + URL only; the hover preview shows the source snippet when it adds
+    text beyond the answer."""
+    norm_answer = " ".join((answer_text or "").split()).lower()
+    body = esc(marked)
+
+    def repl(m):
+        n = int(m.group(1))
+        if not (1 <= n <= len(sources)):
+            return m.group(0)  # not a real citation number; leave as-is
+        s = sources[n - 1]
+        support = _source_snippet(s.get("snippet"), norm_answer)
+        tsnip = f'<span class="tsnip">{esc(abridge(support))}</span>' if support else ""
+        tip = (f'<span class="tip"><b>{esc(s.get("title") or s.get("url"))}</b>{tsnip}</span>')
+        return (f'<span class="cw"><sup class="cite">'
+                f'<a href="#cref{n}">[{n}]</a></sup>{tip}</span>')
+
+    body = _MARK_RE.sub(repl, body).replace("\n", "<br>\n")
+
+    # References list: Title + URL only (no snippet — the cited passage lives in the
+    # answer/hover, not duplicated here).
+    items = []
+    for i, s in enumerate(sources, 1):
+        url, title = s.get("url", ""), (s.get("title") or s.get("url") or "(untitled)")
+        title_html = f'<a href="{esc(url)}" target="_blank">{esc(title)}</a>' if url else esc(title)
+        items.append(f'<li id="cref{i}"><span class="rn">[{i}]</span> '
+                     f'<span class="rt">{title_html}</span></li>')
+    refs_html = f'<ol class="refs">{"".join(items)}</ol>' if items else "<p><em>No sources.</em></p>"
+    return body, refs_html
+
+
+def render_compare(compare_path: Path) -> str:
+    """Render a Claude+web-search comparison (sample_NNN.compare.json) as HTML."""
+    c = json.loads(compare_path.read_text())
+    sources = c.get("claude_sources") or []
+    cited = c.get("claude_sources_kind") == "cited" and c.get("claude_marked")
+    if cited:
+        ans, src_block = _render_marked_answer(
+            c["claude_marked"], sources, c.get("claude_answer", ""))
+        src_heading = f"References ({len(sources)})"
+    else:
+        # Fallback: plain answer + flat consulted-source list (no inline citations).
+        ans = esc(c.get("claude_answer") or "").replace("\n", "<br>\n")
+        items = "".join(
+            f'<li><a href="{esc(s.get("url"))}" target="_blank">'
+            f'{esc(s.get("title") or s.get("url"))}</a></li>' for s in sources)
+        src_block = f'<ol class="refs">{items}</ol>'
+        src_heading = f"Sources ({len(sources)}) — consulted (no inline citations)"
+    raw = c.get("judge_raw", {})
+    ov, cr = raw.get("overall", {}), raw.get("criterion", {})
+    ov_conf = f" (confidence {ov.get('confidence')}/5)" if ov.get("confidence") is not None else ""
+    cr_conf = f" (confidence {cr.get('confidence')}/5)" if cr.get("confidence") is not None else ""
+    v = c.get("verdicts", {})
+    cost = c.get("cost", {})
+    order = "DR-Tulu shown as A" if c.get("judge_order") == "dr_tulu_first" else "Claude shown as A"
+    judge_model = c.get("judge_model", "judge")
+    return PAGE.format(
+        title=f"Comparison — {compare_path.stem}",
+        heading=f"{compare_path.stem.replace('.compare', '')} · DR-Tulu vs Claude+web-search",
+        seed=esc(c.get("seed", "")),
+        cite_css=CITE_CSS,
+        attempts=f"""
+<section class="attempt" open>
+  <div class="qbox">
+    <div><b>Question</b> {esc(c.get('question'))}</div>
+    <div><b>Criterion</b> {esc(c.get('criterion'))}</div>
+  </div>
+  <h3>Verdicts ({esc(judge_model)} judge · {esc(order)})</h3>
+  <div class="qbox">
+    <div><b>Overall quality</b> {_verdict_chip(v.get('overall'))}{esc(ov_conf)}
+         &nbsp;<span style="color:#57606a">— {esc(ov.get('reasoning'))}</span></div>
+    <div><b>Criterion satisfaction</b> {_verdict_chip(v.get('criterion'))}{esc(cr_conf)}
+         &nbsp;<span style="color:#57606a">— {esc(cr.get('reasoning'))}</span></div>
+  </div>
+  <h3>Claude + web-search answer
+      <span style="font-weight:400;color:#57606a">({c.get('claude_num_searches', 0)} searches · ${cost.get('cost_usd', 0):.4f})</span></h3>
+  <div class="answer">{ans}</div>
+  <h3>{src_heading}</h3>
+  {src_block}
+</section>""",
     )
 
 
