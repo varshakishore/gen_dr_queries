@@ -51,6 +51,7 @@ MAX_ATTEMPTS = 5
 # Cache writes are billed at 1.25x input; cache hits at 0.10x input.
 # Extend this table when adding new models.
 MODEL_PRICING = {
+    "claude-opus-4-8":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-7":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-6":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-5":   {"input": 5.00,  "output": 25.00},
@@ -177,6 +178,61 @@ OUTPUT FORMAT (valid JSON, no extra text):
 {{
   "verification_criteria": ["<atomic criterion 1>", "<atomic criterion 2 (optional)>", "<atomic criterion 3 (optional)>"]
 }}
+"""
+
+PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE = """You are an expert in constructing challenging research questions.
+
+Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
+
+ANSWERING SYSTEM PROFILE:
+The answering system is an open "deep research" model that is trained to produce attributed long-form answers and whose ONLY tool is Semantic Scholar ("S2") search over academic papers. The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not come from requiring sources outside this corpus. The system is good at surveying a single well-studied topic and producing a long well-structured report. It is bad at complex reasoning. 
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{
+  "brainstorming": "<think about distinct strategies and reason about why they may or may not work>",
+  "chosen_strategy": "<name and justify the single most promising strategy>",
+  "updated_question": "<the rewritten question>",
+  "why_harder": "<explanation of why this question might be hard for a deep research system>",
+  "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
+}
+
+RULES:
+- Avoid questions that can easily be answered by retrieving information.
+- The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
+- The updated question length should change by fewer than 15 words from the seed.
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+- DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW.Be creative and come up with your own strategy. 
+
+Here are a few examples:
+Seed Question: What is pretraining-data deduplication?
+{
+"brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
+"chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
+"updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
+"why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
+"verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+}
+
+Seed Question: What is the role of attention sparsity in efficient transformers?
+{
+"brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
+"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY cited papers disagree rather than just report their results.",
+"updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
+"why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
+"verification_criterion": "The answer must show that its OWN cited sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it cites do not actually report conflicting sparse-vs-dense comparisons."
+}
+
+Seed Question: How does brown adipose tissue produce heat?
+{
+"brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
+"chosen_strategy": "False premise via conjunction of separately-documented facts.",
+"updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
+"why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
+"verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
+}
+
+Reminder: Do not use the same strategies as the examples above.
 """
 
 JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system outputs.
@@ -569,7 +625,7 @@ def harder_question_gen(
 
     messages = [{"role": "user", "content": user_content}]
     raw, bucket = _call_claude(
-        client, model=model, system=PROMPT_TO_MAKE_HARDER_QUESTION, messages=messages,
+        client, model=model, system=PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE, messages=messages,
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)

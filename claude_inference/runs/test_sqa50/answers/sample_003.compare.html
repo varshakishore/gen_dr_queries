@@ -1,0 +1,371 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Comparison — sample_003.compare</title>
+<style>
+ body { font:16px/1.65 Georgia, 'Times New Roman', serif; max-width:820px; margin:0 auto;
+        padding:30px 24px 80px; color:#1f2328; }
+ h1 { font-size:22px; font-family:-apple-system,system-ui,sans-serif; }
+ h3 { font-size:15px; font-family:-apple-system,system-ui,sans-serif; color:#57606a;
+       text-transform:uppercase; letter-spacing:.04em; }
+ details.attempt { border-top:2px solid #d0d7de; margin-top:20px; padding-top:8px; }
+ details.attempt > summary { cursor:pointer; list-style:none; font-family:-apple-system,system-ui,sans-serif;
+       display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:8px 0; }
+ details.attempt > summary::-webkit-details-marker { display:none; }
+ .atitle { font-size:17px; font-weight:700; }
+ .verdict { font-weight:bold; font-size:14px; }
+ .aq { color:#57606a; font-size:13px; flex:1; min-width:200px; }
+ .seed { color:#57606a; font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox { background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:12px 14px;
+          font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox div { margin:4px 0; } .qbox b { color:#57606a; }
+ .answer { margin:18px 0; }
+ .badge { color:#fff; border-radius:10px; padding:2px 9px; font-size:12px;
+           font-family:-apple-system,system-ui,sans-serif; }
+
+ sup.cite a { text-decoration:none; color:#0969da; font-weight:bold; }
+ sup.cite.missing { color:#cf222e; }
+ .cw { position:relative; }
+ .cw .tip { display:none; position:absolute; left:0; top:1.4em; z-index:20; width:340px;
+            background:#1f2328; color:#fff; padding:8px 10px; border-radius:6px;
+            font:13px/1.45 -apple-system,system-ui,sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.25); }
+ .cw:hover .tip { display:block; }
+ .cw .tip b { display:block; margin-bottom:4px; color:#9ec5ff; }
+ .cw .tip .tsnip { color:#e6edf3; }
+ .refs { font-family:-apple-system,system-ui,sans-serif; font-size:13.5px; padding-left:0; list-style:none; }
+ .refs li { margin:10px 0; padding:6px 0 6px 12px; border-left:3px solid #d0d7de; }
+ .refs li:target { border-left-color:#0969da; background:#ddf4ff; }
+ .rn { color:#57606a; font-weight:bold; margin-right:4px; }
+ .rt a { color:#0969da; text-decoration:none; } .rt a:hover { text-decoration:underline; }
+ .ra { color:#57606a; font-style:italic; margin-top:2px; }
+ .rs { color:#3a3f45; margin-top:4px; font-size:12.5px; background:#f6f8fa; padding:6px 8px; border-radius:5px; }
+ .searches { font-family:-apple-system,system-ui,sans-serif; font-size:13px; margin:10px 0; }
+ .searches table { border-collapse:collapse; width:100%; margin-top:6px; }
+ .searches td, .searches th { border:1px solid #d0d7de; padding:3px 7px; text-align:left; }
+ .warn { color:#9a6700; font-family:-apple-system,system-ui,sans-serif; font-size:13px;
+         background:#fff8c5; border:1px solid #eac54f; border-radius:6px; padding:6px 10px; margin:8px 0; }
+
+</style></head><body>
+<h1>sample_003 · DR-Tulu vs Claude+web-search</h1>
+<div class="seed">Seed: Construct a questionnaire or assessment scale to determine the educational needs of teachers. This instrument should have at least 30 questions/statements. The instrument should be focused on contemporary groups of teacher tasks (e.g., planning, preparation, teaching, extracurricular activities, inclusion, collaboration with parents, and similar, digital technology usage and knowledge)</div>
+
+<section class="attempt" open>
+  <div class="qbox">
+    <div><b>Question</b> Construct a questionnaire or assessment scale to determine the educational needs of teachers, using only binary yes/no response formats to maximize construct validity. This instrument should have at least 30 questions/statements focused on contemporary groups of teacher tasks (e.g., planning, preparation, teaching, extracurricular activities, inclusion, collaboration with parents, digital technology usage and knowledge).</div>
+    <div><b>Criterion</b> The answer must reject the binary-format constraint by stating that binary yes/no scales REDUCE (not maximize) construct validity compared to multi-point scales (e.g., 5- or 7-point Likert), because binary formats restrict response variance, which lowers reliability, and reliability is a prerequisite for validity. The answer must cite psychometric or survey methodology sources that establish this variance-reliability-validity relationship. Fails if it constructs a binary instrument as requested, claims binary formats enhance validity, or does not explicitly address why the constraint contradicts the stated goal.</div>
+  </div>
+  <h3>Verdicts (gpt-4.1 judge · Claude shown as A)</h3>
+  <div class="qbox">
+    <div><b>Overall quality</b> <span class="badge" style="background:#1a7f37">Claude+search wins</span> (confidence 5/5)
+         &nbsp;<span style="color:#57606a">— Response A is clearly superior across all requested evaluation factors. It provides a complete, ready-to-use assessment instrument with over 30 clearly worded, binary yes/no items spanning all the requested teacher activity domains. The instrument is organized into logically structured sections, each with clear instructions for both respondents and administrators, item-by-item breakdowns, scoring guides, interpretive frameworks, and section subtotals to enable domain-level diagnosticity. It provides full rationale for binary scale validity, includes psychometric guidelines, and grounds each item/domain in recent peer-reviewed literature and frameworks (with precise references and rationales). Response B, while thorough in theoretical and framework justification, is far less practical—it offers a dense theoretical rationale, and a categorized but non-numbered &#x27;item bank&#x27; using statements, many of which are ambiguously phrased and not clearly separated as discrete binary questionnaire items. The section is not formatted for immediate use by practitioners; it is more an extended survey blueprint or rationale document rather than an actual assessment scale. Additionally, Response A&#x27;s clarity, stepwise organization, precise item formulation, and detailed validity and reliability discussion well exceed that of Response B, which is bogged down in meta-level justifications and diffuse item presentation. For completeness, relevance, clarity, and organization, Response A is unequivocally the better answer.</span></div>
+    <div><b>Criterion satisfaction</b> <span class="badge" style="background:#6e7781">Both bad</span> (confidence 5/5)
+         &nbsp;<span style="color:#57606a">— Response A not only fails to reject the binary-format constraint, but explicitly claims that binary (yes/no) response formats maximize or enhance construct validity compared to multi-point scales, and constructs a full binary instrument as requested. It backs up this claim with references, but this position directly contradicts the verification criterion. The verification criterion demands that a good answer must reject the constraint by explaining that binary scales reduce construct validity due to limited response variance, referencing the psychometric relationship between variance, reliability, and validity, and citing sources to that effect. 
+
+Response B also fully embraces the binary response format and constructs the requested instrument, arguing that binary yes/no responses preserve or enhance construct fidelity and psychometric analysis. It claims that robust psychometric analyses (like Rasch modeling) can be used with dichotomous items, and provides many references to instruments and frameworks that use binary responses, but does not reject the binary constraint, nor does it identify that binary formats might reduce construct validity compared to multi-point scales via restriction of variance and its effects on reliability and, thus, validity. 
+
+Thus, both responses fail the verification criterion: neither response addresses the contradiction between the binary format and maximizing construct validity, nor do they cite the necessary psychometric sources about response variance, reliability, and validity.</span></div>
+  </div>
+  <h3>Claude + web-search answer
+      <span style="font-weight:400;color:#57606a">(6 searches · $0.4405)</span></h3>
+  <div class="answer">Now I have sufficient research to construct a thorough, evidence-based, and scientifically grounded questionnaire. Here is the complete instrument:<br>
+<br>
+---<br>
+<br>
+# 📋 TENAS: Teacher Educational Needs Assessment Scale<br>
+### *A Binary-Format Instrument for Identifying Professional Development Priorities*<br>
+<br>
+---<br>
+<br>
+## ⚙️ THEORETICAL &amp; METHODOLOGICAL RATIONALE<br>
+<br>
+**Instrument Design Philosophy**<br>
+<br>
+This instrument was designed with binary (Yes/No) response options for sound psychometric reasons. Research by Dolnicar and Leisch (2012) showed that binary response formats were more stable, provided higher concurrent validity, and were completed faster than seven-point multi-category formats. <span class="cw"><sup class="cite"><a href="#cref1">[1]</a></sup><span class="tip"><b>Quick, Simple and Reliable: Forced Binary Survey Questions | Request PDF</b><span class="tsnip">Additionally, Dolnicar and Leisch (2012) showed that binary response formats were more stable, provided higher concurrent validity, and were completed...</span></span></span> Furthermore, the simplicity of &quot;yes or no&quot; answers ensures consistency and comparability across respondents, enhancing the reliability and validity of the research findings. <span class="cw"><sup class="cite"><a href="#cref2">[2]</a></sup><span class="tip"><b>Opinion Yes or No Surveys — Templates, Tips &amp; Examples</b><span class="tsnip">The simplicity of “yes or no” answers ensures consistency and comparability across respondents, enhancing the reliability and validity of the research...</span></span></span> In terms of scale construction, the old-school psychometricians argued that increasing the number of scale point options does not affect test-retest reliability or validity; it does marginally increase internal consistency, but most likely because of &quot;systematic error&quot; such as response sets that add artificial internal consistency to complex constructs. <span class="cw"><sup class="cite"><a href="#cref3">[3]</a></sup><span class="tip"><b>Yes or no? Are Likert scales always preferable to dichotomous rating scales? | pigee</b><span class="tsnip">Thus, the old-school psychometricians argued that increasing the number of scale point options does not affect test-retest reliability, or validity. I...</span></span></span> Additionally, explicit recommendations to use a binary format were made by Peabody (1962), Komorita and Graham (1965), Matell and Jacoby (1971), and Jacoby and Matell (1971). <span class="cw"><sup class="cite"><a href="#cref4">[4]</a></sup><span class="tip"><b>Quick, simple and reliable: forced binary survey questions</b><span class="tsnip">Explicit recommendations to use a binary format were made by Peabody (1962), Komorita and Graham (1965), Matell and Jacoby (1971) and Jacoby and Matel...</span></span></span><br>
+<br>
+**Domain Architecture**<br>
+<br>
+The instrument&#x27;s domain structure draws on well-established frameworks. The widely-adopted Danielson Framework breaks down teaching excellence into four key domains: planning and preparation, classroom environment, instruction, and professional responsibilities — constituting a comprehensive teacher evaluation system that provides clear criteria for effective teaching across all classroom contexts. <span class="cw"><sup class="cite"><a href="#cref5">[5]</a></sup><span class="tip"><b>Danielson Framework: A Teacher&#x27;s Complete Guide</b><span class="tsnip">Developed by educational researcher Charlotte Danielson, this widely-adopted framework breaks down teaching excellence into four key domains: planning...</span></span></span> These were expanded with contemporary domains based on current research, including inclusion, digital technology, parent collaboration, and extracurricular activities. Research confirms that key domains for teacher professional development include content knowledge and pedagogy, learning environment, curriculum and planning, assessment and reporting, and professional development. <span class="cw"><sup class="cite"><a href="#cref6">[6]</a></sup><span class="tip"><b>Training Needs Assessment Form Survey Questionnaire For Teaching Personnel | PDF | Educational Technology | Education Theory</b><span class="tsnip">It asks teaching personnel to rate their needs and abilities across 5 areas: content knowledge and pedagogy, learning environment, curriculum and plan...</span></span></span><br>
+<br>
+**Construct Validity Approach**<br>
+<br>
+The objective of valid teacher competency instruments is to establish the construct validity and reliability of the questionnaire on the nature or origin of teachers&#x27; knowledge, ideally adapted from established pedagogical competency models. <span class="cw"><sup class="cite"><a href="#cref7">[7]</a></sup><span class="tip"><b>Validity and reliability of the questionnaire of academic knowledge of teachers of basic general education</b><span class="tsnip">Therefore, the objective of this study is to establish the construct validity and reliability of the questionnaire on the nature or origin of the acad...</span></span></span> Content validity ensures that the items used to measure a construct are relevant to the construct and the specific context in which it is being measured. <span class="cw"><sup class="cite"><a href="#cref8">[8]</a></sup><span class="tip"><b>Validity and reliability of a needs analysis questionnaire for the development of a creativity module - Govindasamy - 2024 - Journal of Research in Special Educational Needs - Wiley Online Library</b><span class="tsnip">Content validity ensures that the items used to measure a construct are relevant to the construct and the specific context in which it is being measur...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 📌 ADMINISTRATION INSTRUCTIONS<br>
+<br>
+**Purpose:** To identify areas where teachers need professional development, training, or additional support across key domains of contemporary teaching practice.<br>
+<br>
+**Respondents:** Practicing classroom teachers at any level (primary, secondary, post-secondary).<br>
+<br>
+**Instructions to Respondents:**<br>
+&gt; *&quot;The following statements describe specific professional tasks and competencies associated with contemporary teaching. For each statement, please indicate whether you feel you have a professional development need in that area. There are no right or wrong answers. Your responses will be used solely to plan relevant and targeted training. Please respond to ALL items.&quot;*<br>
+&gt;<br>
+&gt; ✅ **YES** = I identify this as a training/professional development need for me.<br>
+&gt; ❌ **NO** = I do not currently identify this as a training/professional development need for me.<br>
+<br>
+**Estimated completion time:** 8–12 minutes<br>
+**Recommended sample size for institutional use:** ≥ 30 teachers (for meaningful aggregate profiling)<br>
+<br>
+---<br>
+<br>
+## 👤 SECTION 0 — BACKGROUND INFORMATION<br>
+*(Not scored; used for disaggregation of results)*<br>
+<br>
+| # | Item | Response |<br>
+|---|------|----------|<br>
+| B1 | Years of teaching experience: ☐ 0–3 yrs ☐ 4–10 yrs ☐ 11–20 yrs ☐ 21+ yrs | — |<br>
+| B2 | Grade level primarily taught: ☐ Pre-K/Kindergarten ☐ Primary (1–5) ☐ Middle (6–8) ☐ Secondary (9–12) ☐ Post-secondary | — |<br>
+| B3 | Subject area(s) taught: ________________________________ | — |<br>
+| B4 | School type: ☐ Public ☐ Private ☐ Charter/Alternative ☐ Other | — |<br>
+| B5 | Highest educational qualification: ☐ Bachelor&#x27;s ☐ Master&#x27;s ☐ Doctorate ☐ Other | — |<br>
+<br>
+---<br>
+<br>
+## 📚 DOMAIN A — LESSON PLANNING &amp; CURRICULUM PREPARATION<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain addresses how teachers design their instructional plans. The planning and preparation domain concentrates on the teacher&#x27;s lessons and lesson plans, essentially evaluating how well a teacher can plan instruction. <span class="cw"><sup class="cite"><a href="#cref9">[9]</a></sup><span class="tip"><b>The Danielson Framework for Teacher Evaluations</b><span class="tsnip">The four domains are planning and preparation, classroom environment, instruction, and professional responsibilities. The first domain, planning and p...</span></span></span> Efforts to promote collegial cooperation and learning are most often not organised in ways that directly support teachers in developing their lesson planning and teaching. <span class="cw"><sup class="cite"><a href="#cref10">[10]</a></sup><span class="tip"><b>Collegial collaboration when planning and preparing lessons: A large-scale study exploring the conditions and infrastructure for teachers’ professional development - ScienceDirect</b><span class="tsnip">The overall pattern indicated that efforts to promote collegial cooperation and learning are most often not organised in ways that directly support te...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 1 | I need more training in aligning my lesson plans with current national or local curriculum standards and learning frameworks. | ☐ | ☐ |<br>
+| 2 | I need further development in designing differentiated lesson plans that address diverse student learning profiles and ability levels. | ☐ | ☐ |<br>
+| 3 | I need more guidance on setting clearly measurable and developmentally appropriate learning objectives for my lessons. | ☐ | ☐ |<br>
+| 4 | I need more support in selecting, evaluating, and adapting instructional materials and resources for my specific learner group. | ☐ | ☐ |<br>
+| 5 | I need more training in integrating cross-curricular or interdisciplinary connections into my lesson planning. | ☐ | ☐ |<br>
+<br>
+**Domain A Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 🎓 DOMAIN B — TEACHING PRACTICE &amp; INSTRUCTIONAL STRATEGIES<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain examines the quality of in-class instruction. Research has determined that teachers commonly need professional development in the areas of instructional technologies, material development, student participation, assessment and evaluation, and teamwork skills. <span class="cw"><sup class="cite"><a href="#cref11">[11]</a></sup><span class="tip"><b>(PDF) Teachers Professional Development Needs: A Q Method Analysis</b><span class="tsnip">It was determined that some of the participants needed professional development in the areas of instructional technologies, material development, stud...</span></span></span> Core teaching skills typically include classroom management, instructional planning, questioning techniques, differentiation, communication, formative assessment, and reflective practice. <span class="cw"><sup class="cite"><a href="#cref12">[12]</a></sup><span class="tip"><b>Understanding the Charlotte Danielson Framework for Teaching</b><span class="tsnip">Core teaching skills typically include classroom management, instructional planning, questioning techniques, differentiation, communication, formative...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 6 | I need further training in applying active learning, inquiry-based, or project-based teaching strategies in my lessons. | ☐ | ☐ |<br>
+| 7 | I need more development in using higher-order questioning and structured discussion techniques to promote critical thinking. | ☐ | ☐ |<br>
+| 8 | I need more support in managing lesson pacing, timing, and smooth transitions between activities. | ☐ | ☐ |<br>
+| 9 | I need more training in modelling new concepts clearly and scaffolding student understanding systematically. | ☐ | ☐ |<br>
+| 10 | I need more development in using formative assessment data to adjust my instruction in real time during lessons. | ☐ | ☐ |<br>
+<br>
+**Domain B Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 🏫 DOMAIN C — CLASSROOM ENVIRONMENT &amp; MANAGEMENT<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain covers the physical and social conditions for learning. Domain two of the Danielson framework grades the teacher on the physical classroom and the attitude found in it — the room needs to be well set up physically, there must be a learning culture, and the teacher needs to manage student behavior. <span class="cw"><sup class="cite"><a href="#cref9">[9]</a></sup><span class="tip"><b>The Danielson Framework for Teacher Evaluations</b><span class="tsnip">The four domains are planning and preparation, classroom environment, instruction, and professional responsibilities. The first domain, planning and p...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 11 | I need more training in establishing and maintaining a positive, respectful, and inclusive classroom culture. | ☐ | ☐ |<br>
+| 12 | I need further development in managing disruptive or challenging student behavior proactively and constructively. | ☐ | ☐ |<br>
+| 13 | I need more guidance on organizing the physical learning space to support engagement, safety, and accessibility. | ☐ | ☐ |<br>
+| 14 | I need more training in establishing and consistently enforcing fair classroom routines, norms, and procedures. | ☐ | ☐ |<br>
+| 15 | I need more support in building strong, respectful, and motivating teacher-student relationships. | ☐ | ☐ |<br>
+<br>
+**Domain C Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 📊 DOMAIN D — STUDENT ASSESSMENT &amp; FEEDBACK<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain concerns how teachers evaluate and respond to student progress. A vital element of professional development plans is the inclusion of assessment strategies for instructional decision-making; teachers must learn to effectively assess students, monitor progress, and use assessment data to inform teaching practices to make data-informed decisions to address students&#x27; specific needs. <span class="cw"><sup class="cite"><a href="#cref13">[13]</a></sup><span class="tip"><b>Professional Development Plan for Teachers</b><span class="tsnip">A vital element of your professional development plan is the inclusion of assessment strategies for instructional decision-making. You must learn to e...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 16 | I need more guidance on designing and implementing diverse formative assessment strategies (e.g., exit tickets, observations, quizzes). | ☐ | ☐ |<br>
+| 17 | I need more training in designing valid and reliable summative assessments that accurately reflect student learning. | ☐ | ☐ |<br>
+| 18 | I need more development in providing timely, specific, and actionable written and oral feedback to my students. | ☐ | ☐ |<br>
+| 19 | I need more training in analyzing and interpreting student performance data to guide future instructional decisions. | ☐ | ☐ |<br>
+| 20 | I need more support in teaching students to self-assess and monitor their own learning progress. | ☐ | ☐ |<br>
+<br>
+**Domain D Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## ♿ DOMAIN E — INCLUSION &amp; SPECIAL EDUCATIONAL NEEDS (SEN)<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain addresses teachers&#x27; capacity for inclusive education. Research from 2019 to 2024 highlights that strategies such as differentiated instruction (DI), universal design for learning (UDL), and collaborative teaching (CT) significantly improve academic achievement and social-emotional development. <span class="cw"><sup class="cite"><a href="#cref14">[14]</a></sup><span class="tip"><b>(PDF) Universal Design for Learning (UDL) in Inclusive Education: Accelerating Learning for All</b><span class="tsnip">Research from 2019 to 2024 highlights that strategies such as differentiated instruction (DI), universal design for learning (UDL), and collaborative ...</span></span></span> Educational needs assessments have identified a shortage of skilled professionals particularly in special education where specific training is lacking; while some inclusive education training is provided, it is often insufficient to meet the needs of learners with special needs, making specialized training and ongoing professional development essential. <span class="cw"><sup class="cite"><a href="#cref15">[15]</a></sup><span class="tip"><b>Understanding Yourself as an Inclusive Teacher – Teacher Professional Identity Development – All means all! – OpenTextbook for diversity in education</b><span class="tsnip">(2016), a 2013 educational needs assessment report identified a shortage of skilled professionals, particularly in special education, where specific t...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 21 | I need more training in identifying and appropriately accommodating students with special educational needs (SEN) in my classroom. | ☐ | ☐ |<br>
+| 22 | I need more development in implementing Universal Design for Learning (UDL) principles to support all learners. | ☐ | ☐ |<br>
+| 23 | I need more guidance on adapting my curriculum, materials, and assessments for students with learning disabilities (e.g., dyslexia, ADHD). | ☐ | ☐ |<br>
+| 24 | I need more training in supporting students from culturally and linguistically diverse backgrounds in an equitable way. | ☐ | ☐ |<br>
+| 25 | I need more support in collaborating with special education co-teachers, therapists, and other specialists to design truly inclusive learning experiences. | ☐ | ☐ |<br>
+<br>
+**Domain E Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 💻 DOMAIN F — DIGITAL TECHNOLOGY USAGE &amp; KNOWLEDGE<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain examines teacher competency with educational technology. PISA 2018 data shows that over 30% of principals reported teachers did not have necessary training in the pedagogical applications of digital tools; 25% of school leaders reported a shortage or inadequacy of ICT as hindering quality instruction; and 35% of teachers reported that investing in ICT should be of &quot;high importance.&quot; <span class="cw"><sup class="cite"><a href="#cref16">[16]</a></sup><span class="tip"><b>OECD Education Working Papers No. 299 Digital equity and inclusion</b><span class="tsnip">More than 30% of principals reported that teachers did not have necessary · training in the pedagogical applications of digital tools. According to ...</span></span></span> Technologies facilitate differentiation and individualisation in education, making it possible for educators to tailor content to suit the needs, backgrounds, and experiences of students; overall, digital tools can cater to diversity by allowing for choice, personalisation, and broadening access to online educational resources. <span class="cw"><sup class="cite"><a href="#cref16">[16]</a></sup><span class="tip"><b>OECD Education Working Papers No. 299 Digital equity and inclusion</b><span class="tsnip">More than 30% of principals reported that teachers did not have necessary · training in the pedagogical applications of digital tools. According to ...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 26 | I need more training in integrating digital tools and platforms (e.g., interactive whiteboards, apps, simulations) into my daily teaching practice. | ☐ | ☐ |<br>
+| 27 | I need further development in evaluating and selecting appropriate educational technology resources for my subject area and learner group. | ☐ | ☐ |<br>
+| 28 | I need more guidance on using learning management systems (e.g., Google Classroom, Moodle, Canvas) effectively for instruction and communication. | ☐ | ☐ |<br>
+| 29 | I need more training in student data privacy, digital ethics, and safe online practices within my classroom. | ☐ | ☐ |<br>
+| 30 | I need more support in designing and facilitating online or blended learning activities that maintain student engagement and meet learning goals. | ☐ | ☐ |<br>
+<br>
+**Domain F Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 👨‍👩‍👧 DOMAIN G — COLLABORATION WITH PARENTS &amp; FAMILIES<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain covers family engagement. A key professional development objective for teachers is to foster a stronger partnership with parents to support student learning. <span class="cw"><sup class="cite"><a href="#cref17">[17]</a></sup><span class="tip"><b>SimpleK12 | Our Blog | The Daily Bell</b><span class="tsnip">Objective: Foster a stronger partnership with parents to support student learning.</span></span></span> Research explores how far collaboration as a creative partnership can be used by teachers and parents to achieve inclusion, covering understanding about special educational needs, willingness to communicate, perceived roles, and expectations of each other. <span class="cw"><sup class="cite"><a href="#cref18">[18]</a></sup><span class="tip"><b>Teacher-Parent Collaboration for an Inclusive Classroom</b><span class="tsnip">This article explores how far collaboration as a creative partnership can be used by teachers and · parents to achieve inclusion within a regular clas...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 31 | I need more training in communicating student academic progress, strengths, and challenges clearly and constructively to parents and guardians. | ☐ | ☐ |<br>
+| 32 | I need more development in engaging parents as active and genuine partners in supporting their child&#x27;s learning at home. | ☐ | ☐ |<br>
+| 33 | I need more guidance on handling difficult, sensitive, or contentious conversations with parents in a professional and empathetic manner. | ☐ | ☐ |<br>
+| 34 | I need more training in planning and conducting productive, student-centered parent-teacher conferences. | ☐ | ☐ |<br>
+| 35 | I need more support in engaging parents from diverse cultural, linguistic, or socioeconomic backgrounds in an equitable and respectful way. | ☐ | ☐ |<br>
+<br>
+**Domain G Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 🏅 DOMAIN H — EXTRACURRICULAR ACTIVITIES &amp; STUDENT LIFE<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain addresses teachers&#x27; involvement beyond the classroom. Extracurricular activities have been hypothesized to positively influence cognitive skills (self-efficacy, self-regulation), emotional dimensions (professional interest), social competencies (teacher-student relationships), and academic achievement. <span class="cw"><sup class="cite"><a href="#cref19">[19]</a></sup><span class="tip"><b>The Impact of Extracurricular Activities on Pre-Service Teacher Professional Development: A Structural Equation Modeling Study</b><span class="tsnip">It was hypothesized that extracurricular activities would positively influence cognitive skills (self-efficacy, self-regulation), emotional dimensions...</span></span></span> Contemporary teacher education recognizes that professional development extends far beyond formal curriculum, occurring primarily through informal learning contexts where knowledge emerges from experience, reflection, and social interaction. <span class="cw"><sup class="cite"><a href="#cref19">[19]</a></sup><span class="tip"><b>The Impact of Extracurricular Activities on Pre-Service Teacher Professional Development: A Structural Equation Modeling Study</b><span class="tsnip">It was hypothesized that extracurricular activities would positively influence cognitive skills (self-efficacy, self-regulation), emotional dimensions...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 36 | I need more training in designing, organizing, and effectively managing extracurricular activities (e.g., clubs, sports teams, arts groups, academic competitions). | ☐ | ☐ |<br>
+| 37 | I need more development in connecting extracurricular and co-curricular experiences to formal classroom learning goals. | ☐ | ☐ |<br>
+| 38 | I need more guidance on ensuring student safety, welfare, and appropriate supervision during extracurricular and off-campus activities. | ☐ | ☐ |<br>
+| 39 | I need more support in identifying and supporting students whose social-emotional needs are expressed primarily through extracurricular participation. | ☐ | ☐ |<br>
+| 40 | I need more training in coordinating extracurricular programs collaboratively with colleagues, administrators, and community partners. | ☐ | ☐ |<br>
+<br>
+**Domain H Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 🤝 DOMAIN I — PROFESSIONAL COLLABORATION WITH COLLEAGUES<br>
+*(5 Items | Domain Score Range: 0–5)*<br>
+<br>
+&gt; This domain evaluates the ability to work as part of a professional learning community. Teams of educators who meet regularly to develop lesson plans, examine student work, monitor student progress, assess the effectiveness of instruction, and identify professional learning needs expose teachers to new ideas and practices and can improve pedagogy through a process of critical reflection. <span class="cw"><sup class="cite"><a href="#cref20">[20]</a></sup><span class="tip"><b>Measurement instruments for assessing the performance of professional</b><span class="tsnip">teams of educators (most commonly teachers) who meet regularly (often but not always during sched­ · uled school time) to develop lesson plans, examin...</span></span></span> Teacher collaboration is an important aspect of teachers&#x27; professional lives, as a means to continuously reflect on and improve the practice of teaching. <span class="cw"><sup class="cite"><a href="#cref21">[21]</a></sup><span class="tip"><b>School-based teacher collaboration: Different learning opportunities across various contexts - ScienceDirect</b><span class="tsnip">Teacher collaboration is an important aspect of teachers&#x27; professional lives, as a means to continuously reflect on and improve the practice of teachi...</span></span></span><br>
+<br>
+| # | Statement | YES | NO |<br>
+|---|-----------|-----|----|<br>
+| 41 | I need more training in participating effectively in professional learning communities (PLCs), collaborative inquiry groups, or subject teams. | ☐ | ☐ |<br>
+| 42 | I need more development in co-planning lessons and units collaboratively with grade-level or subject-area colleagues. | ☐ | ☐ |<br>
+| 43 | I need more guidance in conducting peer classroom observations and providing constructive, evidence-based feedback to colleagues. | ☐ | ☐ |<br>
+| 44 | I need more support in contributing meaningfully to whole-school improvement planning, curriculum development, and shared governance. | ☐ | ☐ |<br>
+| 45 | I need more training in managing professional disagreements with colleagues constructively and maintaining collaborative working relationships. | ☐ | ☐ |<br>
+<br>
+**Domain I Subtotal: _____ / 5**<br>
+<br>
+---<br>
+<br>
+## 🖊️ SECTION 1 — OPEN REFLECTION *(Optional, Unscored)*<br>
+<br>
+&gt; These items allow teachers to qualify or expand upon their binary responses.<br>
+<br>
+| # | Item | Response |<br>
+|---|------|----------|<br>
+| R1 | Which single domain above do you consider your highest-priority professional development need, and why? | _________________ |<br>
+| R2 | Is there a professional development need you have that is not captured in the domains above? Please describe it briefly. | _________________ |<br>
+<br>
+---<br>
+<br>
+## 📐 SCORING GUIDE &amp; INTERPRETATION FRAMEWORK<br>
+<br>
+### Step 1 — Domain Scoring<br>
+<br>
+For each domain, count the number of **YES** responses. Each YES = **1 point**. Each NO = **0 points**.<br>
+<br>
+| Domain | Label | Items | Max Score | Your Score |<br>
+|--------|-------|-------|-----------|------------|<br>
+| A | Lesson Planning &amp; Curriculum Preparation | 1–5 | 5 | _____ |<br>
+| B | Teaching Practice &amp; Instructional Strategies | 6–10 | 5 | _____ |<br>
+| C | Classroom Environment &amp; Management | 11–15 | 5 | _____ |<br>
+| D | Student Assessment &amp; Feedback | 16–20 | 5 | _____ |<br>
+| E | Inclusion &amp; Special Educational Needs | 21–25 | 5 | _____ |<br>
+| F | Digital Technology Usage &amp; Knowledge | 26–30 | 5 | _____ |<br>
+| G | Collaboration with Parents &amp; Families | 31–35 | 5 | _____ |<br>
+| H | Extracurricular Activities &amp; Student Life | 36–40 | 5 | _____ |<br>
+| I | Professional Collaboration with Colleagues | 41–45 | 5 | _____ |<br>
+| | **TOTAL TENAS SCORE** | **1–45** | **45** | **_____** |<br>
+<br>
+---<br>
+<br>
+### Step 2 — Domain-Level Interpretation<br>
+<br>
+| Domain Score | Interpretation | Recommended Action |<br>
+|---|---|---|<br>
+| **0** | No need identified in this domain | Monitor; reassess annually |<br>
+| **1–2** | Low need — minor gaps present | Self-directed resources or peer learning |<br>
+| **3** | Moderate need — targeted support warranted | Structured workshop or mentoring |<br>
+| **4–5** | High need — significant gap identified | Intensive professional development program |<br>
+<br>
+---<br>
+<br>
+### Step 3 — Total Score Interpretation<br>
+<br>
+| Total TENAS Score | Need Level | Recommended Response |<br>
+|---|---|---|<br>
+| **0 – 9** | 🟢 **Minimal** | Maintain current professional development activities |<br>
+| **10 – 22** | 🟡 **Moderate** | Develop targeted professional development plan addressing top 2–3 domains |<br>
+| **23 – 34** | 🟠 **Substantial** | Implement comprehensive, multi-domain professional development programme |<br>
+| **35 – 45** | 🔴 **Extensive** | Prioritize intensive, sustained, and mentored professional development immediately |<br>
+<br>
+---<br>
+<br>
+### Step 4 — Priority Domain Identification (For Institutions)<br>
+<br>
+When administering to groups, aggregate domain mean scores across all respondents. Rank domains from highest to lowest mean score to identify **institutional professional development priorities**.<br>
+<br>
+&gt; 💡 *Note: Individual teachers scoring 4–5 in any domain, regardless of total score, should be offered domain-specific support.*<br>
+<br>
+---<br>
+<br>
+## 🔬 PSYCHOMETRIC NOTES FOR ADMINISTRATORS &amp; RESEARCHERS<br>
+<br>
+1. **Construct Validity:** High construct validity requires rigorous validation by a panel of subject-matter experts resulting in high content validity scores. <span class="cw"><sup class="cite"><a href="#cref8">[8]</a></sup><span class="tip"><b>Validity and reliability of a needs analysis questionnaire for the development of a creativity module - Govindasamy - 2024 - Journal of Research in Special Educational Needs - Wiley Online Library</b><span class="tsnip">Content validity ensures that the items used to measure a construct are relevant to the construct and the specific context in which it is being measur...</span></span></span> It is recommended that this instrument be validated locally by a panel of at least 5–7 experienced educators and educational researchers before first use in a new institutional context.<br>
+<br>
+2. **Binary Format Justification:** A general warning about rating scales with multiple answer options comes from concerns about increased central tendency error due to confounding the direction (e.g., agree or not agree, yes or no) and intensity (how much, to which extent). <span class="cw"><sup class="cite"><a href="#cref4">[4]</a></sup><span class="tip"><b>Quick, simple and reliable: forced binary survey questions</b><span class="tsnip">Explicit recommendations to use a binary format were made by Peabody (1962), Komorita and Graham (1965), Matell and Jacoby (1971) and Jacoby and Matel...</span></span></span> The binary format eliminates this confound, ensuring that each response reflects a genuine directional judgment about need.<br>
+<br>
+3. **Acquiescence Awareness:** In binary scales where respondents have to convert mild responses into Yes–No answers, respondents are forced to make computations to transform their opinion into an extreme answer, which may result in a higher degree of agreement than would be reached if middle responses were available. <span class="cw"><sup class="cite"><a href="#cref22">[22]</a></sup><span class="tip"><b>Continuous and binary sets of responses differ in the field</b><span class="tsnip">In binary scales, where respondents have to convert mild responses into Yes–No answers, respondents are forced to make computations to transform their...</span></span></span> Administrators should communicate clearly that &quot;Yes&quot; responses carry no negative professional consequences to reduce socially desirable responding.<br>
+<br>
+4. **Reliability Testing:** Pilot testing with a meaningful sample of teachers should aim to demonstrate Cronbach&#x27;s Alpha values of ≥ 0.80, indicating high reliability for all questionnaire domains. <span class="cw"><sup class="cite"><a href="#cref8">[8]</a></sup><span class="tip"><b>Validity and reliability of a needs analysis questionnaire for the development of a creativity module - Govindasamy - 2024 - Journal of Research in Special Educational Needs - Wiley Online Library</b><span class="tsnip">Content validity ensures that the items used to measure a construct are relevant to the construct and the specific context in which it is being measur...</span></span></span> The phi coefficient (φ) is the recommended correlation coefficient for binary-scored items in reliability analysis.<br>
+<br>
+5. **Revision Cycle:** It is recommended that this instrument be reviewed and updated at least every three years to reflect evolving educational standards, technology landscapes, and policy priorities. Following the precedent of established frameworks, instruments of this type should undergo revision in response to the instructional implications of new curriculum standards. <span class="cw"><sup class="cite"><a href="#cref23">[23]</a></sup><span class="tip"><b>Understanding the Danielson Framework in Sped</b><span class="tsnip">The 22-component framework has undergone several revisions over the years, including a revision in 2013 to respond to the instructional implications o...</span></span></span><br>
+<br>
+---<br>
+<br>
+## 📚 EVIDENCE BASE &amp; DOMAIN GROUNDING<br>
+<br>
+| Domain | Key Research Support |<br>
+|--------|----------------------|<br>
+| **A – Planning** | Danielson Framework (1996/2013); Collegial planning research (ScienceDirect, 2021) |<br>
+| **B – Teaching** | Q-Method teacher PD needs analysis (ResearchGate, 2021); Danielson Domain 3 |<br>
+| **C – Classroom Mgmt** | Danielson Domain 2; SimpleK12 PD frameworks |<br>
+| **D – Assessment** | Training Needs Assessment, Catmon NHS (Scribd); SimpleK12 PD frameworks |<br>
+| **E – Inclusion/SEN** | UNESCO (2020); UDL research (Frontiers, 2024); Chitiyo et al. (2016) |<br>
+| **F – Digital Technology** | OECD PISA 2018; OECD Working Paper No. 299 (2023); TALIS 2018 |<br>
+| **G – Parent Collaboration** | Teacher-Parent Collaboration for Inclusion (ERIC); PMC Digital Inclusion study (2023) |<br>
+| **H – Extracurricular** | Scale on Contribution of Extracurricular Activities (PMC, 2025) |<br>
+| **I – Prof. Collaboration** | PLCs measurement instruments (ERIC); ScienceDirect teacher collaboration studies |<br>
+<br>
+---<br>
+<br>
+&gt; **⚠️ Ethical Note:** All responses must be treated as **strictly confidential**. Results should be used exclusively for professional development planning, never for personnel evaluation, performance appraisal, or disciplinary purposes. Informed consent should be obtained prior to administration.</div>
+  <h3>References (23)</h3>
+  <ol class="refs"><li id="cref1"><span class="rn">[1]</span> <span class="rt"><a href="https://www.researchgate.net/publication/223999138_Quick_Simple_and_Reliable_Forced_Binary_Survey_Questions" target="_blank">Quick, Simple and Reliable: Forced Binary Survey Questions | Request PDF</a></span></li><li id="cref2"><span class="rn">[2]</span> <span class="rt"><a href="https://qualaroo.com/blog/yes-or-no-surveys/" target="_blank">Opinion Yes or No Surveys — Templates, Tips &amp; Examples</a></span></li><li id="cref3"><span class="rn">[3]</span> <span class="rt"><a href="https://floggingpvalues.blog/2015/11/06/yes-or-no-are-likert-scales-always-preferable-to-dichotomous-rating-scales/" target="_blank">Yes or no? Are Likert scales always preferable to dichotomous rating scales? | pigee</a></span></li><li id="cref4"><span class="rn">[4]</span> <span class="rt"><a href="https://scispace.com/pdf/quick-simple-and-reliable-forced-binary-survey-questions-20dgjj1591.pdf" target="_blank">Quick, simple and reliable: forced binary survey questions</a></span></li><li id="cref5"><span class="rn">[5]</span> <span class="rt"><a href="https://www.structural-learning.com/post/danielson-framework-teachers-guide" target="_blank">Danielson Framework: A Teacher&#x27;s Complete Guide</a></span></li><li id="cref6"><span class="rn">[6]</span> <span class="rt"><a href="https://www.scribd.com/document/495251741/Training-Needs-Assessment" target="_blank">Training Needs Assessment Form Survey Questionnaire For Teaching Personnel | PDF | Educational Technology | Education Theory</a></span></li><li id="cref7"><span class="rn">[7]</span> <span class="rt"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11112302/" target="_blank">Validity and reliability of the questionnaire of academic knowledge of teachers of basic general education</a></span></li><li id="cref8"><span class="rn">[8]</span> <span class="rt"><a href="https://nasenjournals.onlinelibrary.wiley.com/doi/10.1111/1471-3802.12659" target="_blank">Validity and reliability of a needs analysis questionnaire for the development of a creativity module - Govindasamy - 2024 - Journal of Research in Special Educational Needs - Wiley Online Library</a></span></li><li id="cref9"><span class="rn">[9]</span> <span class="rt"><a href="https://theeducatorsroom.com/the-danielson-framework-for-teacher-evaluations/" target="_blank">The Danielson Framework for Teacher Evaluations</a></span></li><li id="cref10"><span class="rn">[10]</span> <span class="rt"><a href="https://www.sciencedirect.com/science/article/pii/S0742051X21002389" target="_blank">Collegial collaboration when planning and preparing lessons: A large-scale study exploring the conditions and infrastructure for teachers’ professional development - ScienceDirect</a></span></li><li id="cref11"><span class="rn">[11]</span> <span class="rt"><a href="https://www.researchgate.net/publication/348182834_Teachers_Professional_Development_Needs_A_Q_Method_Analysis" target="_blank">(PDF) Teachers Professional Development Needs: A Q Method Analysis</a></span></li><li id="cref12"><span class="rn">[12]</span> <span class="rt"><a href="https://educationwalkthrough.com/danielson-framework-for-teaching/" target="_blank">Understanding the Charlotte Danielson Framework for Teaching</a></span></li><li id="cref13"><span class="rn">[13]</span> <span class="rt"><a href="https://www.simplek12.com/blog/plans-teachers" target="_blank">Professional Development Plan for Teachers</a></span></li><li id="cref14"><span class="rn">[14]</span> <span class="rt"><a href="https://www.researchgate.net/publication/380810176_Universal_Design_for_Learning_UDL_in_Inclusive_Education_Accelerating_Learning_for_All" target="_blank">(PDF) Universal Design for Learning (UDL) in Inclusive Education: Accelerating Learning for All</a></span></li><li id="cref15"><span class="rn">[15]</span> <span class="rt"><a href="https://book.all-means-all.education/ama-2025-en/chapter/teacher-professional-identity-development/" target="_blank">Understanding Yourself as an Inclusive Teacher – Teacher Professional Identity Development – All means all! – OpenTextbook for diversity in education</a></span></li><li id="cref16"><span class="rn">[16]</span> <span class="rt"><a href="https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/08/digital-equity-and-inclusion-in-education_c56b91ad/7cb15030-en.pdf" target="_blank">OECD Education Working Papers No. 299 Digital equity and inclusion</a></span></li><li id="cref17"><span class="rn">[17]</span> <span class="rt"><a href="https://simplek12.com/professional-development/plans-for-teachers" target="_blank">SimpleK12 | Our Blog | The Daily Bell</a></span></li><li id="cref18"><span class="rn">[18]</span> <span class="rt"><a href="https://files.eric.ed.gov/fulltext/EJ1106456.pdf" target="_blank">Teacher-Parent Collaboration for an Inclusive Classroom</a></span></li><li id="cref19"><span class="rn">[19]</span> <span class="rt"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12295686/" target="_blank">The Impact of Extracurricular Activities on Pre-Service Teacher Professional Development: A Structural Equation Modeling Study</a></span></li><li id="cref20"><span class="rn">[20]</span> <span class="rt"><a href="https://files.eric.ed.gov/fulltext/ED568594.pdf" target="_blank">Measurement instruments for assessing the performance of professional</a></span></li><li id="cref21"><span class="rn">[21]</span> <span class="rt"><a href="https://www.sciencedirect.com/science/article/pii/S0742051X18315579" target="_blank">School-based teacher collaboration: Different learning opportunities across various contexts - ScienceDirect</a></span></li><li id="cref22"><span class="rn">[22]</span> <span class="rt"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9399090/" target="_blank">Continuous and binary sets of responses differ in the field</a></span></li><li id="cref23"><span class="rn">[23]</span> <span class="rt"><a href="https://www.rethinked.com/resources/understanding-danielson-framework-special-education/" target="_blank">Understanding the Danielson Framework in Sped</a></span></li></ol>
+</section>
+</body></html>

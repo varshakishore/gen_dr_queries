@@ -52,6 +52,35 @@ to force).
 Citation ids are `<tool_call_id>-<doc_index>`, resolved via
 `trace.tool_calls[*].documents` (+ `raw_output.data[*].paper` for authors/corpusId).
 
+### 4. `compare_claude.py` — competing-answer baseline + pairwise judge
+For each **FAILED_FOUND** seed in a run, generates a competing answer and pairwise-judges
+it against the failing DR-Tulu answer. This tests whether the question is genuinely
+answerable (a stronger system can do it) vs. impossible, and where DR-Tulu's gap is real.
+1. **Answer** — `claude-sonnet-4-6` + server-side web search (`web_search_20250305`,
+   the classic tool — it emits inline `web_search_result_location` citations, which we
+   resolve to a precise cited-source list; the newer `web_search_20260209` uses dynamic
+   filtering and does NOT surface inline citations, so we avoid it).
+2. **Normalize** — both answers are converted to a uniform `[n]` + References format
+   before judging (DR-Tulu's `<cite id>` tags resolved via its trace; Claude's structured
+   citations turned into inline markers), so the judge sees comparable, resolvable
+   citations rather than DR-Tulu's opaque IDs vs. Claude's plain prose.
+3. **Judge (GPT-4.1)** — two separate calls, each rating `A`/`B`/`Both Bad`/`Tie` with
+   `reasoning` + `confidence` (1–5):
+     - **overall** quality (criterion-blind) — uses the general-quality prompt.
+     - **criterion** satisfaction — given the verification criterion.
+   A single A/B ordering per sample, alternated by index to balance position bias.
+4. Writes `sample_NNN.compare.json` (Claude answer, cited sources, both verdicts +
+   reasoning/confidence, per-source split cost). Skips existing (`--no-skip-existing`,
+   `--limit N`, `--debug-blocks`).
+
+Cost is split: Claude answer tokens, **web search ($10/1000 searches)**, and GPT-4.1
+judge tokens. Requires both `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`.
+
+`summarize_run.py` picks up any `*.compare.json`: report cards show the two verdict
+chips (green=Claude / red=DR-Tulu / amber=Tie / grey=Both bad) + a link to a compare
+page that renders the Claude answer with DR-Tulu-style hover citations and a
+Title+URL references list (snippet shown on hover only when it adds text beyond the answer).
+
 ## Commands
 
 ```bash
@@ -74,10 +103,15 @@ open runs/sqa10/report.html
 # (Optional) render answer pages directly, without the report
 python view_answer.py runs/sqa10/sample_001.json     # one file
 python view_answer.py runs/sqa10                      # whole run -> answers/
+
+# Compare failing DR-Tulu answers vs Claude Sonnet + web search (needs OPENAI_API_KEY too)
+python compare_claude.py runs/sqa10 --limit 1        # try one
+python compare_claude.py runs/sqa10                  # all FAILED_FOUND seeds
+python summarize_run.py runs/sqa10                   # rebuild report w/ verdicts + compare pages
 ```
 
 ## Current status
-- Pipeline + parallel runner + viewer all working.
+- Pipeline + parallel runner + viewer + Claude-comparison all working.
 - Latest run: `runs/test_sqa50` (50 SQA seeds, Sonnet 4.5, max 5 attempts).
   - **43 FAILED_FOUND (86%)**, 7 ERROR; total ~$2.75.
   - Avg ~1.77 make-harder calls per FAILED_FOUND seed; 20/43 broke on attempt 1.
@@ -85,6 +119,9 @@ python view_answer.py runs/sqa10                      # whole run -> answers/
     **reconcile-conflicting-evidence**, and **unanswerable/no-causal-isolation**
     (~84% of breaks). Softer prompt strategies (audience framing, broad synthesis)
     rarely win.
+- `compare_claude.py` validated on a few `test_sqa50` samples (answers now
+  `claude-sonnet-4-6` + web search; GPT-4.1 judge). Inline citations confirmed working
+  with the classic web-search tool; full FAILED_FOUND comparison not yet run end-to-end.
 
 ## Known issues
 - **7 ERRORs are pipeline crashes, not interesting failures** — mostly

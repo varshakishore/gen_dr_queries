@@ -21,7 +21,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from view_answer import render_sample
+from view_answer import render_sample, render_compare, VERDICT_COLOR, VERDICT_LABEL
 
 
 def load_run(run_dir: Path):
@@ -35,6 +35,14 @@ def load_run(run_dir: Path):
             try:
                 data = json.loads(fpath.read_text())
                 rec["result"] = (data.get("results") or [None])[0]
+            except (ValueError, OSError):
+                pass
+        # Attach the Claude+web-search comparison if it exists.
+        rec["compare"] = None
+        cpath = run_dir / row["file"].replace(".json", ".compare.json")
+        if cpath.exists():
+            try:
+                rec["compare"] = json.loads(cpath.read_text())
             except (ValueError, OSError):
                 pass
         samples.append(rec)
@@ -76,6 +84,16 @@ def console_summary(index, samples):
         for msg, n in ecounts.most_common():
             print(f"    {n}x  {msg}")
 
+    # Claude+web-search comparison stats, if any comparisons have been run.
+    compared = [s for s in samples if s.get("compare")]
+    if compared:
+        print(f"\n  vs Claude+web-search ({len(compared)} compared):")
+        for axis in ("overall", "criterion"):
+            c = Counter(s["compare"].get("verdicts", {}).get(axis) for s in compared)
+            parts = "  ".join(f"{k}={c[k]}" for k in
+                              ("claude", "dr_tulu", "tie", "inconsistent") if c[k])
+            print(f"    {axis:9} {parts}")
+
 
 # ---------------------------------------------------------------------------
 # HTML report
@@ -90,6 +108,11 @@ STATUS_COLOR = {
 
 def esc(x) -> str:
     return html.escape(str(x if x is not None else ""))
+
+
+def _verdict_chip(v) -> str:
+    return (f'<span class="badge" style="background:{VERDICT_COLOR.get(v, "#57606a")}">'
+            f'{esc(VERDICT_LABEL.get(v, v))}</span>')
 
 
 def card_html(s) -> str:
@@ -134,6 +157,18 @@ def card_html(s) -> str:
             f'target="_blank">📄 Open full answer with linked references '
             f'({len(ans):,} chars)</a></div>'
         )
+
+        # Claude + web-search comparison, if available.
+        cmp = s.get("compare")
+        if cmp:
+            v = cmp.get("verdicts", {})
+            chips = (f'overall: {_verdict_chip(v.get("overall"))} &nbsp; '
+                     f'criterion: {_verdict_chip(v.get("criterion"))}')
+            parts.append(f'<div class="field"><b>vs Claude+web-search</b><div>{chips}</div></div>')
+            parts.append(
+                f'<div class="field"><a class="viewlink" href="answers/{stem}.compare.html" '
+                f'target="_blank">⚖️ Open Claude answer + judge reasoning</a></div>'
+            )
 
     # Per-attempt trail (verdict + question for each round).
     if len(attempts) > 1:
@@ -211,17 +246,24 @@ def main():
     ans_dir = run_dir / "answers"
     ans_dir.mkdir(exist_ok=True)
     n_pages = 0
+    n_compare = 0
     for s in samples:
         if s.get("result") is None:
             continue
         fp = run_dir / s["file"]
         (ans_dir / f"{fp.stem}.html").write_text(render_sample(fp))
         n_pages += 1
+        if s.get("compare"):
+            cpath = run_dir / s["file"].replace(".json", ".compare.json")
+            (ans_dir / f"{fp.stem}.compare.html").write_text(render_compare(cpath))
+            n_compare += 1
 
     out = run_dir / "report.html"
     out.write_text(build_html(index, samples))
     print(f"\nHTML report written to: {out}")
     print(f"Answer pages ({n_pages}) written to: {ans_dir}/")
+    if n_compare:
+        print(f"Claude comparison pages ({n_compare}) written to: {ans_dir}/")
 
 
 if __name__ == "__main__":
