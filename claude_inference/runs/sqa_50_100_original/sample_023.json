@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_023",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 136,
+    "output_tokens": 46,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.001098,
+    "calls": 1
+  },
+  "results": [
+    {
+      "seed": "I have worked on a project based on bioinformatics. It is an in-silico multiepitope vaccine. Now I want to predict discontinuous B-cells by the ellipro server.",
+      "final_status": "ERROR",
+      "error": "Judging failed: list index out of range",
+      "cost": {
+        "input_tokens": 136,
+        "output_tokens": 46,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.001098,
+        "calls": 1
+      },
+      "attempts": []
+    }
+  ]
+}

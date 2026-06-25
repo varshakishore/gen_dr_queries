@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_035",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 117,
+    "output_tokens": 62,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.001281,
+    "calls": 1
+  },
+  "results": [
+    {
+      "seed": "\u4e9a\u786b\u9178\u6c22\u94a0\u548c \u4e9a\u785d\u9178\u76d0 \u53cd\u5e94\u4e48",
+      "final_status": "ERROR",
+      "error": "Judging failed: Expecting ',' delimiter: line 3 column 257 (char 289)",
+      "cost": {
+        "input_tokens": 117,
+        "output_tokens": 62,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.001281,
+        "calls": 1
+      },
+      "attempts": []
+    }
+  ]
+}

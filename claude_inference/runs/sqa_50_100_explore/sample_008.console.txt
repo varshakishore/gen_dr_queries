@@ -1,0 +1,11 @@
+Run ID: sample_008
+Logging every call to: runs/sqa_50_100_explore/run-sample_008.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0247, 2 Claude calls) ‌绩效错觉转移‌是管理者受到随机误差、系统性偏差（例如，光环和严格性）以及由于种族、性别、民族和其他原因引起的偏差
+
+Total cost: $0.0247 (2 Claude calls, 5,262 input + 597 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_008.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_008.json

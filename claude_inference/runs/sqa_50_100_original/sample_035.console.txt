@@ -1,0 +1,12 @@
+Run ID: sample_035
+Logging every call to: runs/sqa_50_100_original/run-sample_035.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0011, 1 Claude calls) 亚硫酸氢钠和 亚硝酸盐 反应么
+    error: Judging failed: Expecting ',' delimiter: line 3 column 395 (char 427)
+
+Total cost: $0.0011 (1 Claude calls, 117 input + 50 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_035.jsonl
+Final results written to: runs/sqa_50_100_original/sample_035.json

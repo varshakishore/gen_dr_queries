@@ -1,0 +1,11 @@
+Run ID: sample_038
+Logging every call to: runs/sqa_50_100_original/run-sample_038.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0274, 2 Claude calls) Research on ‘The role of ESG factors in stimulating countries' financial development’ with econometrics, where the dependent variables are: Financial Development Index, Financial Institution Index, Financial Market Index.
+
+Total cost: $0.0274 (2 Claude calls, 6,178 input + 589 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_038.jsonl
+Final results written to: runs/sqa_50_100_original/sample_038.json

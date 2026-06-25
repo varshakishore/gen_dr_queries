@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_046",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.0,
+    "calls": 0
+  },
+  "results": [
+    {
+      "seed": "I am interested in morphological, or other, differences between different subspecies of Aedes Vexans. I know that there are some subspecies, like aedes vexans nipponii. I would like to learn the following:\n- Geographical spread\n- How do we distinguish between them? Are there any morphological markers? Or is it based on molecular differences and/or where they are?\n- Do we know anything about migration patterns?\nAny information about distinctions between subspecies would be great. Thank you",
+      "final_status": "ERROR",
+      "error": "Generating seed criterion failed: list index out of range",
+      "cost": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.0,
+        "calls": 0
+      },
+      "attempts": []
+    }
+  ]
+}

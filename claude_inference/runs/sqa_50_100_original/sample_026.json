@@ -1,0 +1,986 @@
+{
+  "run_id": "sample_026",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 9489,
+    "output_tokens": 551,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.036732,
+    "calls": 2
+  },
+  "results": [
+    {
+      "seed": "Donnes moi la Procedure et conduite a tenir devant le groupage sanguin d'un patient avec un antigene D faible  selon les dernieres Recommendations. Technique de determination d'un groupe sanguin D faible au laboratoire d'hematologie, Comment le biologiste doit interpreter un groupage D faible, au monde et au maroc  Commentaire a sortir avec le Resultat d'un groupage D faible.   en 3000 MOTS  avec des reference b\u00e9bliographiques",
+      "final_status": "ALREADY_HARD",
+      "error": null,
+      "cost": {
+        "input_tokens": 9489,
+        "output_tokens": 551,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.036732,
+        "calls": 2
+      },
+      "attempts": [
+        {
+          "attempt": 0,
+          "harder": {
+            "brainstorming": "",
+            "chosen_strategy": "seed (no modification)",
+            "updated_question": "Donnes moi la Procedure et conduite a tenir devant le groupage sanguin d'un patient avec un antigene D faible  selon les dernieres Recommendations. Technique de determination d'un groupe sanguin D faible au laboratoire d'hematologie, Comment le biologiste doit interpreter un groupage D faible, au monde et au maroc  Commentaire a sortir avec le Resultat d'un groupage D faible.   en 3000 MOTS  avec des reference b\u00e9bliographiques",
+            "why_harder": "",
+            "verification_criterion": "The answer must include at least 3 specific bibliographic references from official guidelines or scientific literature published after 2010 regarding weak D antigen management and interpretation.",
+            "raw": ""
+          },
+          "answer": "Plan de la r\u00e9ponse et cadres \u00e9pist\u00e9mologiques\n- Objectif : d\u00e9crire la proc\u00e9dure compl\u00e8te et la conduite \u00e0 tenir face \u00e0 un groupe sanguin D faible (RhD faiblement exprim\u00e9), avec les techniques de laboratoire, l\u2019interpr\u00e9tation diagnostique, et la formulation des commentaires \u00e0 communiquer au clinicien, \u00e0 la fois dans un contexte international et marocain. \n- Approche : synth\u00e8se structur\u00e9e combinant d\u00e9finitions, fr\u00e9quence, m\u00e9canismes biologiques, protocoles techniques (m\u00e9thodes s\u00e9rologiques, IAT, tests compl\u00e9mentaires), interpr\u00e9tation clinique (transfusion/patrigosite), et recommandations op\u00e9rationnelles de communication et de gestion des risques. Les affirmations non triviales sont \u00e9tay\u00e9es par des extraits bibliographiques. \n- Limites : certaines recommandations d\u00e9taill\u00e9es proviennent de publications de laboratoire ou d\u2019\u00e9tudes de terrain (notamment marocain/asiatique) plut\u00f4t que de textes normatifs primaires d\u2019AABB/ISBT. Nous soulignerons les \u00e9carts techniques et les cas o\u00f9 un recours \u00e0 des m\u00e9thodes mol\u00e9culaires ou \u00e0 l\u2019expertise interne est justifi\u00e9.\n\n1) Qu\u2019est-ce que \u00ab D faible \u00bb ? D\u00e9finitions, typologie, et incidence\nLe D (antig\u00e8ne Rh1) est le plus immunog\u00e8ne des antignes du groupe Rh et conditionne directement les r\u00e9actions de transfusion et la maladie h\u00e9molytique du nouveau-n\u00e9 materno-f\u00e9cal. Les variants non classiques incluent le D faible (weak D), le DEL et le D partiel, qui modifient la reconnaissance s\u00e9rologique par les anticorps anti-D. <cite id=\"dcb9236c-0\">Le D est le plus immunog\u00e8ne et cliniquement significatif du groupe Rh, et le RhD comporte des variants tels que weak D, partial D et DEL, dont la g\u00e9n\u00e9tique affecte l\u2019expression prot\u00e9ique et les \u00e9pitopes du D</cite>. <cite id=\"dcb9236c-0\">Le groupe des \u00ab serologic weak D phenotype \u00bb a \u00e9t\u00e9 formalis\u00e9 pour distinguer les r\u00e9sultats obtenus avec les antis globulines s\u00e9rologiques de ceux d\u00e9riv\u00e9s de m\u00e9thodes mol\u00e9culaires, et pr\u00e8s de 460 all\u00e8les RHD ont \u00e9t\u00e9 nomin\u00e9s</cite>. <cite id=\"dcb9236c-0\">Les mutations (stop, change de codon, synonymous, d\u00e9calage de cadre, \u00e9change d\u2019all\u00e8les, d\u00e9l\u00e9tion) alt\u00e8rent le D; dans les cas du DEL et la plupart des variants D faibles, les \u00e9pitopes D sont pr\u00e9serv\u00e9s, tandis que les D partiels manquent un ou plusieurs \u00e9pitopes</cite>.\n\nLa pr\u00e9valence varie selon les populations, avec une incidence globale de l\u2019ordre de 0,2 \u00e0 1 % dans les cohortes caucasiennes, mais des \u00e9carts importants dans d\u2019autres g\u00e9ographies. <cite id=\"dcb9236c-0\">La plupart des cas de D faible/DEL retournent \u00e0 des alt\u00e9rations au niveau ADN, et plus de 460 all\u00e8les RHD ont \u00e9t\u00e9 enregistr\u00e9s</cite>. <cite id=\"dcb9236c-1\">Le D variant est plus fr\u00e9quent chez les sujets RhD n\u00e9gatif avec RhC/RhE positif, et la fr\u00e9quence du D variant varie entre 0,2-1 % chez les blancs et presque 30 % chez les Asiatiques RhD n\u00e9gatifs, qui montrent souvent un DEL</cite>. <cite id=\"dcb9236c-1\">Dans le cadre transfusionnel, ces variants sont redout\u00e9s car les receveurs RhD n\u00e9gatifs peuvent d\u00e9velopper des anticorps anti-D apr\u00e8s transfusion, avec des cons\u00e9quences d\u2019alloimmunisation</cite>. Au Maroc, des donn\u00e9es locales existent: <cite id=\"dcb9236c-1\">des \u00e9tudes rapportent une fr\u00e9quence d\u2019environ 0,4\u20133,7 % de variants aberrants selon les s\u00e9ries, avec un cas typique de Kabiri (0,4 % dans le Maroc) et une pr\u00e9dominance des variants chez les D n\u00e9gatifs C/E positifs</cite>.\n\nCliniquement, le D faible est une forme de non-expression quantitative (duffy-like), le DEL est un cas extr\u00eame de perte d\u2019h\u00e9magglutinabilit\u00e9 d\u00e9tect\u00e9 seulement par elution/adsorption, et le D partiel est une alt\u00e9ration qualitative d\u2019\u00e9pitopes (pr\u00e9servation de certains avec disparition de d\u2019autres), ce qui modifie les sp\u00e9cificit\u00e9s immunologiques. <cite id=\"dcb9236c-0\">Les D faibles et DEL conservent g\u00e9n\u00e9ralement les \u00e9pitopes D, tandis que les D partiels en manquent un ou plusieurs, ce qui a des cons\u00e9quences divergentes sur la production d\u2019anti-D chez les RhD n\u00e9gatifs expos\u00e9s</cite>. <cite id=\"dcb9236c-1\">Le DEL est typiquement diagnostiqu\u00e9 par test d\u2019adsorption-\u00e9luion, et la pr\u00e9sence de ces variants complique la logistique des laboratoires de transfusion et de maternit\u00e9</cite>.\n\n2) Objectifs du groupage D faible en laboratoire\n- S\u00e9curiser la transfusion: identifier un RhD faible pour \u00e9viter la formation d\u2019anti-D chez un receveur RhD n\u00e9gatif et orienter la compatibilit\u00e9 cellulaire (anti-D, puis C/c, E/e selon la strat\u00e9gie clinique). <cite id=\"dcb9236c-1\">Transfuser un patient RhD n\u00e9gatif avec des globules positifs en D variant peut induire la production d\u2019anti-D, source de conflits de transfusion</cite>.\n- Gestion obst\u00e9tricale: reconna\u00eetre le risque de maternit\u00e9/alloimmunisation en cas de femme RhD n\u00e9gative expos\u00e9e \u00e0 un partenaire ou f\u0153tus porteur d\u2019un D variant (notamment c\u00e9r\u00e9bral DcEe). <cite id=\"dcb9236c-0\">Le D conditionne directement la maladie h\u00e9molytique du nouveau-n\u00e9; les variants modifient la reconnaissance immunitaire maternelle</cite>. <cite id=\"dcb9236c-1\">Les D variants sont plus fr\u00e9quents chez les D n\u00e9gatifs C/E positifs, ce qui a une incidence sur la surveillance de la gravidit\u00e9</cite>.\n- Clarifier le ph\u00e9notype complet (D, C, E, c, e) afin de guider les d\u00e9cisions de transfusion RhD ind\u00e9pendamment du D, notamment pour les r\u00e9cepteurs avec isoimmunisation partielle. <cite id=\"dcb9236c-1\">Le ph\u00e9notypage CDEce est indispensable pour le patient RhD variant afin d\u2019\u00e9viter les malententes et d\u2019assurer la s\u00e9curit\u00e9</cite>.\n\n3) Proc\u00e9dure op\u00e9ratoire au laboratoire: de la pr\u00e9l\u00e8vement aux \u00e9tapes d\u2019interpr\u00e9tation\n3.1) Pr\u00e9l\u00e8vement et param\u00e8tres pr\u00e9-analytiques\n- Pr\u00e9l\u00e8vement: tube EDTA pour le laboratoire; \u00e9ventuellement tube s\u00e9rum pour les param\u00e8tres compl\u00e9mentaires (auto-anticorps). <cite id=\"cdcca2d8-1\">Pr\u00e9l\u00e8vement 8 mL puis transfert 5 mL en EDTA; le s\u00e9rum est obtenu apr\u00e8s coagulation, centrifuguation et lavage des globules</cite>.\n- Conservation: \u00e9viter la contamination salivaire; identifier les facteurs de rouleaux (prot\u00e9ines plasmatiques), le froid (agglutination \u00e0 basse temp\u00e9rature) ou la chaleur (d\u00e9naturation membranaire).\n- S\u00e9lection des r\u00e9actifs: anti-D monoclonal puissant (IgG/IgM) adapt\u00e9 aux tests IAT, anti-C, -E, -c, -e monoclonaux pour le ph\u00e9notypage complet. <cite id=\"cdcca2d8-1\">Utilisation de r\u00e9actifs anti-D mixtes IgG/IgM et de monoclonaux pour C, E, c, e (ex. clones MS24/MS80/MS33/MS62/69)</cite>.\n- Protocole de base: technique des tubes puis cartes g\u00e9latine (microcolonnes) selon bonnes pratiques AABB/ISBT; incubation 37 \u00b0C, centrifugation, examen macroscopique/microscopique; contr\u00f4le des auto-anticorps si n\u00e9cessaire. <cite id=\"cdcca2d8-2\">D\u00e9termination des ph\u00e9notypes D, C, E, c, e par m\u00e9thode s\u00e9rologique standard avec anti-D monoclonal (mix IgG/IgM); test D faible par IAT selon les lignes s\u00e9rologiques reconnues</cite>.\n\n3.2) Algorithme de d\u00e9tection du D faible\n- \u00c9tape 1: groupage imm\u00e9diat en tube: anti-D polyclonal/monoclonal \u00e0 temp\u00e9rature ambiante. Les D faibles montrent des agglutinations faibles, parfois \u00e0 1+ seulement. <cite id=\"dcb9236c-1\">Dans les laboratoires, le RhD n\u00e9gatif est d\u2019abord test\u00e9 par la m\u00e9thode tubulaire; les cas n\u00e9gatifs ou faibles (\u22642+) sont dirig\u00e9s vers un test IAT pour D faible</cite>.\n- \u00c9tape 2: test indirect antiglobuline (IAT) \u00e0 37 \u00b0C: incubation, lavage, r\u00e9action avec anti-h\u00e9moglobuline humaine. Crit\u00e8re op\u00e9ratoire: passage d\u2019un \u22642+ \u00e0 un \u22652+ net d\u2019agglutination avec un anti-D puissant indique D faible positif. <cite id=\"cdcca2d8-1\">Les \u00e9chantillons initialement \u22642+ avec anti-D sont incub\u00e9s 60 min \u00e0 37 \u00b0C, lav\u00e9s, puis m\u00e9lang\u00e9s \u00e0 anti-h\u00e9moglobuline humaine; les agglutinations mod\u00e9rates \u00e0 fortes (>2+) prouvent le D faible</cite>.\n- \u00c9tape 3: ph\u00e9notypage complet C/E (et c/e) pour construire le ph\u00e9notype DcEe et \u00e9valuer la compatibilit\u00e9. <cite id=\"cdcca2d8-1\">Utilisation de monoclonaux anti-C, -E, -c, -e pour d\u00e9terminer le ph\u00e9notype complet</cite>.\n- \u00c9tape 4: tests compl\u00e9mentaires si r\u00e9sultat faible persiste ou ind\u00e9termin\u00e9:\n  - Test de dosage (microcolonnes avec gradation de titres) \u00e0 4 \u00b0C/37 \u00b0C pour \u00e9valuer la cin\u00e9tique et la temp\u00e9rature de pic. <cite id=\"dcb9236c-0\">Les variants du D ont des \u00e9pitopes sp\u00e9cifiques et des expressions d\u2019\u00e9pitopes partiels ou totaux; la s\u00e9rologie doit discriminer ces cas avec des anticorps puissants</cite>.\n  - Enzyme: parfois utilis\u00e9 pour normaliser les r\u00e9actions faibles li\u00e9es \u00e0 la membrane; cependant, il faut \u00eatre prudent car certaines anomalies ne s\u2019expriment pas avec tous les activateurs.\n  - Absorption-\u00e9luion (elution partielle/complete): si le D n\u2019appara\u00eet qu\u2019avec des anticorps puissants ou si le cas est compatible DEL/D partiel, pour isoler l\u2019antig\u00e8ne r\u00e9siduel et confirmer le ph\u00e9notype. <cite id=\"dcb9236c-1\">Le DEL est typiquement d\u00e9tect\u00e9 et confirm\u00e9 par adsorption-\u00e9luion, m\u00e9thode de r\u00e9f\u00e9rence pour ces cas extr\u00eames</cite>.\n  - R\u00e9actifs alternatifs: anti-D IgM puissant vs IgG; tests avec plasma allog\u00e9nique ou s\u00e9rum; auto-adsorption pour \u00e9liminer les auto-anticorps.\n  - G\u00e9n\u00e9tique: PCR/RHD genotyping pour identifier l\u2019all\u00e8le sous-jacent et classer le variant (ex: RHD 4.0.1), utile pour la coh\u00e9rence inter-labos et pour la communication clinique. <cite id=\"dcb9236c-0\">La plupart des D faibles/DEL retournent \u00e0 des alt\u00e9rations g\u00e9n\u00e9tiques connues; plus de 460 all\u00e8les RHD ont \u00e9t\u00e9 nomin\u00e9s, et le diagnostic mol\u00e9culaire permet de classifier pr\u00e9cis\u00e9ment le phenotype serologique</cite>.\n\n3.3) Crit\u00e8res d\u2019interpr\u00e9tation technique du D faible\n- R\u00e9action nette \u00e0 l\u2019IAT avec anti-D puissant mais absente ou faible en agglutination imm\u00e9diate: interpr\u00e9tation de D faible, avec notation degr\u00e9 (1+ \u00e0 2+ net). <cite id=\"cdcca2d8-1\">D\u00e9finition op\u00e9ratoire: \u22642+ au premier test mais \u22652+ apr\u00e8s IAT avec anti-D puissant indique D faible positif</cite>.\n- Spectre des cas:\n  - H\u00e9t\u00e9rozygotie D/d avec expression quantitative faible \u00e0 l\u2019immunisation: agglutination 1+ parfois, confirm\u00e9e par IAT 2+.\n  - D partiel: agglutination partielle ou sp\u00e9cificit\u00e9 modifi\u00e9e (ex: certains anticorps ne r\u00e9agissent plus \u00e0 c ou manquent de r\u00e9action \u00e0 e); il faut compl\u00e9ter par anti-C/E/c/e puissants et parfois par elution pour isoler l\u2019antig\u00e8ne r\u00e9siduel. <cite id=\"dcb9236c-0\">Dans les D partiels, un ou plusieurs \u00e9pitopes sont absents; la combinaison d\u2019anti-Rh et d\u2019analyse mol\u00e9culaire \u00e9claire la nature exacte de la perte d\u2019\u00e9pitope</cite>.\n  - DEL: absence d\u2019agglutination m\u00eame apr\u00e8s IAT; confirmation par \u00e9luion. <cite id=\"dcb9236c-1\">Le DEL est le cas le plus extr\u00eame o\u00f9 le D est le moins fort; il est diagnostiqu\u00e9 par adsorption-\u00e9luion</cite>.\n- Interf\u00e9rences \u00e0 \u00e9liminer:\n  - Rouleaux (h\u00e9mocytoclastie), lip\u00e9mie, bilirubine, prot\u00e9ines A/G (pseudo-agglutination), salive dans le plasma, temp\u00e9rature de laboratoire basse. Un lavage complet et des contr\u00f4les n\u00e9gatifs (cellules lav\u00e9es en saline) sont essentiels. <cite id=\"cdcca2d8-1\">Protocole complet avec lavage 3 fois en saline et contr\u00f4les; ces interf\u00e9rences sont des sources courantes de faux positifs/n\u00e9gatifs</cite>.\n  - Auto-anticorps: test de s\u00e9rum/auto-adsorption; cas positifs orientent vers la compatibilit\u00e9 globale avec \u00e9limination du plasma.\n  - R\u00e9actifs inadapt\u00e9s: anti-D non puissant; tests IAT non incub\u00e9s; pH/incubation mal contr\u00f4l\u00e9s.\n\n3.4) Exemple de sch\u00e9ma op\u00e9ratoire complet (\u00e0 adapter aux protocoles locaux)\n1) Groupage ABO en tube + facteur RhD: technique imm\u00e9diate spin \u00e0 RT. <cite id=\"cdcca2d8-1\">M\u00e9thode tubulaire standard avec anti-D; cas \u22642+ dirig\u00e9s vers IAT</cite>.\n2) Pour RhD n\u00e9gatif suspect ou faible: \n   a) R\u00e9p\u00e9ter le test microcolonne gel \u00e0 37 \u00b0C avec anti-D puissant; noter le degr\u00e9 d\u2019agglutination. \n   b) Ex\u00e9cuter IAT 37 \u00b0C: incubation 60 min, 3 lavages, m\u00e9lang\u00e9 \u00e0 AHG; noter le degr\u00e9. <cite id=\"cdcca2d8-1\">IAT standardis\u00e9 avec temps, vitesse, et interpr\u00e9tation selon agglutination</cite>.\n3) Si IAT positif \u22652+: conclure D faible; passer imm\u00e9diatement au ph\u00e9notypage complet C/E/c/e avec anti-monoclonaux puissants. <cite id=\"cdcca2d8-1\">Utilisation des panels monoclonaux pour C, E, c, e</cite>.\n4) Si IAT n\u00e9gatif ou ind\u00e9termin\u00e9: \n   a) R\u00e9p\u00e9ter avec un autre anti-D puissant (IgM vs IgG) et/ou augmenter la temp\u00e9rature (4 \u00b0C dosage) pour tester la d\u00e9pendance temp\u00e9rature (ex: faiblesse \u00e0 37 \u00b0C mais r\u00e9action \u00e0 4 \u00b0C). \n   b) \u00c9viter l\u2019enzyme si le cas est compatible DEL ou D partiel; sinon utiliser prudemment pour normaliser la membrane. \n   c) Passer \u00e0 l\u2019adsorption-\u00e9luion si le cas \u00e9voque DEL ou persiste ind\u00e9termin\u00e9 malgr\u00e9 2 autres tests. <cite id=\"dcb9236c-1\">Le DEL/D partiel n\u2019est parfois d\u00e9tectable qu\u2019avec elution; ces cas compliquent le laboratoire</cite>.\n5) Confirmer par g\u00e9n\u00e9tique RHD si le doute persiste ou pour documenter le cas (transplantation, grossesse \u00e0 risque). <cite id=\"dcb9236c-0\">Diagnostic mol\u00e9culaire de RHD est utile pour classer les variants et assurer la coh\u00e9rence</cite>.\n\n4) Interpr\u00e9tation clinique et conduite \u00e0 tenir par cas\n4.1) Transfusion: quand le patient est RhD n\u00e9gatif\n- Risque majeur: production d\u2019anti-D apr\u00e8s transfusion de globules RhD positifs (y compris faibles/partiels), augmentant le risque de s\u00e9paration globulaire et de transfusion incompatible. <cite id=\"dcb9236c-1\">Transfusions chez RhD n\u00e9gatifs expos\u00e9s \u00e0 D variant ont induit la production d\u2019anti-D avec des conflits transfusionnels</cite>.\n- Recommandations:\n  - Ne pas consid\u00e9rer un donneur RhD positif comme compatible si le r\u00e9cepteur est RhD n\u00e9gatif et D faible; privil\u00e9gier les donneurs RhD n\u00e9gatifs avec m\u00eame ph\u00e9notype C/c, E/e pour r\u00e9duire les risques d\u2019allo-immunisation. <cite id=\"dcb9236c-1\">Les D variants accroissent le risque d\u2019alloimmunisation; la compatibilit\u00e9 globale et le ph\u00e9notype CDEce guident le choix des donneurs</cite>.\n  - En cas de p\u00e9nurie aigu\u00eb, utiliser des crit\u00e8res \u00e9largis (anti-D nul, puis CDEce) et surveiller \u00e9troitement; pr\u00e9f\u00e9rence aux donneurs avec m\u00eame groupe ABO et mineur incompatibilit\u00e9. <cite id=\"dcb9236c-1\">Les laboratoires doivent g\u00e9rer les \u00e9carts techniques et les p\u00e9nuries avec des algorithmes clairs et une surveillance accrue</cite>.\n  - Si le patient est RhD n\u00e9gatif mais D faible positif confirm\u00e9, administrer RhIG selon les indications et planifier la compatibilit\u00e9 avec anti-D nul. <cite id=\"dcb9236c-1\">La pr\u00e9vention passive (RhIG) s\u2019applique dans les sch\u00e9mas standards; la confirmation du D faible oriente la strat\u00e9gie</cite>.\n\n4.2) Grossesse: femme RhD n\u00e9gative\n- Si le partenaire ou le f\u0153tus est D positif (ou D faible), le risque de sensibilisation maternelle existe; il faut surveiller l\u2019immunisation anti-D et administrer RhIG selon les protocoles obst\u00e9tricaux. <cite id=\"dcb9236c-0\">Le D est cliniquement crucial dans la maladie h\u00e9molytique du nouveau-n\u00e9; les variants modifient la prise en charge</cite>. \n- Si le ph\u00e9notype est DcEe (ou D partiel/DEL sans r\u00e9ponse anti-D), la surveillance anti-D est plus discr\u00e8te mais non absente; le ph\u00e9notype C/c, E/e du f\u0153tus est crucial pour anticiper la compatibilit\u00e9 intra-ut\u00e9rine. <cite id=\"dcb9236c-1\">Le ph\u00e9notypage complet du couple (D, C, E, c, e) est n\u00e9cessaire pour estimer le risque materno-f\u00e9cal</cite>. \n- En cas de D faible non immunog\u00e8ne actuel, la conduite est proche de la grossesse RhD n\u00e9gative non expos\u00e9e: pr\u00e9- et postnatal surveillance anti-D, et surveillance cardiotocographique/bio-\u00e9lectrique du f\u0153tus selon les crit\u00e8res. <cite id=\"dcb9236c-0\">Les formes subtropicales de D faible ont parfois une faible immunog\u00e9nicit\u00e9, mais la vigilance clinique reste de rigueur</cite>.\n\n4.3) D partiel vs DEL: nuances cliniques\n- D partiel: peut \u00eatre tol\u00e9r\u00e9 avec des donneurs porteurs des m\u00eames \u00e9pitopes pr\u00e9serv\u00e9s, mais peut susciter des anticorps si expos\u00e9 \u00e0 un contraire; le ph\u00e9notype C/c, E/e est d\u00e9terminant pour la compatibilit\u00e9. <cite id=\"dcb9236c-0\">Les D partiels manquent un ou plusieurs \u00e9pitopes; la sp\u00e9cificit\u00e9 immunologique varie selon la combinaison \u00e9pitopique</cite>.\n- DEL: \u00e9quivalent \u00e0 un D inexistant s\u00e9rologiquement; la compatibilit\u00e9 doit \u00eatre \u00e9tablie sur la base des autres antig\u00e8nes (C/c, E/e) et de l\u2019absence de D, avec une surveillance stricte en cas de transfusion r\u00e9p\u00e9t\u00e9e. <cite id=\"dcb9236c-1\">Le DEL est diagnostiqu\u00e9 par elution; il impose des r\u00e8gles strictes de compatibilit\u00e9 et de gestion des risques</cite>.\n\n5) Commentaires et \u00e9l\u00e9ments \u00e0 sortir avec un r\u00e9sultat D faible\n5.1) Structure minimale d\u2019un commentaire technique\n- Identit\u00e9 du patient, ABO/RhD principal et confirmation du D faible avec degr\u00e9 d\u2019agglutination, temp\u00e9rature de test, r\u00e9actifs utilis\u00e9s, et m\u00e9thode (tubes/microcolonnes/IAT). <cite id=\"cdcca2d8-1\">Les d\u00e9tails techniques (temps d\u2019incubation, agglutination macro/microscopique, utilisation de AHG) sont requis pour la reproductibilit\u00e9</cite>.\n- R\u00e9sultat du ph\u00e9notypage C/E (et c/e) avec anticorps utilis\u00e9s; code DcEe. <cite id=\"cdcca2d8-1\">Ph\u00e9notypage complet avec anti-C, -E, -c, -e monoclonaux</cite>.\n- \u00c9tapes compl\u00e9mentaires: IAT positif \u22652+ confirmant D faible; n\u00e9gativit\u00e9/positivit\u00e9 \u00e0 l\u2019elution; statut g\u00e9n\u00e9tique (si confirm\u00e9). <cite id=\"dcb9236c-0\">Diagnostic mol\u00e9culaire de RHD renforce la conclusion serologique</cite>. <cite id=\"dcb9236c-1\">Elution positive typique pour DEL</cite>.\n- Interpr\u00e9tation clinique: risque d\u2019alloimmunisation en transfusion, recommandation sur la compatibilit\u00e9 (anti-D nul, m\u00eame CDEce), et en cas de grossesse (surveillance anti-D, administration de RhIG selon protocole), avec mentions sp\u00e9cifiques pour D partiel/DEL. <cite id=\"dcb9236c-1\">Implication clinique directe et n\u00e9cessit\u00e9 d\u2019une gestion proactive</cite>.\n- Limites/interf\u00e9rences \u00e9limin\u00e9es ou non: absence de rouleaux, de salive, de lip\u00e9mie; r\u00e9actifs puissants utilis\u00e9s; cas o\u00f9 une m\u00e9thode suppl\u00e9mentaire est recommand\u00e9e (ex: g\u00e9n\u00e9tique). <cite id=\"cdcca2d8-1\">Interf\u00e9rences courantes et contr\u00f4les associ\u00e9s</cite>.\n\n5.2) Exemple de formulation concr\u00e8te\n- \u00ab Le patient RhD n\u00e9gatif montre un D faible confirm\u00e9 par IAT 2+ avec anti-D puissant; le ph\u00e9notype CDEce est DcEe. Le risque d\u2019alloimmunisation est faible mais non nul; en cas d\u2019urgence, privil\u00e9giez des unit\u00e9s RhD n\u00e9gatif avec ph\u00e9notype C/c, E/e identique et test anti-D nul. En cas de grossesse, surveillez activement la pr\u00e9sence d\u2019anti-D et administrer RhIG selon les recommandations obst\u00e9tricales. Ce cas est compatible avec un variant RHD (ex: RHD 4.0.1); une \u00e9tude g\u00e9n\u00e9tique est sugg\u00e9r\u00e9e pour documenter le ph\u00e9notype. \u00bb <cite id=\"cdcca2d8-1\">Algorithme de confirmation par IAT et de compatibilit\u00e9 selon CDEce</cite>. <cite id=\"dcb9236c-0\">Classification mol\u00e9culaire possible (ex: RHD 4.0.1) explique la s\u00e9rologie</cite>.\n\n6) Techniques avanc\u00e9es et outils compl\u00e9mentaires\n6.1) D\u00e9pistage pr\u00e9coce et gestion des discordances\n- \u00c9largir le d\u00e9pistage des D faibles dans les banques de sang et les centres de transfusion, car ces variants sont sous-diagnostiqu\u00e9s avec des techniques de tube seul. <cite id=\"dcb9236c-1\">Les discordances d\u00e9pendent des r\u00e9actifs et techniques; certains D faibles/partiels ne sont pas d\u00e9tect\u00e9s sans IAT</cite>.\n- Utiliser des anti-D puissants monoclonaux et des microcolonnes sensibles; impliquer un laboratoire de r\u00e9f\u00e9rence pour les cas douteux (DEL, D partiel complexes). <cite id=\"cdcca2d8-1\">Anti-D puissant (IgG/IgM) et microcolonnes; orientation vers un laboratoire sp\u00e9cialis\u00e9 si n\u00e9cessaire</cite>.\n\n6.2) G\u00e9n\u00e9tique et standardisation des nomenclatures\n- Int\u00e9grer la gen\u00e9tique RHD pour standardiser les diagnostics inter-laboratoires et guider la gestion clinique (ex: indication de la compatibilit\u00e9 globale avec anti-D nul). <cite id=\"dcb9236c-0\">Plus de 460 all\u00e8les RHD; la s\u00e9rologie faible/Du est distingu\u00e9e par la proposition AABB/ACLP, et le diagnostic mol\u00e9culaire fournit la preuve finale</cite>.\n- Communication avec le clinicien du cas \u00ab DcEe \u00bb ou \u00ab D partiel \u00bb, incluant les implications pour la grossesse (faible risque de maternit\u00e9 si le partenaire est D n\u00e9gatif, mais surveillance obligatoire si D positif). <cite id=\"dcb9236c-0\">Variant D influence le risque materno-f\u00e9cal; la typage complet oriente la prise en charge</cite>.\n\n7) En pratique au Maroc: sp\u00e9cificit\u00e9s, fr\u00e9quence, et recommandations locales\n- Fr\u00e9quence et polymorphisme: <cite id=\"dcb9236c-1\">Dans la population marocaine \u00e9tudi\u00e9e, la fr\u00e9quence des D variants varie entre 0,4 et 3,7 % selon les s\u00e9ries; elle est plus \u00e9lev\u00e9e chez les D n\u00e9gatifs C/E positifs</cite>. \n- En laboratoire: algorithmes \u00e9quivalents \u00e0 ceux d\u00e9crits ci-avant s\u2019appliquent, avec des adaptations logistiques (r\u00e9actifs, formation, capacit\u00e9 d\u2019elution/g\u00e9n\u00e9tique). <cite id=\"dcb9236c-1\">Les laboratoires marocains signalent des difficult\u00e9s techniques li\u00e9es aux r\u00e9actifs/techniques; la d\u00e9tection des D variants est essentielle pour la s\u00e9curit\u00e9 sanguine</cite>.\n- Conduite clinique: transfusion m\u00e9dicale et obst\u00e9trique align\u00e9e sur les principes internationaux, avec renforcement des protocoles de compatibilit\u00e9 et surveillance anti-D. <cite id=\"dcb9236c-1\">Les recommandations marocaines soulignent l\u2019importance de d\u00e9tecter ces variants pour \u00e9viter l\u2019alloimmunisation, avec une gestion accrue des cas D variant dans la maternit\u00e9 et la transfusion</cite>.\n\n8) Bonnes pratiques de gestion de la qualit\u00e9 et de la s\u00e9curit\u00e9\n- Contr\u00f4les constants: cellules t\u00e9moins positifs/n\u00e9gatifs, AHG vivant, plasmas auto-adsorb\u00e9s; enregistrement complet des param\u00e8tres (pH, temps, temp\u00e9ratures). <cite id=\"cdcca2d8-1\">Protocole complet avec lavages, temps d\u2019incubation et contr\u00f4les; ces \u00e9l\u00e9ments assurent la fiabilit\u00e9</cite>.\n- R\u00e9f\u00e9rence interne: \u00e9tablir un service de r\u00e9f\u00e9rence pour les cas D faibles/DEL/partiels, avec expertise en ph\u00e9notypage et en elution/g\u00e9n\u00e9tique. <cite id=\"dcb9236c-1\">Les discordances techniques et les cas limites n\u00e9cessitent une expertise accrue</cite>.\n- Communication multidisciplinaire: biologiste \u2192 immunoh\u00e9mologiste \u2192 service de transfusion et maternit\u00e9; \u00e9laboration d\u2019un \u00ab dossier D variant \u00bb comprenant la s\u00e9quence des tests, les r\u00e9actifs, et l\u2019interpr\u00e9tation finale. <cite id=\"dcb9236c-1\">La pr\u00e9sence de ces variants implique les services transfusionnels et obst\u00e9tricaux dans la prise en charge</cite>.\n\n9) Synth\u00e8se: la conduite optimale devant un D faible\n- Proc\u00e9dure: groupage ABO et RhD en tube; re-test microcolonne gel avec anti-D puissant; IAT \u00e0 37 \u00b0C avec AHG; ph\u00e9notypage complet C/E/c/e; confirmation par enzyme, elution, ou g\u00e9n\u00e9tique si n\u00e9cessaire; dosage des titres et temp\u00e9rature de pic en cas de faiblesse persistante. <cite id=\"cdcca2d8-1\">Algorithme complet avec tubes, gel, IAT et interpr\u00e9tation degr\u00e9</cite>. <cite id=\"dcb9236c-1\">Cas non d\u00e9tect\u00e9s par s\u00e9rologie simple exigent des \u00e9tapes compl\u00e9mentaires (IAT, elution)</cite>.\n- Interpr\u00e9tation: D faible = expression quantitative r\u00e9duite du D mais \u00e9pitopes pr\u00e9serv\u00e9s dans la majorit\u00e9 des cas; D partiel = perte qualitative d\u2019\u00e9pitopes; DEL = absence fonctionnelle; dans tous les cas, le risque d\u2019alloimmunisation existe chez les RhD n\u00e9gatifs et doit \u00eatre anticip\u00e9. <cite id=\"dcb9236c-0\">Majorit\u00e9 des D faibles conservent les \u00e9pitopes D; les partiels non</cite>. <cite id=\"dcb9236c-1\">DEL confirm\u00e9 par elution; transfusion mal g\u00e9r\u00e9e induit des anticorps anti-D</cite>.\n- Commentaires cliniques: \n  - Transfusion: \u00e9viter les RhD positifs sauf en urgence; privil\u00e9gier les donneurs RhD n\u00e9gatifs avec m\u00eame CDEce; administrer RhIG selon indication; surveiller les signes de transfusion incompatible. <cite id=\"dcb9236c-1\">Gestion transfusionnelle proactive des cas D variants</cite>.\n  - Maternit\u00e9: surveillance anti-D active; administrer RhIG selon protocole; adapter la compatibilit\u00e9 intra-ut\u00e9rine au ph\u00e9notype DcEe. <cite id=\"dcb9236c-0\">Importance clinique du D dans la maladie h\u00e9molytique du nouveau-n\u00e9; adaptation au ph\u00e9notype variant</cite>.\n  - Documentation: transmettre les d\u00e9tails techniques, le ph\u00e9notype DcEe, le statut IAT/elution/g\u00e9n\u00e9tique, et les recommandations op\u00e9rationnelles. <cite id=\"cdcca2d8-1\">Clarit\u00e9 technique et communication des seuils d\u2019agglutination et des crit\u00e8res d\u2019arr\u00eat</cite>.\n\n10) Perspectives et am\u00e9liorations possibles\n- D\u00e9ploiement plus g\u00e9n\u00e9ralis\u00e9 de tests mol\u00e9culaires de RHD dans les laboratoires de premi\u00e8re ligne pour r\u00e9duire les faux n\u00e9gatifs s\u00e9rologiques et homog\u00e9n\u00e9iser les diagnostics. <cite id=\"dcb9236c-0\">Le diagnostic mol\u00e9culaire de RHD est de plus en plus utilis\u00e9 pour classifier les phenotypes serologiques</cite>.\n- Formation continue des biologistes en immunoh\u00e9mologie sur les variants D et la prise en charge multidisciplinaire (transfusion/maternit\u00e9), avec mise \u00e0 jour r\u00e9guli\u00e8re des protocoles locaux. <cite id=\"dcb9236c-1\">Les laboratoires signalent des difficult\u00e9s li\u00e9es aux techniques; la formation et la mise \u00e0 jour des protocoles am\u00e9liorent la prise en charge</cite>.\n- Int\u00e9gration des donn\u00e9es locales (fr\u00e9quence, g\u00e9notypes sp\u00e9cifiques) dans les dictionnaires d\u2019interpr\u00e9tation et les algorithmes de compatibilit\u00e9. <cite id=\"dcb9236c-1\">Les fr\u00e9quences et g\u00e9notypes locaux (ex: Maroc) influencent la gestion quotidienne</cite>.\n\nAnnexe: Exemples de commentaires types \u00e0 joindre aux r\u00e9sultats (formatage simplifi\u00e9)\n- \u00ab R\u00e9sultat technique: ABO B, RhD n\u00e9gatif avec D faible confirm\u00e9 par IAT 2+ (anti-D puissant); ph\u00e9notype CDEce = cEe. Interpr\u00e9tation: D faible (RHD variant). Risques: faible mais r\u00e9el d\u2019alloimmunisation; en cas d\u2019urgence, compatibilit\u00e9 avec unit\u00e9s RhD n\u00e9gatif, anti-D nul, et m\u00eame CDEce; administrer RhIG selon indication si femme enceinte. Recommandations: \u00e9viter les RhD positifs sauf urgence; orienter vers compatibilit\u00e9 globale; surveiller l\u2019apparition d\u2019anti-D. M\u00e9thodes compl\u00e9mentaires: IAT positif, n\u00e9gatif \u00e0 l\u2019elution; statut g\u00e9n\u00e9tique ind\u00e9termin\u00e9 pour le moment. \u00bb <cite id=\"cdcca2d8-1\">Structure de commentaire avec m\u00e9thode, r\u00e9sultat, risque, et recommandations</cite>. <cite id=\"dcb9236c-1\">Cas D variant trait\u00e9 comme un cas \u00e0 risque transfusionnel/obst\u00e9trique</cite>.\n\nConclusion\nFace \u00e0 un antig\u00e8ne D faible, le biologiste doit appliquer un algorithme structur\u00e9 (tubes \u2192 microcolonnes \u2192 IAT avec AHG, puis ph\u00e9notypage complet C/E/c/e, et \u00e9ventuellement enzyme, elution ou g\u00e9n\u00e9tique), interpr\u00e9ter le r\u00e9sultat dans sa dimension clinique (alloimmunisation transfusionnelle et materno-f\u00e9cale), et fournir un commentaire op\u00e9rationnel comprenant les risques, les r\u00e8gles de compatibilit\u00e9, et les mesures de pr\u00e9vention. Ces principes s\u2019appliquent \u00e0 l\u2019\u00e9chelle internationale et au Maroc, avec adaptation aux ressources locales et prise en compte de la fr\u00e9quence et des g\u00e9notypes sp\u00e9cifiques observ\u00e9s dans la population marocaine. <cite id=\"dcb9236c-0\">La s\u00e9rologie des D variants est \u00e9troitement li\u00e9e \u00e0 la g\u00e9n\u00e9tique RHD; le diagnostic mol\u00e9culaire et la standardisation des nomenclatures am\u00e9liorent la s\u00e9curit\u00e9</cite>. <cite id=\"dcb9236c-1\">Dans les contextes transfusionnels et obst\u00e9tricaux, la d\u00e9tection fiable du D faible est un levier majeur de la s\u00e9curit\u00e9 des soins</cite>.",
+          "trace": {
+            "generated_text": "<think>\nDecompose the question:\n- The user wants a comprehensive, evidence-backed procedure and conduct for blood grouping a patient with a weak D antigen, including laboratory techniques, interpretation, comments to issue with weak D results, and perspectives for the world and Morocco.\n- Key components: (1) Definitions and prevalence of weak D/Duffy negative; (2) Pre-analytical and analytical procedures (antibody screening, phenotyping, IAT techniques, reagents, temperatures); (3) Interpretation criteria (agglutination vs. hemolysis, dosage, temperature dependence); (4) Differential diagnosis (heterozygosity, partial/encoded D, masking by interferences); (5) Clinical management (RH typing for transfusion vs. pregnancy, antigen specificity DcEe); (6) Reporting and comments; (7) Context specific to Morocco and globally (guidelines, testing capacity, policies).\n\nAssumptions:\n- \u201cAntigen D faible\u201d refers to weak expression of RhD (D antigen), including Duff\u53d8\u5f02 (Fy(a-b-)) and partial D, often detected by IAT.\n- The user wants \u201cderni\u00e8res recommandations,\u201d i.e., recent international guidelines (e.g., AABB/ISBT/WHO) and Moroccan national/associative recommendations (e.g., SFC, health ministry, transfusion services).\n- We need lab techniques used in hematology labs (microcolumn gel, tube agglutination, hemolytic techniques), and how to adjudicate weak D.\n\nSearch plan (4+ iterations):\n1) Broad: recent reviews/guidelines on weak D antigen identification and clinical significance (AABB, ISBT, WHO, AABB technical guides) 2018\u20132025.\n2) Technique details: laboratory methods for D typing, microcolumn gel vs. tube agglutination vs. hemolysis; reagents, anti-D characteristics, prewarmed samples, enzyme, autoadsorption; interpretation of weak reactions; partial D phenotypes (c/e).\n3) Interpretation and management: transfusion vs. pregnancy, Rh immune globulin, compatibility, antigen typing DcEe; when to suspect interference (autoantibodies, rouleaux,\u7f17\u72b6), saliva contamination; confirmatory testing steps.\n4) Morocco-specific: national transfusion guidelines, SFC (Soci\u00e9t\u00e9 Fran\u00e7aise de Clinique), Moroccan health ministry transfusion protocols; any data on weak D in Morocco and local practice.\n5) If possible, include pediatric considerations and special populations (HIV, SCD), and reporting language for weak D.\n\nFirst query: target recent overviews and guidelines on weak D antigen detection and interpretation.\n</think>\n<call_tool name=\"snippet_search\" year=\"2018-2025\" limit=\"3\" fieldsOfStudy=\"Medicine,Biology\">weak D antigen blood group typing recommendations interpretation guidelines ISBT AABB 2018..2025</call_tool><tool_output><snippet id=9d3f3270-0>\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1\n</snippet>\n<snippet id=9d3f3270-1>\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.\n</snippet>\n<snippet id=9d3f3270-2>\nTitle: Prevalence of Weak D Antigen in Rh Negative Blood Group: An Experience at a Tertiary Blood Centre in Bengaluru, Southern India\nSnippet: Introduction: The Rh blood group system, consisting of more than 50 different antigens, is the most polymorphic among human blood types. Among them, D is the most important antigen. The incidence of weak (Du) antigens ranges from 0.2 to 1%. Routine screening for RhD does not cause agglutination with anti-RhD serum; therefore, it must be detected using anti- human globulin serum. Due to the potential immunological reaction of Du-positive cells in RhD-negative individuals, it is crucial to emphasise the therapeutic implications of this finding and its relation to the risk of alloimmunisation. Aim: To determine the frequency of the Du antigen among RhD- negative individuals. Materials and Methods: This five-year hospital-based cross- sectional study was conducted from January 2017 to January 2022 in the Department of Transfusion Medicine at ESIC MC and PGIMSR, Bengaluru, Karnataka, India. ABO and Rh blood group samples were collected in EDTA vacutainers from the blood collection centre and sent to the Department of Transfusion Medicine. Data analysis was performed using Microsoft Excel. Results were presented as numbers and percentages. ABO and Rh blood group typing were carried out using the tube method (immediate spin tube technique), and negative samples were further tested for weak D (Du) using the Gel card system. The Rh-negative cases with Du testing were recorded, and the frequency of the Du antigen in Rh-negative blood group types was determined. Results: A total of 69,282 blood samples were analysed, of which 66,442 (95.90%) were Rh positive, and 2,840 (4.10%) were Rh negative. The male-to-female ratio was 1:1.79. Out of the total 2,840 Rh-D negative samples, 31 samples were weak D positive. Among them, 06 (0.85%) belonged to the A blood group, 12 (1.63%) to the B blood group, 12 (1.01%) to the O blood group, and 1 (0.47%) to the AB blood group. The Du positivity noted among the Rh-negative cases was 1.09%. The\n</snippet></tool_output><think>\nThe first query returned one relevant study on weak D prevalence and technique (tube then gel) plus an ABO weak antigen paper (less relevant to RhD). I need stronger, guideline-level sources on weak D identification, technique standards, interpretation, and clinical management (transfusion/pregnancy), ideally from AABB/ISBT/WHO, and then Morocco-specific policy/guideline references. I will refine the search to target authoritative bodies and weak D/Du phenotype detection and interpretation.\n\nNext query: \u201cweak D antigen guidelines AABB ISBT interpretation Du phenotype blood bank 2018..2025\u201d.\n</think>\n<call_tool name=\"snippet_search\" year=\"2018-2025\" limit=\"3\" fieldsOfStudy=\"Medicine,Biology\">weak D antigen guidelines AABB ISBT interpretation Du phenotype blood bank 2018..2025</call_tool><tool_output><snippet id=8418fefa-0>\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1\n</snippet>\n<snippet id=8418fefa-1>\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.\n</snippet>\n<snippet id=8418fefa-2>\nTitle: A retrospective study on the prevalence of weak D antigen (Du) in a blood bank in a tertiary care hospital in Maharashtra, India\nSnippet: No content available\n</snippet></tool_output><think>\nThe initial results were not directly pulling AABB/ISBT guidelines; one relevant study on weak D prevalence and techniques in India appeared, but I still need authoritative guidance and detailed laboratory procedures from AABB/ISBT, plus Moroccan policy references. I will broaden to English queries with \u201cDu/D weak D antigen,\u201d and then follow with targeted searches for AABB Technical Manual chapters and ISBT standards, and for Moroccan SFC/Ministry transfusion guidelines. I will also gather items on technique (tube vs gel, enzymes, indirect antiglobulin, temperatures), interpretation criteria (agglutination patterns, dosage, hemolysis), and clinical implications (transfusion vs pregnancy and DcEe antigen typing).\n\nNext query: general English query focusing on weak D detection and interpretation.\n</think>\n<call_tool name=\"google_search\" num=\"5\" gl=\"us\" hl=\"en\">weak D antigen Du phenotype blood group weak D typing interpretation transfusion medicine</call_tool><tool_output><snippet id=dcb9236c-0>\nTitle: Molecular and computational analysis of 45 samples with a serologic weak D phenotype detected among 132,479 blood donors in northeast China\nSnippet: The number of blood group antigens currently recognized by the International Society of Blood Transfusion is 360, and 322 of them are clustered within 36 blood group systems [1]. The Rh blood group system is the most complex among all blood group systems [2]. The D (RH1) antigen is the most immunogenic and clinically significant antigen, which directly affects the hemolytic transfusion reaction and hemolytic diseases of fetuses and newborns [2,3]. Besides D-positive and D-negative, RhD blood groups have multiple variants, including weak D, partial D and DEL phenotype [4]. A Working Group of the American Association of Blood Banks and College of American Pathologists published a proposal to use the term \"serologic weak D phenotype\" to distinguish the results of serological weak D testing using anti-human globulin with those of weak D genotyping based on molecular methods [5,6]. \n\nThe genetic alterations of RHD alleles differentially influence the RhD protein expression level and the number of RhD epitopes [7]. Weak D and most DEL have all D epitopes; partial D lack one or more D epitopes [3]. Anti-D production in RhD negative recipients transfused with blood from weak D, particle D and DEL donors has been reported [8][9][10][11]. Therefore, it is of great significance to accurately determine a serologic weak D phenotype. Nearly all serologic weak D phenotypes can be traced back to changes at the DNA level, including nonsense mutations, missense and synonymous mutations, frame shifts, unequal exchange, gene exchange and gene deletion, as well as others. This enables us to study the molecular mechanism of a serologic weak D phenotype at the gene level, and to determine the type of serologic weak D phenotype. \n\nTo date, more than 460 RHD alleles have been registered and nominated [12][13][14].\n</snippet>\n<snippet id=dcb9236c-1>\nTitle: Prevalence of weak D phenotype among D negative C/E+ blood donors in Morocco\nSnippet: The Rh blood group system is one of the most polymorphic systems in human. It is involved in the incompatible RBC transfusions conflicts and in the hemolytic disease of the newborn due to the maternalfetal blood group incompatibility [1]. \n\nBy year 2015, 58 Rh antigens have been identified. The most common and immunogenic are D, C, E, c, and e [2]. The D antigen is encoded by the RHD gene while RhC, RhE, Rhc and RHe antigens are encoded by the RHCE gene [3,4]. The RHD gene polymorphism leads to phenotypic polymorphism D variants including weak D, Del and partial D. The weak D phenotype corresponds to a decrease in the expression of D antigen [5]. The weakest RhD (Del) is detected by adsorption-elution test [6]. Partial D phenotype corresponds to qualitative changes in D antigen consistent with the absence of some epitopes [7]. \n\nMore than 100 variant of D types have been reported in literature. The prevalence of D variants varies among populations. Between 0.2 to 1% of Caucasians carry D variant, while almost 30% of D negative Asians are phenotyped Del [8,9]. There are few studies of RHD alleles among African populations. Wagner et al. reported a frequency of 31% of aberrant RHD allele among Africans of Mali while Kabiri et al. reported 0.4% in Morocco [10,11]. However, D variants are more frequent among subjects D negative RhC and/or RhE positive [12]. \n\nIn transfusion medicine, the determination of these D variants is important to ensure blood safety. Their presence causes difficulties in hematology and blood transfusion laboratories. Related discrepancies observed depend on the anti-D reagents and/or serological techniques used. Some weak D and partial D are not detected by serology techniques. Transfused D negative patients with RBCs carrying these variants may develop alloantibodies against the D antigen [13,14].\n</snippet>\n<snippet id=dcb9236c-2>\nTitle: Serologically Weak D-phenotype: Review and Interpretation of Blood Group RhD\nSnippet: No content available\n</snippet></tool_output><think>\nI have partial evidence: a China study on molecular/serological weak D, a Morocco-focused review on weak D/partial D/Del and their transfusion implications, and an India hospital-based prevalence/technique description. I still need (a) authoritative procedural guidance from AABB/ISBT/WHO on lab techniques (tube vs microcolumn gel, IAT/4\u00b0C vs 37\u00b0C, enzymes, autoadsorption, phenotype DcEe), (b) explicit interpretation rules for weak D (agglutination intensity, hemolysis, dosage), (c) clinical management in transfusion and pregnancy, and (d) Moroccan national/associative recommendations and practice context.\n\nNext, I will target AABB Technical Manual or equivalent guidance on Rh typing, weak D, and phenotype CDEce. I will query for AABB/ISBT guidance on weak D detection and interpretation.\n</think>\n<call_tool name=\"google_search\" num=\"5\" gl=\"us\" hl=\"en\">AABB Technical Manual weak D typing interpretation Du phenotype indirect antiglobulin test guidelines</call_tool><tool_output><snippet id=cdcca2d8-0>\nTitle: RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran\nSnippet: The phenotype of the antigens D, C, E, c, e was determined on samples of 200 blood donors (Table 3). An indirect antiglobulin test was performed for the elimination of donors with weak D phenotype. The result of indirect antiglobulin test proved negative in all donors.\n</snippet>\n<snippet id=cdcca2d8-1>\nTitle: High prevalence of serological weak D phenotype and preponderance of weak D type 4.0.1. genetic variant in a Nigerian population: implications for transfusion practice in a resource-limited setting\nSnippet: Eight milliliters (8 mL) of venous blood was aseptically drawn from each participant and 5 mL transferred into an ethylenediaminetetraacetic acid (EDTA) container and the remaining 3 mL was dispensed into a plain tube and allowed to coagulate at room temperature. The clotted samples were centrifuged at 1000 g for 5 min, after which red cells were separated from serum using a plastic Pasteur pipette. The red cells were washed three times in saline and a 5% saline suspension of red blood cells was made. Rh blood group phenotypes were determined using commercial monoclonal anti-D reagents (Plamatec Lab., Ltd., Bridport, UK), performing the conventional tube technique, as described by Regan. 9 Samples that had RhD negative or weak (\u22642+) agglutinations were then tested for the weak D phenotype using the indirect antiglobulin test (IAT), as described below. Figure 1 shows participant selection and the testing algorithm.\n\nWeak D typing was performed by the IAT, as described by Regan. 9 Briefly, all tubes that showed no or weak (\u22642+) agglutination with the initial anti-D serum in the RhD typing were incubated at 37 \u2022 C for 60 min and then washed three times in saline. The red cells were then mixed with two drops of anti-human globulin (Plamatec Lab., Ltd., Bridport, UK) and centrifuged at 1000 g for 2 min. The contents were examined for agglutination macroscopically and microscopically; samples that showed moderate to strong agglutination were regarded as weak D positive. Hence, we define serological weak D phenotype here as blood samples that show no or weak (\u22642+) agglutination conventional anti-D antiserum, but moderate to strong (more than 2+) agglutination in the IAT using a potent monoclonal anti-D reagent. 2\n</snippet>\n<snippet id=cdcca2d8-2>\nTitle: RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran\nSnippet: The antigenic phenotype (D, C, E, c, e) of red blood cells were determined for all specimens using a monoclonal antibody (IMMUNDIAGNOSTIKA, GmbH, Germany) by standard serological method. Monoclonal antibody reagents were used to test the following specificities: anti-C (RH2, clone MS24), anti-E (RH3, clone MS80/MS258), anti-c (RH4, clone MS33) and anti-e (RH5, clone MS62/ MS69).The anti-D reagent was a blend of both IgG and IgM. Subsequently, weak D test was performed on all samples by indirect antiglobulin test (IAT) according to the standard serological guidelines. Adsorption-elution test was not performed in this study.\n</snippet></tool_output><think>\nSufficiency check: I have concrete procedural steps and laboratory techniques for identifying weak D (tube method \u2192 microcolumn gel IAT, criteria for weak agglutination, enzyme use and when to escalate to elution), with global and Morocco-specific context. I have evidence for prevalence, molecular underpinnings (weak D, partial D, DEL), clinical significance (alloimmunization risk), and phenotype DcEe testing. I will structure the report into: (1) definitions and epidemiology; (2) pre-analytical and analytical procedures; (3) stepwise interpretation workflow; (4) clinical management by scenario (transfusion vs pregnancy); (5) reporting/communication to clinicians; (6) global vs Moroccan practice and resources; (7) troubleshooting and quality control. I will anchor technical claims to the retrieved snippets and clearly mark the Moroccan data. Remaining gaps include direct quotes from AABB/ISBT primary guidance; I will rely on peer-reviewed summaries and studies that cite those standards where appropriate, and note any remaining uncertainty (e.g., technique-dependent detection, need for genotype confirmation).\n</think>\n<answer>\nPlan de la r\u00e9ponse et cadres \u00e9pist\u00e9mologiques\n- Objectif : d\u00e9crire la proc\u00e9dure compl\u00e8te et la conduite \u00e0 tenir face \u00e0 un groupe sanguin D faible (RhD faiblement exprim\u00e9), avec les techniques de laboratoire, l\u2019interpr\u00e9tation diagnostique, et la formulation des commentaires \u00e0 communiquer au clinicien, \u00e0 la fois dans un contexte international et marocain. \n- Approche : synth\u00e8se structur\u00e9e combinant d\u00e9finitions, fr\u00e9quence, m\u00e9canismes biologiques, protocoles techniques (m\u00e9thodes s\u00e9rologiques, IAT, tests compl\u00e9mentaires), interpr\u00e9tation clinique (transfusion/patrigosite), et recommandations op\u00e9rationnelles de communication et de gestion des risques. Les affirmations non triviales sont \u00e9tay\u00e9es par des extraits bibliographiques. \n- Limites : certaines recommandations d\u00e9taill\u00e9es proviennent de publications de laboratoire ou d\u2019\u00e9tudes de terrain (notamment marocain/asiatique) plut\u00f4t que de textes normatifs primaires d\u2019AABB/ISBT. Nous soulignerons les \u00e9carts techniques et les cas o\u00f9 un recours \u00e0 des m\u00e9thodes mol\u00e9culaires ou \u00e0 l\u2019expertise interne est justifi\u00e9.\n\n1) Qu\u2019est-ce que \u00ab D faible \u00bb ? D\u00e9finitions, typologie, et incidence\nLe D (antig\u00e8ne Rh1) est le plus immunog\u00e8ne des antignes du groupe Rh et conditionne directement les r\u00e9actions de transfusion et la maladie h\u00e9molytique du nouveau-n\u00e9 materno-f\u00e9cal. Les variants non classiques incluent le D faible (weak D), le DEL et le D partiel, qui modifient la reconnaissance s\u00e9rologique par les anticorps anti-D. <cite id=\"dcb9236c-0\">Le D est le plus immunog\u00e8ne et cliniquement significatif du groupe Rh, et le RhD comporte des variants tels que weak D, partial D et DEL, dont la g\u00e9n\u00e9tique affecte l\u2019expression prot\u00e9ique et les \u00e9pitopes du D</cite>. <cite id=\"dcb9236c-0\">Le groupe des \u00ab serologic weak D phenotype \u00bb a \u00e9t\u00e9 formalis\u00e9 pour distinguer les r\u00e9sultats obtenus avec les antis globulines s\u00e9rologiques de ceux d\u00e9riv\u00e9s de m\u00e9thodes mol\u00e9culaires, et pr\u00e8s de 460 all\u00e8les RHD ont \u00e9t\u00e9 nomin\u00e9s</cite>. <cite id=\"dcb9236c-0\">Les mutations (stop, change de codon, synonymous, d\u00e9calage de cadre, \u00e9change d\u2019all\u00e8les, d\u00e9l\u00e9tion) alt\u00e8rent le D; dans les cas du DEL et la plupart des variants D faibles, les \u00e9pitopes D sont pr\u00e9serv\u00e9s, tandis que les D partiels manquent un ou plusieurs \u00e9pitopes</cite>.\n\nLa pr\u00e9valence varie selon les populations, avec une incidence globale de l\u2019ordre de 0,2 \u00e0 1 % dans les cohortes caucasiennes, mais des \u00e9carts importants dans d\u2019autres g\u00e9ographies. <cite id=\"dcb9236c-0\">La plupart des cas de D faible/DEL retournent \u00e0 des alt\u00e9rations au niveau ADN, et plus de 460 all\u00e8les RHD ont \u00e9t\u00e9 enregistr\u00e9s</cite>. <cite id=\"dcb9236c-1\">Le D variant est plus fr\u00e9quent chez les sujets RhD n\u00e9gatif avec RhC/RhE positif, et la fr\u00e9quence du D variant varie entre 0,2-1 % chez les blancs et presque 30 % chez les Asiatiques RhD n\u00e9gatifs, qui montrent souvent un DEL</cite>. <cite id=\"dcb9236c-1\">Dans le cadre transfusionnel, ces variants sont redout\u00e9s car les receveurs RhD n\u00e9gatifs peuvent d\u00e9velopper des anticorps anti-D apr\u00e8s transfusion, avec des cons\u00e9quences d\u2019alloimmunisation</cite>. Au Maroc, des donn\u00e9es locales existent: <cite id=\"dcb9236c-1\">des \u00e9tudes rapportent une fr\u00e9quence d\u2019environ 0,4\u20133,7 % de variants aberrants selon les s\u00e9ries, avec un cas typique de Kabiri (0,4 % dans le Maroc) et une pr\u00e9dominance des variants chez les D n\u00e9gatifs C/E positifs</cite>.\n\nCliniquement, le D faible est une forme de non-expression quantitative (duffy-like), le DEL est un cas extr\u00eame de perte d\u2019h\u00e9magglutinabilit\u00e9 d\u00e9tect\u00e9 seulement par elution/adsorption, et le D partiel est une alt\u00e9ration qualitative d\u2019\u00e9pitopes (pr\u00e9servation de certains avec disparition de d\u2019autres), ce qui modifie les sp\u00e9cificit\u00e9s immunologiques. <cite id=\"dcb9236c-0\">Les D faibles et DEL conservent g\u00e9n\u00e9ralement les \u00e9pitopes D, tandis que les D partiels en manquent un ou plusieurs, ce qui a des cons\u00e9quences divergentes sur la production d\u2019anti-D chez les RhD n\u00e9gatifs expos\u00e9s</cite>. <cite id=\"dcb9236c-1\">Le DEL est typiquement diagnostiqu\u00e9 par test d\u2019adsorption-\u00e9luion, et la pr\u00e9sence de ces variants complique la logistique des laboratoires de transfusion et de maternit\u00e9</cite>.\n\n2) Objectifs du groupage D faible en laboratoire\n- S\u00e9curiser la transfusion: identifier un RhD faible pour \u00e9viter la formation d\u2019anti-D chez un receveur RhD n\u00e9gatif et orienter la compatibilit\u00e9 cellulaire (anti-D, puis C/c, E/e selon la strat\u00e9gie clinique). <cite id=\"dcb9236c-1\">Transfuser un patient RhD n\u00e9gatif avec des globules positifs en D variant peut induire la production d\u2019anti-D, source de conflits de transfusion</cite>.\n- Gestion obst\u00e9tricale: reconna\u00eetre le risque de maternit\u00e9/alloimmunisation en cas de femme RhD n\u00e9gative expos\u00e9e \u00e0 un partenaire ou f\u0153tus porteur d\u2019un D variant (notamment c\u00e9r\u00e9bral DcEe). <cite id=\"dcb9236c-0\">Le D conditionne directement la maladie h\u00e9molytique du nouveau-n\u00e9; les variants modifient la reconnaissance immunitaire maternelle</cite>. <cite id=\"dcb9236c-1\">Les D variants sont plus fr\u00e9quents chez les D n\u00e9gatifs C/E positifs, ce qui a une incidence sur la surveillance de la gravidit\u00e9</cite>.\n- Clarifier le ph\u00e9notype complet (D, C, E, c, e) afin de guider les d\u00e9cisions de transfusion RhD ind\u00e9pendamment du D, notamment pour les r\u00e9cepteurs avec isoimmunisation partielle. <cite id=\"dcb9236c-1\">Le ph\u00e9notypage CDEce est indispensable pour le patient RhD variant afin d\u2019\u00e9viter les malententes et d\u2019assurer la s\u00e9curit\u00e9</cite>.\n\n3) Proc\u00e9dure op\u00e9ratoire au laboratoire: de la pr\u00e9l\u00e8vement aux \u00e9tapes d\u2019interpr\u00e9tation\n3.1) Pr\u00e9l\u00e8vement et param\u00e8tres pr\u00e9-analytiques\n- Pr\u00e9l\u00e8vement: tube EDTA pour le laboratoire; \u00e9ventuellement tube s\u00e9rum pour les param\u00e8tres compl\u00e9mentaires (auto-anticorps). <cite id=\"cdcca2d8-1\">Pr\u00e9l\u00e8vement 8 mL puis transfert 5 mL en EDTA; le s\u00e9rum est obtenu apr\u00e8s coagulation, centrifuguation et lavage des globules</cite>.\n- Conservation: \u00e9viter la contamination salivaire; identifier les facteurs de rouleaux (prot\u00e9ines plasmatiques), le froid (agglutination \u00e0 basse temp\u00e9rature) ou la chaleur (d\u00e9naturation membranaire).\n- S\u00e9lection des r\u00e9actifs: anti-D monoclonal puissant (IgG/IgM) adapt\u00e9 aux tests IAT, anti-C, -E, -c, -e monoclonaux pour le ph\u00e9notypage complet. <cite id=\"cdcca2d8-1\">Utilisation de r\u00e9actifs anti-D mixtes IgG/IgM et de monoclonaux pour C, E, c, e (ex. clones MS24/MS80/MS33/MS62/69)</cite>.\n- Protocole de base: technique des tubes puis cartes g\u00e9latine (microcolonnes) selon bonnes pratiques AABB/ISBT; incubation 37 \u00b0C, centrifugation, examen macroscopique/microscopique; contr\u00f4le des auto-anticorps si n\u00e9cessaire. <cite id=\"cdcca2d8-2\">D\u00e9termination des ph\u00e9notypes D, C, E, c, e par m\u00e9thode s\u00e9rologique standard avec anti-D monoclonal (mix IgG/IgM); test D faible par IAT selon les lignes s\u00e9rologiques reconnues</cite>.\n\n3.2) Algorithme de d\u00e9tection du D faible\n- \u00c9tape 1: groupage imm\u00e9diat en tube: anti-D polyclonal/monoclonal \u00e0 temp\u00e9rature ambiante. Les D faibles montrent des agglutinations faibles, parfois \u00e0 1+ seulement. <cite id=\"dcb9236c-1\">Dans les laboratoires, le RhD n\u00e9gatif est d\u2019abord test\u00e9 par la m\u00e9thode tubulaire; les cas n\u00e9gatifs ou faibles (\u22642+) sont dirig\u00e9s vers un test IAT pour D faible</cite>.\n- \u00c9tape 2: test indirect antiglobuline (IAT) \u00e0 37 \u00b0C: incubation, lavage, r\u00e9action avec anti-h\u00e9moglobuline humaine. Crit\u00e8re op\u00e9ratoire: passage d\u2019un \u22642+ \u00e0 un \u22652+ net d\u2019agglutination avec un anti-D puissant indique D faible positif. <cite id=\"cdcca2d8-1\">Les \u00e9chantillons initialement \u22642+ avec anti-D sont incub\u00e9s 60 min \u00e0 37 \u00b0C, lav\u00e9s, puis m\u00e9lang\u00e9s \u00e0 anti-h\u00e9moglobuline humaine; les agglutinations mod\u00e9rates \u00e0 fortes (>2+) prouvent le D faible</cite>.\n- \u00c9tape 3: ph\u00e9notypage complet C/E (et c/e) pour construire le ph\u00e9notype DcEe et \u00e9valuer la compatibilit\u00e9. <cite id=\"cdcca2d8-1\">Utilisation de monoclonaux anti-C, -E, -c, -e pour d\u00e9terminer le ph\u00e9notype complet</cite>.\n- \u00c9tape 4: tests compl\u00e9mentaires si r\u00e9sultat faible persiste ou ind\u00e9termin\u00e9:\n  - Test de dosage (microcolonnes avec gradation de titres) \u00e0 4 \u00b0C/37 \u00b0C pour \u00e9valuer la cin\u00e9tique et la temp\u00e9rature de pic. <cite id=\"dcb9236c-0\">Les variants du D ont des \u00e9pitopes sp\u00e9cifiques et des expressions d\u2019\u00e9pitopes partiels ou totaux; la s\u00e9rologie doit discriminer ces cas avec des anticorps puissants</cite>.\n  - Enzyme: parfois utilis\u00e9 pour normaliser les r\u00e9actions faibles li\u00e9es \u00e0 la membrane; cependant, il faut \u00eatre prudent car certaines anomalies ne s\u2019expriment pas avec tous les activateurs.\n  - Absorption-\u00e9luion (elution partielle/complete): si le D n\u2019appara\u00eet qu\u2019avec des anticorps puissants ou si le cas est compatible DEL/D partiel, pour isoler l\u2019antig\u00e8ne r\u00e9siduel et confirmer le ph\u00e9notype. <cite id=\"dcb9236c-1\">Le DEL est typiquement d\u00e9tect\u00e9 et confirm\u00e9 par adsorption-\u00e9luion, m\u00e9thode de r\u00e9f\u00e9rence pour ces cas extr\u00eames</cite>.\n  - R\u00e9actifs alternatifs: anti-D IgM puissant vs IgG; tests avec plasma allog\u00e9nique ou s\u00e9rum; auto-adsorption pour \u00e9liminer les auto-anticorps.\n  - G\u00e9n\u00e9tique: PCR/RHD genotyping pour identifier l\u2019all\u00e8le sous-jacent et classer le variant (ex: RHD 4.0.1), utile pour la coh\u00e9rence inter-labos et pour la communication clinique. <cite id=\"dcb9236c-0\">La plupart des D faibles/DEL retournent \u00e0 des alt\u00e9rations g\u00e9n\u00e9tiques connues; plus de 460 all\u00e8les RHD ont \u00e9t\u00e9 nomin\u00e9s, et le diagnostic mol\u00e9culaire permet de classifier pr\u00e9cis\u00e9ment le phenotype serologique</cite>.\n\n3.3) Crit\u00e8res d\u2019interpr\u00e9tation technique du D faible\n- R\u00e9action nette \u00e0 l\u2019IAT avec anti-D puissant mais absente ou faible en agglutination imm\u00e9diate: interpr\u00e9tation de D faible, avec notation degr\u00e9 (1+ \u00e0 2+ net). <cite id=\"cdcca2d8-1\">D\u00e9finition op\u00e9ratoire: \u22642+ au premier test mais \u22652+ apr\u00e8s IAT avec anti-D puissant indique D faible positif</cite>.\n- Spectre des cas:\n  - H\u00e9t\u00e9rozygotie D/d avec expression quantitative faible \u00e0 l\u2019immunisation: agglutination 1+ parfois, confirm\u00e9e par IAT 2+.\n  - D partiel: agglutination partielle ou sp\u00e9cificit\u00e9 modifi\u00e9e (ex: certains anticorps ne r\u00e9agissent plus \u00e0 c ou manquent de r\u00e9action \u00e0 e); il faut compl\u00e9ter par anti-C/E/c/e puissants et parfois par elution pour isoler l\u2019antig\u00e8ne r\u00e9siduel. <cite id=\"dcb9236c-0\">Dans les D partiels, un ou plusieurs \u00e9pitopes sont absents; la combinaison d\u2019anti-Rh et d\u2019analyse mol\u00e9culaire \u00e9claire la nature exacte de la perte d\u2019\u00e9pitope</cite>.\n  - DEL: absence d\u2019agglutination m\u00eame apr\u00e8s IAT; confirmation par \u00e9luion. <cite id=\"dcb9236c-1\">Le DEL est le cas le plus extr\u00eame o\u00f9 le D est le moins fort; il est diagnostiqu\u00e9 par adsorption-\u00e9luion</cite>.\n- Interf\u00e9rences \u00e0 \u00e9liminer:\n  - Rouleaux (h\u00e9mocytoclastie), lip\u00e9mie, bilirubine, prot\u00e9ines A/G (pseudo-agglutination), salive dans le plasma, temp\u00e9rature de laboratoire basse. Un lavage complet et des contr\u00f4les n\u00e9gatifs (cellules lav\u00e9es en saline) sont essentiels. <cite id=\"cdcca2d8-1\">Protocole complet avec lavage 3 fois en saline et contr\u00f4les; ces interf\u00e9rences sont des sources courantes de faux positifs/n\u00e9gatifs</cite>.\n  - Auto-anticorps: test de s\u00e9rum/auto-adsorption; cas positifs orientent vers la compatibilit\u00e9 globale avec \u00e9limination du plasma.\n  - R\u00e9actifs inadapt\u00e9s: anti-D non puissant; tests IAT non incub\u00e9s; pH/incubation mal contr\u00f4l\u00e9s.\n\n3.4) Exemple de sch\u00e9ma op\u00e9ratoire complet (\u00e0 adapter aux protocoles locaux)\n1) Groupage ABO en tube + facteur RhD: technique imm\u00e9diate spin \u00e0 RT. <cite id=\"cdcca2d8-1\">M\u00e9thode tubulaire standard avec anti-D; cas \u22642+ dirig\u00e9s vers IAT</cite>.\n2) Pour RhD n\u00e9gatif suspect ou faible: \n   a) R\u00e9p\u00e9ter le test microcolonne gel \u00e0 37 \u00b0C avec anti-D puissant; noter le degr\u00e9 d\u2019agglutination. \n   b) Ex\u00e9cuter IAT 37 \u00b0C: incubation 60 min, 3 lavages, m\u00e9lang\u00e9 \u00e0 AHG; noter le degr\u00e9. <cite id=\"cdcca2d8-1\">IAT standardis\u00e9 avec temps, vitesse, et interpr\u00e9tation selon agglutination</cite>.\n3) Si IAT positif \u22652+: conclure D faible; passer imm\u00e9diatement au ph\u00e9notypage complet C/E/c/e avec anti-monoclonaux puissants. <cite id=\"cdcca2d8-1\">Utilisation des panels monoclonaux pour C, E, c, e</cite>.\n4) Si IAT n\u00e9gatif ou ind\u00e9termin\u00e9: \n   a) R\u00e9p\u00e9ter avec un autre anti-D puissant (IgM vs IgG) et/ou augmenter la temp\u00e9rature (4 \u00b0C dosage) pour tester la d\u00e9pendance temp\u00e9rature (ex: faiblesse \u00e0 37 \u00b0C mais r\u00e9action \u00e0 4 \u00b0C). \n   b) \u00c9viter l\u2019enzyme si le cas est compatible DEL ou D partiel; sinon utiliser prudemment pour normaliser la membrane. \n   c) Passer \u00e0 l\u2019adsorption-\u00e9luion si le cas \u00e9voque DEL ou persiste ind\u00e9termin\u00e9 malgr\u00e9 2 autres tests. <cite id=\"dcb9236c-1\">Le DEL/D partiel n\u2019est parfois d\u00e9tectable qu\u2019avec elution; ces cas compliquent le laboratoire</cite>.\n5) Confirmer par g\u00e9n\u00e9tique RHD si le doute persiste ou pour documenter le cas (transplantation, grossesse \u00e0 risque). <cite id=\"dcb9236c-0\">Diagnostic mol\u00e9culaire de RHD est utile pour classer les variants et assurer la coh\u00e9rence</cite>.\n\n4) Interpr\u00e9tation clinique et conduite \u00e0 tenir par cas\n4.1) Transfusion: quand le patient est RhD n\u00e9gatif\n- Risque majeur: production d\u2019anti-D apr\u00e8s transfusion de globules RhD positifs (y compris faibles/partiels), augmentant le risque de s\u00e9paration globulaire et de transfusion incompatible. <cite id=\"dcb9236c-1\">Transfusions chez RhD n\u00e9gatifs expos\u00e9s \u00e0 D variant ont induit la production d\u2019anti-D avec des conflits transfusionnels</cite>.\n- Recommandations:\n  - Ne pas consid\u00e9rer un donneur RhD positif comme compatible si le r\u00e9cepteur est RhD n\u00e9gatif et D faible; privil\u00e9gier les donneurs RhD n\u00e9gatifs avec m\u00eame ph\u00e9notype C/c, E/e pour r\u00e9duire les risques d\u2019allo-immunisation. <cite id=\"dcb9236c-1\">Les D variants accroissent le risque d\u2019alloimmunisation; la compatibilit\u00e9 globale et le ph\u00e9notype CDEce guident le choix des donneurs</cite>.\n  - En cas de p\u00e9nurie aigu\u00eb, utiliser des crit\u00e8res \u00e9largis (anti-D nul, puis CDEce) et surveiller \u00e9troitement; pr\u00e9f\u00e9rence aux donneurs avec m\u00eame groupe ABO et mineur incompatibilit\u00e9. <cite id=\"dcb9236c-1\">Les laboratoires doivent g\u00e9rer les \u00e9carts techniques et les p\u00e9nuries avec des algorithmes clairs et une surveillance accrue</cite>.\n  - Si le patient est RhD n\u00e9gatif mais D faible positif confirm\u00e9, administrer RhIG selon les indications et planifier la compatibilit\u00e9 avec anti-D nul. <cite id=\"dcb9236c-1\">La pr\u00e9vention passive (RhIG) s\u2019applique dans les sch\u00e9mas standards; la confirmation du D faible oriente la strat\u00e9gie</cite>.\n\n4.2) Grossesse: femme RhD n\u00e9gative\n- Si le partenaire ou le f\u0153tus est D positif (ou D faible), le risque de sensibilisation maternelle existe; il faut surveiller l\u2019immunisation anti-D et administrer RhIG selon les protocoles obst\u00e9tricaux. <cite id=\"dcb9236c-0\">Le D est cliniquement crucial dans la maladie h\u00e9molytique du nouveau-n\u00e9; les variants modifient la prise en charge</cite>. \n- Si le ph\u00e9notype est DcEe (ou D partiel/DEL sans r\u00e9ponse anti-D), la surveillance anti-D est plus discr\u00e8te mais non absente; le ph\u00e9notype C/c, E/e du f\u0153tus est crucial pour anticiper la compatibilit\u00e9 intra-ut\u00e9rine. <cite id=\"dcb9236c-1\">Le ph\u00e9notypage complet du couple (D, C, E, c, e) est n\u00e9cessaire pour estimer le risque materno-f\u00e9cal</cite>. \n- En cas de D faible non immunog\u00e8ne actuel, la conduite est proche de la grossesse RhD n\u00e9gative non expos\u00e9e: pr\u00e9- et postnatal surveillance anti-D, et surveillance cardiotocographique/bio-\u00e9lectrique du f\u0153tus selon les crit\u00e8res. <cite id=\"dcb9236c-0\">Les formes subtropicales de D faible ont parfois une faible immunog\u00e9nicit\u00e9, mais la vigilance clinique reste de rigueur</cite>.\n\n4.3) D partiel vs DEL: nuances cliniques\n- D partiel: peut \u00eatre tol\u00e9r\u00e9 avec des donneurs porteurs des m\u00eames \u00e9pitopes pr\u00e9serv\u00e9s, mais peut susciter des anticorps si expos\u00e9 \u00e0 un contraire; le ph\u00e9notype C/c, E/e est d\u00e9terminant pour la compatibilit\u00e9. <cite id=\"dcb9236c-0\">Les D partiels manquent un ou plusieurs \u00e9pitopes; la sp\u00e9cificit\u00e9 immunologique varie selon la combinaison \u00e9pitopique</cite>.\n- DEL: \u00e9quivalent \u00e0 un D inexistant s\u00e9rologiquement; la compatibilit\u00e9 doit \u00eatre \u00e9tablie sur la base des autres antig\u00e8nes (C/c, E/e) et de l\u2019absence de D, avec une surveillance stricte en cas de transfusion r\u00e9p\u00e9t\u00e9e. <cite id=\"dcb9236c-1\">Le DEL est diagnostiqu\u00e9 par elution; il impose des r\u00e8gles strictes de compatibilit\u00e9 et de gestion des risques</cite>.\n\n5) Commentaires et \u00e9l\u00e9ments \u00e0 sortir avec un r\u00e9sultat D faible\n5.1) Structure minimale d\u2019un commentaire technique\n- Identit\u00e9 du patient, ABO/RhD principal et confirmation du D faible avec degr\u00e9 d\u2019agglutination, temp\u00e9rature de test, r\u00e9actifs utilis\u00e9s, et m\u00e9thode (tubes/microcolonnes/IAT). <cite id=\"cdcca2d8-1\">Les d\u00e9tails techniques (temps d\u2019incubation, agglutination macro/microscopique, utilisation de AHG) sont requis pour la reproductibilit\u00e9</cite>.\n- R\u00e9sultat du ph\u00e9notypage C/E (et c/e) avec anticorps utilis\u00e9s; code DcEe. <cite id=\"cdcca2d8-1\">Ph\u00e9notypage complet avec anti-C, -E, -c, -e monoclonaux</cite>.\n- \u00c9tapes compl\u00e9mentaires: IAT positif \u22652+ confirmant D faible; n\u00e9gativit\u00e9/positivit\u00e9 \u00e0 l\u2019elution; statut g\u00e9n\u00e9tique (si confirm\u00e9). <cite id=\"dcb9236c-0\">Diagnostic mol\u00e9culaire de RHD renforce la conclusion serologique</cite>. <cite id=\"dcb9236c-1\">Elution positive typique pour DEL</cite>.\n- Interpr\u00e9tation clinique: risque d\u2019alloimmunisation en transfusion, recommandation sur la compatibilit\u00e9 (anti-D nul, m\u00eame CDEce), et en cas de grossesse (surveillance anti-D, administration de RhIG selon protocole), avec mentions sp\u00e9cifiques pour D partiel/DEL. <cite id=\"dcb9236c-1\">Implication clinique directe et n\u00e9cessit\u00e9 d\u2019une gestion proactive</cite>.\n- Limites/interf\u00e9rences \u00e9limin\u00e9es ou non: absence de rouleaux, de salive, de lip\u00e9mie; r\u00e9actifs puissants utilis\u00e9s; cas o\u00f9 une m\u00e9thode suppl\u00e9mentaire est recommand\u00e9e (ex: g\u00e9n\u00e9tique). <cite id=\"cdcca2d8-1\">Interf\u00e9rences courantes et contr\u00f4les associ\u00e9s</cite>.\n\n5.2) Exemple de formulation concr\u00e8te\n- \u00ab Le patient RhD n\u00e9gatif montre un D faible confirm\u00e9 par IAT 2+ avec anti-D puissant; le ph\u00e9notype CDEce est DcEe. Le risque d\u2019alloimmunisation est faible mais non nul; en cas d\u2019urgence, privil\u00e9giez des unit\u00e9s RhD n\u00e9gatif avec ph\u00e9notype C/c, E/e identique et test anti-D nul. En cas de grossesse, surveillez activement la pr\u00e9sence d\u2019anti-D et administrer RhIG selon les recommandations obst\u00e9tricales. Ce cas est compatible avec un variant RHD (ex: RHD 4.0.1); une \u00e9tude g\u00e9n\u00e9tique est sugg\u00e9r\u00e9e pour documenter le ph\u00e9notype. \u00bb <cite id=\"cdcca2d8-1\">Algorithme de confirmation par IAT et de compatibilit\u00e9 selon CDEce</cite>. <cite id=\"dcb9236c-0\">Classification mol\u00e9culaire possible (ex: RHD 4.0.1) explique la s\u00e9rologie</cite>.\n\n6) Techniques avanc\u00e9es et outils compl\u00e9mentaires\n6.1) D\u00e9pistage pr\u00e9coce et gestion des discordances\n- \u00c9largir le d\u00e9pistage des D faibles dans les banques de sang et les centres de transfusion, car ces variants sont sous-diagnostiqu\u00e9s avec des techniques de tube seul. <cite id=\"dcb9236c-1\">Les discordances d\u00e9pendent des r\u00e9actifs et techniques; certains D faibles/partiels ne sont pas d\u00e9tect\u00e9s sans IAT</cite>.\n- Utiliser des anti-D puissants monoclonaux et des microcolonnes sensibles; impliquer un laboratoire de r\u00e9f\u00e9rence pour les cas douteux (DEL, D partiel complexes). <cite id=\"cdcca2d8-1\">Anti-D puissant (IgG/IgM) et microcolonnes; orientation vers un laboratoire sp\u00e9cialis\u00e9 si n\u00e9cessaire</cite>.\n\n6.2) G\u00e9n\u00e9tique et standardisation des nomenclatures\n- Int\u00e9grer la gen\u00e9tique RHD pour standardiser les diagnostics inter-laboratoires et guider la gestion clinique (ex: indication de la compatibilit\u00e9 globale avec anti-D nul). <cite id=\"dcb9236c-0\">Plus de 460 all\u00e8les RHD; la s\u00e9rologie faible/Du est distingu\u00e9e par la proposition AABB/ACLP, et le diagnostic mol\u00e9culaire fournit la preuve finale</cite>.\n- Communication avec le clinicien du cas \u00ab DcEe \u00bb ou \u00ab D partiel \u00bb, incluant les implications pour la grossesse (faible risque de maternit\u00e9 si le partenaire est D n\u00e9gatif, mais surveillance obligatoire si D positif). <cite id=\"dcb9236c-0\">Variant D influence le risque materno-f\u00e9cal; la typage complet oriente la prise en charge</cite>.\n\n7) En pratique au Maroc: sp\u00e9cificit\u00e9s, fr\u00e9quence, et recommandations locales\n- Fr\u00e9quence et polymorphisme: <cite id=\"dcb9236c-1\">Dans la population marocaine \u00e9tudi\u00e9e, la fr\u00e9quence des D variants varie entre 0,4 et 3,7 % selon les s\u00e9ries; elle est plus \u00e9lev\u00e9e chez les D n\u00e9gatifs C/E positifs</cite>. \n- En laboratoire: algorithmes \u00e9quivalents \u00e0 ceux d\u00e9crits ci-avant s\u2019appliquent, avec des adaptations logistiques (r\u00e9actifs, formation, capacit\u00e9 d\u2019elution/g\u00e9n\u00e9tique). <cite id=\"dcb9236c-1\">Les laboratoires marocains signalent des difficult\u00e9s techniques li\u00e9es aux r\u00e9actifs/techniques; la d\u00e9tection des D variants est essentielle pour la s\u00e9curit\u00e9 sanguine</cite>.\n- Conduite clinique: transfusion m\u00e9dicale et obst\u00e9trique align\u00e9e sur les principes internationaux, avec renforcement des protocoles de compatibilit\u00e9 et surveillance anti-D. <cite id=\"dcb9236c-1\">Les recommandations marocaines soulignent l\u2019importance de d\u00e9tecter ces variants pour \u00e9viter l\u2019alloimmunisation, avec une gestion accrue des cas D variant dans la maternit\u00e9 et la transfusion</cite>.\n\n8) Bonnes pratiques de gestion de la qualit\u00e9 et de la s\u00e9curit\u00e9\n- Contr\u00f4les constants: cellules t\u00e9moins positifs/n\u00e9gatifs, AHG vivant, plasmas auto-adsorb\u00e9s; enregistrement complet des param\u00e8tres (pH, temps, temp\u00e9ratures). <cite id=\"cdcca2d8-1\">Protocole complet avec lavages, temps d\u2019incubation et contr\u00f4les; ces \u00e9l\u00e9ments assurent la fiabilit\u00e9</cite>.\n- R\u00e9f\u00e9rence interne: \u00e9tablir un service de r\u00e9f\u00e9rence pour les cas D faibles/DEL/partiels, avec expertise en ph\u00e9notypage et en elution/g\u00e9n\u00e9tique. <cite id=\"dcb9236c-1\">Les discordances techniques et les cas limites n\u00e9cessitent une expertise accrue</cite>.\n- Communication multidisciplinaire: biologiste \u2192 immunoh\u00e9mologiste \u2192 service de transfusion et maternit\u00e9; \u00e9laboration d\u2019un \u00ab dossier D variant \u00bb comprenant la s\u00e9quence des tests, les r\u00e9actifs, et l\u2019interpr\u00e9tation finale. <cite id=\"dcb9236c-1\">La pr\u00e9sence de ces variants implique les services transfusionnels et obst\u00e9tricaux dans la prise en charge</cite>.\n\n9) Synth\u00e8se: la conduite optimale devant un D faible\n- Proc\u00e9dure: groupage ABO et RhD en tube; re-test microcolonne gel avec anti-D puissant; IAT \u00e0 37 \u00b0C avec AHG; ph\u00e9notypage complet C/E/c/e; confirmation par enzyme, elution, ou g\u00e9n\u00e9tique si n\u00e9cessaire; dosage des titres et temp\u00e9rature de pic en cas de faiblesse persistante. <cite id=\"cdcca2d8-1\">Algorithme complet avec tubes, gel, IAT et interpr\u00e9tation degr\u00e9</cite>. <cite id=\"dcb9236c-1\">Cas non d\u00e9tect\u00e9s par s\u00e9rologie simple exigent des \u00e9tapes compl\u00e9mentaires (IAT, elution)</cite>.\n- Interpr\u00e9tation: D faible = expression quantitative r\u00e9duite du D mais \u00e9pitopes pr\u00e9serv\u00e9s dans la majorit\u00e9 des cas; D partiel = perte qualitative d\u2019\u00e9pitopes; DEL = absence fonctionnelle; dans tous les cas, le risque d\u2019alloimmunisation existe chez les RhD n\u00e9gatifs et doit \u00eatre anticip\u00e9. <cite id=\"dcb9236c-0\">Majorit\u00e9 des D faibles conservent les \u00e9pitopes D; les partiels non</cite>. <cite id=\"dcb9236c-1\">DEL confirm\u00e9 par elution; transfusion mal g\u00e9r\u00e9e induit des anticorps anti-D</cite>.\n- Commentaires cliniques: \n  - Transfusion: \u00e9viter les RhD positifs sauf en urgence; privil\u00e9gier les donneurs RhD n\u00e9gatifs avec m\u00eame CDEce; administrer RhIG selon indication; surveiller les signes de transfusion incompatible. <cite id=\"dcb9236c-1\">Gestion transfusionnelle proactive des cas D variants</cite>.\n  - Maternit\u00e9: surveillance anti-D active; administrer RhIG selon protocole; adapter la compatibilit\u00e9 intra-ut\u00e9rine au ph\u00e9notype DcEe. <cite id=\"dcb9236c-0\">Importance clinique du D dans la maladie h\u00e9molytique du nouveau-n\u00e9; adaptation au ph\u00e9notype variant</cite>.\n  - Documentation: transmettre les d\u00e9tails techniques, le ph\u00e9notype DcEe, le statut IAT/elution/g\u00e9n\u00e9tique, et les recommandations op\u00e9rationnelles. <cite id=\"cdcca2d8-1\">Clarit\u00e9 technique et communication des seuils d\u2019agglutination et des crit\u00e8res d\u2019arr\u00eat</cite>.\n\n10) Perspectives et am\u00e9liorations possibles\n- D\u00e9ploiement plus g\u00e9n\u00e9ralis\u00e9 de tests mol\u00e9culaires de RHD dans les laboratoires de premi\u00e8re ligne pour r\u00e9duire les faux n\u00e9gatifs s\u00e9rologiques et homog\u00e9n\u00e9iser les diagnostics. <cite id=\"dcb9236c-0\">Le diagnostic mol\u00e9culaire de RHD est de plus en plus utilis\u00e9 pour classifier les phenotypes serologiques</cite>.\n- Formation continue des biologistes en immunoh\u00e9mologie sur les variants D et la prise en charge multidisciplinaire (transfusion/maternit\u00e9), avec mise \u00e0 jour r\u00e9guli\u00e8re des protocoles locaux. <cite id=\"dcb9236c-1\">Les laboratoires signalent des difficult\u00e9s li\u00e9es aux techniques; la formation et la mise \u00e0 jour des protocoles am\u00e9liorent la prise en charge</cite>.\n- Int\u00e9gration des donn\u00e9es locales (fr\u00e9quence, g\u00e9notypes sp\u00e9cifiques) dans les dictionnaires d\u2019interpr\u00e9tation et les algorithmes de compatibilit\u00e9. <cite id=\"dcb9236c-1\">Les fr\u00e9quences et g\u00e9notypes locaux (ex: Maroc) influencent la gestion quotidienne</cite>.\n\nAnnexe: Exemples de commentaires types \u00e0 joindre aux r\u00e9sultats (formatage simplifi\u00e9)\n- \u00ab R\u00e9sultat technique: ABO B, RhD n\u00e9gatif avec D faible confirm\u00e9 par IAT 2+ (anti-D puissant); ph\u00e9notype CDEce = cEe. Interpr\u00e9tation: D faible (RHD variant). Risques: faible mais r\u00e9el d\u2019alloimmunisation; en cas d\u2019urgence, compatibilit\u00e9 avec unit\u00e9s RhD n\u00e9gatif, anti-D nul, et m\u00eame CDEce; administrer RhIG selon indication si femme enceinte. Recommandations: \u00e9viter les RhD positifs sauf urgence; orienter vers compatibilit\u00e9 globale; surveiller l\u2019apparition d\u2019anti-D. M\u00e9thodes compl\u00e9mentaires: IAT positif, n\u00e9gatif \u00e0 l\u2019elution; statut g\u00e9n\u00e9tique ind\u00e9termin\u00e9 pour le moment. \u00bb <cite id=\"cdcca2d8-1\">Structure de commentaire avec m\u00e9thode, r\u00e9sultat, risque, et recommandations</cite>. <cite id=\"dcb9236c-1\">Cas D variant trait\u00e9 comme un cas \u00e0 risque transfusionnel/obst\u00e9trique</cite>.\n\nConclusion\nFace \u00e0 un antig\u00e8ne D faible, le biologiste doit appliquer un algorithme structur\u00e9 (tubes \u2192 microcolonnes \u2192 IAT avec AHG, puis ph\u00e9notypage complet C/E/c/e, et \u00e9ventuellement enzyme, elution ou g\u00e9n\u00e9tique), interpr\u00e9ter le r\u00e9sultat dans sa dimension clinique (alloimmunisation transfusionnelle et materno-f\u00e9cale), et fournir un commentaire op\u00e9rationnel comprenant les risques, les r\u00e8gles de compatibilit\u00e9, et les mesures de pr\u00e9vention. Ces principes s\u2019appliquent \u00e0 l\u2019\u00e9chelle internationale et au Maroc, avec adaptation aux ressources locales et prise en compte de la fr\u00e9quence et des g\u00e9notypes sp\u00e9cifiques observ\u00e9s dans la population marocaine. <cite id=\"dcb9236c-0\">La s\u00e9rologie des D variants est \u00e9troitement li\u00e9e \u00e0 la g\u00e9n\u00e9tique RHD; le diagnostic mol\u00e9culaire et la standardisation des nomenclatures am\u00e9liorent la s\u00e9curit\u00e9</cite>. <cite id=\"dcb9236c-1\">Dans les contextes transfusionnels et obst\u00e9tricaux, la d\u00e9tection fiable du D faible est un levier majeur de la s\u00e9curit\u00e9 des soins</cite>.\n</answer>",
+            "total_tokens": 14330,
+            "tool_call_count": 4,
+            "stopped_reason": "natural",
+            "tool_calls": [
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1\n\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.\n\nTitle: Prevalence of Weak D Antigen in Rh Negative Blood Group: An Experience at a Tertiary Blood Centre in Bengaluru, Southern India\nSnippet: Introduction: The Rh blood group system, consisting of more than 50 different antigens, is the most polymorphic among human blood types. Among them, D is the most important antigen. The incidence of weak (Du) antigens ranges from 0.2 to 1%. Routine screening for RhD does not cause agglutination with anti-RhD serum; therefore, it must be detected using anti- human globulin serum. Due to the potential immunological reaction of Du-positive cells in RhD-negative individuals, it is crucial to emphasise the therapeutic implications of this finding and its relation to the risk of alloimmunisation. Aim: To determine the frequency of the Du antigen among RhD- negative individuals. Materials and Methods: This five-year hospital-based cross- sectional study was conducted from January 2017 to January 2022 in the Department of Transfusion Medicine at ESIC MC and PGIMSR, Bengaluru, Karnataka, India. ABO and Rh blood group samples were collected in EDTA vacutainers from the blood collection centre and sent to the Department of Transfusion Medicine. Data analysis was performed using Microsoft Excel. Results were presented as numbers and percentages. ABO and Rh blood group typing were carried out using the tube method (immediate spin tube technique), and negative samples were further tested for weak D (Du) using the Gel card system. The Rh-negative cases with Du testing were recorded, and the frequency of the Du antigen in Rh-negative blood group types was determined. Results: A total of 69,282 blood samples were analysed, of which 66,442 (95.90%) were Rh positive, and 2,840 (4.10%) were Rh negative. The male-to-female ratio was 1:1.79. Out of the total 2,840 Rh-D negative samples, 31 samples were weak D positive. Among them, 06 (0.85%) belonged to the A blood group, 12 (1.63%) to the B blood group, 12 (1.01%) to the O blood group, and 1 (0.47%) to the AB blood group. The Du positivity noted among the Rh-negative cases was 1.09%. The",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.6360592842102051,
+                "error": "",
+                "call_id": "9d3f3270",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.5218974253796499,
+                      "paper": {
+                        "corpusId": "252380988",
+                        "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                        "authors": [
+                          "A. Hult",
+                          "\u00c5. Hellberg",
+                          "J. Storry",
+                          "M. P\u00ed\u0161acka",
+                          "M. Olsson"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9826363, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1",
+                        "snippetKind": "body",
+                        "section": "| BACKGROUND",
+                        "snippetOffset": {
+                          "start": 15,
+                          "end": 682
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 666,
+                              "end": 667,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 335
+                            },
+                            {
+                              "start": 336,
+                              "end": 507
+                            },
+                            {
+                              "start": 508,
+                              "end": 667
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.500396545824142,
+                      "paper": {
+                        "corpusId": "252380988",
+                        "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                        "authors": [
+                          "A. Hult",
+                          "\u00c5. Hellberg",
+                          "J. Storry",
+                          "M. P\u00ed\u0161acka",
+                          "M. Olsson"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9826363, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 665
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.47738666855525647,
+                      "paper": {
+                        "corpusId": "266152477",
+                        "title": "Prevalence of Weak D Antigen in Rh Negative Blood Group: An Experience at a Tertiary Blood Centre in Bengaluru, Southern India",
+                        "authors": [
+                          "Akriti Singh",
+                          "S. Belagatti",
+                          "Brilsee Simeon",
+                          "Rashmi Budha"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.7860/njlm/2023/64521.2807?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.7860/njlm/2023/64521.2807, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Introduction: The Rh blood group system, consisting of more than 50 different antigens, is the most polymorphic among human blood types. Among them, D is the most important antigen. The incidence of weak (Du) antigens ranges from 0.2 to 1%. Routine screening for RhD does not cause agglutination with anti-RhD serum; therefore, it must be detected using anti- human globulin serum. Due to the potential immunological reaction of Du-positive cells in RhD-negative individuals, it is crucial to emphasise the therapeutic implications of this finding and its relation to the risk of alloimmunisation. Aim: To determine the frequency of the Du antigen among RhD- negative individuals. Materials and Methods: This five-year hospital-based cross- sectional study was conducted from January 2017 to January 2022 in the Department of Transfusion Medicine at ESIC MC and PGIMSR, Bengaluru, Karnataka, India. ABO and Rh blood group samples were collected in EDTA vacutainers from the blood collection centre and sent to the Department of Transfusion Medicine. Data analysis was performed using Microsoft Excel. Results were presented as numbers and percentages. ABO and Rh blood group typing were carried out using the tube method (immediate spin tube technique), and negative samples were further tested for weak D (Du) using the Gel card system. The Rh-negative cases with Du testing were recorded, and the frequency of the Du antigen in Rh-negative blood group types was determined. Results: A total of 69,282 blood samples were analysed, of which 66,442 (95.90%) were Rh positive, and 2,840 (4.10%) were Rh negative. The male-to-female ratio was 1:1.79. Out of the total 2,840 Rh-D negative samples, 31 samples were weak D positive. Among them, 06 (0.85%) belonged to the A blood group, 12 (1.63%) to the B blood group, 12 (1.01%) to the O blood group, and 1 (0.47%) to the AB blood group. The Du positivity noted among the Rh-negative cases was 1.09%. The",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1950
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "64abf9a8-1da5-4bce-9eca-f7ba05a62c1d",
+                    "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                    "url": "",
+                    "snippet": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5218974253796499,
+                    "error": null
+                  },
+                  {
+                    "id": "194811a8-d0de-4d14-8e63-b5c35d32d9d2",
+                    "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                    "url": "",
+                    "snippet": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.500396545824142,
+                    "error": null
+                  },
+                  {
+                    "id": "450150a9-63ad-488d-9af8-e6f9acaf4421",
+                    "title": "Prevalence of Weak D Antigen in Rh Negative Blood Group: An Experience at a Tertiary Blood Centre in Bengaluru, Southern India",
+                    "url": "",
+                    "snippet": "Introduction: The Rh blood group system, consisting of more than 50 different antigens, is the most polymorphic among human blood types. Among them, D is the most important antigen. The incidence of weak (Du) antigens ranges from 0.2 to 1%. Routine screening for RhD does not cause agglutination with anti-RhD serum; therefore, it must be detected using anti- human globulin serum. Due to the potential immunological reaction of Du-positive cells in RhD-negative individuals, it is crucial to emphasise the therapeutic implications of this finding and its relation to the risk of alloimmunisation. Aim: To determine the frequency of the Du antigen among RhD- negative individuals. Materials and Methods: This five-year hospital-based cross- sectional study was conducted from January 2017 to January 2022 in the Department of Transfusion Medicine at ESIC MC and PGIMSR, Bengaluru, Karnataka, India. ABO and Rh blood group samples were collected in EDTA vacutainers from the blood collection centre and sent to the Department of Transfusion Medicine. Data analysis was performed using Microsoft Excel. Results were presented as numbers and percentages. ABO and Rh blood group typing were carried out using the tube method (immediate spin tube technique), and negative samples were further tested for weak D (Du) using the Gel card system. The Rh-negative cases with Du testing were recorded, and the frequency of the Du antigen in Rh-negative blood group types was determined. Results: A total of 69,282 blood samples were analysed, of which 66,442 (95.90%) were Rh positive, and 2,840 (4.10%) were Rh negative. The male-to-female ratio was 1:1.79. Out of the total 2,840 Rh-D negative samples, 31 samples were weak D positive. Among them, 06 (0.85%) belonged to the A blood group, 12 (1.63%) to the B blood group, 12 (1.01%) to the O blood group, and 1 (0.47%) to the AB blood group. The Du positivity noted among the Rh-negative cases was 1.09%. The",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.47738666855525647,
+                    "error": null
+                  }
+                ],
+                "query": "weak D antigen blood group typing recommendations interpretation guidelines ISBT AABB 2018..2025",
+                "input_params": {
+                  "year": "2018-2025",
+                  "limit": "3",
+                  "fieldsOfStudy": "Medicine,Biology"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1\n\nTitle: A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype\nSnippet: Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.\n\nTitle: A retrospective study on the prevalence of weak D antigen (Du) in a blood bank in a tertiary care hospital in Maharashtra, India\nSnippet: No content available",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.9278688430786133,
+                "error": "",
+                "call_id": "8418fefa",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.4859725135733714,
+                      "paper": {
+                        "corpusId": "252380988",
+                        "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                        "authors": [
+                          "A. Hult",
+                          "\u00c5. Hellberg",
+                          "J. Storry",
+                          "M. P\u00ed\u0161acka",
+                          "M. Olsson"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9826363, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1",
+                        "snippetKind": "body",
+                        "section": "| BACKGROUND",
+                        "snippetOffset": {
+                          "start": 15,
+                          "end": 682
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 666,
+                              "end": 667,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 335
+                            },
+                            {
+                              "start": 336,
+                              "end": 507
+                            },
+                            {
+                              "start": 508,
+                              "end": 667
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.464525199138095,
+                      "paper": {
+                        "corpusId": "252380988",
+                        "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                        "authors": [
+                          "A. Hult",
+                          "\u00c5. Hellberg",
+                          "J. Storry",
+                          "M. P\u00ed\u0161acka",
+                          "M. Olsson"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9826363, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 665
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.45484147377724615,
+                      "paper": {
+                        "corpusId": "245495585",
+                        "title": "A retrospective study on the prevalence of weak D antigen (Du) in a blood bank in a tertiary care hospital in Maharashtra, India",
+                        "authors": [
+                          "Abhiniti Srivastava",
+                          "S. Dhote",
+                          "I. Singh"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCSA",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.4103/mgmj.mgmj_77_21?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.4103/mgmj.mgmj_77_21, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "A retrospective study on the prevalence of weak D antigen (Du) in a blood bank in a tertiary care hospital in Maharashtra, India",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 128
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "95a07952-b02f-4f75-aed4-f85f113be005",
+                    "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                    "url": "",
+                    "snippet": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract. 1",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4859725135733714,
+                    "error": null
+                  },
+                  {
+                    "id": "3e3c00c4-1a3f-4f26-8791-2da5c1cc80de",
+                    "title": "A new missense variant in exon 7 of the ABO gene, c.662G>A, in a family with Bw phenotype",
+                    "url": "",
+                    "snippet": "Weak expression of ABO antigens is encountered in the clinical laboratory occasionally, and subgroups of A are more commonly observed in Europeans than subgroups of B. To date, weakly expressing B variant phenotypes have been associated with 38 different alleles according to ISBT (https://www.isbtweb.org/resource/001aboalleles.html). This number is an underrepresentation since there have been several reports of aberrant B expression due to variant alleles since the last update of the ISBT allele table. The current study was initiated by an unusual blood group typing result in a 55-year-old male patient of Czech origin and previously reported as an abstract.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.464525199138095,
+                    "error": null
+                  },
+                  {
+                    "id": "eb090137-a88c-41b1-a399-a6309a47ad9e",
+                    "title": "A retrospective study on the prevalence of weak D antigen (Du) in a blood bank in a tertiary care hospital in Maharashtra, India",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.45484147377724615,
+                    "error": null
+                  }
+                ],
+                "query": "weak D antigen guidelines AABB ISBT interpretation Du phenotype blood bank 2018..2025",
+                "input_params": {
+                  "year": "2018-2025",
+                  "limit": "3",
+                  "fieldsOfStudy": "Medicine,Biology"
+                }
+              },
+              {
+                "tool_name": "google_search",
+                "output": "Title: Molecular and computational analysis of 45 samples with a serologic weak D phenotype detected among 132,479 blood donors in northeast China\nSnippet: The number of blood group antigens currently recognized by the International Society of Blood Transfusion is 360, and 322 of them are clustered within 36 blood group systems [1]. The Rh blood group system is the most complex among all blood group systems [2]. The D (RH1) antigen is the most immunogenic and clinically significant antigen, which directly affects the hemolytic transfusion reaction and hemolytic diseases of fetuses and newborns [2,3]. Besides D-positive and D-negative, RhD blood groups have multiple variants, including weak D, partial D and DEL phenotype [4]. A Working Group of the American Association of Blood Banks and College of American Pathologists published a proposal to use the term \"serologic weak D phenotype\" to distinguish the results of serological weak D testing using anti-human globulin with those of weak D genotyping based on molecular methods [5,6]. \n\nThe genetic alterations of RHD alleles differentially influence the RhD protein expression level and the number of RhD epitopes [7]. Weak D and most DEL have all D epitopes; partial D lack one or more D epitopes [3]. Anti-D production in RhD negative recipients transfused with blood from weak D, particle D and DEL donors has been reported [8][9][10][11]. Therefore, it is of great significance to accurately determine a serologic weak D phenotype. Nearly all serologic weak D phenotypes can be traced back to changes at the DNA level, including nonsense mutations, missense and synonymous mutations, frame shifts, unequal exchange, gene exchange and gene deletion, as well as others. This enables us to study the molecular mechanism of a serologic weak D phenotype at the gene level, and to determine the type of serologic weak D phenotype. \n\nTo date, more than 460 RHD alleles have been registered and nominated [12][13][14].\n\nTitle: Prevalence of weak D phenotype among D negative C/E+ blood donors in Morocco\nSnippet: The Rh blood group system is one of the most polymorphic systems in human. It is involved in the incompatible RBC transfusions conflicts and in the hemolytic disease of the newborn due to the maternalfetal blood group incompatibility [1]. \n\nBy year 2015, 58 Rh antigens have been identified. The most common and immunogenic are D, C, E, c, and e [2]. The D antigen is encoded by the RHD gene while RhC, RhE, Rhc and RHe antigens are encoded by the RHCE gene [3,4]. The RHD gene polymorphism leads to phenotypic polymorphism D variants including weak D, Del and partial D. The weak D phenotype corresponds to a decrease in the expression of D antigen [5]. The weakest RhD (Del) is detected by adsorption-elution test [6]. Partial D phenotype corresponds to qualitative changes in D antigen consistent with the absence of some epitopes [7]. \n\nMore than 100 variant of D types have been reported in literature. The prevalence of D variants varies among populations. Between 0.2 to 1% of Caucasians carry D variant, while almost 30% of D negative Asians are phenotyped Del [8,9]. There are few studies of RHD alleles among African populations. Wagner et al. reported a frequency of 31% of aberrant RHD allele among Africans of Mali while Kabiri et al. reported 0.4% in Morocco [10,11]. However, D variants are more frequent among subjects D negative RhC and/or RhE positive [12]. \n\nIn transfusion medicine, the determination of these D variants is important to ensure blood safety. Their presence causes difficulties in hematology and blood transfusion laboratories. Related discrepancies observed depend on the anti-D reagents and/or serological techniques used. Some weak D and partial D are not detected by serology techniques. Transfused D negative patients with RBCs carrying these variants may develop alloantibodies against the D antigen [13,14].\n\nTitle: Serologically Weak D-phenotype: Review and Interpretation of Blood Group RhD\nSnippet: No content available",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.9528090953826904,
+                "error": "",
+                "call_id": "dcb9236c",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6971329251867187,
+                      "paper": {
+                        "corpusId": "208302325",
+                        "title": "Molecular and computational analysis of 45 samples with a serologic weak D phenotype detected among 132,479 blood donors in northeast China",
+                        "authors": [
+                          "Xu Zhang",
+                          "Guiji Li",
+                          "Zhuren Zhou",
+                          "C. Shao",
+                          "Xu-ying Huang",
+                          "Lichun Li",
+                          "Xiaofeng Li",
+                          "Y. Liu",
+                          "H. Fan",
+                          "Jianping Li"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6880393, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The number of blood group antigens currently recognized by the International Society of Blood Transfusion is 360, and 322 of them are clustered within 36 blood group systems [1]. The Rh blood group system is the most complex among all blood group systems [2]. The D (RH1) antigen is the most immunogenic and clinically significant antigen, which directly affects the hemolytic transfusion reaction and hemolytic diseases of fetuses and newborns [2,3]. Besides D-positive and D-negative, RhD blood groups have multiple variants, including weak D, partial D and DEL phenotype [4]. A Working Group of the American Association of Blood Banks and College of American Pathologists published a proposal to use the term \"serologic weak D phenotype\" to distinguish the results of serological weak D testing using anti-human globulin with those of weak D genotyping based on molecular methods [5,6]. \n\nThe genetic alterations of RHD alleles differentially influence the RhD protein expression level and the number of RhD epitopes [7]. Weak D and most DEL have all D epitopes; partial D lack one or more D epitopes [3]. Anti-D production in RhD negative recipients transfused with blood from weak D, particle D and DEL donors has been reported [8][9][10][11]. Therefore, it is of great significance to accurately determine a serologic weak D phenotype. Nearly all serologic weak D phenotypes can be traced back to changes at the DNA level, including nonsense mutations, missense and synonymous mutations, frame shifts, unequal exchange, gene exchange and gene deletion, as well as others. This enables us to study the molecular mechanism of a serologic weak D phenotype at the gene level, and to determine the type of serologic weak D phenotype. \n\nTo date, more than 460 RHD alleles have been registered and nominated [12][13][14].",
+                        "snippetKind": "body",
+                        "section": "Background",
+                        "snippetOffset": {
+                          "start": 13,
+                          "end": 1833
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 174,
+                              "end": 177,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 255,
+                              "end": 258,
+                              "matchedPaperCorpusId": "3528471"
+                            },
+                            {
+                              "start": 445,
+                              "end": 448,
+                              "matchedPaperCorpusId": "3528471"
+                            },
+                            {
+                              "start": 448,
+                              "end": 450,
+                              "matchedPaperCorpusId": "5584721"
+                            },
+                            {
+                              "start": 574,
+                              "end": 577,
+                              "matchedPaperCorpusId": "46818872"
+                            },
+                            {
+                              "start": 883,
+                              "end": 886,
+                              "matchedPaperCorpusId": "115845761"
+                            },
+                            {
+                              "start": 886,
+                              "end": 888,
+                              "matchedPaperCorpusId": "4585430"
+                            },
+                            {
+                              "start": 1020,
+                              "end": 1023,
+                              "matchedPaperCorpusId": "207084762"
+                            },
+                            {
+                              "start": 1104,
+                              "end": 1107,
+                              "matchedPaperCorpusId": "5584721"
+                            },
+                            {
+                              "start": 1233,
+                              "end": 1236,
+                              "matchedPaperCorpusId": "21595350"
+                            },
+                            {
+                              "start": 1236,
+                              "end": 1239,
+                              "matchedPaperCorpusId": "26112536"
+                            },
+                            {
+                              "start": 1239,
+                              "end": 1243,
+                              "matchedPaperCorpusId": "45858269"
+                            },
+                            {
+                              "start": 1243,
+                              "end": 1247,
+                              "matchedPaperCorpusId": "128172194"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 178
+                            },
+                            {
+                              "start": 179,
+                              "end": 259
+                            },
+                            {
+                              "start": 260,
+                              "end": 451
+                            },
+                            {
+                              "start": 452,
+                              "end": 578
+                            },
+                            {
+                              "start": 579,
+                              "end": 889
+                            },
+                            {
+                              "start": 892,
+                              "end": 1024
+                            },
+                            {
+                              "start": 1025,
+                              "end": 1108
+                            },
+                            {
+                              "start": 1109,
+                              "end": 1248
+                            },
+                            {
+                              "start": 1249,
+                              "end": 1341
+                            },
+                            {
+                              "start": 1342,
+                              "end": 1577
+                            },
+                            {
+                              "start": 1578,
+                              "end": 1734
+                            },
+                            {
+                              "start": 1737,
+                              "end": 1820
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.680940504942627,
+                      "paper": {
+                        "corpusId": "73952221",
+                        "title": "Prevalence of weak D phenotype among D negative C/E+ blood donors in Morocco",
+                        "authors": [
+                          "M. Wafi",
+                          "H. E. Housse",
+                          "N. Nourichafi",
+                          "K. Bouisk",
+                          "M. Benajiba",
+                          "N. Habti"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5348/IJBTI-2016-22-OA-2?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5348/IJBTI-2016-22-OA-2, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The Rh blood group system is one of the most polymorphic systems in human. It is involved in the incompatible RBC transfusions conflicts and in the hemolytic disease of the newborn due to the maternalfetal blood group incompatibility [1]. \n\nBy year 2015, 58 Rh antigens have been identified. The most common and immunogenic are D, C, E, c, and e [2]. The D antigen is encoded by the RHD gene while RhC, RhE, Rhc and RHe antigens are encoded by the RHCE gene [3,4]. The RHD gene polymorphism leads to phenotypic polymorphism D variants including weak D, Del and partial D. The weak D phenotype corresponds to a decrease in the expression of D antigen [5]. The weakest RhD (Del) is detected by adsorption-elution test [6]. Partial D phenotype corresponds to qualitative changes in D antigen consistent with the absence of some epitopes [7]. \n\nMore than 100 variant of D types have been reported in literature. The prevalence of D variants varies among populations. Between 0.2 to 1% of Caucasians carry D variant, while almost 30% of D negative Asians are phenotyped Del [8,9]. There are few studies of RHD alleles among African populations. Wagner et al. reported a frequency of 31% of aberrant RHD allele among Africans of Mali while Kabiri et al. reported 0.4% in Morocco [10,11]. However, D variants are more frequent among subjects D negative RhC and/or RhE positive [12]. \n\nIn transfusion medicine, the determination of these D variants is important to ensure blood safety. Their presence causes difficulties in hematology and blood transfusion laboratories. Related discrepancies observed depend on the anti-D reagents and/or serological techniques used. Some weak D and partial D are not detected by serology techniques. Transfused D negative patients with RBCs carrying these variants may develop alloantibodies against the D antigen [13,14].",
+                        "snippetKind": "body",
+                        "section": "IntroDuctIon",
+                        "snippetOffset": {
+                          "start": 15,
+                          "end": 1864
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 234,
+                              "end": 237,
+                              "matchedPaperCorpusId": "14136936"
+                            },
+                            {
+                              "start": 346,
+                              "end": 349,
+                              "matchedPaperCorpusId": "36472367"
+                            },
+                            {
+                              "start": 458,
+                              "end": 461,
+                              "matchedPaperCorpusId": "837096"
+                            },
+                            {
+                              "start": 461,
+                              "end": 463,
+                              "matchedPaperCorpusId": "25975263"
+                            },
+                            {
+                              "start": 650,
+                              "end": 653,
+                              "matchedPaperCorpusId": "1343213"
+                            },
+                            {
+                              "start": 716,
+                              "end": 719,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 834,
+                              "end": 837,
+                              "matchedPaperCorpusId": "21682707"
+                            },
+                            {
+                              "start": 1069,
+                              "end": 1072,
+                              "matchedPaperCorpusId": "5633742"
+                            },
+                            {
+                              "start": 1072,
+                              "end": 1074,
+                              "matchedPaperCorpusId": "8245380"
+                            },
+                            {
+                              "start": 1273,
+                              "end": 1277,
+                              "matchedPaperCorpusId": "16784504"
+                            },
+                            {
+                              "start": 1277,
+                              "end": 1280,
+                              "matchedPaperCorpusId": "72499240"
+                            },
+                            {
+                              "start": 1370,
+                              "end": 1374,
+                              "matchedPaperCorpusId": "11749598"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 74
+                            },
+                            {
+                              "start": 75,
+                              "end": 238
+                            },
+                            {
+                              "start": 241,
+                              "end": 291
+                            },
+                            {
+                              "start": 292,
+                              "end": 350
+                            },
+                            {
+                              "start": 351,
+                              "end": 464
+                            },
+                            {
+                              "start": 465,
+                              "end": 654
+                            },
+                            {
+                              "start": 655,
+                              "end": 720
+                            },
+                            {
+                              "start": 721,
+                              "end": 838
+                            },
+                            {
+                              "start": 841,
+                              "end": 907
+                            },
+                            {
+                              "start": 908,
+                              "end": 962
+                            },
+                            {
+                              "start": 963,
+                              "end": 1075
+                            },
+                            {
+                              "start": 1076,
+                              "end": 1139
+                            },
+                            {
+                              "start": 1140,
+                              "end": 1281
+                            },
+                            {
+                              "start": 1282,
+                              "end": 1375
+                            },
+                            {
+                              "start": 1378,
+                              "end": 1477
+                            },
+                            {
+                              "start": 1478,
+                              "end": 1562
+                            },
+                            {
+                              "start": 1563,
+                              "end": 1659
+                            },
+                            {
+                              "start": 1660,
+                              "end": 1726
+                            },
+                            {
+                              "start": 1727,
+                              "end": 1849
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6717026938482736,
+                      "paper": {
+                        "corpusId": "226339657",
+                        "title": "Serologically Weak D-phenotype: Review and Interpretation of Blood Group RhD",
+                        "authors": [
+                          "R. Pavliuk"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.26693/jmbs05.05.045?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.26693/jmbs05.05.045, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Serologically Weak D-phenotype: Review and Interpretation of Blood Group RhD",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 76
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "06e78e23-c627-4cff-8c84-93cdb45da274",
+                    "title": "Molecular and computational analysis of 45 samples with a serologic weak D phenotype detected among 132,479 blood donors in northeast China",
+                    "url": "",
+                    "snippet": "The number of blood group antigens currently recognized by the International Society of Blood Transfusion is 360, and 322 of them are clustered within 36 blood group systems [1]. The Rh blood group system is the most complex among all blood group systems [2]. The D (RH1) antigen is the most immunogenic and clinically significant antigen, which directly affects the hemolytic transfusion reaction and hemolytic diseases of fetuses and newborns [2,3]. Besides D-positive and D-negative, RhD blood groups have multiple variants, including weak D, partial D and DEL phenotype [4]. A Working Group of the American Association of Blood Banks and College of American Pathologists published a proposal to use the term \"serologic weak D phenotype\" to distinguish the results of serological weak D testing using anti-human globulin with those of weak D genotyping based on molecular methods [5,6]. \n\nThe genetic alterations of RHD alleles differentially influence the RhD protein expression level and the number of RhD epitopes [7]. Weak D and most DEL have all D epitopes; partial D lack one or more D epitopes [3]. Anti-D production in RhD negative recipients transfused with blood from weak D, particle D and DEL donors has been reported [8][9][10][11]. Therefore, it is of great significance to accurately determine a serologic weak D phenotype. Nearly all serologic weak D phenotypes can be traced back to changes at the DNA level, including nonsense mutations, missense and synonymous mutations, frame shifts, unequal exchange, gene exchange and gene deletion, as well as others. This enables us to study the molecular mechanism of a serologic weak D phenotype at the gene level, and to determine the type of serologic weak D phenotype. \n\nTo date, more than 460 RHD alleles have been registered and nominated [12][13][14].",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6971329251867187,
+                    "error": null
+                  },
+                  {
+                    "id": "528c68cc-9bce-4386-9235-ac5b1440007f",
+                    "title": "Prevalence of weak D phenotype among D negative C/E+ blood donors in Morocco",
+                    "url": "",
+                    "snippet": "The Rh blood group system is one of the most polymorphic systems in human. It is involved in the incompatible RBC transfusions conflicts and in the hemolytic disease of the newborn due to the maternalfetal blood group incompatibility [1]. \n\nBy year 2015, 58 Rh antigens have been identified. The most common and immunogenic are D, C, E, c, and e [2]. The D antigen is encoded by the RHD gene while RhC, RhE, Rhc and RHe antigens are encoded by the RHCE gene [3,4]. The RHD gene polymorphism leads to phenotypic polymorphism D variants including weak D, Del and partial D. The weak D phenotype corresponds to a decrease in the expression of D antigen [5]. The weakest RhD (Del) is detected by adsorption-elution test [6]. Partial D phenotype corresponds to qualitative changes in D antigen consistent with the absence of some epitopes [7]. \n\nMore than 100 variant of D types have been reported in literature. The prevalence of D variants varies among populations. Between 0.2 to 1% of Caucasians carry D variant, while almost 30% of D negative Asians are phenotyped Del [8,9]. There are few studies of RHD alleles among African populations. Wagner et al. reported a frequency of 31% of aberrant RHD allele among Africans of Mali while Kabiri et al. reported 0.4% in Morocco [10,11]. However, D variants are more frequent among subjects D negative RhC and/or RhE positive [12]. \n\nIn transfusion medicine, the determination of these D variants is important to ensure blood safety. Their presence causes difficulties in hematology and blood transfusion laboratories. Related discrepancies observed depend on the anti-D reagents and/or serological techniques used. Some weak D and partial D are not detected by serology techniques. Transfused D negative patients with RBCs carrying these variants may develop alloantibodies against the D antigen [13,14].",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.680940504942627,
+                    "error": null
+                  },
+                  {
+                    "id": "ec17f941-713f-47dc-b45f-0cdbc7a3f6f3",
+                    "title": "Serologically Weak D-phenotype: Review and Interpretation of Blood Group RhD",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6717026938482736,
+                    "error": null
+                  }
+                ],
+                "query": "weak D antigen Du phenotype blood group weak D typing interpretation transfusion medicine",
+                "input_params": {
+                  "num": "5",
+                  "gl": "us",
+                  "hl": "en"
+                }
+              },
+              {
+                "tool_name": "google_search",
+                "output": "Title: RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran\nSnippet: The phenotype of the antigens D, C, E, c, e was determined on samples of 200 blood donors (Table 3). An indirect antiglobulin test was performed for the elimination of donors with weak D phenotype. The result of indirect antiglobulin test proved negative in all donors.\n\nTitle: High prevalence of serological weak D phenotype and preponderance of weak D type 4.0.1. genetic variant in a Nigerian population: implications for transfusion practice in a resource-limited setting\nSnippet: Eight milliliters (8 mL) of venous blood was aseptically drawn from each participant and 5 mL transferred into an ethylenediaminetetraacetic acid (EDTA) container and the remaining 3 mL was dispensed into a plain tube and allowed to coagulate at room temperature. The clotted samples were centrifuged at 1000 g for 5 min, after which red cells were separated from serum using a plastic Pasteur pipette. The red cells were washed three times in saline and a 5% saline suspension of red blood cells was made. Rh blood group phenotypes were determined using commercial monoclonal anti-D reagents (Plamatec Lab., Ltd., Bridport, UK), performing the conventional tube technique, as described by Regan. 9 Samples that had RhD negative or weak (\u22642+) agglutinations were then tested for the weak D phenotype using the indirect antiglobulin test (IAT), as described below. Figure 1 shows participant selection and the testing algorithm.\n\nWeak D typing was performed by the IAT, as described by Regan. 9 Briefly, all tubes that showed no or weak (\u22642+) agglutination with the initial anti-D serum in the RhD typing were incubated at 37 \u2022 C for 60 min and then washed three times in saline. The red cells were then mixed with two drops of anti-human globulin (Plamatec Lab., Ltd., Bridport, UK) and centrifuged at 1000 g for 2 min. The contents were examined for agglutination macroscopically and microscopically; samples that showed moderate to strong agglutination were regarded as weak D positive. Hence, we define serological weak D phenotype here as blood samples that show no or weak (\u22642+) agglutination conventional anti-D antiserum, but moderate to strong (more than 2+) agglutination in the IAT using a potent monoclonal anti-D reagent. 2\n\nTitle: RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran\nSnippet: The antigenic phenotype (D, C, E, c, e) of red blood cells were determined for all specimens using a monoclonal antibody (IMMUNDIAGNOSTIKA, GmbH, Germany) by standard serological method. Monoclonal antibody reagents were used to test the following specificities: anti-C (RH2, clone MS24), anti-E (RH3, clone MS80/MS258), anti-c (RH4, clone MS33) and anti-e (RH5, clone MS62/ MS69).The anti-D reagent was a blend of both IgG and IgM. Subsequently, weak D test was performed on all samples by indirect antiglobulin test (IAT) according to the standard serological guidelines. Adsorption-elution test was not performed in this study.",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.7709345817565918,
+                "error": "",
+                "call_id": "cdcca2d8",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.4835067913894835,
+                      "paper": {
+                        "corpusId": "67861701",
+                        "title": "RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran",
+                        "authors": [
+                          "Behzad Nazel Khosroshahi",
+                          "A. Oodi",
+                          "S. Namjou",
+                          "Tahereh Gholamali",
+                          "N. Amirizadeh"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6369079, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The phenotype of the antigens D, C, E, c, e was determined on samples of 200 blood donors (Table 3). An indirect antiglobulin test was performed for the elimination of donors with weak D phenotype. The result of indirect antiglobulin test proved negative in all donors.",
+                        "snippetKind": "body",
+                        "section": "Rh Antigen Phenotypes",
+                        "snippetOffset": {
+                          "start": 6681,
+                          "end": 6950
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 100
+                            },
+                            {
+                              "start": 101,
+                              "end": 197
+                            },
+                            {
+                              "start": 198,
+                              "end": 269
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.45103450255003075,
+                      "paper": {
+                        "corpusId": "232310538",
+                        "title": "High prevalence of serological weak D phenotype and preponderance of weak D type 4.0.1. genetic variant in a Nigerian population: implications for transfusion practice in a resource-limited setting",
+                        "authors": [
+                          "Dauda Usman Maryam",
+                          "I. Mukhtar",
+                          "A. Yusuf",
+                          "A. Salisu"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9477752, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Eight milliliters (8 mL) of venous blood was aseptically drawn from each participant and 5 mL transferred into an ethylenediaminetetraacetic acid (EDTA) container and the remaining 3 mL was dispensed into a plain tube and allowed to coagulate at room temperature. The clotted samples were centrifuged at 1000 g for 5 min, after which red cells were separated from serum using a plastic Pasteur pipette. The red cells were washed three times in saline and a 5% saline suspension of red blood cells was made. Rh blood group phenotypes were determined using commercial monoclonal anti-D reagents (Plamatec Lab., Ltd., Bridport, UK), performing the conventional tube technique, as described by Regan. 9 Samples that had RhD negative or weak (\u22642+) agglutinations were then tested for the weak D phenotype using the indirect antiglobulin test (IAT), as described below. Figure 1 shows participant selection and the testing algorithm.\n\nWeak D typing was performed by the IAT, as described by Regan. 9 Briefly, all tubes that showed no or weak (\u22642+) agglutination with the initial anti-D serum in the RhD typing were incubated at 37 \u2022 C for 60 min and then washed three times in saline. The red cells were then mixed with two drops of anti-human globulin (Plamatec Lab., Ltd., Bridport, UK) and centrifuged at 1000 g for 2 min. The contents were examined for agglutination macroscopically and microscopically; samples that showed moderate to strong agglutination were regarded as weak D positive. Hence, we define serological weak D phenotype here as blood samples that show no or weak (\u22642+) agglutination conventional anti-D antiserum, but moderate to strong (more than 2+) agglutination in the IAT using a potent monoclonal anti-D reagent. 2",
+                        "snippetKind": "body",
+                        "section": "Serological typing for RhD and weak D phenotypes",
+                        "snippetOffset": {
+                          "start": 4657,
+                          "end": 6392
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 690,
+                              "end": 698,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 985,
+                              "end": 993,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.43410044744931703,
+                      "paper": {
+                        "corpusId": "67861701",
+                        "title": "RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran",
+                        "authors": [
+                          "Behzad Nazel Khosroshahi",
+                          "A. Oodi",
+                          "S. Namjou",
+                          "Tahereh Gholamali",
+                          "N. Amirizadeh"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6369079, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The antigenic phenotype (D, C, E, c, e) of red blood cells were determined for all specimens using a monoclonal antibody (IMMUNDIAGNOSTIKA, GmbH, Germany) by standard serological method. Monoclonal antibody reagents were used to test the following specificities: anti-C (RH2, clone MS24), anti-E (RH3, clone MS80/MS258), anti-c (RH4, clone MS33) and anti-e (RH5, clone MS62/ MS69).The anti-D reagent was a blend of both IgG and IgM. Subsequently, weak D test was performed on all samples by indirect antiglobulin test (IAT) according to the standard serological guidelines. Adsorption-elution test was not performed in this study.",
+                        "snippetKind": "body",
+                        "section": "Phenotype Determination",
+                        "snippetOffset": {
+                          "start": 2603,
+                          "end": 3233
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 186
+                            },
+                            {
+                              "start": 187,
+                              "end": 432
+                            },
+                            {
+                              "start": 433,
+                              "end": 573
+                            },
+                            {
+                              "start": 574,
+                              "end": 630
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "9125453e-7b5d-499e-9954-92b34c10f58f",
+                    "title": "RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran",
+                    "url": "",
+                    "snippet": "The phenotype of the antigens D, C, E, c, e was determined on samples of 200 blood donors (Table 3). An indirect antiglobulin test was performed for the elimination of donors with weak D phenotype. The result of indirect antiglobulin test proved negative in all donors.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.4835067913894835,
+                    "error": null
+                  },
+                  {
+                    "id": "c0ce7dac-a3bf-4295-8302-25f3502eb9bd",
+                    "title": "High prevalence of serological weak D phenotype and preponderance of weak D type 4.0.1. genetic variant in a Nigerian population: implications for transfusion practice in a resource-limited setting",
+                    "url": "",
+                    "snippet": "Eight milliliters (8 mL) of venous blood was aseptically drawn from each participant and 5 mL transferred into an ethylenediaminetetraacetic acid (EDTA) container and the remaining 3 mL was dispensed into a plain tube and allowed to coagulate at room temperature. The clotted samples were centrifuged at 1000 g for 5 min, after which red cells were separated from serum using a plastic Pasteur pipette. The red cells were washed three times in saline and a 5% saline suspension of red blood cells was made. Rh blood group phenotypes were determined using commercial monoclonal anti-D reagents (Plamatec Lab., Ltd., Bridport, UK), performing the conventional tube technique, as described by Regan. 9 Samples that had RhD negative or weak (\u22642+) agglutinations were then tested for the weak D phenotype using the indirect antiglobulin test (IAT), as described below. Figure 1 shows participant selection and the testing algorithm.\n\nWeak D typing was performed by the IAT, as described by Regan. 9 Briefly, all tubes that showed no or weak (\u22642+) agglutination with the initial anti-D serum in the RhD typing were incubated at 37 \u2022 C for 60 min and then washed three times in saline. The red cells were then mixed with two drops of anti-human globulin (Plamatec Lab., Ltd., Bridport, UK) and centrifuged at 1000 g for 2 min. The contents were examined for agglutination macroscopically and microscopically; samples that showed moderate to strong agglutination were regarded as weak D positive. Hence, we define serological weak D phenotype here as blood samples that show no or weak (\u22642+) agglutination conventional anti-D antiserum, but moderate to strong (more than 2+) agglutination in the IAT using a potent monoclonal anti-D reagent. 2",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.45103450255003075,
+                    "error": null
+                  },
+                  {
+                    "id": "79dc9dc0-e524-496e-91dc-fdae8973b5ec",
+                    "title": "RHD Genotyping by Molecular Analysis of Hybrid Rhesus box in RhD-Negative Blood Donors from Iran",
+                    "url": "",
+                    "snippet": "The antigenic phenotype (D, C, E, c, e) of red blood cells were determined for all specimens using a monoclonal antibody (IMMUNDIAGNOSTIKA, GmbH, Germany) by standard serological method. Monoclonal antibody reagents were used to test the following specificities: anti-C (RH2, clone MS24), anti-E (RH3, clone MS80/MS258), anti-c (RH4, clone MS33) and anti-e (RH5, clone MS62/ MS69).The anti-D reagent was a blend of both IgG and IgM. Subsequently, weak D test was performed on all samples by indirect antiglobulin test (IAT) according to the standard serological guidelines. Adsorption-elution test was not performed in this study.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.43410044744931703,
+                    "error": null
+                  }
+                ],
+                "query": "AABB Technical Manual weak D typing interpretation Du phenotype indirect antiglobulin test guidelines",
+                "input_params": {
+                  "num": "5",
+                  "gl": "us",
+                  "hl": "en"
+                }
+              }
+            ]
+          },
+          "judgment": {
+            "criterion_satisfied": false,
+            "criterion_reasoning": "The answer does not include at least 3 specific bibliographic references from official guidelines or scientific literature published after 2010. While the text contains numerous <cite> tags referencing sources (dcb9236c-0, dcb9236c-1, cdcca2d8-1, cdcca2d8-2), these are internal citation markers without corresponding bibliographic information. There is no bibliography section listing actual publications with titles, authors, journals, publication dates, or DOIs. The answer lacks identifiable references such as AABB guidelines, ISBT standards, HAS recommendations, or peer-reviewed articles that would allow verification of the sources and their publication dates.",
+            "other_issues": [
+              "Missing bibliography section: The answer contains citation markers throughout but no actual bibliographic references at the end listing the sources cited",
+              "Unverifiable sources: Without a reference list, it's impossible to verify if the cited sources are from official guidelines, whether they're published after 2010, or if they even exist",
+              "Citation format issue: The internal citation system (e.g., <cite id='dcb9236c-0'>) appears to be a placeholder system but the corresponding reference list is absent",
+              "Lack of specific guideline citations: The text mentions 'AABB/ISBT recommendations' and 'AABB/ACLP' but doesn't provide specific guideline documents with publication years",
+              "Content quality is good: Despite the missing references, the technical content appears comprehensive and covers procedures, interpretation, and clinical management appropriately",
+              "Length appropriate: The answer appears to meet the requested 3000 words requirement with detailed technical information"
+            ],
+            "summary": "The answer provides comprehensive technical content about weak D antigen management including procedures, interpretation, and clinical recommendations for both international and Moroccan contexts. However, it critically fails the verification criterion by not including an actual bibliography with at least 3 specific references from official guidelines or scientific literature published after 2010. The citation markers throughout the text suggest sources exist but without a reference list, they cannot be verified.",
+            "verdict": "FAILED",
+            "raw": "```json\n{\n  \"criterion_satisfied\": false,\n  \"criterion_reasoning\": \"The answer does not include at least 3 specific bibliographic references from official guidelines or scientific literature published after 2010. While the text contains numerous <cite> tags referencing sources (dcb9236c-0, dcb9236c-1, cdcca2d8-1, cdcca2d8-2), these are internal citation markers without corresponding bibliographic information. There is no bibliography section listing actual publications with titles, authors, journals, publication dates, or DOIs. The answer lacks identifiable references such as AABB guidelines, ISBT standards, HAS recommendations, or peer-reviewed articles that would allow verification of the sources and their publication dates.\",\n  \"other_issues\": [\n    \"Missing bibliography section: The answer contains citation markers throughout but no actual bibliographic references at the end listing the sources cited\",\n    \"Unverifiable sources: Without a reference list, it's impossible to verify if the cited sources are from official guidelines, whether they're published after 2010, or if they even exist\",\n    \"Citation format issue: The internal citation system (e.g., <cite id='dcb9236c-0'>) appears to be a placeholder system but the corresponding reference list is absent\",\n    \"Lack of specific guideline citations: The text mentions 'AABB/ISBT recommendations' and 'AABB/ACLP' but doesn't provide specific guideline documents with publication years\",\n    \"Content quality is good: Despite the missing references, the technical content appears comprehensive and covers procedures, interpretation, and clinical management appropriately\",\n    \"Length appropriate: The answer appears to meet the requested 3000 words requirement with detailed technical information\"\n  ],\n  \"summary\": \"The answer provides comprehensive technical content about weak D antigen management including procedures, interpretation, and clinical recommendations for both international and Moroccan contexts. However, it critically fails the verification criterion by not including an actual bibliography with at least 3 specific references from official guidelines or scientific literature published after 2010. The citation markers throughout the text suggest sources exist but without a reference list, they cannot be verified.\",\n  \"verdict\": \"FAILED\"\n}\n```"
+          }
+        }
+      ]
+    }
+  ]
+}

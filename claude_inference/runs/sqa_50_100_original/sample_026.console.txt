@@ -1,0 +1,11 @@
+Run ID: sample_026
+Logging every call to: runs/sqa_50_100_original/run-sample_026.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0367, 2 Claude calls) Donnes moi la Procedure et conduite a tenir devant le groupage sanguin d'un patient avec un antigene D faible  selon les dernieres Recommendations. Technique de determination d'un groupe sanguin D faible au laboratoire d'hematologie, Comment le biologiste doit interpreter un groupage D faible, au monde et au maroc  Commentaire a sortir avec le Resultat d'un groupage D faible.   en 3000 MOTS  avec des reference bébliographiques
+
+Total cost: $0.0367 (2 Claude calls, 9,489 input + 551 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_026.jsonl
+Final results written to: runs/sqa_50_100_original/sample_026.json

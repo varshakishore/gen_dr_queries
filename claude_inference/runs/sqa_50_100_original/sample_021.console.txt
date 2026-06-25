@@ -1,0 +1,11 @@
+Run ID: sample_021
+Logging every call to: runs/sqa_50_100_original/run-sample_021.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0184, 2 Claude calls) Has basal cell carcinoma been previously reported in association with nevus spilus? Are there mechanistic or histological links suggesting a causal relationship rather than coincidence?
+
+Total cost: $0.0184 (2 Claude calls, 3,105 input + 604 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_021.jsonl
+Final results written to: runs/sqa_50_100_original/sample_021.json

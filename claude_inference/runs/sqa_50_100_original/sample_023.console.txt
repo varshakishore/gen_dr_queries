@@ -1,0 +1,12 @@
+Run ID: sample_023
+Logging every call to: runs/sqa_50_100_original/run-sample_023.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0011, 1 Claude calls) I have worked on a project based on bioinformatics. It is an in-silico multiepitope vaccine. Now I want to predict discontinuous B-cells by the ellipro server.
+    error: Judging failed: list index out of range
+
+Total cost: $0.0011 (1 Claude calls, 136 input + 46 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_023.jsonl
+Final results written to: runs/sqa_50_100_original/sample_023.json

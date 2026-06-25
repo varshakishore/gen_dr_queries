@@ -1,0 +1,11 @@
+Run ID: sample_027
+Logging every call to: runs/sqa_50_100_original/run-sample_027.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0191, 2 Claude calls) NCT04421820
+
+Total cost: $0.0191 (2 Claude calls, 3,769 input + 520 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_027.jsonl
+Final results written to: runs/sqa_50_100_original/sample_027.json

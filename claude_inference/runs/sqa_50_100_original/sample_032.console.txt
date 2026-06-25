@@ -1,0 +1,11 @@
+Run ID: sample_032
+Logging every call to: runs/sqa_50_100_original/run-sample_032.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0211, 2 Claude calls) Global almond production has grown significantly in recent years. Currently, the area under cultivation has reached approximately 700,000 hectares, accounting for 31% of global tree nut production. (Guimarães et al., 2025)
+
+Total cost: $0.0211 (2 Claude calls, 4,085 input + 592 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_032.jsonl
+Final results written to: runs/sqa_50_100_original/sample_032.json
