@@ -1,0 +1,12 @@
+Run ID: sample_011
+Logging every call to: runs/sqa_50_100_original/run-sample_011.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (2 attempts, $0.0652, 5 Claude calls) motor imaginary
+    error: Judging failed: Expecting ',' delimiter: line 3 column 401 (char 434)
+
+Total cost: $0.0652 (5 Claude calls, 9,038 input + 2,463 output tokens, 3,754 cache reads)
+Run log written to: runs/sqa_50_100_original/run-sample_011.jsonl
+Final results written to: runs/sqa_50_100_original/sample_011.json

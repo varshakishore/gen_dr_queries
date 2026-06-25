@@ -1,0 +1,28 @@
+{
+  "run_id": "sample_005",
+  "model": "claude-sonnet-4-5",
+  "grand_total_cost": {
+    "input_tokens": 124,
+    "output_tokens": 50,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.001122,
+    "calls": 1
+  },
+  "results": [
+    {
+      "seed": "The search for effective dengue treatments has led to the exploration of natural compounds and novel drug delivery systems with immunomodulatory and antiviral properties",
+      "final_status": "ERROR",
+      "error": "Judging failed: list index out of range",
+      "cost": {
+        "input_tokens": 124,
+        "output_tokens": 50,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.001122,
+        "calls": 1
+      },
+      "attempts": []
+    }
+  ]
+}

@@ -55,6 +55,8 @@ def load_hf_seeds(args) -> list[str]:
         "allenai/asta-user-interactions", "optin_queries",
         split="train", streaming=True,
     )
+    start = getattr(args, "start", 0) or 0
+    need = (start + args.limit) if args.limit else None  # how many to collect before slicing
     seen: set[str] = set()
     out: list[str] = []
     for row in ds:
@@ -65,11 +67,12 @@ def load_hf_seeds(args) -> list[str]:
             continue
         seen.add(q)
         out.append(q)
-        if args.limit and len(out) >= args.limit:
+        if need and len(out) >= need:
             break
-    print(f"Loaded {len(out)} unique seed(s) from allenai/asta-user-interactions "
-          f"[optin_queries/train, tool=sqa]")
-    return out
+    sliced = out[start: (start + args.limit) if args.limit else None]
+    print(f"Loaded {len(sliced)} unique seed(s) from allenai/asta-user-interactions "
+          f"[optin_queries/train, tool=sqa, seeds {start}:{start + len(sliced)}]")
+    return sliced
 
 
 def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
@@ -90,6 +93,7 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         "--log-dir", str(out_dir),
         "--max-attempts", str(args.max_attempts),
         "--model", args.model,
+        "--prompt", args.prompt,
         "--server-url", args.server_url,
         "--quiet",                   # avoid interleaved per-attempt output across workers
     ]
@@ -149,8 +153,13 @@ def main():
     # HF dataset source (used when no explicit seeds / .txt file are given)
     p.add_argument("--limit", type=int, default=100,
                    help="Max seeds to pull from the HF dataset (default: 100; 0 = all).")
+    p.add_argument("--start", type=int, default=0,
+                   help="Skip the first N HF seeds before taking --limit "
+                        "(e.g. --start 50 --limit 50 = seeds 50-99).")
     p.add_argument("--max-attempts", type=int, default=5)
     p.add_argument("--model", default="claude-sonnet-4-5")
+    p.add_argument("--prompt", choices=["explore", "original"], default="explore",
+                   help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--server-url", default="http://localhost:8007/ask")
     p.add_argument("--python", default=sys.executable, help="Python interpreter for subprocesses.")
     p.add_argument("--no-skip-existing", dest="skip_existing", action="store_false",

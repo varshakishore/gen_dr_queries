@@ -615,6 +615,7 @@ def harder_question_gen(
     prior_attempts: list,
     logger: RunLogger,
     attempt: int,
+    harder_prompt: str = PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
 ) -> tuple[HarderQuestion, CostBucket]:
     user_content = f"Seed question: {seed}"
     if prior_attempts:
@@ -640,7 +641,7 @@ def harder_question_gen(
 
     messages = [{"role": "user", "content": user_content}]
     raw, bucket = _call_claude(
-        client, model=model, system=PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE, messages=messages,
+        client, model=model, system=harder_prompt, messages=messages,
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)
@@ -787,6 +788,7 @@ def process_seed(
     max_attempts: int = MAX_ATTEMPTS,
     verbose: bool = True,
     server_url: str = RESEARCH_SERVER_URL,
+    harder_prompt: str = PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
@@ -816,7 +818,8 @@ def process_seed(
             else:
                 prior_harder = [a for a in result.attempts if a.attempt > 0]
                 harder, bucket = harder_question_gen(
-                    client, model, seed, prior_harder, logger, attempt
+                    client, model, seed, prior_harder, logger, attempt,
+                    harder_prompt=harder_prompt,
                 )
                 result.cost.add(bucket)
         except Exception as e:
@@ -958,7 +961,16 @@ def main():
         "--server-url", default=RESEARCH_SERVER_URL,
         help=f"Research server endpoint (default: {RESEARCH_SERVER_URL}).",
     )
+    parser.add_argument(
+        "--prompt", choices=["explore", "original"], default="explore",
+        help="Which make-harder system prompt to use (default: explore). "
+             "'explore' forbids reusing the example strategies; 'original' keeps the "
+             "in-context strategy menu.",
+    )
     args = parser.parse_args()
+
+    harder_prompt = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
+                     else PROMPT_TO_MAKE_HARDER_QUESTION)
 
     seeds = list(args.seeds)
     if args.seeds_file:
@@ -987,7 +999,7 @@ def main():
         result = process_seed(
             client, args.model, seed, logger,
             max_attempts=args.max_attempts, verbose=not args.quiet,
-            server_url=args.server_url,
+            server_url=args.server_url, harder_prompt=harder_prompt,
         )
         all_results.append(result)
         grand_total.add(result.cost)

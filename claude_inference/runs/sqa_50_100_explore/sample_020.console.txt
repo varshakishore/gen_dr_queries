@@ -1,0 +1,11 @@
+Run ID: sample_020
+Logging every call to: runs/sqa_50_100_explore/run-sample_020.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0235, 2 Claude calls) Study of nonlinear optical properties  of cobalt-doped nickel at different concentrations
+
+Total cost: $0.0235 (2 Claude calls, 4,696 input + 630 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_020.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_020.json

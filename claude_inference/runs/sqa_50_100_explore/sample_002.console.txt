@@ -1,0 +1,11 @@
+Run ID: sample_002
+Logging every call to: runs/sqa_50_100_explore/run-sample_002.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0246, 2 Claude calls) Questionnaire, scale, tools For Intentional University
+
+Total cost: $0.0246 (2 Claude calls, 5,130 input + 616 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_002.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_002.json

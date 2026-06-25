@@ -1,0 +1,12 @@
+Run ID: sample_023
+Logging every call to: runs/sqa_50_100_explore/run-sample_023.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (1 attempts, $0.0265, 2 Claude calls) I have worked on a project based on bioinformatics. It is an in-silico multiepitope vaccine. Now I want to predict discontinuous B-cells by the ellipro server.
+    error: Making harder question failed: list index out of range
+
+Total cost: $0.0265 (2 Claude calls, 6,219 input + 522 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_023.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_023.json

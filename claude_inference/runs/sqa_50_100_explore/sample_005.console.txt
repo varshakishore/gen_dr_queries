@@ -1,0 +1,12 @@
+Run ID: sample_005
+Logging every call to: runs/sqa_50_100_explore/run-sample_005.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0011, 1 Claude calls) The search for effective dengue treatments has led to the exploration of natural compounds and novel drug delivery systems with immunomodulatory and antiviral properties
+    error: Judging failed: list index out of range
+
+Total cost: $0.0011 (1 Claude calls, 124 input + 50 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_005.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_005.json

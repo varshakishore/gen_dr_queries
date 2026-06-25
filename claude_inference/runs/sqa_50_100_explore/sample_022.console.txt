@@ -1,0 +1,12 @@
+Run ID: sample_022
+Logging every call to: runs/sqa_50_100_explore/run-sample_022.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR         ] (0 attempts, $0.0015, 1 Claude calls) Is it  reasonable to state that  theta-gamma coupling is related to coordination between the Executive Control Network RSN and the Limbic RSN that serves to establish and maintain cognitive maps and to place representations of items of attention within those maps?
+    error: Judging failed: Expecting ',' delimiter: line 3 column 844 (char 876)
+
+Total cost: $0.0015 (1 Claude calls, 143 input + 70 output tokens)
+Run log written to: runs/sqa_50_100_explore/run-sample_022.jsonl
+Final results written to: runs/sqa_50_100_explore/sample_022.json

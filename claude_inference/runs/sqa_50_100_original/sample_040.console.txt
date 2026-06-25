@@ -1,0 +1,11 @@
+Run ID: sample_040
+Logging every call to: runs/sqa_50_100_original/run-sample_040.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0176, 2 Claude calls) but i need articoli in italiano
+
+Total cost: $0.0176 (2 Claude calls, 3,379 input + 499 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_040.jsonl
+Final results written to: runs/sqa_50_100_original/sample_040.json

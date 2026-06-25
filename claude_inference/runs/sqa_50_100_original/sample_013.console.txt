@@ -1,0 +1,11 @@
+Run ID: sample_013
+Logging every call to: runs/sqa_50_100_original/run-sample_013.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0197, 2 Claude calls) impact of thriving at work on innovative work behavior
+
+Total cost: $0.0197 (2 Claude calls, 3,362 input + 642 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_013.jsonl
+Final results written to: runs/sqa_50_100_original/sample_013.json

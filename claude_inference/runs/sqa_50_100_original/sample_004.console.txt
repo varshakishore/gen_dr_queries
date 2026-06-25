@@ -1,0 +1,11 @@
+Run ID: sample_004
+Logging every call to: runs/sqa_50_100_original/run-sample_004.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0422, 2 Claude calls) பாடசாலை மாணவர்களின் ஒழுக்கம்
+
+Total cost: $0.0422 (2 Claude calls, 11,158 input + 583 output tokens)
+Run log written to: runs/sqa_50_100_original/run-sample_004.jsonl
+Final results written to: runs/sqa_50_100_original/sample_004.json
