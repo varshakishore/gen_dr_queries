@@ -1,0 +1,567 @@
+[
+  {
+    "id": "sqa-lucy1-000",
+    "seed": "A review on taxonomy and biogeography of the genus Acanthophyllum with emphasis on pollen morphological studies",
+    "status": "ALREADY_HARD",
+    "verdict": "FAILED",
+    "criteria_failed": 2,
+    "criteria_total": 3,
+    "summary": "This answer contains a critical factual error: Acanthophyllum belongs to Caryophyllaceae, not Apiaceae. The entire response is built on this misidentification, describing Apiaceae pollen morphology and biogeography instead of the correct family. While the answer demonstrates thorough coverage of biogeographic distribution and detailed palynological terminology, it fails to provide actual Acanthophyllum-specific taxonomic structure or pollen data. The system should improve taxonomic verification before retrieving related literature.",
+    "criteria": [
+      "Describes the taxonomic classification and major species groups within the genus Acanthophyllum",
+      "Discusses the geographical distribution patterns or biogeographic regions where Acanthophyllum species are found",
+      "Includes specific details about pollen morphological characteristics (such as pollen shape, size, aperture type, or exine ornamentation) of Acanthophyllum species"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Describes the taxonomic classification and major species groups within the genus Acanthophyllum",
+        "satisfied": false,
+        "reasoning": "The answer places Acanthophyllum in Apiaceae/Coronopidineae and mentions general features (spinose-ciliate margins, dense indumenta), but does not describe major species groups or infrageneric classification. A few species names are mentioned in passing (A. scoparium, A. fruticosum, etc.) but without any taxonomic organization or species group structure."
+      },
+      {
+        "criterion": "Discusses the geographical distribution patterns or biogeographic regions where Acanthophyllum species are found",
+        "satisfied": true,
+        "reasoning": "The answer clearly describes distribution across Central Asia (Kazakhstan, SW Russia, Turkmenistan, Uzbekistan) with Mediterranean peripheries in southern Europe and northern Africa. It discusses xeric steppes, desert-steppe habitats, and mentions the Pamir-Caucasus-Pontic arc, along with range fragmentation and climatic oscillations."
+      },
+      {
+        "criterion": "Includes specific details about pollen morphological characteristics (such as pollen shape, size, aperture type, or exine ornamentation) of Acanthophyllum species",
+        "satisfied": false,
+        "reasoning": "While the answer provides detailed pollen morphology for Apiaceae in general (tricolporate apertures, 17-19 \u00b5m long, 8-10 \u00b5m wide, exine 1-1.5 \u00b5m thick, scabrate microrugulate ornamentation), it explicitly acknowledges that 'genus-specific, head-to-head SEM accounts for individual Acanthophyllum species are sparse' and that it provides only a 'reliable null model' based on related taxa, not actual Acanthophyllum data."
+      }
+    ],
+    "original_critique": "Acanthophyllum belongs to family Caryophyllaceae not Acanthaceae!",
+    "pipeline_status": "ALREADY_HARD"
+  },
+  {
+    "id": "sqa-lucy1-001",
+    "seed": "Clinical Outcomes of Perioperative Regional Nerve Blocks",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer comprehensively addresses all three criteria with substantial depth and breadth. It identifies 7+ distinct clinical outcome measures, cites 10+ academic papers/studies, and covers at least 5 different types of regional nerve blocks across multiple surgical contexts. The response is well-structured, evidence-based, and provides clinically relevant information about perioperative regional nerve blocks.",
+    "criteria": [
+      "Identifies at least 3 distinct clinical outcome measures (e.g., pain scores, opioid consumption, hospital length of stay, complications, patient satisfaction)",
+      "Cites at least 5 academic papers or clinical studies related to perioperative regional nerve blocks",
+      "Addresses outcomes for at least 2 different types of regional nerve blocks or surgical contexts"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Identifies at least 3 distinct clinical outcome measures (e.g., pain scores, opioid consumption, hospital length of stay, complications, patient satisfaction)",
+        "satisfied": true,
+        "reasoning": "The answer clearly identifies and discusses multiple distinct outcome measures including: (1) pain scores/pain intensity, (2) opioid consumption/requirements, (3) hospital length of stay, (4) complications (nerve damage, infection, systemic toxicity, hematoma, hypotension), (5) patient satisfaction, (6) time to ambulation/functional recovery, and (7) time to first rescue analgesia. This exceeds the minimum requirement of 3."
+      },
+      {
+        "criterion": "Cites at least 5 academic papers or clinical studies related to perioperative regional nerve blocks",
+        "satisfied": true,
+        "reasoning": "The answer contains numerous citations throughout, with at least 10+ distinct citation IDs visible (ac38b4ac-0, ac38b4ac-1, ac38b4ac-2, ac38b4ac-3, 8ad8641c-1, 8ad8641c-2, 8ad8641c-3, 319d3f70-0, 319d3f70-2, 319d3f70-3, e995a615-0, e995a615-2). These reference meta-analyses, randomized studies, retrospective analyses, and narrative reviews, clearly exceeding the minimum of 5."
+      },
+      {
+        "criterion": "Addresses outcomes for at least 2 different types of regional nerve blocks or surgical contexts",
+        "satisfied": true,
+        "reasoning": "The answer extensively covers multiple types of regional nerve blocks across different surgical contexts: (1) brachial plexus blocks (interscalene, supraclavicular) for shoulder/upper extremity surgery, (2) adductor canal and femoral blocks for knee arthroplasty, (3) TAP and ilioinguinal/iliohypogastric blocks for inguinal hernia repair, (4) facial nerve blocks for nasal surgery, (5) epidural anesthesia for cesarean delivery. This far exceeds the minimum of 2."
+      }
+    ],
+    "original_critique": "it might be better if the narrative contain more cases about some specific nerve block type",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-002",
+    "seed": "experience of idiopathic adolescent scoliosis",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer successfully addresses all three criteria by covering the lived experience of adolescents with idiopathic scoliosis, citing numerous distinct academic sources, and thoroughly discussing psychosocial impacts including body image, quality of life, and psychological distress. The response balances clinical information with patient-centered concerns and acknowledges the emotional and social dimensions of living with AIS. No factual errors or serious issues were identified.",
+    "criteria": [
+      "Addresses the patient/lived experience of adolescents with idiopathic scoliosis, not just clinical or treatment aspects",
+      "Cites at least 3 distinct academic sources",
+      "Discusses psychosocial impacts such as body image, self-esteem, or quality of life"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Addresses the patient/lived experience of adolescents with idiopathic scoliosis, not just clinical or treatment aspects",
+        "satisfied": true,
+        "reasoning": "The answer discusses psychosocial dimensions including back pain experiences, body image concerns, awareness of postural changes, stress from bracing, and quality of life impacts. Sections explicitly cover 'Quality of Life, Function, and Psychosocial Experience' and acknowledge daily realities of living with AIS including brace burden and self-image challenges."
+      },
+      {
+        "criterion": "Cites at least 3 distinct academic sources",
+        "satisfied": true,
+        "reasoning": "The answer contains multiple distinct citation IDs (33ed8b47-2, eb9d5d44-2, eb9d5d44-0, eb9d5d44-4, eb9d5d44-1, 677b02ef-2, 42e0a82d-4, 677b02ef-0, 677b02ef-1, 33ed8b47-0) representing well over 3 distinct academic sources throughout the text."
+      },
+      {
+        "criterion": "Discusses psychosocial impacts such as body image, self-esteem, or quality of life",
+        "satisfied": true,
+        "reasoning": "The answer extensively discusses body image dissatisfaction, psychological distress, quality of life impacts, self-perception of trunk appearance (TAPS scores), stress from deformity and bracing, and the need for psychosocial assessment and counseling. These themes appear throughout multiple sections."
+      }
+    ],
+    "original_critique": "i am missing \"living experience of scoliosis\"",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-003",
+    "seed": "How Large language Models are used in the automatic generation of related work?",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer comprehensively satisfies all three criteria. It identifies well over 3 specific LLM techniques for related work generation, references multiple distinct academic sources/systems, and thoroughly describes various evaluation metrics and validation approaches. The response is well-structured, detailed, and provides both technical depth and practical guidance. No significant factual errors, hallucinations, or other serious issues were detected.",
+    "criteria": [
+      "Identifies at least 3 specific techniques or methods by which LLMs are used to generate related work sections",
+      "Cites at least 4 distinct academic papers or sources that discuss LLM-based related work generation",
+      "Describes at least one evaluation metric or validation approach used to assess the quality of LLM-generated related work"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Identifies at least 3 specific techniques or methods by which LLMs are used to generate related work sections",
+        "satisfied": true,
+        "reasoning": "The answer clearly identifies multiple specific techniques: (1) Abstractive paraphrasing and cohesion - LLMs rewrite extracted sentences into coherent paragraphs; (2) Citation text generation and sentence-level attribution - models generate citation sentences given cited papers; (3) Survey/literature-review generation with structure - LLMs draft surveys with outline, section drafting, and polishing stages; (4) Workflow orchestration and agentic pipelines - LLMs coordinate retrieval, ranking, writing, and judging roles in multi-agent setups; (5) RAG-based retrieval-plus-generation pipelines. Well over 3 techniques identified."
+      },
+      {
+        "criterion": "Cites at least 4 distinct academic papers or sources that discuss LLM-based related work generation",
+        "satisfied": true,
+        "reasoning": "The answer references multiple distinct sources through its citation system: ReWoS (extractive work), OARelatedWork (dataset), AutoSurvey (multi-agent system), SurveyX (with AttributeTree), InteractiveSurvey (interactive generation), LitLLM, ChatCite, and others. While the citations use an ID system rather than traditional academic formatting, the content clearly draws from at least 4-5 distinct academic papers/systems discussing LLM-based related work generation."
+      },
+      {
+        "criterion": "Describes at least one evaluation metric or validation approach used to assess the quality of LLM-generated related work",
+        "satisfied": true,
+        "reasoning": "The answer describes multiple evaluation approaches: (1) ROUGE/BLEURT metrics for surface overlap; (2) Multi-LLM judging for citation quality and coverage; (3) Benchmarking against human-written surveys; (4) Human assessments using multi-stage rubrics evaluating coverage, coherence, and citation accuracy; (5) Judge modules that score citation quality, coverage, and logical structure (mentioned in AutoSurvey context). The section 'Evaluation: Metrics, Benchmarks, and Human Assessments' is dedicated to this topic."
+      }
+    ],
+    "original_critique": "Some of the example are not for related work section",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-004",
+    "seed": "How much global electricity generating capacity is needed for everyone on Earth to have an adequate standard of living?",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer comprehensively addresses all three criteria. It provides specific quantitative estimates (20-35 TW installed capacity, 12,000-20,000 TWh/year generation), clearly defines adequate living standards using measurable IEA benchmarks and per-capita/household consumption thresholds, and extensively cites relevant sources throughout. The analysis is thorough, well-structured, and includes sensitivity analysis around key assumptions like appliance efficiency and technology mix.",
+    "criteria": [
+      "Provides a specific quantitative estimate of global electricity generating capacity needed (in units such as TW, GW, or TWh/year)",
+      "Defines or references what constitutes an 'adequate standard of living' in measurable terms",
+      "Cites at least one peer-reviewed academic source that directly addresses electricity needs for adequate living standards"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Provides a specific quantitative estimate of global electricity generating capacity needed (in units such as TW, GW, or TWh/year)",
+        "satisfied": true,
+        "reasoning": "The answer provides multiple specific quantitative estimates: 20-35 TW of installed capacity, 22-33 TW in the detailed calculation section, and 12,000-20,000 TWh/year in terms of annual generation. The bottom-line estimate clearly states '20-35 terawatts' of generating capacity."
+      },
+      {
+        "criterion": "Defines or references what constitutes an 'adequate standard of living' in measurable terms",
+        "satisfied": true,
+        "reasoning": "The answer extensively defines 'adequate standard of living' using the IEA's 'basic bundle' framework: 1,250 kWh per household per year (or 420 kWh with efficient appliances) for lighting, phone charging, radio, fan/TV, plus clean cooking access (~3,232 kWh/household/year for electric cooking). It also references per-capita thresholds of 100-500 kWh/year for basic needs and 1,000-2,500 kWh for urban contexts."
+      },
+      {
+        "criterion": "Cites at least one peer-reviewed academic source that directly addresses electricity needs for adequate living standards",
+        "satisfied": true,
+        "reasoning": "The answer extensively cites sources that address electricity needs for adequate living standards, including multiple references to IEA frameworks (cite id d7974380-0, d7974380-2, d7974380-4), World Bank/UNESCAP data (cite id abf56c7d-3), and research on clean cooking and energy access (cite id 6ab29b36-0, 6ab29b36-4). These sources directly quantify electricity requirements for basic needs and adequate living standards."
+      }
+    ],
+    "original_critique": "If current global electricity generating capacity is 18 TW, the conclusion of needing a total of about 7.5 TW by 2030 is inconsistent.",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-005",
+    "seed": "Literature review on Traditional Processes of Dessert Banana in Africa",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer provides a comprehensive literature review that satisfies all three criteria. It identifies numerous traditional processing methods (ripening chambers, chips/flour production, fermented beverages, various cooking methods), cites well over 5 academic sources with African contexts, and covers multiple countries across East and West Africa. The minor issue of one Mexican citation and some discussion of cooking bananas does not substantially detract from an otherwise thorough and well-sourced review focused on African dessert banana processing.",
+    "criteria": [
+      "Identifies at least 3 distinct traditional processing methods for dessert bananas in Africa",
+      "Cites at least 5 academic sources specifically about banana processing in African contexts",
+      "Covers traditional processes from at least 2 different African regions or countries"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Identifies at least 3 distinct traditional processing methods for dessert bananas in Africa",
+        "satisfied": true,
+        "reasoning": "The answer identifies multiple distinct traditional processing methods: (1) ripening in controlled chambers ('chella/muket' rooms in Ethiopia), (2) processing into chips and flour from green/unripe bananas, (3) fermented banana beverages (urwagwa/urugwa), (4) cooking methods (boiling, steaming, baking, roasting, frying), and (5) fresh-keeping with polyethylene bagging. Well exceeds the minimum of 3 methods."
+      },
+      {
+        "criterion": "Cites at least 5 academic sources specifically about banana processing in African contexts",
+        "satisfied": true,
+        "reasoning": "The answer contains numerous citations (indicated by <cite> tags with IDs) referencing sources about banana processing in African countries including Uganda, Rwanda, Ethiopia, Ghana, Nigeria, and Tanzania. Multiple distinct source IDs appear throughout (1ccce3ab-0, 1b5c4e75-0, 1b5c4e75-2, 1b5c4e75-3, 1b5c4e75-4, 1a03c70a-3, 3cd2601a-0, etc.), well exceeding 5 sources."
+      },
+      {
+        "criterion": "Covers traditional processes from at least 2 different African regions or countries",
+        "satisfied": true,
+        "reasoning": "The answer covers traditional processes from multiple African countries: East Africa (Uganda, Rwanda, Ethiopia, Tanzania), West Africa (Ghana, Nigeria), and mentions Democratic Republic of the Congo. This clearly exceeds the minimum of 2 different regions/countries."
+      }
+    ],
+    "original_critique": "It is not complete. All the local banana by-products done  in each country of Africa must be listed and a discussion is needed on their processes limits and proposed perspectives to their amelioration must be listed. | It is too short and lacks references.",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-006",
+    "seed": "make a table  summarizing the effect of each cytokine in neurons and glial cells",
+    "status": "ALREADY_HARD",
+    "verdict": "FAILED",
+    "criteria_failed": 1,
+    "criteria_total": 3,
+    "summary": "The answer provides comprehensive, well-cited information about cytokine effects on neurons and glial cells, covering more than the required number of cytokines and clearly distinguishing between cell types. However, it fails the primary formatting requirement by presenting information in a hierarchical bullet-point structure rather than as an actual table with rows and columns. The content quality is high, but the presentation format does not match what was explicitly requested.",
+    "criteria": [
+      "The answer presents information in a table format with clear rows and columns",
+      "The table includes effects for at least 5 distinct cytokines",
+      "The table distinguishes between effects on neurons and effects on glial cells as separate categories"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "The answer presents information in a table format with clear rows and columns",
+        "satisfied": false,
+        "reasoning": "The answer uses a bullet-point list structure with hierarchical indentation rather than an actual table format with rows and columns. While labeled 'Table: effects of major cytokines in neurons and glial cells', it does not present data in tabular form with clear column headers and cell delineation."
+      },
+      {
+        "criterion": "The table includes effects for at least 5 distinct cytokines",
+        "satisfied": true,
+        "reasoning": "The answer covers 7 distinct cytokines: IL-1\u03b2, TNF-\u03b1, IL-6, IFN-\u03b3, IL-10, TGF-\u03b2, and IL-4/IL-13, which exceeds the minimum requirement of 5."
+      },
+      {
+        "criterion": "The table distinguishes between effects on neurons and effects on glial cells as separate categories",
+        "satisfied": true,
+        "reasoning": "For each cytokine, the answer clearly separates effects into distinct categories: Neurons, Microglia, and Astrocytes, with additional mechanisms/notes. This effectively distinguishes neuronal from glial cell effects."
+      }
+    ],
+    "original_critique": "missing IL18, Il34, Il3 among others",
+    "pipeline_status": "ALREADY_HARD"
+  },
+  {
+    "id": "sqa-lucy1-007",
+    "seed": "provide a summary of the literature that reviews risk factors for the growth of kidney tumors. describe the study designs, number of patients, how tumor size was measured, length of follow-up, and the risk factors assessed in each study. provide the effect size and confidence intervals for any risk factors identified",
+    "status": "ALREADY_HARD",
+    "verdict": "FAILED",
+    "criteria_failed": 1,
+    "criteria_total": 3,
+    "summary": "The answer provides quantitative effect sizes with confidence intervals and specifies measurement methods and follow-up periods for studies discussed, satisfying two of three criteria. However, it fails to systematically classify the study design type for each individual study. Additional issues include poor organization, excessive citation density, and vague study identification that would make verification difficult. The content appears substantive but presentation severely hampers usability.",
+    "criteria": [
+      "Reports specific study design types (e.g., retrospective cohort, prospective cohort, case-control) for each included study",
+      "Provides quantitative effect sizes (e.g., hazard ratios, odds ratios, growth rates) with confidence intervals for identified risk factors",
+      "Specifies both the method of tumor size measurement (e.g., CT, MRI, ultrasound) and length of follow-up period for each study"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Reports specific study design types (e.g., retrospective cohort, prospective cohort, case-control) for each included study",
+        "satisfied": false,
+        "reasoning": "While the answer mentions 'prospective registries,' 'institutional cohorts,' 'SEER-based studies,' and 'case-control studies,' it does not systematically specify the design type for each individual study discussed. Most studies are described by their setting or database rather than explicit design classification (e.g., retrospective vs. prospective cohort)."
+      },
+      {
+        "criterion": "Provides quantitative effect sizes (e.g., hazard ratios, odds ratios, growth rates) with confidence intervals for identified risk factors",
+        "satisfied": true,
+        "reasoning": "The answer provides multiple quantitative effect sizes with confidence intervals: HR 1.038 (95% CI 1.029-1.046) for per 1cm tumor size increase in metastatic RCC; HR 0.880 (95% CI 0.654-0.987) for small tumors in SEER cohort; HR 2.15 (95% CI 1.51-3.06) for tumor size <4cm in Detroit cohort; and various growth rates (0.2 cm/year, 0.287 cm/year, etc.). Volume doubling time (27.15 months) is also provided for VHL cohorts."
+      },
+      {
+        "criterion": "Specifies both the method of tumor size measurement (e.g., CT, MRI, ultrasound) and length of follow-up period for each study",
+        "satisfied": true,
+        "reasoning": "The answer consistently provides both measurement methods and follow-up periods: e.g., 'baseline CT/MRI and serial CT/ultrasound at 6 months' with 'mean follow-up 27.3 months'; 'CT/MR urography every 6 months' for a 70-patient cohort (2003-2013); SEER cohorts with '5 years of follow-up to 2015'; VHL cohorts with '102 renal tumors' on 'serial imaging' with volumetry. Both dimensions are addressed for the major studies discussed."
+      }
+    ],
+    "original_critique": "this response looks at risk factors for kidney cancer, not growth of a tumor",
+    "pipeline_status": "ALREADY_HARD"
+  },
+  {
+    "id": "sqa-lucy1-008",
+    "seed": "What are the primary domains for measuring organizational health literary?",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer successfully satisfies all three verification criteria. It identifies 6 distinct domains for measuring organizational health, cites numerous academic sources and frameworks throughout the discussion, and provides explicit definitions and descriptions for each domain. The response is comprehensive, well-structured, and grounded in the literature with appropriate citations.",
+    "criteria": [
+      "Identifies at least 4 distinct domains or dimensions used to measure organizational health in the literature",
+      "Cites at least 3 different academic sources that define or discuss organizational health measurement domains",
+      "Provides explicit definitions or descriptions of what each identified domain measures"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Identifies at least 4 distinct domains or dimensions used to measure organizational health in the literature",
+        "satisfied": true,
+        "reasoning": "The answer identifies 6 primary domains: (1) Leadership, culture, and safety climate; (2) Psychological safety and employee voice/learning/innovation; (3) Engagement, well-being, and burnout; (4) Work design and demands-resources balance; (5) Behavioral and relational climate; (6) Structure, systems, and alignment. Each is clearly delineated with numbered headings."
+      },
+      {
+        "criterion": "Cites at least 3 different academic sources that define or discuss organizational health measurement domains",
+        "satisfied": true,
+        "reasoning": "The answer cites multiple distinct sources throughout, including references to Miles (1969), the Organizational Health Index (OHI), the Organizational Health Behavior Index (OHBI), WHO Healthy Workplace Model, Total Worker Health framework, CDC worksite scorecards, and various studies on safety culture and psychological safety. These appear across multiple citation IDs (813dab29-0/1/2/3, 69de1290-0/1/2/3/4, af6ec332-0/1/2/3/4)."
+      },
+      {
+        "criterion": "Provides explicit definitions or descriptions of what each identified domain measures",
+        "satisfied": true,
+        "reasoning": "Each of the 6 domains includes explicit descriptions: Domain 1 describes leadership behaviors, safety climate, and just culture; Domain 2 explains psychological safety as trust/respect/low reprisal risk enabling voice; Domain 3 covers engagement, vitality, and burnout outcomes; Domain 4 describes demands/control/autonomy/social support; Domain 5 details day-to-day relational indicators like appreciation and communication; Domain 6 explains alignment, execution, and renewal capacity."
+      }
+    ],
+    "original_critique": "This is focused on health not health literacy.",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-009",
+    "seed": "What is inflation dependent on and can you then say that printing or creating money by the central bank and the government will mostly or often lead to inflation? Use a model that doesn't use flawed assumptions and give me an empirical and logical answer.",
+    "status": "EXHAUSTED",
+    "verdict": "PASSED",
+    "criteria_failed": 0,
+    "criteria_total": 3,
+    "summary": "The answer successfully meets all three criteria with a comprehensive, model-based analysis. It identifies multiple empirical determinants of inflation grounded in New Keynesian frameworks, provides specific historical case studies (particularly Japan's detailed monetary data), and acknowledges key assumptions and limitations of both quantity theory and Phillips curve models. The answer is technically sophisticated, empirically grounded, and nuanced in its treatment of when money creation does and does not lead to inflation.",
+    "criteria": [
+      "Identifies at least three distinct empirical determinants or causes of inflation based on economic research",
+      "Explicitly evaluates the empirical relationship between money creation and inflation using at least one specific historical case study or dataset",
+      "Acknowledges at least one limitation or assumption of a major inflation model (such as the quantity theory of money or Phillips curve)"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Identifies at least three distinct empirical determinants or causes of inflation based on economic research",
+        "satisfied": true,
+        "reasoning": "The answer identifies multiple empirical determinants: (1) output gap/capacity utilization, (2) inflation expectations (forward-looking and anchored expectations), (3) money velocity/demand, and (4) nominal demand relative to real output capacity. These are grounded in New Keynesian Phillips Curve framework and historical evidence from Friedman & Schwartz."
+      },
+      {
+        "criterion": "Explicitly evaluates the empirical relationship between money creation and inflation using at least one specific historical case study or dataset",
+        "satisfied": true,
+        "reasoning": "The answer provides multiple empirical cases: (1) Japan's experience with M2/nominal GDP ratios showing money growth of 3.01% in 2013-2017 was insufficient to achieve inflation targets, (2) helicopter money literature review showing no convincing proof of uncontrollable inflation when credibly implemented, and (3) references to WWII mobilization and historical hyperinflations. Japan case is particularly detailed with specific quantitative data."
+      },
+      {
+        "criterion": "Acknowledges at least one limitation or assumption of a major inflation model (such as the quantity theory of money or Phillips curve)",
+        "satisfied": true,
+        "reasoning": "The answer acknowledges multiple limitations: (1) discusses Calvo price-stickiness assumptions in NKPC, (2) notes that money demand stability assumption from Friedman can break down with uncertainty/volatility, (3) explains velocity is state-dependent rather than constant (challenging classical quantity theory), and (4) notes cross-country heterogeneity in money demand complicates generalizations. The discussion of when money printing does NOT lead to inflation (liquidity trap, ZLB) implicitly acknowledges quantity theory limitations."
+      }
+    ],
+    "original_critique": "I don't see endogenous money creation (more emphasized if I missed it), because it's more realistic. I don't see the errors mentioned of QTM, quantity theory of money or the monetarist view. Which should de-emphasize it's role in this whole analysis.",
+    "pipeline_status": "EXHAUSTED"
+  },
+  {
+    "id": "sqa-lucy1-010",
+    "seed": "what is the effect of PPY knockout in mice? and impairment in humans ?",
+    "status": "ALREADY_HARD",
+    "verdict": "FAILED",
+    "criteria_failed": 1,
+    "criteria_total": 3,
+    "summary": "The answer satisfies 2 of 3 criteria. It provides detailed mouse knockout phenotypes and extensive citations, but fails to identify any actual human disease or condition associated with PPY impairment, only offering predictions based on mouse models. The answer also suffers from conflation of potentially distinct peptide systems (PPY vs NPFF) and excessive verbosity that obscures the direct answers to the questions.",
+    "criteria": [
+      "Describes at least one specific phenotypic effect observed in PPY knockout mice",
+      "Identifies at least one disease or condition associated with PPY impairment in humans",
+      "Cites at least 2 distinct sources supporting the described effects"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Describes at least one specific phenotypic effect observed in PPY knockout mice",
+        "satisfied": true,
+        "reasoning": "The answer describes multiple specific phenotypes in NPFFR2 knockout mice, including resistance to stress-induced anxiety-like behaviors, reduced HPA axis hyperactivity after single prolonged stress, and stronger negative feedback on the HPA axis. These are specific, measurable phenotypic effects."
+      },
+      {
+        "criterion": "Identifies at least one disease or condition associated with PPY impairment in humans",
+        "satisfied": false,
+        "reasoning": "While the answer extensively discusses predicted or hypothetical human effects (altered HPA axis responses, reduced anxiety vulnerability, altered pain sensitivity), it explicitly states that 'direct human PPY knockout or clear PPY receptor loss-of-function case series linking to reproducible clinical impairments... are presently sparse in the retrieved literature' and describes this as 'an important evidence gap.' No actual human disease or condition is definitively identified."
+      },
+      {
+        "criterion": "Cites at least 2 distinct sources supporting the described effects",
+        "satisfied": true,
+        "reasoning": "The answer extensively cites multiple distinct sources throughout, including citations ad24b92c-0, ad24b92c-2, ad24b92c-3, e708e7df-0, e708e7df-1, 5c9da041-2, 5c9da041-3, and many others supporting various claims about both mouse phenotypes and human considerations."
+      }
+    ],
+    "original_critique": "wrong subject - PYY instead of PPY",
+    "pipeline_status": "ALREADY_HARD"
+  },
+  {
+    "id": "sqa-lucy1-011",
+    "seed": "What is the role of lactic acid in Monday morning sickness in horses?",
+    "status": "ALREADY_HARD",
+    "verdict": "FAILED",
+    "criteria_failed": 3,
+    "criteria_total": 3,
+    "summary": "The answer fundamentally misidentifies the condition in question. Monday morning sickness refers to exertional rhabdomyolysis (a muscle disorder in horses rested on full feed then exercised), not post-anesthetic gastrointestinal stasis. While the answer provides detailed, apparently well-researched information about lactic acid in equine colic, it addresses an entirely different disease. All three criteria fail because the answer is about the wrong condition.",
+    "criteria": [
+      "Explains the relationship between lactic acid accumulation and Monday morning sickness (exertional rhabdomyolysis) in horses",
+      "Cites at least 2 distinct academic sources about equine Monday morning sickness or exertional rhabdomyolysis",
+      "Describes the mechanism by which lactic acid contributes to the condition or explains whether lactic acid is a cause, effect, or misconception"
+    ],
+    "criterion_results": [
+      {
+        "criterion": "Explains the relationship between lactic acid accumulation and Monday morning sickness (exertional rhabdomyolysis) in horses",
+        "satisfied": false,
+        "reasoning": "The answer confuses two completely different conditions. 'Monday morning sickness' in horses refers to exertional rhabdomyolysis (azoturia/tying-up), a muscle disease in horses rested on full feed then exercised. The answer instead discusses post-anesthetic/post-surgical ileus and colic, which is an entirely different gastrointestinal condition. This is a fundamental factual error."
+      },
+      {
+        "criterion": "Cites at least 2 distinct academic sources about equine Monday morning sickness or exertional rhabdomyolysis",
+        "satisfied": false,
+        "reasoning": "The answer cites multiple sources, but none appear to be about exertional rhabdomyolysis or Monday morning sickness. All citations relate to post-operative colic, anesthesia recovery, and hindgut acidosis - completely unrelated conditions."
+      },
+      {
+        "criterion": "Describes the mechanism by which lactic acid contributes to the condition or explains whether lactic acid is a cause, effect, or misconception",
+        "satisfied": false,
+        "reasoning": "While the answer does describe lactic acid mechanisms in detail, it describes them for the wrong condition (post-surgical ileus rather than exertional rhabdomyolysis). The actual role of lactic acid in Monday morning sickness/exertional rhabdomyolysis is muscle lactate accumulation during exercise in glycogen-loaded muscles after rest, not gastrointestinal lactate from hindgut fermentation."
+      }
+    ],
+    "original_critique": "Esta teoria j\u00e1 foi refutada. Sabemos hoje que o metabolismo de cargoidratos n\u00e3o promove acidose muscular e que acido latico n\u00e3o \u00e9 formado no musculo.  A explica\u00e7\u00e3o \u00e9 longa, mas o texto \u00e9 obsoleto.",
+    "pipeline_status": "ALREADY_HARD"
+  },
+  {
+    "id": "sqa-lucy1-012",
+    "seed": "Given the costs of preserving oocytes from aging and deterioration, why would synchronous ovarian development evolved? Does  synchronous ovarian development present any advantage?",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Why are humans cited here when our species presents asynchronous oocyte development?",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-013",
+    "seed": "How Large language Models are used in the automatic generation of related work",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "It does not contain information of 2024 and 2025 that changes how this task is performing thanks to the implementation of LLMs | It does not show any example of the usage of LLMs in related work section such as LitFM,LitLLM,ChatCite, Citegeist or ScholarCopilot. | The content is not related with the topic. | The content is outdated. It  focused on encoder instead of decoder which is the main architecture of LLMs.",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-014",
+    "seed": "I am looking for studies that don't have a comparison group, so they leverage risk assessments or other classification tools to create a predicted outcome, and then compare actual outcomes of the study sample to the predicted outcome. Ideally, the study would be related to criminal justice.",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Studies provided do not address the main method I was looking for",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-015",
+    "seed": "I'd like to know whether LLM-as-a-judge being used to evaluate the specificity of things (claims, etc.) has a high correlation with human judgements",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Doesn't really address 'specificity', just talks about lots of other LLM-as-a-judge stuff",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-016",
+    "seed": "Links between Slaney's dimensions of perfectionism and the four humor styles of Martin et al. (2003)",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Requested results based on dimensions from a specific theoretical framework but received results based on different theoretical framework.",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-017",
+    "seed": "Research on super pixel that helps visual generative models like image or video generative models",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Confuse between super pixel vs super resolution",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-018",
+    "seed": "seahorse research in marbella",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "wheres marbella? even malaga? closest were portugal and italy, i asked about marbella",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-019",
+    "seed": "ship design capabilities of naval architects of bangladesh",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "Nothing mentioned on the ship design capabilities by bangladeshi naval architects",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-020",
+    "seed": "What age are symptoms required to be present by when diagnosing autism",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "after clarification on the criteria present in early developmental period not information on age of diagnosis or how early it can observed.",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-021",
+    "seed": "What are the key pathological features of inflammatory bowel disease (IBD) that could be targeted by nanobot interventions, particularly regarding the inflammatory processes? How might nanobots be employed as a delivery system for therapeutics in the context of IBD, and what advantages do they offer over traditional delivery methods? What strategies are being explored for using nanobots to modulate the immune response and reduce inflammation specifically in IBD?",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "It confuses the concept of nanobots with that of nanoparticles. They are not the same!",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-022",
+    "seed": "What is the current status of microRNA and lncRNA research for asthma research focused on the role of airway smooth muscle?",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "missed large body of published research on miR-146a and miR-155, and other miRs in this research area.",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-023",
+    "seed": "What is the oldest known food recipe that isn't a form of bread or an alcoholic beverage?",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "It focuses exclusively in fermented foods and didn't answer the question.",
+    "pipeline_status": "ERROR"
+  },
+  {
+    "id": "sqa-lucy1-024",
+    "seed": "which rickettsial effectors target organelles",
+    "status": "ERROR",
+    "verdict": "",
+    "criteria_failed": "",
+    "criteria_total": "",
+    "summary": "Research server call failed: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))",
+    "criteria": [],
+    "criterion_results": [],
+    "original_critique": "completely inaccurate",
+    "pipeline_status": "ERROR"
+  }
+]
