@@ -1,20 +1,43 @@
-"""Convert research_pipeline run output into the eval-tree input format.
+"""Convert claude_inference run output into EvalTree input for the DRChallenge dataset.
 
-Each run dir (e.g. runs/sqa_50_100_explore) holds sample_NNN.json files, each
-with a list of `results`; every result records the seed and a list of attempts.
-The final attempt is the one that determined `final_status`:
+The research pipeline writes, per sample, a `sample_NNN.json` file holding a list of
+`results`. Each result records a `seed` question and a list of `attempts`; each attempt
+carries the hardened question it posed (`harder.updated_question`, plus the attack
+`chosen_strategy` and `verification_criterion`) and the grader's `judgment.verdict`
+("PASSED" / "FAILED"). The final attempt is the one that determined `final_status`:
 
   * ALREADY_HARD  -> attempt 0 FAILED; seed used unmodified.
   * FAILED_FOUND  -> a rewritten (harder) attempt FAILED; the rewrite is "found".
-  * EXHAUSTED     -> no attempt ever failed; we keep the hardest (last) attempt.
+  * EXHAUSTED     -> no attempt ever failed; the hardest (last) attempt is kept.
   * ERROR         -> no usable attempt; skipped.
 
-For each kept result we emit:
-  { seed_question, updated_question, strategy, verification_criterion }
+This script assembles those runs into the three artifacts the EvalTree DRChallenge
+pipeline consumes (see Datasets/DRChallenge/README.md):
+
+  <out-dir>/dataset.json                          # one instance per graded question
+  <out-dir>/eval_results/real/<model>/results.json  # 0/1 per instance (1 = FAILED)
+  <out-dir>/splits/train-test.json                # [0 .. N-1]
+
+Each dataset instance is:
+  { seed_question, updated_question, strategy, verification_criterion, drtulu_verdict,
+    source_run }
+where `source_run` names the run folder the instance came from (so the combined dataset
+can be subsampled per run; EvalTree ignores the extra field). `results.json[i]` is 1
+when instance i's verdict is FAILED, else 0 (dataset order).
+
+By default every graded attempt across all runs becomes an instance (the deciding /
+"challenge" attempt of each result first, then the other attempts the agent also
+answered — mirroring the dataset's failing-then-passing ordering), deduplicated by
+`updated_question`. Use --deciding-only to keep just the one challenge question per
+result (the original behaviour), or --keep-run-duplicates to let the same question
+appear once per run it came from.
 
 Usage:
-    python to_eval_tree.py runs/sqa_50_100_explore runs/sqa_50_100_original
-    # writes <dir>_eval_tree.json next to each run dir
+    # Build a fresh DRChallenge dataset dir from any run outputs:
+    python to_eval_tree.py runs/sqa_50_100_explore runs/sqa_50_100_original \
+        --out-dir EvalTree/Datasets/DRChallenge
+
+    # A run path may be a run dir, a parent of run dirs, or a single sample_*.json.
 """
 
 import argparse
@@ -24,6 +47,7 @@ from pathlib import Path
 
 
 def strategy_label(status: str, chosen: str) -> str:
+    """Human-readable strategy for the *deciding* attempt of a result."""
     if status == "ALREADY_HARD":
         return "ALREADY_HARD (seed already hard; no rewrite)"
     if status == "EXHAUSTED":
@@ -32,47 +56,146 @@ def strategy_label(status: str, chosen: str) -> str:
     return chosen
 
 
-def result_to_entry(result: dict) -> dict | None:
-    status = result.get("final_status", "")
-    attempts = result.get("attempts", [])
-    if status == "ERROR" or not attempts:
+def verdict_of(attempt: dict) -> str | None:
+    """The grader's verdict for an attempt, or None if it wasn't (validly) graded."""
+    judgment = attempt.get("judgment")
+    if isinstance(judgment, dict):
+        verdict = judgment.get("verdict")
+        if verdict in ("PASSED", "FAILED"):
+            return verdict
+    return None
+
+
+def attempt_to_entry(result: dict, attempt: dict, is_deciding: bool) -> dict | None:
+    """Turn one graded attempt into a dataset instance, or None if unusable."""
+    verdict = verdict_of(attempt)
+    harder = attempt.get("harder", {})
+    updated = harder.get("updated_question", "")
+    if verdict is None or not updated:
         return None
-    # The attempt that set final_status is the last one recorded.
-    last = attempts[-1]
-    harder = last.get("harder", {})
+    if is_deciding:
+        strategy = strategy_label(result.get("final_status", ""), harder.get("chosen_strategy", ""))
+    else:
+        strategy = harder.get("chosen_strategy", "")
     return {
         "seed_question": result.get("seed", ""),
-        "updated_question": harder.get("updated_question", ""),
-        "strategy": strategy_label(status, harder.get("chosen_strategy", "")),
+        "updated_question": updated,
+        "strategy": strategy,
         "verification_criterion": harder.get("verification_criterion", ""),
+        "drtulu_verdict": verdict,
+        # Originating run folder, retained so the combined dataset can be
+        # subsampled per run (EvalTree ignores unknown fields).
+        "source_run": "",
     }
 
 
-def convert_dir(run_dir: Path) -> list[dict]:
-    entries = []
-    for sample_path in sorted(run_dir.glob("sample_*.json")):
-        data = json.loads(sample_path.read_text())
-        for result in data.get("results", []):
-            entry = result_to_entry(result)
-            if entry is not None:
-                entries.append(entry)
+def iter_sample_files(path: Path):
+    """Yield sample_*.json files under `path` (a file, run dir, or parent of run dirs)."""
+    if path.is_file():
+        yield path
+        return
+    if not path.is_dir():
+        print(f"[skip] not a file or directory: {path}", file=sys.stderr)
+        return
+    direct = sorted(path.glob("sample_*.json"))
+    if direct:
+        yield from direct
+    else:
+        # Treat `path` as a parent of run dirs and search one level deeper.
+        yield from sorted(path.glob("*/sample_*.json"))
+
+
+def load_results(sample_path: Path) -> list[dict]:
+    """Return the `results` list from a sample file (tolerant of a bare list top level)."""
+    data = json.loads(sample_path.read_text())
+    if isinstance(data, list):
+        return data
+    return data.get("results", [])
+
+
+def collect_entries(run_paths: list[Path], *, deciding_only: bool, keep_run_dups: bool) -> list[dict]:
+    """Assemble dataset instances from all runs, deciding attempts first, then deduped."""
+    deciding: list[dict] = []
+    other: list[dict] = []
+    for run_path in run_paths:
+        # A run's identity (for --keep-run-duplicates) is the dir holding its samples.
+        for sample_path in iter_sample_files(run_path):
+            run_key = str(sample_path.parent)
+            for result in load_results(sample_path):
+                if result.get("final_status") == "ERROR":
+                    continue
+                attempts = result.get("attempts", [])
+                if not attempts:
+                    continue
+                last_i = len(attempts) - 1
+                for i, attempt in enumerate(attempts):
+                    is_deciding = i == last_i
+                    if deciding_only and not is_deciding:
+                        continue
+                    entry = attempt_to_entry(result, attempt, is_deciding)
+                    if entry is None:
+                        continue
+                    entry["source_run"] = Path(run_key).name
+                    entry["_run_key"] = run_key
+                    (deciding if is_deciding else other).append(entry)
+
+    # Deciding/failing questions first, then the remaining attempts — mirrors the
+    # dataset's "selected questions, then intermediate passing cases" index order.
+    seen: set = set()
+    entries: list[dict] = []
+    for entry in deciding + other:
+        dedup_key = (entry["_run_key"], entry["updated_question"]) if keep_run_dups else entry["updated_question"]
+        if dedup_key in seen:
+            continue
+        seen.add(dedup_key)
+        entries.append({k: v for k, v in entry.items() if k != "_run_key"})
     return entries
 
 
+def write_dataset(out_dir: Path, entries: list[dict], model_name: str) -> None:
+    """Write dataset.json, results.json, and splits/train-test.json under out_dir."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "dataset.json").write_text(json.dumps(entries, indent=2, ensure_ascii=False))
+
+    results = [1 if e["drtulu_verdict"] == "FAILED" else 0 for e in entries]
+    results_dir = out_dir / "eval_results" / "real" / model_name
+    results_dir.mkdir(parents=True, exist_ok=True)
+    (results_dir / "results.json").write_text(json.dumps(results))
+
+    splits_dir = out_dir / "splits"
+    splits_dir.mkdir(parents=True, exist_ok=True)
+    (splits_dir / "train-test.json").write_text(json.dumps(list(range(len(entries)))))
+
+
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("run_dirs", nargs="+", help="run directories to convert")
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("run_paths", nargs="+", help="run dirs, parents of run dirs, or sample_*.json files")
+    ap.add_argument("--out-dir", required=True, type=Path,
+                    help="output dataset dir (e.g. EvalTree/Datasets/DRChallenge)")
+    ap.add_argument("--model-name", default="drtulu",
+                    help="agent name for eval_results/real/<model>/results.json (default: drtulu)")
+    ap.add_argument("--deciding-only", action="store_true",
+                    help="keep only the one challenge question per result (skip other attempts)")
+    ap.add_argument("--keep-run-duplicates", action="store_true",
+                    help="dedup per (run, question) instead of globally, keeping cross-run repeats")
     args = ap.parse_args()
 
-    for d in args.run_dirs:
-        run_dir = Path(d)
-        if not run_dir.is_dir():
-            print(f"[skip] not a directory: {run_dir}", file=sys.stderr)
-            continue
-        entries = convert_dir(run_dir)
-        out_path = run_dir.parent / f"{run_dir.name}_eval_tree.json"
-        out_path.write_text(json.dumps(entries, indent=2, ensure_ascii=False))
-        print(f"{run_dir.name}: wrote {len(entries)} entries -> {out_path}")
+    entries = collect_entries(
+        [Path(p) for p in args.run_paths],
+        deciding_only=args.deciding_only,
+        keep_run_dups=args.keep_run_duplicates,
+    )
+    if not entries:
+        print("no usable graded attempts found in the given run paths", file=sys.stderr)
+        sys.exit(1)
+
+    write_dataset(args.out_dir, entries, args.model_name)
+
+    failed = sum(1 for e in entries if e["drtulu_verdict"] == "FAILED")
+    print(f"wrote {len(entries)} instances ({failed} FAILED / {len(entries) - failed} PASSED) -> {args.out_dir}")
+    print(f"  {args.out_dir / 'dataset.json'}")
+    print(f"  {args.out_dir / 'eval_results' / 'real' / args.model_name / 'results.json'}")
+    print(f"  {args.out_dir / 'splits' / 'train-test.json'}")
 
 
 if __name__ == "__main__":
