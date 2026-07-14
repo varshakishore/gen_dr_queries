@@ -1,0 +1,3 @@
+[submodule "claude_inference/EvalTree"]
+	path = claude_inference/EvalTree
+	url = git@github.com:lucylw/EvalTree.git
