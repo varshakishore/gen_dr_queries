@@ -32,7 +32,7 @@ from pathlib import Path
 DEFAULT_DATASET_DIR = Path(__file__).resolve().parent / "EvalTree" / "Datasets" / "DRChallenge"
 
 
-def find_tree_json(dataset_dir: Path, annotation: str | None) -> Path:
+def find_tree_json(dataset_dir: Path, annotation: str | None, latest: bool = False) -> Path:
     """Locate the stage-4 tree JSON (optionally constrained to an annotation variant)."""
     pattern = "stage3-RecursiveClustering/*[stage4-CapabilityDescription-model=*.json"
     candidates = sorted(p for p in (dataset_dir / "EvalTree").glob(pattern))
@@ -42,8 +42,12 @@ def find_tree_json(dataset_dir: Path, annotation: str | None) -> Path:
         sys.exit(f"no stage-4 tree JSON found under {dataset_dir/'EvalTree'} "
                  f"(annotation={annotation}); run the pipeline first")
     if len(candidates) > 1:
+        if latest:
+            # e.g. a capped and a fully-recursive tree share an annotation; take the
+            # freshest, which is the one the pipeline just built.
+            return max(candidates, key=lambda p: p.stat().st_mtime)
         names = "\n  ".join(p.name for p in candidates)
-        sys.exit(f"multiple trees found; pass --annotation to choose:\n  {names}")
+        sys.exit(f"multiple trees found; pass --annotation (and/or --latest) to choose:\n  {names}")
     return candidates[0]
 
 
@@ -89,6 +93,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dataset-dir", type=Path, default=DEFAULT_DATASET_DIR,
                     help=f"DRChallenge dataset dir (default: {DEFAULT_DATASET_DIR})")
+    ap.add_argument("--tree", type=Path, default=None,
+                    help="explicit stage-4 tree JSON to read (bypasses auto-detection), resolved "
+                         "against CWD; the exact path the pipeline reports as '<...> tree:'")
     ap.add_argument("--annotation", default=None,
                     help="leaf-label variant, e.g. 'strategy' or 'gpt-4o-mini' (default: auto if unambiguous)")
     ap.add_argument("--model", default="drtulu", help="agent name under eval_results/real/ (default: drtulu)")
@@ -96,9 +103,16 @@ def main():
                     help="output CSV path (default: <dataset-dir>/promising_categories[_<annotation>].csv)")
     ap.add_argument("--min-questions", type=int, default=1,
                     help="drop categories covering fewer than this many questions (default: 1)")
+    ap.add_argument("--latest", action="store_true",
+                    help="if several trees share the annotation, use the most recently built one")
     args = ap.parse_args()
 
-    tree_path = find_tree_json(args.dataset_dir, args.annotation)
+    if args.tree is not None:
+        tree_path = args.tree  # resolved against CWD like any file path (absolute also fine)
+        if not tree_path.is_file():
+            sys.exit(f"--tree not found: {tree_path}")
+    else:
+        tree_path = find_tree_json(args.dataset_dir, args.annotation, latest=args.latest)
     ci_path = find_ci_json(args.dataset_dir, args.model, tree_path.name)
     tree = json.loads(tree_path.read_text())
     ci = json.loads(ci_path.read_text())
