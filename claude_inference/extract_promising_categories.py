@@ -13,13 +13,22 @@ total number of questions under it, and how many failed. Rows are sorted from hi
 failure rate to lowest — the top rows are the research capabilities that most reliably
 stump the agent, i.e. the promising categories to subsample and dig into.
 
+Each `dataset.json` instance carries a `source_run` field naming the generation subset
+it came from (e.g. "explore" / "original" / "round1"). This script also breaks every
+capability node down BY subset, adding `<subset>_num_questions`, `<subset>_num_failed`,
+and `<subset>_failure_rate` columns so you can see, per capability, how the subsets
+differ (e.g. whether "explore" questions stump the agent more than "original" ones).
+The subset columns are discovered dynamically from whatever `source_run` values appear.
+
 Usage:
     python extract_promising_categories.py                       # auto-detect the tree
     python extract_promising_categories.py --annotation strategy # pick a variant
     python extract_promising_categories.py --out categories.csv --min-questions 3
 
 Output CSV columns:
-    failure_rate, num_questions, num_failed, num_passed, depth, node_id, description
+    failure_rate, num_questions, num_failed, num_passed,
+    <subset>_num_questions, <subset>_num_failed, <subset>_failure_rate, ... (per subset),
+    depth, node_id, description
 """
 
 import argparse
@@ -64,29 +73,55 @@ def find_ci_json(dataset_dir: Path, model: str, tree_name: str) -> Path:
     return ci_path
 
 
-def walk(tree, ci, rows: list[dict], depth: int = 0, node_id: str = "root") -> None:
-    """Parallel-walk the description tree and the CI tree, collecting one row per node."""
+def subset_breakdown(leaves: list[int], subsets: list[str],
+                     idx_to_run: dict[int, str], results: list[int]) -> dict:
+    """Per-subset {num_questions, num_failed, failure_rate} columns for a node's leaves."""
+    cols: dict = {}
+    for s in subsets:
+        s_leaves = [i for i in leaves if idx_to_run.get(i) == s]
+        n = len(s_leaves)
+        f = sum(results[i] for i in s_leaves)
+        cols[f"{s}_num_questions"] = n
+        cols[f"{s}_num_failed"] = f
+        cols[f"{s}_failure_rate"] = f"{f / n:.4f}" if n else ""
+    return cols
+
+
+def walk(tree, ci, rows: list[dict], subsets: list[str], idx_to_run: dict[int, str],
+         results: list[int], depth: int = 0, node_id: str = "root") -> list[int]:
+    """Parallel-walk the description tree and the CI tree, collecting one row per node.
+
+    Returns the dataset-index leaves under `tree`, so each node can report a per-subset
+    breakdown (which subset each leaf belongs to comes from `idx_to_run`).
+    """
     # Leaves are bare instance indices in both trees; they carry no description.
     if isinstance(tree, int):
-        return
+        return [tree]
+
+    t_sub, c_sub = tree["subtrees"], ci["subtrees"]
+    leaves: list[int] = []
+    if isinstance(t_sub, dict):
+        for k in t_sub:
+            leaves += walk(t_sub[k], c_sub[k], rows, subsets, idx_to_run, results,
+                           depth + 1, f"{node_id}.{k}")
+    elif isinstance(t_sub, list):
+        for i, (t, c) in enumerate(zip(t_sub, c_sub)):
+            leaves += walk(t, c, rows, subsets, idx_to_run, results,
+                           depth + 1, f"{node_id}[{i}]")
+    elif isinstance(t_sub, int):  # single leaf child (int index) — nothing more to describe
+        leaves.append(t_sub)
+
     rows.append({
         "failure_rate": ci["sum_metrics"] / ci["size"] if ci["size"] else 0.0,
         "num_questions": ci["size"],
         "num_failed": ci["sum_metrics"],
         "num_passed": ci["size"] - ci["sum_metrics"],
+        **subset_breakdown(leaves, subsets, idx_to_run, results),
         "depth": depth,
         "node_id": node_id,
         "description": tree.get("description", ""),
     })
-    t_sub, c_sub = tree["subtrees"], ci["subtrees"]
-    if isinstance(t_sub, dict):
-        for k in t_sub:
-            walk(t_sub[k], c_sub[k], rows, depth + 1, f"{node_id}.{k}")
-    elif isinstance(t_sub, list):
-        for i, (t, c) in enumerate(zip(t_sub, c_sub)):
-            walk(t, c, rows, depth + 1, f"{node_id}[{i}]")
-    else:  # single leaf child (int index) — nothing more to describe
-        return
+    return leaves
 
 
 def main():
@@ -117,8 +152,16 @@ def main():
     tree = json.loads(tree_path.read_text())
     ci = json.loads(ci_path.read_text())
 
+    # Map each dataset index to its generation subset (source_run) and its 0/1 verdict,
+    # so every node can be broken down per subset. results.json aligns index-for-index
+    # with dataset.json (1 = FAILED), matching the tree's leaf indices.
+    dataset = json.loads((args.dataset_dir / "dataset.json").read_text())
+    results = json.loads((ci_path.parents[2] / "results.json").read_text())
+    idx_to_run = {i: (inst.get("source_run") or "unknown") for i, inst in enumerate(dataset)}
+    subsets = sorted(set(idx_to_run.values()))
+
     rows: list[dict] = []
-    walk(tree, ci, rows)
+    walk(tree, ci, rows, subsets, idx_to_run, results)
     rows = [r for r in rows if r["num_questions"] >= args.min_questions]
     # Highest failure rate first; break ties toward larger, more actionable categories.
     rows.sort(key=lambda r: (r["failure_rate"], r["num_questions"]), reverse=True)
@@ -131,7 +174,10 @@ def main():
         suffix = f"_{ann}" if ann else ""
         out_path = args.dataset_dir / f"promising_categories{suffix}.csv"
 
-    fields = ["failure_rate", "num_questions", "num_failed", "num_passed", "depth", "node_id", "description"]
+    subset_fields = [f"{s}_{col}" for s in subsets
+                     for col in ("num_questions", "num_failed", "failure_rate")]
+    fields = (["failure_rate", "num_questions", "num_failed", "num_passed"]
+              + subset_fields + ["depth", "node_id", "description"])
     with open(out_path, "w", newline="") as fout:
         writer = csv.DictWriter(fout, fieldnames=fields)
         writer.writeheader()
@@ -140,6 +186,7 @@ def main():
 
     print(f"tree: {tree_path.name}")
     print(f"CI:   {ci_path.parent.name}")
+    print(f"subsets: {', '.join(subsets)}")
     print(f"wrote {len(rows)} categories -> {out_path}")
     if rows:
         top = rows[0]

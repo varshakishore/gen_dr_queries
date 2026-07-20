@@ -32,6 +32,10 @@ answered — mirroring the dataset's failing-then-passing ordering), deduplicate
 result (the original behaviour), or --keep-run-duplicates to let the same question
 appear once per run it came from.
 
+Round 0 (the seed tested as-is) is OMITTED by default — those instances are the
+original seed questions, not generated/hardened ones. Pass --include-seed-round to
+keep them. Each instance records its `round` (0 = seed, 1..N = harder rewrites).
+
 Usage:
     # Build a fresh DRChallenge dataset dir from any run outputs:
     python to_eval_tree.py runs/sqa_50_100_explore runs/sqa_50_100_original \
@@ -66,7 +70,7 @@ def verdict_of(attempt: dict) -> str | None:
     return None
 
 
-def attempt_to_entry(result: dict, attempt: dict, is_deciding: bool) -> dict | None:
+def attempt_to_entry(result: dict, attempt: dict, is_deciding: bool, round_idx: int) -> dict | None:
     """Turn one graded attempt into a dataset instance, or None if unusable."""
     verdict = verdict_of(attempt)
     harder = attempt.get("harder", {})
@@ -83,6 +87,9 @@ def attempt_to_entry(result: dict, attempt: dict, is_deciding: bool) -> dict | N
         "strategy": strategy,
         "verification_criterion": harder.get("verification_criterion", ""),
         "drtulu_verdict": verdict,
+        # Round index within the seed's run: 0 = seed tested as-is, 1..N = harder
+        # rewrites. Retained so round 0 (the seed itself) can be filtered downstream.
+        "round": round_idx,
         # Originating run folder, retained so the combined dataset can be
         # subsampled per run (EvalTree ignores unknown fields).
         "source_run": "",
@@ -113,7 +120,8 @@ def load_results(sample_path: Path) -> list[dict]:
     return data.get("results", [])
 
 
-def collect_entries(run_paths: list[Path], *, deciding_only: bool, keep_run_dups: bool) -> list[dict]:
+def collect_entries(run_paths: list[Path], *, deciding_only: bool, keep_run_dups: bool,
+                    include_seed_round: bool) -> list[dict]:
     """Assemble dataset instances from all runs, deciding attempts first, then deduped."""
     deciding: list[dict] = []
     other: list[dict] = []
@@ -129,10 +137,15 @@ def collect_entries(run_paths: list[Path], *, deciding_only: bool, keep_run_dups
                     continue
                 last_i = len(attempts) - 1
                 for i, attempt in enumerate(attempts):
+                    round_idx = attempt.get("attempt", i)  # 0 = seed as-is
+                    # Skip the seed round (round 0) by default: those are the original
+                    # seed questions, not generated/hardened ones.
+                    if round_idx == 0 and not include_seed_round:
+                        continue
                     is_deciding = i == last_i
                     if deciding_only and not is_deciding:
                         continue
-                    entry = attempt_to_entry(result, attempt, is_deciding)
+                    entry = attempt_to_entry(result, attempt, is_deciding, round_idx)
                     if entry is None:
                         continue
                     entry["source_run"] = Path(run_key).name
@@ -150,6 +163,29 @@ def collect_entries(run_paths: list[Path], *, deciding_only: bool, keep_run_dups
         seen.add(dedup_key)
         entries.append({k: v for k, v in entry.items() if k != "_run_key"})
     return entries
+
+
+def print_subset_summary(entries: list[dict]) -> None:
+    """Print a per-source_run breakdown so subset differences are visible at build time."""
+    from collections import Counter
+
+    runs = sorted({e.get("source_run") or "unknown" for e in entries})
+    if len(runs) <= 1:
+        return  # single subset — nothing to compare
+    failed = Counter()
+    total = Counter()
+    for e in entries:
+        run = e.get("source_run") or "unknown"
+        total[run] += 1
+        if e["drtulu_verdict"] == "FAILED":
+            failed[run] += 1
+    width = max(len(r) for r in runs)
+    print("per-subset breakdown (source_run):")
+    print(f"  {'subset'.ljust(width)}  {'n':>5}  {'FAILED':>6}  {'PASSED':>6}  {'fail_rate':>9}")
+    for run in runs:
+        n, f = total[run], failed[run]
+        rate = f"{f / n:.3f}" if n else "-"
+        print(f"  {run.ljust(width)}  {n:>5}  {f:>6}  {n - f:>6}  {rate:>9}")
 
 
 def write_dataset(out_dir: Path, entries: list[dict], model_name: str) -> None:
@@ -178,12 +214,15 @@ def main():
                     help="keep only the one challenge question per result (skip other attempts)")
     ap.add_argument("--keep-run-duplicates", action="store_true",
                     help="dedup per (run, question) instead of globally, keeping cross-run repeats")
+    ap.add_argument("--include-seed-round", action="store_true",
+                    help="also include round-0 (seed-as-is) questions; by default they are omitted")
     args = ap.parse_args()
 
     entries = collect_entries(
         [Path(p) for p in args.run_paths],
         deciding_only=args.deciding_only,
         keep_run_dups=args.keep_run_duplicates,
+        include_seed_round=args.include_seed_round,
     )
     if not entries:
         print("no usable graded attempts found in the given run paths", file=sys.stderr)
@@ -193,6 +232,7 @@ def main():
 
     failed = sum(1 for e in entries if e["drtulu_verdict"] == "FAILED")
     print(f"wrote {len(entries)} instances ({failed} FAILED / {len(entries) - failed} PASSED) -> {args.out_dir}")
+    print_subset_summary(entries)
     print(f"  {args.out_dir / 'dataset.json'}")
     print(f"  {args.out_dir / 'eval_results' / 'real' / args.model_name / 'results.json'}")
     print(f"  {args.out_dir / 'splits' / 'train-test.json'}")
