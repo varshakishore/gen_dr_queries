@@ -669,12 +669,13 @@ def query_research_system(
     attempt: int,
     url: str = RESEARCH_SERVER_URL,
     timeout_s: float = RESEARCH_TIMEOUT_S,
-) -> tuple[str, object]:
-    """POST the question to the research server and return (answer, trace).
+) -> dict:
+    """POST the question to the research server and return
+    {"answer", "trace", "model", "usage"}.
 
-    The server is expected to respond with JSON of the form
-    {"answer": "...", "trace": ...}. The full body is logged verbatim; `trace`
-    is None if the server did not include it.
+    The server is expected to respond with JSON containing at least "answer"; "trace",
+    "model", and "usage" are passed through if present (else None). The full body is
+    logged (redacted).
     """
     request_json = {"question": question}
     t0 = time.perf_counter()
@@ -714,7 +715,13 @@ def query_research_system(
         response_status=status, response_body=_redact_research_body(body),
         latency_s=latency, error=None,
     )
-    return answer, trace
+    # Pass through answer + any of trace/model/usage the server included (None if absent).
+    return {
+        "answer": answer,
+        "trace": body.get("trace"),
+        "model": body.get("model"),
+        "usage": body.get("usage"),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -781,9 +788,10 @@ def process_seed(
 
         # Step 2 — query research system
         try:
-            answer, trace = query_research_system(
+            research = query_research_system(
                 harder.updated_question, logger, seed, attempt, url=server_url,
             )
+            answer, trace = research["answer"], research["trace"]
         except Exception as e:
             result.final_status = "ERROR"
             result.error = f"Research server call failed: {e}"
