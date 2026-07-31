@@ -65,12 +65,50 @@ CACHE_WRITE_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.10
 
 
+# ---------------------------------------------------------------------------
+# Answering-system profiles
+# ---------------------------------------------------------------------------
+# Describe the system whose weaknesses we're probing. Selected via --profile and
+# injected into the make-harder prompts in place of the "{ANSWERING_SYSTEM_PROFILE}"
+# sentinel. Add new entries here as you target new answering systems.
+ANSWERING_SYSTEM_PROFILES = {
+    "drtulu": (
+        'The answering system is an open "deep research" model that is trained to produce '
+        'attributed long-form answers and whose ONLY tool is Semantic Scholar ("S2") search '
+        "over academic papers. The system retrieves from a corpus of academic papers and "
+        "synthesizes a cited report. Difficulty must not come from requiring sources outside "
+        "this corpus. The system is good at surveying a single well-studied topic and "
+        "producing a long well-structured report. It is bad at complex reasoning."
+    ),
+    "tongyi": (
+        'The answering system is an open "deep research" model that is trained to produce '
+        'attributed long-form answers and whose ONLY tool is search '
+        "over academic papers. The system retrieves from a corpus of papers and "
+        "synthesizes a report. Difficulty must not come from requiring sources outside "
+        "this corpus. The system is good at surveying a single well-studied topic and "
+        "producing a long well-structured report. It is bad at complex reasoning."
+    ),
+}
+DEFAULT_PROFILE = "drtulu"
+
+_PROFILE_SENTINEL = "{ANSWERING_SYSTEM_PROFILE}"
+
+
+def with_profile(template: str, profile_text: str) -> str:
+    """Inject the answering-system profile into a make-harder prompt template.
+
+    Uses str.replace (not str.format) so the literal JSON braces in the template are
+    left untouched.
+    """
+    return template.replace(_PROFILE_SENTINEL, profile_text)
+
+
 PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
 
 Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
 
 ANSWERING SYSTEM PROFILE:
-The answering system is an open "deep research" model that is trained to produce attributed long-form answers and whose ONLY tool is Semantic Scholar ("S2") search over academic papers. The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not come from requiring sources outside this corpus. The system is good at surveying a single well-studied topic and producing a long well-structured report. It is bad at complex reasoning. 
+{ANSWERING_SYSTEM_PROFILE}
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
@@ -85,7 +123,7 @@ RULES:
 - Avoid questions that can easily be answered by retrieving information.
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
-- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
 - The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main 
   component (no "and" or multiple sub-questions). It is better to keep it simple.
@@ -95,7 +133,7 @@ EXAMPLE STRATEGIES TO CONSIDER:
 2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
 3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
 4. Require handling conflicting, incomplete, or low-quality evidence.
-5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions.
+5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.
 6. Require correcting a hidden misconception or establishing key knowns before answering.
 7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
 8. Make a question that is unanswerable by current research, no existing work is available.
@@ -114,10 +152,10 @@ Seed Question: What is pretraining-data deduplication?
 Seed Question: What is the role of attention sparsity in efficient transformers?
 {
 "brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
-"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY cited papers disagree rather than just report their results.",
+"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
 "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
 "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-"verification_criterion": "The answer must show that its OWN cited sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it cites do not actually report conflicting sparse-vs-dense comparisons."
+"verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
 }
 
 Seed Question: How does brown adipose tissue produce heat?
@@ -135,7 +173,7 @@ PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE = """You are an expert in constructing ch
 Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
 
 ANSWERING SYSTEM PROFILE:
-The answering system is an open "deep research" model that is trained to produce attributed long-form answers and whose ONLY tool is Semantic Scholar ("S2") search over academic papers. The system retrieves from a corpus of academic papers and synthesizes a cited report. Difficulty must not come from requiring sources outside this corpus. The system is good at surveying a single well-studied topic and producing a long well-structured report. It is bad at complex reasoning. 
+{ANSWERING_SYSTEM_PROFILE}
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
@@ -150,9 +188,9 @@ RULES:
 - Avoid questions that can easily be answered by retrieving information.
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
-- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own cited sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
-- DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW.Be creative and come up with your own strategy. 
+- DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW. Be creative and come up with your own strategy. 
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -167,10 +205,10 @@ Seed Question: What is pretraining-data deduplication?
 Seed Question: What is the role of attention sparsity in efficient transformers?
 {
 "brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
-"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY cited papers disagree rather than just report their results.",
+"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
 "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
 "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-"verification_criterion": "The answer must show that its OWN cited sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it cites do not actually report conflicting sparse-vs-dense comparisons."
+"verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
 }
 
 Seed Question: How does brown adipose tissue produce heat?
@@ -187,8 +225,7 @@ Reminder: Do not use the same strategies as the examples above.
 
 PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research systems.
 
-Given a research question, produce a simple, ATOMIC verification criterion. The criterion must test
-exactly ONE concrete property of a good answer — not a combination.
+Given a research question, produce a simple, ATOMIC verification criterion. The criterion must test exactly ONE concrete property of a good answer — not a combination. If the question is underspecified, then the verification_criterion should say "Any non-empty answer is acceptable."
 
 QUESTION:
 {question}
@@ -420,6 +457,7 @@ class AttemptRecord:
     answer: str
     judgment: Judgment
     trace: object = None
+    answer_model: object = None   # model the research server self-reported
 
 
 @dataclass
@@ -737,6 +775,7 @@ def process_seed(
     verbose: bool = True,
     server_url: str = RESEARCH_SERVER_URL,
     harder_prompt: str = PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
+    timeout_s: float = RESEARCH_TIMEOUT_S,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
@@ -790,8 +829,10 @@ def process_seed(
         try:
             research = query_research_system(
                 harder.updated_question, logger, seed, attempt, url=server_url,
+                timeout_s=timeout_s,
             )
-            answer, trace = research["answer"], research["trace"]
+            answer, trace, answer_model = (
+                research["answer"], research["trace"], research["model"])
         except Exception as e:
             result.final_status = "ERROR"
             result.error = f"Research server call failed: {e}"
@@ -836,7 +877,7 @@ def process_seed(
         result.attempts.append(
             AttemptRecord(
                 attempt=attempt, harder=harder, answer=answer, judgment=judgment,
-                trace=trace,
+                trace=trace, answer_model=answer_model,
             )
         )
 
@@ -875,6 +916,7 @@ def result_to_dict(result: SeedResult) -> dict:
                 "attempt": a.attempt,
                 "harder": asdict(a.harder),
                 "answer": a.answer,
+                "answer_model": a.answer_model,
                 "trace": a.trace,
                 "judgment": asdict(a.judgment),
             }
@@ -911,15 +953,28 @@ def main():
         help=f"Research server endpoint (default: {RESEARCH_SERVER_URL}).",
     )
     parser.add_argument(
+        "--timeout", type=float, default=RESEARCH_TIMEOUT_S,
+        help=f"Read timeout (s) for each research-server call (default: {RESEARCH_TIMEOUT_S}). "
+             "Raise it for slow models, e.g. 7200 for Tongyi.",
+    )
+    parser.add_argument(
         "--prompt", choices=["explore", "original"], default="explore",
         help="Which make-harder system prompt to use (default: explore). "
              "'explore' forbids reusing the example strategies; 'original' keeps the "
              "in-context strategy menu.",
     )
+    parser.add_argument(
+        "--profile", choices=sorted(ANSWERING_SYSTEM_PROFILES), default=DEFAULT_PROFILE,
+        help=f"Answering-system profile injected into the make-harder prompt "
+             f"(default: {DEFAULT_PROFILE}).",
+    )
     args = parser.parse_args()
 
-    harder_prompt = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
+    profile_text = ANSWERING_SYSTEM_PROFILES[args.profile]
+
+    base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
                      else PROMPT_TO_MAKE_HARDER_QUESTION)
+    harder_prompt = with_profile(base_template, profile_text)
 
     seeds = list(args.seeds)
     if args.seeds_file:
@@ -949,6 +1004,7 @@ def main():
             client, args.model, seed, logger,
             max_attempts=args.max_attempts, verbose=not args.quiet,
             server_url=args.server_url, harder_prompt=harder_prompt,
+            timeout_s=args.timeout,
         )
         all_results.append(result)
         grand_total.add(result.cost)

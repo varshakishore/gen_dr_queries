@@ -25,6 +25,9 @@ Examples:
 
   # a list of seeds from a file
   python research_pipeline_parallel.py --seeds-file seeds.txt --out-dir runs/exp1
+
+Usage:
+python research_pipeline_parallel.py --out-dir runs/sqa_50_100_explore --start 50 --limit 50 --concurrency 10 --prompt explore && python summarize_run.py runs/sqa_50_100_explore && python research_pipeline_parallel.py --out-dir runs/sqa_50_100_original --start 50 --limit 50 --concurrency 10 --prompt original && python summarize_run.py runs/sqa_50_100_original
 """
 
 import argparse
@@ -97,6 +100,10 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         "--server-url", args.server_url,
         "--quiet",                   # avoid interleaved per-attempt output across workers
     ]
+    if args.profile:
+        cmd += ["--profile", args.profile]
+    if args.timeout:
+        cmd += ["--timeout", str(args.timeout)]
 
     print(f"[start {idx:>3}/{args._n}] {seed}", flush=True)
     proc = subprocess.run(cmd, capture_output=True, text=True)
@@ -160,6 +167,11 @@ def main():
     p.add_argument("--model", default="claude-sonnet-4-5")
     p.add_argument("--prompt", choices=["explore", "original"], default="explore",
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
+    p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
+                                     "(e.g. drtulu, tongyi).")
+    p.add_argument("--timeout", type=float,
+                   help="Read timeout (s) per research-server call passed to the pipeline "
+                        "(e.g. 7200 for slow models like Tongyi).")
     p.add_argument("--server-url", default="http://localhost:8007/ask")
     p.add_argument("--python", default=sys.executable, help="Python interpreter for subprocesses.")
     p.add_argument("--no-skip-existing", dest="skip_existing", action="store_false",
