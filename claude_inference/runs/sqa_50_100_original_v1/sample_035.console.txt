@@ -1,0 +1,11 @@
+Run ID: sample_035
+Logging every call to: runs/sqa_50_100_original_v1/run-sample_035.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0114, 2 Claude calls) 亚硫酸氢钠和 亚硝酸盐 反应么
+
+Total cost: $0.0114 (2 Claude calls, 1,410 input + 475 output tokens)
+Run log written to: runs/sqa_50_100_original_v1/run-sample_035.jsonl
+Final results written to: runs/sqa_50_100_original_v1/sample_035.json

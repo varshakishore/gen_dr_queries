@@ -1,0 +1,81 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Answer viewer — sample_035</title>
+<style>
+ body { font:16px/1.65 Georgia, 'Times New Roman', serif; max-width:820px; margin:0 auto;
+        padding:30px 24px 80px; color:#1f2328; }
+ h1 { font-size:22px; font-family:-apple-system,system-ui,sans-serif; }
+ h3 { font-size:15px; font-family:-apple-system,system-ui,sans-serif; color:#57606a;
+       text-transform:uppercase; letter-spacing:.04em; }
+ details.attempt { border-top:2px solid #d0d7de; margin-top:20px; padding-top:8px; }
+ details.attempt > summary { cursor:pointer; list-style:none; font-family:-apple-system,system-ui,sans-serif;
+       display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:8px 0; }
+ details.attempt > summary::-webkit-details-marker { display:none; }
+ .atitle { font-size:17px; font-weight:700; }
+ .verdict { font-weight:bold; font-size:14px; }
+ .aq { color:#57606a; font-size:13px; flex:1; min-width:200px; }
+ .seed { color:#57606a; font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox { background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:12px 14px;
+          font-family:-apple-system,system-ui,sans-serif; font-size:14px; }
+ .qbox div { margin:4px 0; } .qbox b { color:#57606a; }
+ .answer { margin:18px 0; }
+ .badge { color:#fff; border-radius:10px; padding:2px 9px; font-size:12px;
+           font-family:-apple-system,system-ui,sans-serif; }
+
+ sup.cite a { text-decoration:none; color:#0969da; font-weight:bold; }
+ sup.cite.missing { color:#cf222e; }
+ .cw { position:relative; }
+ .cw .tip { display:none; position:absolute; left:0; top:1.4em; z-index:20; width:340px;
+            background:#1f2328; color:#fff; padding:8px 10px; border-radius:6px;
+            font:13px/1.45 -apple-system,system-ui,sans-serif; box-shadow:0 4px 16px rgba(0,0,0,.25); }
+ .cw:hover .tip { display:block; }
+ .cw .tip b { display:block; margin-bottom:4px; color:#9ec5ff; }
+ .cw .tip .tsnip { color:#e6edf3; }
+ .refs { font-family:-apple-system,system-ui,sans-serif; font-size:13.5px; padding-left:0; list-style:none; }
+ .refs li { margin:10px 0; padding:6px 0 6px 12px; border-left:3px solid #d0d7de; }
+ .refs li:target { border-left-color:#0969da; background:#ddf4ff; }
+ .rn { color:#57606a; font-weight:bold; margin-right:4px; }
+ .rt a { color:#0969da; text-decoration:none; } .rt a:hover { text-decoration:underline; }
+ .ra { color:#57606a; font-style:italic; margin-top:2px; }
+ .rs { color:#3a3f45; margin-top:4px; font-size:12.5px; background:#f6f8fa; padding:6px 8px; border-radius:5px; }
+ .searches { font-family:-apple-system,system-ui,sans-serif; font-size:13px; margin:10px 0; }
+ .searches table { border-collapse:collapse; width:100%; margin-top:6px; }
+ .searches td, .searches th { border:1px solid #d0d7de; padding:3px 7px; text-align:left; }
+ .warn { color:#9a6700; font-family:-apple-system,system-ui,sans-serif; font-size:13px;
+         background:#fff8c5; border:1px solid #eac54f; border-radius:6px; padding:6px 10px; margin:8px 0; }
+
+</style></head><body>
+<h1>sample_035 · ALREADY_HARD</h1>
+<div class="seed">Seed: 亚硫酸氢钠和 亚硝酸盐 反应么</div>
+
+<details class="attempt" open>
+  <summary><span class="atitle">Attempt 0</span>
+      <span class="verdict" style="color:#cf222e">FAILED</span>
+      <span class="aq">亚硫酸氢钠和 亚硝酸盐 反应么</span></summary>
+  <div class="qbox">
+    <div><b>Question</b> 亚硫酸氢钠和 亚硝酸盐 反应么</div>
+    <div><b>Criterion</b> The answer must clearly state whether sodium bisulfite (亚硫酸氢钠) and nitrite (亚硝酸盐) react with each other, with a yes/no determination or description of reaction conditions under which they do or do not react.</div>
+    <div><b>Judge</b> While the answer satisfies the verification criterion by providing a clear yes/no answer with conditions, it appears to contain significant factual errors about the reaction product N(SO3Na)3, which is not a credible chemical species from this reaction. The citations cannot be verified and the claimed reaction product raises serious concerns about hallucination or misinterpretation of source materials. The answer structure is good but the chemical content is highly suspect.</div>
+  </div>
+  <details class="searches"><summary>Searches run (5)</summary><table><tr><th>tool</th><th>query</th><th>#docs</th></tr><tr><td>snippet_search</td><td>sodium bisulfite nitrite reaction NaHSO3 HNO2 reaction mechanism</td><td>10</td></tr><tr><td>snippet_search</td><td>sodium bisulfite sodium nitrite reaction mechanism NaHSO3 NaNO2 90 C N(SO3Na)3</td><td>10</td></tr><tr><td>snippet_search</td><td>N(SO3Na)3 preparation sodium nitrite sodium bisulfite mechanism reaction conditions</td><td>10</td></tr><tr><td>snippet_search</td><td>sodium nitrite sodium bisulfite reaction mechanism nitrous acid nitrosation NaHSO3 NaNO2 HNO2</td><td>10</td></tr><tr><td>snippet_search</td><td>sodium bisulfite nitrite reaction NaHSO3 HNO2 reaction mechanism</td><td>10</td></tr></table></details>
+  <div class="warn">1 citation id(s) could not be resolved from the trace.</div>
+  <div class="answer"># Short answer<br>
+<span class="claim">Yes. Sodium bisulfite reacts with sodium nitrite under heating (about 90 °C for ~90 minutes) to prepare the sulfating agent N(SO3Na)3, indicating that NaNO2 and NaHSO3 undergo a chemical transformation under these conditions.</span><sup class="cite missing">[?]</sup><br>
+<br>
+# Evidence from documented procedures<br>
+- Multiple sources in materials chemistry describe an identical method to obtain N(SO3Na)3 by stirring an aqueous NaNO2 solution over a NaHSO3 solution at 90 °C for 90 minutes, then isolating the product; this is repeated independently in a review and an experimental protocol for sulfated derivatives, demonstrating a reproducible thermal reaction between NaNO2 and NaHSO3 to form the trisulfonate.&lt;/cite id=&quot;436f7760-0,436f7760-1,098ded54-2&quot;&gt;&lt;/cite&gt;<br>
+<br>
+# Mechanistic plausibility (acidified systems)<br>
+- In aqueous chemistry, nitrite is not strongly reactive by itself; in acidic or warmed media nitrite generates nitrous acid (HNO2). At higher pH, HNO2 is in equilibrium with its anhydride N2O3, which can act as a nitrosating agent and react with sulfur-containing species. This provides a plausible pathway for interactions between nitrite-derived species (HNO2/N2O3) and bisulfite under acidified or heated conditions.&lt;/cite id=&quot;06021171-0&quot;&gt;&lt;/cite&gt;<br>
+<br>
+# Practical notes and scope<br>
+- The documented NaNO2/NaHSO3 transformation is triggered by heating to ~90 °C; at room temperature, the sources do not report rapid reaction, and the process is typically carried out as a sulfonation/activation step under elevated temperature.&lt;/cite id=&quot;436f7760-0,436f7760-1,098ded54-2&quot;&gt;&lt;/cite&gt;<br>
+- Nitrite is commonly generated in situ as HNO2 in acidic environments and equilibrates with N2O3; these species are known nitrosating agents, supporting reactivity with sulfur-bearing reagents such as bisulfite when sufficient acidity and/or temperature are present.&lt;/cite id=&quot;06021171-0&quot;&gt;&lt;/cite&gt;<br>
+<br>
+# Limitations and what would resolve them<br>
+- The available snippets do not provide a balanced, explicit reaction equation or detailed product distribution for the NaNO2–NaHSO3 heating reaction; they only describe the thermal protocol and isolation of N(SO3Na)3.&lt;/cite id=&quot;436f7760-0,436f7760-1,098ded54-2&quot;&gt;&lt;/cite&gt;<br>
+- No direct evidence was found for a reaction between NaHSO3 and concentrated nitric acid (HNO3) in the retrieved snippets; strong-acid behavior and potential oxidation of bisulfite to sulfate were not addressed here and would require separate experimental or mechanistic citations.&lt;/cite id=&quot;436f7760-0,436f7760-1,098ded54-2&quot;&gt;&lt;/cite&gt;<br>
+<br>
+If you need a precise stoichiometry and isolated yields for the NaNO2/NaHSO3 heating reaction, the next step would be a targeted search for the original method papers detailing the synthesis of N(SO3Na)3 with full reaction conditions and analytical confirmation.</div>
+  <h3>References</h3>
+  <p><em>No resolved references.</em></p>
+</details>
+</body></html>

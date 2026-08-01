@@ -1,0 +1,11 @@
+Run ID: sample_043
+Logging every call to: runs/sqa_50_100_original_v1/run-sample_043.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ALREADY_HARD  ] (1 attempts, $0.0110, 2 Claude calls) does moringa have chemical that can regenerate nerve cell
+
+Total cost: $0.0110 (2 Claude calls, 1,397 input + 455 output tokens)
+Run log written to: runs/sqa_50_100_original_v1/run-sample_043.jsonl
+Final results written to: runs/sqa_50_100_original_v1/sample_043.json

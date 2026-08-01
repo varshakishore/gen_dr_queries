@@ -43,7 +43,7 @@ from anthropic import Anthropic
 RESEARCH_SERVER_URL = "http://localhost:8007/ask"
 RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 
-CLAUDE_MODEL = "claude-sonnet-4-5"
+CLAUDE_MODEL = "claude-sonnet-5"
 MAX_ATTEMPTS = 5
 
 # Per-million-token pricing in USD (input, output).
@@ -60,6 +60,7 @@ MODEL_PRICING = {
     "claude-sonnet-4-6": {"input": 3.00,  "output": 15.00},
     "claude-sonnet-4-5": {"input": 3.00,  "output": 15.00},
     "claude-haiku-4-5":  {"input": 1.00,  "output": 5.00},
+    "claude-sonnet-5":  {"input": 3.00,  "output": 15.00},
 }
 CACHE_WRITE_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.10
@@ -125,8 +126,8 @@ RULES:
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
-- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main 
-  component (no "and" or multiple sub-questions). It is better to keep it simple.
+- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions). It is better to keep it simple.
+- The question should be in English.
 
 EXAMPLE STRATEGIES TO CONSIDER:
 1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
@@ -227,6 +228,13 @@ PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research syst
 
 Given a research question, produce a simple, ATOMIC verification criterion. The criterion must test exactly ONE concrete property of a good answer — not a combination. If the question is underspecified, then the verification_criterion should say "Any non-empty answer is acceptable."
 
+A question is underspecified when:
+  - It states no ask at all (a bare entity, ID, name, or URL with no verb).
+  - The ask has multiple non-overlapping readings and nothing selects one
+    (e.g. "Tesla 2024" — sales? stock? litigation? model releases?).
+  - The success condition depends on unstated context the evaluator does not
+    have (e.g. "is this dosage safe for my patient?").
+
 QUESTION:
 {question}
 
@@ -244,7 +252,7 @@ You will be given:
 - The verification criterion that defines what a good answer must do
 - The answer the research system produced
 
-Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion.
+Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion. If the verification criterion is "Any non-empty answer is acceptable", then the verdict should be PASSED.
 
 QUESTION:
 {question}
