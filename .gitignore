@@ -64,3 +64,4 @@ secrets.env
 /analysis/*.json
 /analysis/*.jsonl
 /analysis/run_utils.py
+.venv/
