@@ -522,6 +522,15 @@ class SeedResult:
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _is_underspecified_criterion(criterion: str) -> bool:
+    """Match the escape-hatch phrase produced by PROMPT_FOR_SEED_CRITERION.
+
+    Tolerant to trailing punctuation and case variation, but does not attempt
+    a fuzzy match — Claude follows the exact wording reliably in practice.
+    """
+    return "any non-empty answer is acceptable" in criterion.lower()
+
+
 def extract_json(text: str) -> dict:
     """Pull the first JSON object out of a string, tolerating code fences."""
     fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
@@ -873,6 +882,29 @@ def process_seed(
             if attempt > 0:
                 print(f"    Strategy: {harder.chosen_strategy}")
             print(f"    Criterion: {harder.verification_criterion}")
+
+        # If round 0's criterion is the underspecified-question escape hatch, don't
+        # spend a DR call + judge call on it. Skip both, mark UNDERSPECIFIED, and
+        # stop — there is nothing meaningful to harden.
+        if attempt == 0 and _is_underspecified_criterion(harder.verification_criterion):
+            judgment = Judgment(
+                criterion_satisfied=True,
+                criterion_reasoning="Seed criterion is the underspecified-question escape hatch; DR + judge skipped.",
+                other_issues=[],
+                summary="Seed underspecified — auto-passed round 0 without a DR or judge call; not hardened.",
+                verdict="PASSED",
+                raw="",
+            )
+            logger.log_verdict(seed=seed, attempt=0, verdict="PASSED", summary=judgment.summary)
+            result.attempts.append(AttemptRecord(
+                attempt=0, harder=harder, answer="", judgment=judgment,
+                trace=None, answer_model=None,
+            ))
+            result.final_status = "UNDERSPECIFIED"
+            if verbose:
+                print("\n>>> Seed underspecified (criterion = 'Any non-empty answer is acceptable'). "
+                      "Skipping DR + judge and not hardening. Stopping.")
+            return result
 
         # Step 2 — query research system
         try:
