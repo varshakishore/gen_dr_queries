@@ -65,3 +65,5 @@ secrets.env
 /analysis/*.jsonl
 /analysis/run_utils.py
 .venv/
+claude_inference/*
+*.pptx
