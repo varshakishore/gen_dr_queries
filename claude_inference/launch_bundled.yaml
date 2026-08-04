@@ -1,0 +1,34 @@
+version: v2
+budget: ai2/nsf-uchicago-apto
+description: "dr-tulu server + gen_dr_queries harden-and-judge pipeline (bundled, cognitive-bias strategy eval)"
+tasks:
+  - name: "dr-tulu-and-pipeline"
+    image:
+      beaker: varshak/drtulu
+    hostNetworking: true
+    command: ["/bin/bash", "-c"]
+    arguments:
+      [
+        "bash /weka/nora-default/jayd/query_generation/gen_dr_queries/claude_inference/run_bundled.sh"
+      ]
+    timeout: "8h"
+    envVars:
+      - name: S2_API_KEY
+        secret: jayd_S2_API_KEY
+      - name: ANTHROPIC_API_KEY
+        secret: jayd_ANTHROPIC_API_KEY_APTO
+    datasets:
+      - mountPath: /weka/oe-adapt-default
+        source:
+          weka: oe-adapt-default
+      - mountPath: /weka/nora-default
+        source:
+          weka: nora-default
+    constraints:
+      cluster:
+        - ai2/saturn
+    resources:
+      gpuCount: 1
+    context:
+      priority: normal
+      preemptible: True

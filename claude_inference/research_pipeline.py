@@ -93,6 +93,7 @@ ANSWERING_SYSTEM_PROFILES = {
 DEFAULT_PROFILE = "drtulu"
 
 _PROFILE_SENTINEL = "{ANSWERING_SYSTEM_PROFILE}"
+_STRATEGY_MENU_SENTINEL = "{STRATEGY_MENU}"
 
 
 def with_profile(template: str, profile_text: str) -> str:
@@ -102,6 +103,54 @@ def with_profile(template: str, profile_text: str) -> str:
     left untouched.
     """
     return template.replace(_PROFILE_SENTINEL, profile_text)
+
+
+# ---------------------------------------------------------------------------
+# Strategy list — single source of truth for the numbered menu inserted into
+# PROMPT_TO_MAKE_HARDER_QUESTION and for --force-strategy N lookup by index.
+# Position in this list (1-based) = number in the prompt menu = --force-strategy N.
+# Add, remove, or reorder freely; both the menu and --force-strategy follow.
+# ---------------------------------------------------------------------------
+STRATEGIES: list[str] = [
+    # 1-8 — original strategies.
+    "Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).",
+    "Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.",
+    "Require multi-step reasoning, structured argumentation, or hierarchical planning.",
+    "Require handling conflicting, incomplete, or low-quality evidence.",
+    "Require universal quantification (\"for all X, is Y true?\") or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.",
+    "Require correcting a hidden misconception or establishing key knowns before answering.",
+    "Embed a specific context that changes the answer (e.g., \"explain to a policymaker with no ML background\").",
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    # 9-21 — added after a cognitive-bias / statistical-error / fallacy review.
+    "Require careful reasoning about numbers, rates, or probabilities (e.g., combining test accuracy with an underlying prevalence). A correct answer must go beyond quoting headline figures — it must combine them, adjust for how common the underlying condition is, distinguish similar-sounding numbers, or give effect sizes with confidence intervals rather than just \"yes there is an effect.\"",
+    "Require the answer to distinguish scale (e.g., a district-level average that hides subgroup reversals). Ask a question where what holds at the group level differs from what holds at the individual level, or where the property of a whole doesn't apply to its parts (or vice versa). A correct answer must show what happens at both scales and note if the trend even reverses.",
+    "Require diagnosing what got measured or didn't (e.g., a pattern that only appears among hospitalized samples). Ask about a pattern whose shape is actually caused by who or what got measured — who was included, who was excluded, what survived to be recorded — rather than by the underlying phenomenon. A correct answer must name that filter, not restate the surface pattern.",
+    "Use a term with contested or shifting meaning (e.g., \"attention\" in ML vs. cognitive psychology). Pick a word that means different things in different subfields, or that has a strong popular meaning and a weaker technical one. A correct answer must state which meaning it is using; where retrieved sources disagree, it must distinguish real disagreement from cases where they are just using the word differently.",
+    "Frame the question so a natural reading forces the answer into a bad choice (e.g., \"what percent genetic vs. environmental?\" assumes a fixed partition). This might mean offering only two options when there is really a third, or asking \"how much of X\" when the correct answer is \"X doesn't apply here.\" A correct answer must reject the framing rather than pick one of the offered options.",
+    "Pose a boundary question with no sharp cutoff (e.g., BMI cutoff for \"obese\", gestational age of \"viability\"). Ask \"when does X become Y?\" where the answer is genuinely graded or threshold-dependent. A correct answer must say there is no clean line and describe the gradient.",
+    "Ask about the past as if the present frame applied (e.g., \"why were 1840s doctors wrong to reject Semmelweis?\"). Frame the question about historical actors, decisions, or outcomes as if they had information or norms they couldn't have had, or as if a result were inevitable. A correct answer must point out what the actors actually knew at the time, or how the outcome could have gone differently.",
+    "Embed a false claim about a source (e.g., attributing a specific claim to a specific named paper that doesn't contain it). State the question as if a specific named paper, author, dataset, or organization said something they didn't actually say (or that is folklore). A correct answer must correct the attribution.",
+    "Ask about a claim whose evidence base is compromised (e.g., a paper that was retracted or failed to replicate, or a finding traceable to a single lab). The paper was retracted or later contradicted, the underlying analysis has known problems (small samples, unregistered post-hoc analyses, missing null results), or the finding traces back to a single lab or a single primary source. A correct answer must surface those problems, not just restate the claim.",
+    "Ask \"why does X cause Y?\" when the evidence really only shows the two things happen together, or when the direction of cause is unclear (e.g., breastfeeding and IQ, where sibling studies show near-null effects). A correct answer must decline the causal framing and say what kind of evidence would be needed.",
+    "Require the answer to weight its sources by evidence quality (e.g., RCTs over observational studies; meta-analyses over single studies; replicated over one-off). Set up a question where naive retrieval will mix low-quality and high-quality sources. A correct answer must stratify by evidence quality, not treat all sources equally.",
+    "Ask about a finding from one setting as it applies to another (e.g., an intervention's efficacy in high-income countries applied to low-income settings). Reference a result established in a specific population, place, time, or laboratory condition, and require the answer to say whether and how it applies to a different one.",
+    "Ask a question where different research methods disagree (e.g., red meat and heart disease — observational vs. RCTs). Randomized trials say one thing and observational studies another, or laboratory results differ from real-world, or animal studies differ from human. A correct answer must reconcile them by explaining what each method can and cannot show.",
+    # 22 — creative catch-all.
+    "Something else you think of that would be effective at exposing weaknesses in research systems!",
+]
+
+
+def numbered_menu() -> str:
+    """Format STRATEGIES as the numbered '1. ...' menu inserted into the prompt."""
+    return "\n".join(f"{i + 1}. {s}" for i, s in enumerate(STRATEGIES))
+
+
+def with_menu(template: str) -> str:
+    """Inject the numbered strategy menu into a make-harder prompt template.
+
+    No-op on templates without the sentinel (e.g. the EXPLORE variant).
+    """
+    return template.replace(_STRATEGY_MENU_SENTINEL, numbered_menu())
 
 
 PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
@@ -130,15 +179,7 @@ RULES:
 - The question should be in English.
 
 EXAMPLE STRATEGIES TO CONSIDER:
-1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
-2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
-3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
-4. Require handling conflicting, incomplete, or low-quality evidence.
-5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.
-6. Require correcting a hidden misconception or establishing key knowns before answering.
-7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
-8. Make a question that is unanswerable by current research, no existing work is available.
-9. Something else you think of that would be effective at exposing weaknesses in research systems!
+{STRATEGY_MENU}
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -480,6 +521,15 @@ class SeedResult:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _is_underspecified_criterion(criterion: str) -> bool:
+    """Match the escape-hatch phrase produced by PROMPT_FOR_SEED_CRITERION.
+
+    Tolerant to trailing punctuation and case variation, but does not attempt
+    a fuzzy match — Claude follows the exact wording reliably in practice.
+    """
+    return "any non-empty answer is acceptable" in criterion.lower()
+
 
 def extract_json(text: str) -> dict:
     """Pull the first JSON object out of a string, tolerating code fences."""
@@ -833,6 +883,29 @@ def process_seed(
                 print(f"    Strategy: {harder.chosen_strategy}")
             print(f"    Criterion: {harder.verification_criterion}")
 
+        # If round 0's criterion is the underspecified-question escape hatch, don't
+        # spend a DR call + judge call on it. Skip both, mark UNDERSPECIFIED, and
+        # stop — there is nothing meaningful to harden.
+        if attempt == 0 and _is_underspecified_criterion(harder.verification_criterion):
+            judgment = Judgment(
+                criterion_satisfied=True,
+                criterion_reasoning="Seed criterion is the underspecified-question escape hatch; DR + judge skipped.",
+                other_issues=[],
+                summary="Seed underspecified — auto-passed round 0 without a DR or judge call; not hardened.",
+                verdict="PASSED",
+                raw="",
+            )
+            logger.log_verdict(seed=seed, attempt=0, verdict="PASSED", summary=judgment.summary)
+            result.attempts.append(AttemptRecord(
+                attempt=0, harder=harder, answer="", judgment=judgment,
+                trace=None, answer_model=None,
+            ))
+            result.final_status = "UNDERSPECIFIED"
+            if verbose:
+                print("\n>>> Seed underspecified (criterion = 'Any non-empty answer is acceptable'). "
+                      "Skipping DR + judge and not hardening. Stopping.")
+            return result
+
         # Step 2 — query research system
         try:
             research = query_research_system(
@@ -976,13 +1049,29 @@ def main():
         help=f"Answering-system profile injected into the make-harder prompt "
              f"(default: {DEFAULT_PROFILE}).",
     )
+    parser.add_argument(
+        "--force-strategy", type=int, metavar="N",
+        choices=range(1, len(STRATEGIES) + 1),
+        help=f"Pin Claude to strategy #N (1..{len(STRATEGIES)}) from the menu in "
+             "PROMPT_TO_MAKE_HARDER_QUESTION. Requires --prompt original.",
+    )
     args = parser.parse_args()
+
+    if args.force_strategy is not None and args.prompt != "original":
+        parser.error("--force-strategy requires --prompt original (the EXPLORE prompt has no menu).")
 
     profile_text = ANSWERING_SYSTEM_PROFILES[args.profile]
 
     base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
                      else PROMPT_TO_MAKE_HARDER_QUESTION)
     harder_prompt = with_profile(base_template, profile_text)
+    if args.force_strategy is not None:
+        # Replace the 22-item menu with just the forced strategy so the model has no
+        # choice but to use it. Uses the same sentinel with_menu() would; skips with_menu().
+        forced_menu = f"1. {STRATEGIES[args.force_strategy - 1]}"
+        harder_prompt = harder_prompt.replace(_STRATEGY_MENU_SENTINEL, forced_menu)
+    else:
+        harder_prompt = with_menu(harder_prompt)
 
     seeds = list(args.seeds)
     if args.seeds_file:

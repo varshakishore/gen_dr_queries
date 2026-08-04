@@ -104,6 +104,8 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         cmd += ["--profile", args.profile]
     if args.timeout:
         cmd += ["--timeout", str(args.timeout)]
+    if args.force_strategy is not None:
+        cmd += ["--force-strategy", str(args.force_strategy)]
 
     print(f"[start {idx:>3}/{args._n}] {seed}", flush=True)
     proc = subprocess.run(cmd, capture_output=True, text=True)
@@ -169,6 +171,9 @@ def main():
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
                                      "(e.g. drtulu, tongyi).")
+    p.add_argument("--force-strategy", type=int, metavar="N",
+                   help="Pin the pipeline to strategy #N (1..22) from the menu in "
+                        "PROMPT_TO_MAKE_HARDER_QUESTION. Requires --prompt original.")
     p.add_argument("--timeout", type=float,
                    help="Read timeout (s) per research-server call passed to the pipeline "
                         "(e.g. 7200 for slow models like Tongyi).")
