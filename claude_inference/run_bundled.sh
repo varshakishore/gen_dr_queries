@@ -19,7 +19,6 @@ set -euo pipefail
 
 PROJECT=/weka/nora-default/jayd/query_generation/gen_dr_queries
 RUNS=$PROJECT/claude_inference/runs
-DR_LAUNCHER=/weka/nora-default/varshak/dr-tulu/agent/workflows/auto_launch.py
 
 # Install pipeline dependencies into the container's Python. Fast, and avoids
 # the (non-portable) local .venv symlinks.
@@ -27,7 +26,10 @@ pip install --quiet anthropic requests datasets openai
 
 # Start the DR-Tulu server stack in the background. `setsid` gives it its own
 # process group so we can kill the whole tree on exit without racing with beaker.
-setsid python "$DR_LAUNCHER" > /tmp/dr-tulu.log 2>&1 &
+# Must be launched with cwd = workflows/ so downstream imports (cite_utils etc.)
+# resolve — running it via an absolute path from elsewhere breaks silently.
+setsid bash -c 'cd /weka/nora-default/varshak/dr-tulu/agent/workflows && python auto_launch.py' \
+    > /tmp/dr-tulu.log 2>&1 &
 SERVER_PGID=$!
 
 cleanup() {
@@ -52,6 +54,23 @@ if ! curl -sf http://localhost:8007/docs > /dev/null 2>&1; then
     tail -80 /tmp/dr-tulu.log || true
     exit 1
 fi
+
+# /docs coming up only proves FastAPI booted — the vLLM + MCP + workflow stack
+# behind /ask can still be broken (e.g. missing cite_utils). Exercise it once
+# on a trivial query and abort if the answer is empty or malformed.
+echo "[wait] running DR-Tulu answer healthcheck (1-2 min)..."
+HEALTH=$(curl -s -X POST http://localhost:8007/ask \
+    -H 'Content-Type: application/json' \
+    -d '{"question": "What is deep learning?"}' \
+    --max-time 600)
+if ! echo "$HEALTH" | python -c "import sys, json; d = json.load(sys.stdin); sys.exit(0 if len(d.get('answer', '') or '') > 100 else 1)" 2>/dev/null; then
+    echo "[fatal] DR-Tulu answer healthcheck failed. Response head:"
+    echo "$HEALTH" | head -c 2000; echo
+    echo "--- /tmp/dr-tulu.log tail ---"
+    tail -100 /tmp/dr-tulu.log 2>&1 || true
+    exit 1
+fi
+echo "[wait] DR-Tulu answer healthcheck OK"
 
 cd "$PROJECT"
 
