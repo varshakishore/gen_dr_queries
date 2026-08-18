@@ -140,23 +140,42 @@ def card_html(s) -> str:
     parts = []
     if attempts:
         last = attempts[-1]
-        h, j = last.get("harder", {}), last.get("judgment", {})
+        h = last.get("harder") or {}
+        # judgment is None when the criterion check rejected the criterion, so the
+        # attempt never reached the research server.
+        j = last.get("judgment") or {}
+        cc = last.get("criterion_check") or {}
         parts.append(f'<div class="field"><b>Final question</b><div>{esc(h.get("updated_question"))}</div></div>')
         parts.append(f'<div class="field"><b>Strategy</b><div>{esc(h.get("chosen_strategy"))}</div></div>')
         parts.append(f'<div class="field"><b>Verification criterion</b><div>{esc(h.get("verification_criterion"))}</div></div>')
-        parts.append(f'<div class="field"><b>Judge verdict</b><div>{esc(j.get("verdict"))} — {esc(j.get("summary"))}</div></div>')
-        parts.append(f'<div class="field"><b>Why it {("failed" if j.get("verdict")=="FAILED" else "passed")}</b><div>{esc(j.get("criterion_reasoning"))}</div></div>')
-        issues = j.get("other_issues") or []
-        if issues:
-            lis = "".join(f"<li>{esc(i)}</li>" for i in issues)
-            parts.append(f'<div class="field"><b>Other issues</b><ul>{lis}</ul></div>')
+        if h.get("verification_criterion_original"):
+            parts.append(f'<div class="field"><b>Criterion before rewrite</b>'
+                         f'<div>{esc(h["verification_criterion_original"])}</div></div>')
+        if last.get("judgment") is None:
+            parts.append(f'<div class="field"><b>Criterion check</b>'
+                         f'<div>{esc(cc.get("correctness_label"))} — '
+                         f'{esc(cc.get("main_correctness_problem"))}</div></div>')
+            if cc.get("reasoning"):
+                parts.append(f'<div class="field"><b>Why the criterion was rejected</b>'
+                             f'<div>{esc(cc["reasoning"])}</div></div>')
+            if cc.get("rewrite"):
+                parts.append(f'<div class="field"><b>Suggested rewrite</b>'
+                             f'<div>{esc(cc["rewrite"])}</div></div>')
+        else:
+            parts.append(f'<div class="field"><b>Judge verdict</b><div>{esc(j.get("verdict"))} — {esc(j.get("summary"))}</div></div>')
+            parts.append(f'<div class="field"><b>Why it {("failed" if j.get("verdict")=="FAILED" else "passed")}</b><div>{esc(j.get("criterion_reasoning"))}</div></div>')
+            issues = j.get("other_issues") or []
+            if issues:
+                lis = "".join(f"<li>{esc(i)}</li>" for i in issues)
+                parts.append(f'<div class="field"><b>Other issues</b><ul>{lis}</ul></div>')
         ans = last.get("answer") or ""
         stem = Path(s["file"]).stem
-        parts.append(
-            f'<div class="field"><a class="viewlink" href="answers/{stem}.html" '
-            f'target="_blank">📄 Open full answer with linked references '
-            f'({len(ans):,} chars)</a></div>'
-        )
+        if ans:
+            parts.append(
+                f'<div class="field"><a class="viewlink" href="answers/{stem}.html" '
+                f'target="_blank">📄 Open full answer with linked references '
+                f'({len(ans):,} chars)</a></div>'
+            )
 
         # Claude + web-search comparison, if available.
         cmp = s.get("compare")
@@ -174,8 +193,8 @@ def card_html(s) -> str:
     if len(attempts) > 1:
         rows = "".join(
             f'<tr><td>{a.get("attempt")}</td>'
-            f'<td>{esc(a.get("judgment",{}).get("verdict"))}</td>'
-            f'<td>{esc(a.get("harder",{}).get("updated_question"))}</td></tr>'
+            f'<td>{esc((a.get("judgment") or {}).get("verdict") or (a.get("criterion_check") or {}).get("correctness_label"))}</td>'
+            f'<td>{esc((a.get("harder") or {}).get("updated_question"))}</td></tr>'
             for a in attempts
         )
         parts.append(

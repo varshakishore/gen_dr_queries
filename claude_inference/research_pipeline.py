@@ -6,6 +6,11 @@ Flow per seed question:
   0. Test the seed question as-is against the research server. If the answer
      already FAILS the judge, stop and report the seed is already difficult.
   1. Use Claude to create a harder version of the seed question (with prior attempts as context after round 1).
+  1b. (--verify-criterion) Retrieve S2 papers for the harder question and ask Claude
+     whether the verification criterion is itself factually correct. Continue on
+     "correct"/"partly_correct", swapping in the meta-judge's rewrite when it supplies
+     one; stop the seed on "incorrect"/"insufficient_evidence" before paying for a
+     research call.
   2. Send the harder question to a local research server at localhost:8007/ask.
   3. Use Claude to judge the answer against the verification criterion.
   4. If the answer FAILED, stop (we found a question that breaks the system).
@@ -36,6 +41,8 @@ from typing import Optional
 import requests
 from anthropic import Anthropic
 
+from cite_utils import build_doc_index, numbered_plaintext, references_block
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -43,7 +50,7 @@ from anthropic import Anthropic
 RESEARCH_SERVER_URL = "http://localhost:8007/ask"
 RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 
-CLAUDE_MODEL = "claude-sonnet-5"
+CLAUDE_MODEL = "claude-sonnet-4-5"
 MAX_ATTEMPTS = 5
 
 # Per-million-token pricing in USD (input, output).
@@ -92,7 +99,89 @@ ANSWERING_SYSTEM_PROFILES = {
 }
 DEFAULT_PROFILE = "drtulu"
 
+
+# ---------------------------------------------------------------------------
+# Example-strategy menus
+# ---------------------------------------------------------------------------
+# Each entry is a list of strategy descriptions shown to Claude under
+# "EXAMPLE STRATEGIES TO CONSIDER" in PROMPT_TO_MAKE_HARDER_QUESTION. Selected via
+# --strategies and numbered automatically at render time. Add new menus here to
+# steer generation toward a particular class of difficulty.
+STRATEGY_LISTS = {
+    # The original mixed menu: a bit of everything.
+    "default": [
+        "Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).",
+        "Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.",
+        "Require multi-step reasoning, structured argumentation, or hierarchical planning.",
+        "Require handling conflicting, incomplete, or low-quality evidence.",
+        'Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions. '
+        "However, keep the scope reasonably bounded so that an answer could adequately address it, and not so "
+        "broad that any answer would necessarily be incomplete.",
+        "Require correcting a hidden misconception or establishing key knowns before answering.",
+        'Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").',
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Something else you think of that would be effective at exposing weaknesses in research systems!",
+    ],
+    "jena_cog_biases":  [
+    # 1. Survivorship & selection
+    "Frame the question around a filtered sample of evidence as though it represented the full population, requiring the answer to identify missing cases and explain how selection affects the inference.",
+    # 2. Base-rate & magnitude neglect
+    "Ignore or obscure a relevant base rate, denominator, sample size, effect size, or population magnitude, requiring the answer to restore the omitted quantity and explain its implications.",
+    # 3. Spurious pattern & causation
+    "Treat a correlation, temporal coincidence, or apparent cluster in noisy evidence as an established relationship, requiring the answer to consider randomness, confounding, reverse causation, or coincidence.",
+    # 4. Source & consensus
+    "Treat apparent agreement, popularity, or endorsement by a dominant authority as independent corroboration, requiring the answer to determine whether the sources genuinely converge or share data, methods, citations, or institutional origins.",
+    # 5. Measurement & proxy
+    "Treat a measurable proxy, such as citations, test scores, or statistical significance, as identical to the underlying construct, requiring the answer to examine whether the metric validly captures what matters.",
+    # 6. Confirmation & motivated testing
+    "Presuppose a favored conclusion and request only confirming evidence or a one-sided test, requiring the answer to consider alternative hypotheses and disconfirming evidence.",
+    # 7. Anchoring, framing & substitution
+    "Introduce an anchor, framing manipulation, salient detail, or substituted proxy question that distorts the target judgment, requiring the answer to identify the distortion before addressing the underlying issue.",
+    # 8. Information & action
+    "Presume that gathering more information, taking action, or eliminating a small residual risk is inherently worthwhile, requiring the answer to determine whether it could materially change the decision or outcome.",
+    # 9. Paradigm resistance & belief updating
+    "Frame a prevailing paradigm as settled and invite the answer to discount contradictory evidence, requiring it instead to weigh the new evidence on its merits and update the prior appropriately.",
+    # 10. Hindsight & outcome
+    "Present the outcome of a past prediction, decision, or study in a way that invites hindsight or outcome bias, requiring the answer to assess the reasoning using only the evidence available at the time.",
+    # 11. Temporal distortion
+    "Presume that a phenomenon is recent, increasingly common, newly important, or declining because of recent attention, requiring the answer to evaluate it against the appropriate historical record.",
+    # 12. Overconfidence & illusion of understanding
+    "Assume that a phenomenon or mechanism is well understood despite limited or primarily descriptive evidence, requiring the answer to calibrate confidence to what the literature actually establishes.",
+    # 13. Illusory truth & availability
+    "Assert that a claim is well established or self-evident because it is repeated, familiar, salient, or easy to retrieve, requiring the answer to separate familiarity and availability from evidential support.",
+    ],
+    "merged_v1": [
+        "Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).",
+        "Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.",
+        "Require multi-step reasoning, structured argumentation, or hierarchical planning.",
+        "Require handling conflicting, incomplete, or low-quality evidence.",
+        "Require universal quantification ('for all X, is Y true?') or reasoning about edge cases and exceptions. "
+        "However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.",
+        "Require correcting a hidden misconception or establishing key knowns before answering.",
+        "Embed a specific context that changes the answer (e.g., 'explain to a policymaker with no ML background').",
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.", 
+        "Treat a correlation, temporal coincidence, or apparent empirical pattern as though it established a causal relationship. A correct answer must consider confounding, reverse causation, selection, or chance and reject unsupported causal framing.", 
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.", 
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.", 
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.", 
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result.", 
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.", 
+        "Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.", 
+        "Presume that obtaining more information, increasing precision, taking action, or eliminating residual uncertainty is inherently valuable. A correct answer must assess whether it could materially change the relevant decision or outcome.", 
+        "Something else you think of that would be effective at exposing weaknesses in research systems!",
+    ]
+}
+DEFAULT_STRATEGIES = "default"
+
 _PROFILE_SENTINEL = "{ANSWERING_SYSTEM_PROFILE}"
+_STRATEGIES_SENTINEL = "{EXAMPLE_STRATEGIES}"
+
+
+def format_strategies(strategies: list) -> str:
+    """Render a strategy list as the numbered menu block used in the prompt."""
+    return "\n".join(f"{i}. {s}" for i, s in enumerate(strategies, start=1))
 
 
 def with_profile(template: str, profile_text: str) -> str:
@@ -102,6 +191,15 @@ def with_profile(template: str, profile_text: str) -> str:
     left untouched.
     """
     return template.replace(_PROFILE_SENTINEL, profile_text)
+
+
+def with_strategies(template: str, strategies: list) -> str:
+    """Inject an example-strategy menu into a make-harder prompt template.
+
+    Templates without the sentinel (e.g. the explore prompt, which forbids reusing
+    the example strategies) are returned unchanged.
+    """
+    return template.replace(_STRATEGIES_SENTINEL, format_strategies(strategies))
 
 
 PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
@@ -130,15 +228,7 @@ RULES:
 - The question should be in English.
 
 EXAMPLE STRATEGIES TO CONSIDER:
-1. Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
-2. Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
-3. Require multi-step reasoning, structured argumentation, or hierarchical planning.
-4. Require handling conflicting, incomplete, or low-quality evidence.
-5. Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.
-6. Require correcting a hidden misconception or establishing key knowns before answering.
-7. Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
-8. Make a question that is unanswerable by current research, no existing work is available.
-9. Something else you think of that would be effective at exposing weaknesses in research systems!
+{EXAMPLE_STRATEGIES}
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -250,7 +340,7 @@ JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system o
 You will be given:
 - A research question
 - The verification criterion that defines what a good answer must do
-- The answer the research system produced
+- The answer the research system produced, with inline [n] citation markers and a References section listing each cited paper snippet
 
 Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion. If the verification criterion is "Any non-empty answer is acceptable", then the verdict should be PASSED.
 
@@ -274,6 +364,69 @@ OUTPUT FORMAT (valid JSON, no extra text):
 
 PASSED means: the criterion is satisfied AND there are no critical issues.
 FAILED means: the criterion is not satisfied OR there are serious problems (hallucinations, refusals, off-topic).
+"""
+
+PROMPT_TO_VERIFY_VERIFICATION_CRITERIA = """You are an expert meta-evaluator for a deep-research benchmark with difficult questions. Your only task is to judge whether the VERIFICATION CRITERION itself is correct as an evaluation standard for the given question.
+
+Do NOT reward or penalize style, atomicity, verbosity, or formatting except where those affect whether the criterion states a correct requirement. Determine whether the criterion's factual expectations, premises, causal claims, comparisons, mechanisms, entities, time frames, required distinctions, and absence/uncertainty claims are true, evidence-supported, and fairly required by the harder question.
+
+BENCHMARK CONTEXT:
+- The answering system being tested uses Semantic Scholar / academic-paper search.
+- A verification criterion is supposed to define one property that a correct answer to the question should satisfy.
+- A criterion is correct only if its required content is true.
+
+EVIDENCE RULES:
+- Use the provided local Semantic Scholar search results.
+- If the criterion embeds a specific expected fact, verify that fact directly.
+- If the criterion requires an answer to reject a false premise, verify that the premise is actually false or misleading.
+- If the criterion requires uncertainty, no causal isolation, no consensus, or absence of evidence, verify that this is a fair characterization of the available evidence rather than an unsupported negative claim.
+- If the combined evidence is not adequate to verify the criterion's factual expectation, use insufficient_evidence.
+- In checked_claims, include ONLY factual claims made by or required by the verification criterion itself. Alternative hypotheses, possible counterexamples, and anything else surfaced by the search belong in reasoning, not in checked_claims.
+
+REQUESTING ADDITIONAL SEARCHES:
+The provided search results are normally what you must work with. Use additional_queries SPARINGLY — only when a claim genuinely cannot be settled from the context given. Leave the list empty in every other case.
+- Always return your best provisional correctness_label from the evidence you already have.
+- If a search would merely add corroborating detail, do not request it.
+
+LABEL DEFINITIONS (for judging the verification criterion itself):
+- correct: The criterion's factual expectations are supported, accurately framed, and fairly required by the question. It can be used as-is to judge an answer.
+- partly_correct: The core expectation is directionally right, but some wording, scope, certainty, causal framing, entity mapping, or required distinction is materially imprecise. It should be revised before use.
+- incorrect: A factual expectation, premise, mechanism, comparison, required conclusion, or absence/uncertainty claim in the criterion is contradicted, unsupported, or unfairly required by the harder question.
+- insufficient_evidence: The given evidence is not adequate to verify whether the criterion itself is correct.
+
+Question:
+{question}
+
+Generator's rationale for why the question is difficult:
+{why_harder}
+
+Verification criterion being evaluated:
+{criterion}
+
+Local Semantic Scholar search results:
+{search_results_context}
+
+OUTPUT FORMAT — return valid JSON only, with this exact shape:
+{{
+  "checked_claims": [
+    {{
+      "claim": "<factual claim made by or required by the verification criterion itself>",
+      "verdict": "supported | contradicted | not_found | not_checkable",
+      "evidence": "<evidence for whether this criterion claim is true>",
+      "sources": ["local S2 title or URL...", "https://..."]
+    }}
+  ],
+  "correctness_label": "correct | partly_correct | incorrect | insufficient_evidence",
+  "main_correctness_problem": "<one sentence naming the single most serious defect in the criterion, e.g. the specific false expectation, mis-scoped requirement, or overstated absence claim. Empty string if and only if correctness_label is 'correct'. For insufficient_evidence, name the specific criterion claim that could not be verified.>",
+  "reasoning": "<the decision process behind correctness_label: connect the criterion's own factual requirements to the combined evidence, weigh any counterexamples or alternative hypotheses your search surfaced, and explain why the selected label is justified.>",
+  "rewrite": "<one corrected verification criterion for the given question, if the criterion is not correct but can be fixed. Empty string if correctness_label is 'correct' or if the evidence is insufficient to write a corrected version.>",
+  "additional_queries": [
+    {{
+      "query": "<a specific search whose results would settle a claim you could not settle from the provided context>",
+      "targets_claim": "<which checked_claims entry this would resolve>",
+    }}
+  ]
+}}
 """
 
 
@@ -367,6 +520,36 @@ class RunLogger:
             "summary": summary,
         })
 
+    def log_criterion_check(
+        self,
+        *,
+        seed: str,
+        attempt: int,
+        question: str,
+        criterion: str,
+        retrieval: dict,
+        check: Optional[dict],
+        latency_s: float,
+        error: Optional[str] = None,
+    ) -> None:
+        """Log the meta-judge's verdict on the verification criterion itself.
+
+        `check` is the parsed output JSON of PROMPT_TO_VERIFY_VERIFICATION_CRITERIA,
+        stored verbatim. `retrieval` holds the S2 retrieval metadata (counts, queries,
+        filters) — the retrieved paper text itself is not logged, only its size.
+        """
+        self._write({
+            "kind": "criterion_check",
+            "seed": seed,
+            "attempt": attempt,
+            "question": question,
+            "criterion": criterion,
+            "retrieval": retrieval,
+            "check": check,
+            "latency_s": latency_s,
+            "error": error,
+        })
+
     def log_run_end(self, totals: dict) -> None:
         self._write({"kind": "run_end", "totals": totals})
 
@@ -444,7 +627,23 @@ class HarderQuestion:
     chosen_strategy: str
     updated_question: str
     why_harder: str
-    verification_criterion: str  # single atomic criterion
+    verification_criterion: str  # single atomic criterion; may be replaced by a meta-judge rewrite
+    raw: str = ""
+    # Set only when the criterion check supplied a rewrite: the criterion as originally
+    # generated, before verification_criterion was replaced by it.
+    verification_criterion_original: str = ""
+
+
+@dataclass
+class CriterionCheck:
+    """Meta-judge verdict on the verification criterion itself (round 1+ only)."""
+    correctness_label: str
+    main_correctness_problem: str
+    reasoning: str
+    rewrite: str
+    checked_claims: list = field(default_factory=list)
+    additional_queries: list = field(default_factory=list)
+    retrieval: dict = field(default_factory=dict)
     raw: str = ""
 
 
@@ -463,9 +662,12 @@ class AttemptRecord:
     attempt: int
     harder: HarderQuestion
     answer: str
-    judgment: Judgment
+    # None when the attempt stopped before the research server was queried, i.e. the
+    # criterion check rejected the criterion.
+    judgment: Optional[Judgment] = None
     trace: object = None
     answer_model: object = None   # model the research server self-reported
+    criterion_check: Optional[CriterionCheck] = None
 
 
 @dataclass
@@ -645,6 +847,20 @@ def harder_question_gen(
     )
 
 
+def format_answer_for_judge(answer: str, trace: object) -> str:
+    """Render an answer the way the HTML viewer does, in plain text.
+
+    DR-Tulu's opaque `<cite id="...">` tags become inline [n] markers backed by a
+    References section carrying each source's title, authors, and retrieved snippet,
+    so the judge can check a claim against the text it cites rather than against the
+    system's own paraphrase of it. Answers with no `<cite>` tags (Tongyi, or any
+    response without a trace) pass through unchanged.
+    """
+    doc_index = build_doc_index(trace if isinstance(trace, dict) else {})
+    marked, refs = numbered_plaintext(answer, doc_index)
+    return marked + references_block(refs, include_snippets=True)
+
+
 def judge_answer(
     client: Anthropic,
     model: str,
@@ -654,15 +870,18 @@ def judge_answer(
     logger: RunLogger,
     seed: str,
     attempt: int,
+    trace: object = None,
 ) -> tuple[Judgment, CostBucket]:
+    judge_answer_text = format_answer_for_judge(answer, trace)
     prompt = JUDGE_PROMPT_TEMPLATE.format(
-        question=question, criterion=criterion, answer=answer
+        question=question, criterion=criterion, answer=judge_answer_text
     )
     messages = [{"role": "user", "content": prompt}]
     # Log the prompt with the (bulky) answer redacted; it lives in the results file.
     log_prompt = JUDGE_PROMPT_TEMPLATE.format(
         question=question, criterion=criterion,
-        answer=f"<answer omitted: {len(answer)} chars — see results file>",
+        answer=f"<answer + references omitted: {len(judge_answer_text)} chars — "
+               f"see results file>",
     )
     log_messages = [{"role": "user", "content": log_prompt}]
     raw, bucket = _call_claude(
@@ -682,6 +901,159 @@ def judge_answer(
             other_issues=data.get("other_issues", []),
             summary=data.get("summary", ""),
             verdict=verdict,
+            raw=raw,
+        ),
+        bucket,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Criterion verification (retrieval + meta-judge)
+# ---------------------------------------------------------------------------
+
+# Defaults for the S2 retrieval that grounds the criterion check. n_rerank is left at
+# retrieve_papers' own default.
+VERIFY_N_PAPERS = 15
+VERIFY_MAX_CHARS_PER_PAPER = 4000
+
+
+def format_search_results_context(
+    papers: list,
+    max_papers: int = VERIFY_N_PAPERS,
+    max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
+) -> str:
+    """Render retrieve_papers() output as the {search_results_context} block.
+
+    Uses `relevance_judgment_input_expanded` — the same per-paper markdown blob
+    ScholarQA feeds to its quote-extraction step — capped per paper so a few
+    long full-text papers cannot crowd out the rest.
+    """
+    if not papers:
+        return "(no papers were retrieved for this question)"
+    blocks = []
+    for i, paper in enumerate(papers[:max_papers], start=1):
+        body = paper.get("relevance_judgment_input_expanded") or ""
+        if max_chars_per_paper and len(body) > max_chars_per_paper:
+            body = body[:max_chars_per_paper] + "\n...[truncated]"
+        blocks.append(
+            f"--- Paper {i} {paper.get('reference_string', '')} ---\n{body}"
+        )
+    return "\n\n".join(blocks)
+
+
+def verify_criterion(
+    client: Anthropic,
+    model: str,
+    question: str,
+    why_harder: str,
+    criterion: str,
+    logger: RunLogger,
+    seed: str,
+    attempt: int,
+    retrieval_kwargs: Optional[dict] = None,
+    n_context_papers: int = VERIFY_N_PAPERS,
+    max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
+) -> tuple[CriterionCheck, CostBucket]:
+    """Retrieve papers for `question`, then judge whether `criterion` is itself correct.
+
+    retrieve_papers() runs its own Claude call for query decomposition using its own
+    client. That call is not logged as a claude_call, but its usage is reported back and
+    folded into the returned CostBucket (and into the criterion_check log record).
+    """
+    # Imported lazily so the pipeline still runs without the retrieval stack installed.
+    from retrieve_papers import retrieve_papers
+
+    t0 = time.perf_counter()
+    retrieval_meta: dict = {}
+    decompose_bucket = CostBucket()
+    try:
+        retrieved = retrieve_papers(question, **(retrieval_kwargs or {}))
+        papers = retrieved.get("papers") or []
+        context = format_search_results_context(
+            papers, max_papers=n_context_papers, max_chars_per_paper=max_chars_per_paper
+        )
+        retrieval_meta = {
+            "n_papers": len(papers),
+            "n_context_papers": min(len(papers), n_context_papers),
+            "context_chars": len(context),
+            "rewritten_query": retrieved.get("rewritten_query"),
+            "keyword_query": retrieved.get("keyword_query"),
+            "search_filters": retrieved.get("search_filters"),
+            "n_snippets": retrieved.get("n_snippets"),
+            "n_keyword_papers": retrieved.get("n_keyword_papers"),
+            "elapsed_s": retrieved.get("elapsed_s"),
+        }
+        # retrieve_papers' query-decomposition call bills to us; price it here since it
+        # never passes through _call_claude.
+        decompose_usage = retrieved.get("decompose_usage")
+        if decompose_usage:
+            decompose_model = retrieved.get("decomposer_model") or model
+            cost, usage_n = price_call(decompose_model, decompose_usage)
+            decompose_bucket = CostBucket(
+                input_tokens=usage_n["input_tokens"],
+                output_tokens=usage_n["output_tokens"],
+                cache_creation_tokens=usage_n["cache_creation_input_tokens"],
+                cache_read_tokens=usage_n["cache_read_input_tokens"],
+                cost_usd=cost,
+                calls=1,
+            )
+            retrieval_meta["decomposer_model"] = decompose_model
+            retrieval_meta["decompose_usage"] = usage_n
+            retrieval_meta["decompose_cost_usd"] = cost
+    except Exception as e:
+        logger.log_criterion_check(
+            seed=seed, attempt=attempt, question=question, criterion=criterion,
+            retrieval=retrieval_meta, check=None,
+            latency_s=time.perf_counter() - t0, error=f"retrieval failed: {type(e).__name__}: {e}",
+        )
+        raise
+
+    prompt = PROMPT_TO_VERIFY_VERIFICATION_CRITERIA.format(
+        question=question, why_harder=why_harder, criterion=criterion,
+        search_results_context=context,
+    )
+    messages = [{"role": "user", "content": prompt}]
+    # Keep the bulky retrieved context out of the claude_call log record; the
+    # criterion_check record carries its size and the queries that produced it.
+    log_messages = [{"role": "user", "content": PROMPT_TO_VERIFY_VERIFICATION_CRITERIA.format(
+        question=question, why_harder=why_harder, criterion=criterion,
+        search_results_context=(
+            f"<{retrieval_meta['n_context_papers']} papers omitted: "
+            f"{retrieval_meta['context_chars']} chars>"
+        ),
+    )}]
+
+    try:
+        raw, bucket = _call_claude(
+            client, model=model, system=None, messages=messages,
+            max_tokens=3000, logger=logger, seed=seed, attempt=attempt,
+            purpose="verify_criterion", log_messages=log_messages,
+        )
+        bucket.add(decompose_bucket)
+        data = extract_json(raw)
+    except Exception as e:
+        logger.log_criterion_check(
+            seed=seed, attempt=attempt, question=question, criterion=criterion,
+            retrieval=retrieval_meta, check=None,
+            latency_s=time.perf_counter() - t0, error=f"{type(e).__name__}: {e}",
+        )
+        raise
+
+    logger.log_criterion_check(
+        seed=seed, attempt=attempt, question=question, criterion=criterion,
+        retrieval=retrieval_meta, check=data,
+        latency_s=time.perf_counter() - t0, error=None,
+    )
+
+    return (
+        CriterionCheck(
+            correctness_label=str(data.get("correctness_label") or "").strip().lower(),
+            main_correctness_problem=data.get("main_correctness_problem", ""),
+            reasoning=data.get("reasoning", ""),
+            rewrite=(data.get("rewrite") or "").strip(),
+            checked_claims=data.get("checked_claims", []),
+            additional_queries=data.get("additional_queries", []),
+            retrieval=retrieval_meta,
             raw=raw,
         ),
         bucket,
@@ -784,6 +1156,10 @@ def process_seed(
     server_url: str = RESEARCH_SERVER_URL,
     harder_prompt: str = PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
     timeout_s: float = RESEARCH_TIMEOUT_S,
+    verify_criteria: bool = False,
+    retrieval_kwargs: Optional[dict] = None,
+    n_context_papers: int = VERIFY_N_PAPERS,
+    max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
@@ -811,7 +1187,9 @@ def process_seed(
                     verification_criterion=criterion,
                 )
             else:
-                prior_harder = [a for a in result.attempts if a.attempt > 0]
+                prior_harder = [
+                    a for a in result.attempts if a.attempt > 0 and a.judgment is not None
+                ]
                 harder, bucket = harder_question_gen(
                     client, model, seed, prior_harder, logger, attempt,
                     harder_prompt=harder_prompt,
@@ -832,6 +1210,58 @@ def process_seed(
             if attempt > 0:
                 print(f"    Strategy: {harder.chosen_strategy}")
             print(f"    Criterion: {harder.verification_criterion}")
+
+        # Step 1b — check the criterion itself before spending a research-server call on
+        # it. Rounds 1+ only: round 0's criterion comes from generate_seed_criterion, has
+        # no why_harder to supply, and is often the "any non-empty answer" escape hatch.
+        criterion_check = None
+        if verify_criteria and attempt > 0:
+            try:
+                criterion_check, bucket = verify_criterion(
+                    client, model, harder.updated_question, harder.why_harder,
+                    harder.verification_criterion, logger, seed, attempt,
+                    retrieval_kwargs=retrieval_kwargs,
+                    n_context_papers=n_context_papers,
+                    max_chars_per_paper=max_chars_per_paper,
+                )
+                result.cost.add(bucket)
+            except Exception as e:
+                result.final_status = "ERROR"
+                result.error = f"Criterion verification failed: {e}"
+                if verbose:
+                    print(f"[ERROR] {result.error}")
+                return result
+
+            if verbose:
+                print(
+                    f"[1b] Criterion check: {criterion_check.correctness_label} "
+                    f"({criterion_check.retrieval.get('n_context_papers', 0)} papers)"
+                )
+                if criterion_check.main_correctness_problem:
+                    print(f"     Problem: {criterion_check.main_correctness_problem}")
+                if criterion_check.additional_queries:
+                    print(f"     Requested searches: {criterion_check.additional_queries}")
+
+            if criterion_check.correctness_label not in ("correct", "partly_correct"):
+                result.final_status = "CRITERION_INVALID"
+                result.attempts.append(
+                    AttemptRecord(
+                        attempt=attempt, harder=harder, answer="",
+                        criterion_check=criterion_check,
+                    )
+                )
+                if verbose:
+                    print(
+                        f"\n>>> Criterion judged {criterion_check.correctness_label} on "
+                        f"attempt {attempt}; not worth a research call. Stopping."
+                    )
+                return result
+
+            if criterion_check.rewrite:
+                harder.verification_criterion_original = harder.verification_criterion
+                harder.verification_criterion = criterion_check.rewrite
+                if verbose:
+                    print(f"     Using rewritten criterion: {harder.verification_criterion}")
 
         # Step 2 — query research system
         try:
@@ -858,6 +1288,7 @@ def process_seed(
             judgment, bucket = judge_answer(
                 client, model, harder.updated_question,
                 harder.verification_criterion, answer, logger, seed, attempt,
+                trace=trace,
             )
             result.cost.add(bucket)
         except Exception as e:
@@ -886,6 +1317,7 @@ def process_seed(
             AttemptRecord(
                 attempt=attempt, harder=harder, answer=answer, judgment=judgment,
                 trace=trace, answer_model=answer_model,
+                criterion_check=criterion_check,
             )
         )
 
@@ -926,7 +1358,10 @@ def result_to_dict(result: SeedResult) -> dict:
                 "answer": a.answer,
                 "answer_model": a.answer_model,
                 "trace": a.trace,
-                "judgment": asdict(a.judgment),
+                "judgment": asdict(a.judgment) if a.judgment is not None else None,
+                "criterion_check": (
+                    asdict(a.criterion_check) if a.criterion_check is not None else None
+                ),
             }
             for a in result.attempts
         ],
@@ -976,13 +1411,52 @@ def main():
         help=f"Answering-system profile injected into the make-harder prompt "
              f"(default: {DEFAULT_PROFILE}).",
     )
+    parser.add_argument(
+        "--strategies", choices=sorted(STRATEGY_LISTS), default=DEFAULT_STRATEGIES,
+        help=f"Which example-strategy menu to inject into the '--prompt original' "
+             f"make-harder prompt (default: {DEFAULT_STRATEGIES}). Ignored by "
+             f"'--prompt explore', which has no strategy menu.",
+    )
+    parser.add_argument(
+        "--verify-criterion", action="store_true",
+        help="Before each research-server call (rounds 1+), retrieve papers for the harder "
+             "question and ask Claude whether the verification criterion is itself correct. "
+             "Continues on 'correct'/'partly_correct' (applying any rewrite) and stops the "
+             "seed on 'incorrect'/'insufficient_evidence'. Requires retrieve_papers.py and "
+             "S2_API_KEY.",
+    )
+    parser.add_argument(
+        "--verify-n-papers", type=int, default=VERIFY_N_PAPERS,
+        help=f"Papers to include in the criterion-check context (default: {VERIFY_N_PAPERS}).",
+    )
+    parser.add_argument(
+        "--verify-max-chars-per-paper", type=int, default=VERIFY_MAX_CHARS_PER_PAPER,
+        help=f"Truncate each paper's text to this many chars in the criterion-check "
+             f"context (default: {VERIFY_MAX_CHARS_PER_PAPER}).",
+    )
+    parser.add_argument(
+        "--reranker", default="auto", choices=["auto", "none", "vllm"],
+        help="Reranker for criterion-check retrieval; 'auto' uses a remote vLLM server if "
+             "one is configured, else no reranking.",
+    )
+    parser.add_argument(
+        "--reranker-url", default=None,
+        help="Base URL of the vLLM reranker, e.g. http://gpu-host:8000 (env: VLLM_RERANK_URL).",
+    )
     args = parser.parse_args()
 
     profile_text = ANSWERING_SYSTEM_PROFILES[args.profile]
 
+    retrieval_kwargs = {
+        "reranker": args.reranker,
+        "reranker_url": args.reranker_url,
+    }
+
     base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
                      else PROMPT_TO_MAKE_HARDER_QUESTION)
-    harder_prompt = with_profile(base_template, profile_text)
+    harder_prompt = with_strategies(
+        with_profile(base_template, profile_text), STRATEGY_LISTS[args.strategies]
+    )
 
     seeds = list(args.seeds)
     if args.seeds_file:
@@ -995,6 +1469,13 @@ def main():
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         parser.error("ANTHROPIC_API_KEY environment variable is not set.")
+
+    if args.verify_criterion and not os.environ.get("S2_API_KEY"):
+        print(
+            "[verify] WARNING: S2_API_KEY is not set; criterion-check retrieval will be "
+            "rate limited hard by the Semantic Scholar API.",
+            file=sys.stderr,
+        )
 
     run_id = args.run_id or dt.datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:6]
     log_path = Path(args.log_dir) / f"run-{run_id}.jsonl"
@@ -1013,6 +1494,10 @@ def main():
             max_attempts=args.max_attempts, verbose=not args.quiet,
             server_url=args.server_url, harder_prompt=harder_prompt,
             timeout_s=args.timeout,
+            verify_criteria=args.verify_criterion,
+            retrieval_kwargs=retrieval_kwargs,
+            n_context_papers=args.verify_n_papers,
+            max_chars_per_paper=args.verify_max_chars_per_paper,
         )
         all_results.append(result)
         grand_total.add(result.cost)
@@ -1023,7 +1508,7 @@ def main():
     for r in all_results:
         n = len(r.attempts)
         print(
-            f"- [{r.final_status:14}] ({n} attempts, ${r.cost.cost_usd:.4f}, "
+            f"- [{r.final_status:17}] ({n} attempts, ${r.cost.cost_usd:.4f}, "
             f"{r.cost.calls} Claude calls) {r.seed}"
         )
         if r.error:
@@ -1032,6 +1517,12 @@ def main():
             last = r.attempts[-1]
             print(f"    failing question: {last.harder.updated_question}")
             print(f"    judge summary: {last.judgment.summary}")
+        elif r.final_status == "CRITERION_INVALID":
+            last = r.attempts[-1]
+            print(f"    rejected question: {last.harder.updated_question}")
+            print(f"    criterion: {last.harder.verification_criterion}")
+            print(f"    label: {last.criterion_check.correctness_label}")
+            print(f"    problem: {last.criterion_check.main_correctness_problem}")
 
     print(
         f"\nTotal cost: ${grand_total.cost_usd:.4f} "

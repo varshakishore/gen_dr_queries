@@ -54,12 +54,29 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title
 
 
 def render_attempt(att: dict, is_last: bool = False) -> str:
-    h = att.get("harder", {})
-    j = att.get("judgment", {})
-    doc_index = build_doc_index(att.get("trace") or {})
+    h = att.get("harder") or {}
+    # judgment is None when the attempt stopped before the research server was queried,
+    # i.e. the criterion check rejected the criterion.
+    j = att.get("judgment") or {}
+    cc = att.get("criterion_check") or {}
+    trace = att.get("trace") or {}
+    doc_index = build_doc_index(trace)
     body, refs, missing = render_answer(att.get("answer") or "", doc_index)
-    verdict = j.get("verdict", "")
-    vcolor = "#cf222e" if verdict == "FAILED" else "#1a7f37"
+    if att.get("judgment") is None and cc:
+        verdict = cc.get("correctness_label", "") or "NO VERDICT"
+        vcolor = "#9a6700"
+    else:
+        verdict = j.get("verdict", "")
+        vcolor = "#cf222e" if verdict == "FAILED" else "#1a7f37"
+    # Show what the criterion check said whenever it rewrote or rejected the criterion.
+    cc_rows = ""
+    if cc and (att.get("judgment") is None or h.get("verification_criterion_original")):
+        if h.get("verification_criterion_original"):
+            cc_rows += (f'<div><b>Criterion (original)</b> '
+                        f'{esc(h["verification_criterion_original"])}</div>')
+        cc_rows += f'<div><b>Criterion check</b> {esc(cc.get("correctness_label"))}</div>'
+        if cc.get("main_correctness_problem"):
+            cc_rows += f'<div><b>Problem</b> {esc(cc["main_correctness_problem"])}</div>'
     miss = (f'<div class="warn">{len(missing)} citation id(s) could not be resolved '
             f'from the trace.</div>' if missing else "")
     open_attr = " open" if is_last else ""
@@ -71,9 +88,10 @@ def render_attempt(att: dict, is_last: bool = False) -> str:
   <div class="qbox">
     <div><b>Question</b> {esc(h.get('updated_question'))}</div>
     <div><b>Criterion</b> {esc(h.get('verification_criterion'))}</div>
+    {cc_rows}
     <div><b>Judge</b> {esc(j.get('summary'))}</div>
   </div>
-  {render_searches(att.get('trace') or {{}})}
+  {render_searches(trace)}
   {miss}
   <div class="answer">{body}</div>
   <h3>References</h3>

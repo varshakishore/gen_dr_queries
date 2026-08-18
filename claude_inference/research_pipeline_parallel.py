@@ -102,8 +102,17 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
     ]
     if args.profile:
         cmd += ["--profile", args.profile]
+    if args.strategies:
+        cmd += ["--strategies", args.strategies]
     if args.timeout:
         cmd += ["--timeout", str(args.timeout)]
+    if args.verify_criterion:
+        cmd += ["--verify-criterion",
+                "--verify-n-papers", str(args.verify_n_papers),
+                "--verify-max-chars-per-paper", str(args.verify_max_chars_per_paper),
+                "--reranker", args.reranker]
+        if args.reranker_url:
+            cmd += ["--reranker-url", args.reranker_url]
 
     print(f"[start {idx:>3}/{args._n}] {seed}", flush=True)
     proc = subprocess.run(cmd, capture_output=True, text=True)
@@ -130,7 +139,9 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
 
     # Keep the console capture only when something went wrong (it holds the traceback);
     # a clean run's stdout is redundant with the result + log files.
-    failed = proc.returncode != 0 or status not in ("FAILED_FOUND", "EXHAUSTED")
+    failed = proc.returncode != 0 or status not in (
+        "FAILED_FOUND", "EXHAUSTED", "CRITERION_INVALID", "ALREADY_HARD"
+    )
     console_name = None
     if failed:
         console_path.write_text(
@@ -169,10 +180,25 @@ def main():
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
                                      "(e.g. drtulu, tongyi).")
+    p.add_argument("--strategies", help="Example-strategy menu name passed to the pipeline "
+                                        "(e.g. default, jena_cog_biases). Only affects "
+                                        "--prompt original.")
     p.add_argument("--timeout", type=float,
                    help="Read timeout (s) per research-server call passed to the pipeline "
                         "(e.g. 7200 for slow models like Tongyi).")
     p.add_argument("--server-url", default="http://localhost:8007/ask")
+    # Criterion verification, forwarded to the pipeline (see research_pipeline.py).
+    p.add_argument("--verify-criterion", action="store_true",
+                   help="Verify each harder question's criterion against retrieved S2 papers "
+                        "before querying the research server. Needs S2_API_KEY.")
+    p.add_argument("--verify-n-papers", type=int, default=15,
+                   help="Papers in the criterion-check context (default: 15).")
+    p.add_argument("--verify-max-chars-per-paper", type=int, default=4000,
+                   help="Per-paper char cap in the criterion-check context (default: 4000).")
+    p.add_argument("--reranker", default="auto", choices=["auto", "none", "vllm"],
+                   help="Reranker for criterion-check retrieval (default: auto).")
+    p.add_argument("--reranker-url", default=None,
+                   help="vLLM reranker base URL (env: VLLM_RERANK_URL).")
     p.add_argument("--python", default=sys.executable, help="Python interpreter for subprocesses.")
     p.add_argument("--no-skip-existing", dest="skip_existing", action="store_false",
                    help="Re-run seeds even if their sample_NNN.json already exists.")
