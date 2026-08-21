@@ -39,9 +39,8 @@ python strategy_feedback_module.py
   --cluster-model claude-opus-4-1      # default
   --min-failure-rate 0.25              # default
   --max-share 0.5                      # default
-  --min-cluster-size 2                 # default
+  --min-cluster-size 0                 # default
   --rank-by underrepresented           # default
-  --max-strategies 5                   # default
   --examples-per-strategy 5            # default
   --out round1_strategy_feedback.json
 ```

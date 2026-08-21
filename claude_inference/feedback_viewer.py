@@ -3,8 +3,9 @@
 Shows, in one self-contained page (no server, no external assets):
   * a cluster-comparison table — every cluster (in seeded mode: each seed strategy plus
     novel clusters) with its FAIL_RATE broken down per source_run, so generation prompts
-    (e.g. original vs explore) can be compared strategy by strategy; and
-  * the focus strategies, each with its per-subset rates and expandable few-shot failures.
+    (e.g. original vs explore) can be compared strategy by strategy;
+  * the focus strategies, each with its per-subset rates and expandable few-shot failures; and
+  * the ineligible strategies — the inverse set, with the selection threshold(s) each missed.
 
 Colour language matches EvalTree/build_viewer.py: green = higher failure rate (a strategy
 that stumps the agent, which is GOOD here). Use standalone or let build_strategy_feedback
@@ -267,6 +268,54 @@ def _focus_cards(feedback: dict, source_runs: list[str], colors: dict, href_map:
     return "".join(cards)
 
 
+def _ineligible_table(feedback: dict, source_runs: list[str], href_map: dict) -> str:
+    """The inverse of the focus list: clusters that missed a threshold, and which one.
+
+    Compact by design — these are the rejects, so no few-shot examples, just the pie, the
+    per-subset rates and a chip per failed check. Scaled against cluster_comparison so the
+    pies stay comparable with the table above.
+    """
+    rows = feedback.get("ineligible_strategies")
+    if rows is None:
+        return ""   # feedback JSON predates ineligible_strategies
+    if not rows:
+        return ('<h2>Ineligible strategies</h2>'
+                "<p class='muted'>None — every cluster met the selection thresholds.</p>")
+    max_size = max((c["num_questions"] for c in feedback.get("cluster_comparison", [])),
+                   default=max((r["num_questions"] for r in rows), default=1))
+    head = "".join(f"<th>{html.escape(_short(r))}</th>" for r in source_runs)
+    body = []
+    for r in rows:
+        cid = r["cluster_id"]
+        chips = "".join(f'<span class="why">{html.escape(w)}</span>'
+                        for w in r.get("excluded_for", []))
+        subset_cells = "".join(
+            f'<td class="pcell">'
+            f'{_pie_cell(b.get("num_questions", 0), b.get("num_failed", 0), max_size, _short(run), href_map.get((cid, run)))}'
+            "</td>"
+            for run, b in ((run, r.get("by_source_run", {}).get(run, {})) for run in source_runs)
+        )
+        body.append(
+            "<tr>"
+            f'<td class="cid">{html.escape(cid)}</td>'
+            f'<td class="desc">{html.escape(r["description"])}'
+            f'<div class="whys">{chips}</div></td>'
+            f'<td class="pcell">'
+            f'{_pie_cell(r["num_questions"], r.get("num_failed", 0), max_size, "overall", href_map.get((cid, "overall")))}'
+            "</td>"
+            + subset_cells
+            + "</tr>"
+        )
+    return (
+        f'<h2>Ineligible strategies <span class="count">{len(rows)} not fed back</span></h2>'
+        '<div class="legend">Clusters that did NOT make the focus list, with the selection '
+        'threshold(s) each one missed.</div>'
+        '<table class="cmp"><thead><tr>'
+        "<th>cluster</th><th>strategy · why not</th><th>overall</th>" + head +
+        "</tr></thead><tbody>" + "".join(body) + "</tbody></table>"
+    )
+
+
 def _meta_html(meta: dict) -> str:
     bits = [
         ("mode", meta.get("clustering", {}).get("cluster_mode", "?")),
@@ -307,6 +356,7 @@ def build_html(feedback: dict, href_map: dict | None = None) -> str:
         legend=_legend(source_runs, colors),
         comparison=_comparison_table(feedback, source_runs, colors, href_map),
         focus=_focus_cards(feedback, source_runs, colors, href_map),
+        ineligible=_ineligible_table(feedback, source_runs, href_map),
         notes=html.escape(meta.get("notes", "")),
     )
 
@@ -372,6 +422,10 @@ _TEMPLATE = r"""<!DOCTYPE html>
   .tag.volume {{ background:#a371f722; color:#a371f7; }}
   .tag.failure_rate {{ background:#3fb95022; color:hsl(120,62%,60%); }}
   .tag.new-underrepresented {{ background:#f0883e22; color:#f0883e; }}
+  .tag.unused {{ background:#8b949e22; color:var(--muted); }}
+  h2 .count {{ text-transform:none; letter-spacing:0; font-weight:400; color:#6e7681; margin-left:8px; }}
+  .whys {{ display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }}
+  .why {{ font-size:11px; padding:2px 8px; border-radius:999px; background:#f8514922; color:#f85149; }}
   .big {{ font-weight:700; }}
   .cdesc {{ margin:10px 0; color:#c9d1d9; }}
   .subs {{ display:flex; flex-wrap:wrap; gap:8px 18px; margin:8px 0; }}
@@ -394,6 +448,7 @@ _TEMPLATE = r"""<!DOCTYPE html>
   {comparison}
   <h2>Focus strategies</h2>
   {focus}
+  {ineligible}
   <h2>Notes</h2>
   <p class="muted">{notes}</p>
 </main>

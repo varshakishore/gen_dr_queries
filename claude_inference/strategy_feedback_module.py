@@ -57,7 +57,7 @@ seed_strategies_file : str | None
 
 Options (all keyword-only, shown with defaults):
     assign_method="llm"           "llm" | "embedding"  (see above)
-    cluster_model="claude-opus-4-1"   [llm] model doing the cluster assignment
+    cluster_model="claude-opus-4-6"   [llm] model doing the cluster assignment
     merge_new_clusters=True       [llm] consolidate near-duplicate new clusters
     batch_size=25                 [llm] strategies per assignment call
     embedding_model="text-embedding-3-small"   [embedding] embedding model if using embeddings
@@ -67,15 +67,16 @@ Options (all keyword-only, shown with defaults):
                                   supply cached vectors to skip the OpenAI call
     min_failure_rate=0.25         a cluster must stump the agent this often to be eligible
     max_share=0.5                 skip catch-all clusters covering more than this share
-    min_cluster_size=2            ignore clusters with fewer questions than this
+    min_cluster_size=0            ignore clusters with fewer questions than this; at 0 the
+                                  UNUSED strategies (0 questions this round) are kept and fed
+                                  back as untried, exempt from the failure_rate/share gates
     max_cluster_size=None         optionally ignore clusters larger than this
     rank_by="underrepresented"    "underrepresented" (failure_rate*(1-share)) | "diverse"
                                   (interleave failure-rate and volume rankings for a spread
                                   of cluster sizes) | "failure_rate" | "volume"
-    max_strategies=5              max focus strategies from the ranking
     always_include_new=True       additionally force-include every underrepresented NEW
                                   cluster that stumped the agent at least once (appended
-                                  beyond max_strategies)
+                                  even if it missed the size/failure thresholds)
     examples_per_strategy=5       max few-shot failure examples attached to EACH focus
                                   strategy; deduped globally so no question repeats
     include_instances=True        include the full per-cluster instance list in
@@ -108,13 +109,19 @@ A plain JSON-serializable dict (write it with `write_feedback`):
       "description": strategy text (seeds) or "[novel strategy not in seed menu] <name>",
       "num_questions", "num_failed", "failure_rate", "share", "score",
       "selected_for": "underrepresented" | "diverse" | "failure_rate" | "volume"
-                      | "new-underrepresented",
+                      | "new-underrepresented" | "unused",
       "rationale": one-line explanation of why it was picked,
       "by_source_run": {prompt: {num_questions, num_failed, failure_rate}},
       "few_shot_failures": [         # sampled from the inputs, FAILED questions only
         {seed_question, updated_question, strategy, verification_criterion, source_run}
       ]
     }, ...
+  ],
+
+  "ineligible_strategies": [         # the inverse set: every cluster NOT fed back
+    {cluster_id, description, num_questions, num_failed, failure_rate, share, score,
+     excluded_for: [which selection thresholds it missed],
+     rationale: one-line explanation, by_source_run: {prompt: {...}}}
   ],
 
   "cluster_comparison": [            # EVERY cluster (all seeds incl. empty ones + new ones)
@@ -170,11 +177,16 @@ from typing import Any, Iterable, Sequence
 # EvalTree embeddings can be passed in via `question_embeddings`).
 EMBEDDING_PREFIX = "The model has the following capability: "
 
-DEFAULT_ANTHROPIC_CLUSTER_MODEL = "claude-opus-4-1"
-DEFAULT_OPENAI_CLUSTER_MODEL = "gpt-5.6-luna"
+DEFAULT_ANTHROPIC_CLUSTER_MODEL = "claude-opus-4-6"
+DEFAULT_OPENAI_CLUSTER_MODEL = "gpt-4o-mini"
 DEFAULT_CLUSTER_MODEL = DEFAULT_ANTHROPIC_CLUSTER_MODEL
 
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+
+
+def _stage(msg: str) -> None:
+    """Announce the pipeline stage in progress (stderr, so stdout stays the report)."""
+    print(f"[stage] {msg}", file=sys.stderr, flush=True)
 
 
 def load_seed_strategies(seeds_file: Path | str | None) -> list[str]:
@@ -398,8 +410,8 @@ How to decide (accuracy first — do NOT distort assignments to hit a target cou
 - Assign to a SEED cluster when the strategy matches that seed's core idea. A \
 real thematic match, not a superficial keyword overlap — do NOT force a strategy into a \
 seed it does not really fit just to avoid making a new cluster.
-- If it fits NO seed well, consier assigning it to an EXISTING NEW cluster; only invent a \
-brand-new one if none fit.
+- If it fits NO seed well, consider assigning it to an EXISTING NEW cluster; only invent a \
+brand-new cluster if no existing cluster fits.
 - When you do invent a new cluster, give it a BROAD, general name that will also capture \
 related strategies (e.g. "temporal reasoning traps", NOT "temporal verification trap"), and \
 never a near-synonym of an existing new cluster.
@@ -576,8 +588,10 @@ def assign_llm(
         return new_index[key]
 
     indexed = list(enumerate(strategies))
-    for start in range(0, len(indexed), batch_size):
+    n_batches = (len(indexed) + batch_size - 1) // batch_size
+    for bi, start in enumerate(range(0, len(indexed), batch_size), start=1):
         batch = indexed[start:start + batch_size]
+        _stage(f"  assigning batch {bi}/{n_batches} ({len(batch)} strategies)")
         new_so_far = "; ".join(new_labels[new_index[k]] for k in new_order) or "none yet"
         strat_block = "\n".join(f"[{i}] {s}" for i, s in batch)
         prompt = _LLM_PROMPT.format(seed_block=seed_block, new_so_far=new_so_far,
@@ -606,6 +620,7 @@ def assign_llm(
         assignments = [unresolved if a is None else a for a in assignments]
 
     if merge and len(new_order) > 1:
+        _stage(f"  merging {len(new_order)} new clusters")
         merged = consolidate_new_clusters(
             new_labels, new_examples, provider, model, client
         )
@@ -732,10 +747,10 @@ def build_nodes(examples: Sequence[QuestionExample], seeds: Sequence[str],
 
 
 def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3,
-                 max_share: float = 0.5, min_cluster_size: int = 2,
-                 max_cluster_size: int | None = None, max_strategies: int = 4,
+                 max_share: float = 0.5, min_cluster_size: int = 0,
+                 max_cluster_size: int | None = None,
                  rank_by: str = "underrepresented",
-                 always_include_new: bool = True) -> list[dict]:
+                 always_include_new: bool = True) -> tuple[list[dict], list[dict]]:
     """Pick the clusters that work (stump the agent) and are worth leaning into next round.
 
     A cluster is eligible when it is a real theme (>= min_cluster_size questions, and no
@@ -753,25 +768,44 @@ def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3
     Each pick is tagged `selected_for` with the reason. When `always_include_new`, every NEW
     (off-menu) cluster that is underrepresented (share <= max_share) and stumped the agent at
     least once is ALWAYS included — even below the size/failure thresholds or the ranking
-    cutoff, and beyond max_strategies — tagged 'new-underrepresented'. Novel working
-    strategies are exactly what the generator should explore more of.
+    cutoff — tagged 'new-underrepresented'.
+
+    With min_cluster_size=0 (the default), UNUSED clusters — seeds the generator never tried
+    this round — are eligible too. These are tagged 'unused'.
+
+    Returns `(picked, ineligible)`. EVERY eligible cluster is returned, ranked. `ineligible` 
+    is the inverse set, every cluster that did not make it into `picked`, each tagged with 
+    the reason for exclusion (`excluded_for`), the list of thresholds it missed, for reporting.
     """
     def enrich(n: dict) -> dict:
         share = n["num_questions"] / total if total else 0.0
         return {**n, "share": share, "score": n["failure_rate"] * (1.0 - share)}
 
-    eligible = []
-    for n in nodes:
+    def exclusion_reasons(n: dict) -> list[str]:
+        """Every eligibility threshold this cluster misses ([] means it is eligible)."""
         size = n["num_questions"]
+        reasons = []
         if size < min_cluster_size:
-            continue
+            reasons.append(f"too small ({size} < min_cluster_size={min_cluster_size})"
+                           + (" — unused this round" if size == 0 else ""))
+            return reasons
+        if size == 0:
+            return reasons  # unused but allowed in: the rate/share gates are moot at n=0
         if max_cluster_size is not None and size > max_cluster_size:
-            continue
+            reasons.append(f"too large ({size} > max_cluster_size={max_cluster_size})")
         if n["failure_rate"] < min_failure_rate:
-            continue
-        if (size / total if total else 0.0) > max_share:
-            continue
-        eligible.append(enrich(n))
+            reasons.append(f"failure_rate {n['failure_rate']:.2f} < "
+                           f"min_failure_rate={min_failure_rate}")
+        share = size / total if total else 0.0
+        if share > max_share:
+            reasons.append(f"over-represented (share {share:.2f} > max_share={max_share})")
+        return reasons
+
+    # Unused (0-question) clusters are ranked separately: with no questions there is nothing to
+    # score, so they are appended after the ranking.
+    passing = [n for n in nodes if not exclusion_reasons(n)]
+    eligible = [enrich(n) for n in passing if n["num_questions"] > 0]
+    unused = [enrich(n) for n in passing if n["num_questions"] == 0]
 
     if rank_by == "diverse":
         rankings = [
@@ -781,7 +815,7 @@ def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3
         picked: list[dict] = []
         picked_ids: set[str] = set()
         cursors, turn = [0, 0], 0
-        while len(picked) < max_strategies and len(picked_ids) < len(eligible):
+        while len(picked_ids) < len(eligible):
             tag, ranked = rankings[turn]
             i = cursors[turn]
             while i < len(ranked) and ranked[i]["node_id"] in picked_ids:
@@ -799,8 +833,7 @@ def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3
         else:  # underrepresented (default): high failure but low share first
             rank_by = "underrepresented"
             key = lambda n: (n["score"], n["failure_rate"], -n["share"])
-        ranked = sorted(eligible, key=key, reverse=True)
-        picked = [{**n, "selected_for": rank_by} for n in ranked[:max_strategies]]
+        picked = sorted(eligible, key=key, reverse=True)
 
     if always_include_new:
         have = {p["node_id"] for p in picked}
@@ -812,7 +845,17 @@ def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3
         extra.sort(key=lambda n: (n["score"], n["failure_rate"]), reverse=True)
         picked.extend({**n, "selected_for": "new-underrepresented"} for n in extra)
 
-    return picked
+    # untried strategies last: nothing to score, but worth trying again
+    unused.sort(key=lambda n: n["node_id"])
+    picked.extend({**n, "selected_for": "unused"} for n in unused)
+
+    # the inverse set: everything not picked, with why it was left out (for reporting)
+    have = {p["node_id"] for p in picked}
+    ineligible = [{**enrich(n), "excluded_for": exclusion_reasons(n)}
+                  for n in nodes if n["node_id"] not in have]
+    ineligible.sort(key=lambda n: (n["score"], n["failure_rate"], n["num_questions"]), reverse=True)
+
+    return picked, ineligible
 
 
 def source_run_breakdown(leaves: Sequence[int], examples: Sequence[QuestionExample]) -> dict:
@@ -887,10 +930,9 @@ def build_feedback(
     # selection
     min_failure_rate: float = 0.3,
     max_share: float = 0.5,
-    min_cluster_size: int = 2,
+    min_cluster_size: int = 0,
     max_cluster_size: int | None = None,
     rank_by: str = "underrepresented",
-    max_strategies: int = 4,
     always_include_new: bool = True,
     examples_per_strategy: int = 5,
     include_instances: bool = True,
@@ -908,6 +950,8 @@ def build_feedback(
     strategies = [e.strategy for e in exs]
 
     # --- 1. cluster ---------------------------------------------------------
+    _how = f"{cluster_provider}/{cluster_model or 'default'}" if assign_method == "llm" else embedding_model
+    _stage(f"1/3 cluster: {len(exs)} strategies vs {len(seeds)} seeds [{assign_method}: {_how}]")
     if assign_method == "llm":
         assignment = assign_llm(
             strategies,
@@ -933,13 +977,14 @@ def build_feedback(
     nodes = build_nodes(exs, seeds, assignment)
 
     # --- 2. score / select --------------------------------------------------
+    _stage(f"2/3 score + select: {len(nodes)} clusters, rank_by={rank_by}")
     total = len(exs)
     num_failed = sum(1 for e in exs if e.failed)
-    focus = select_focus(
+    focus, ineligible = select_focus(
         nodes, total,
         min_failure_rate=min_failure_rate, max_share=max_share,
         min_cluster_size=min_cluster_size, max_cluster_size=max_cluster_size,
-        max_strategies=max_strategies, rank_by=rank_by,
+        rank_by=rank_by,
         always_include_new=always_include_new,
     )
     # No ancestor/descendant dedup needed: seeded clusters are disjoint by construction.
@@ -971,6 +1016,8 @@ def build_feedback(
         cluster_source["nearest_seed_distance_max"] = round(max(dists), 4) if dists else None
 
     # --- 3. assemble --------------------------------------------------------
+    _stage(f"3/3 assemble: {len(focus)} focus, {len(ineligible)} ineligible")
+
     def cluster_sort_key(n: dict):
         kind, _, num = n["node_id"].partition(".")
         order = {"seed": 0, "new": 1}.get(kind, 2)
@@ -1007,6 +1054,9 @@ def build_feedback(
             "score": round(n["score"], 4),
             "selected_for": n.get("selected_for", ""),
             "rationale": (
+                "Never used — the generator did not try this strategy at all this round. "
+                "Untested rather than unproductive, so give it a go next round."
+                if n["num_questions"] == 0 else
                 f"Works ({n['num_failed']}/{n['num_questions']} stumped the agent, "
                 f"failure rate {n['failure_rate']:.2f}) but under-used — only {n['share'] * 100:.0f}% "
                 f"of this round's questions. Under-represented, so lean into it next round."
@@ -1015,6 +1065,19 @@ def build_feedback(
             "few_shot_failures": few_shot_failures(
                 n, exs, per_strategy=examples_per_strategy, seen=seen_examples),
         })
+
+    ineligible_strategies = [{
+        "cluster_id": n["node_id"],
+        "description": n["description"],
+        "num_questions": n["num_questions"],
+        "num_failed": n["num_failed"],
+        "failure_rate": round(n["failure_rate"], 4),
+        "share": round(n["share"], 4),
+        "score": round(n["score"], 4),
+        "excluded_for": n["excluded_for"],
+        "rationale": "Not fed back next round: " + "; ".join(n["excluded_for"]) + ".",
+        "by_source_run": source_run_breakdown(n["leaves"], exs),
+    } for n in ineligible]
 
     return {
         "meta": {
@@ -1030,7 +1093,6 @@ def build_feedback(
                 "max_share": max_share,
                 "min_cluster_size": min_cluster_size,
                 "max_cluster_size": max_cluster_size,
-                "max_strategies": max_strategies,
                 "always_include_new": always_include_new,
                 "examples_per_strategy": examples_per_strategy,
             },
@@ -1041,9 +1103,12 @@ def build_feedback(
                      "'underrepresented' favours strategies that work (high failure_rate) but are "
                      "RARE (low share) — working approaches the generator under-uses. each carries "
                      "up to examples_per_strategy few_shot_failures — questions that FAILED "
-                     "verification — to demonstrate it.",
+                     "verification — to demonstrate it. ineligible_strategies is the inverse set: "
+                     "every cluster that missed a selection threshold, with excluded_for saying "
+                     "which.",
         },
         "focus_strategies": focus_strategies,
+        "ineligible_strategies": ineligible_strategies,
         "cluster_comparison": cluster_comparison,
     }
 
@@ -1085,6 +1150,14 @@ def format_summary(feedback: dict) -> str:
         lines.append(f"  [{r['failure_rate']:.2f} fail | {r['num_questions']:>2} q | "
                      f"{r['share'] * 100:>4.0f}% | {len(r['few_shot_failures'])} ex | "
                      f"{r['selected_for']:>20}] {r['description'][:60]}")
+
+    skipped = feedback.get("ineligible_strategies") or []
+    if skipped:
+        lines.append(f"skipped {len(skipped)} ineligible strategies")
+        for r in skipped:
+            lines.append(f"  [{r['failure_rate']:.2f} fail | {r['num_questions']:>2} q | "
+                         f"{r['share'] * 100:>4.0f}% | {'; '.join(r['excluded_for'])}] "
+                         f"{r['description'][:60]}")
 
     source_runs = meta["source_runs"]
     if len(source_runs) > 1:
@@ -1145,11 +1218,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     sel = ap.add_argument_group("selection (failures are GOOD: higher failure_rate is better)")
     sel.add_argument("--min-failure-rate", type=float, default=0.25)
     sel.add_argument("--max-share", type=float, default=0.5)
-    sel.add_argument("--min-cluster-size", type=int, default=2)
+    sel.add_argument("--min-cluster-size", type=int, default=0,
+                     help="drop clusters with fewer questions than this (0 keeps unused ones)")
     sel.add_argument("--max-cluster-size", type=int, default=None)
     sel.add_argument("--rank-by", choices=("underrepresented", "diverse", "failure_rate", "volume"),
                      default="underrepresented")
-    sel.add_argument("--max-strategies", type=int, default=5)
     sel.add_argument("--no-always-include-new", action="store_true",
                      help="do NOT force-include underrepresented novel clusters that worked")
     sel.add_argument("--examples-per-strategy", type=int, default=5)
@@ -1159,10 +1232,12 @@ def main(argv: Sequence[str] | None = None) -> None:
     ap.add_argument("--out", type=Path, required=True, help="output JSON path")
     args = ap.parse_args(argv)
 
+    _stage(f"0/3 load: {len(args.runs or [])} run path(s)")
     examples = load_examples_from_runs(
         args.runs, deciding_only=args.deciding_only,
         keep_run_duplicates=args.keep_run_duplicates,
         include_seed_round=args.include_seed_round)
+    _stage(f"  loaded {len(examples)} questions")
 
     feedback = build_feedback(
         examples,
@@ -1178,7 +1253,6 @@ def main(argv: Sequence[str] | None = None) -> None:
         min_cluster_size=args.min_cluster_size,
         max_cluster_size=args.max_cluster_size,
         rank_by=args.rank_by,
-        max_strategies=args.max_strategies,
         always_include_new=not args.no_always_include_new,
         examples_per_strategy=args.examples_per_strategy,
         include_instances=not args.no_instances,
