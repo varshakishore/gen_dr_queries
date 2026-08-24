@@ -104,6 +104,8 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         cmd += ["--profile", args.profile]
     if args.strategies:
         cmd += ["--strategies", args.strategies]
+    if args.banned_strategies:
+        cmd += ["--banned-strategies", args.banned_strategies]
     if args.timeout:
         cmd += ["--timeout", str(args.timeout)]
     if args.verify_criterion:
@@ -180,6 +182,9 @@ def main():
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
                                      "(e.g. drtulu, tongyi).")
+    p.add_argument("--banned-strategies",
+                   help="Banned-strategy menu name passed to the pipeline "
+                        "(--banned-strategies); only used with --prompt explore.")
     p.add_argument("--strategies", help="Example-strategy menu name passed to the pipeline "
                                         "(e.g. default, jena_cog_biases). Only affects "
                                         "--prompt original.")

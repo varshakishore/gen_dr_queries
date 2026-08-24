@@ -175,8 +175,33 @@ STRATEGY_LISTS = {
 }
 DEFAULT_STRATEGIES = "default"
 
+
+# ---------------------------------------------------------------------------
+# Banned-strategy menus
+# ---------------------------------------------------------------------------
+# Banning forces the search wider.
+BANNED_STRATEGY_LISTS = {
+    # The three strategies the prompt's own few-shot examples demonstrate. The prompt
+    # already says not to reuse them; naming them makes that enforceable.
+    "default": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY "
+        "retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question.",
+    ],
+    # Ban exactly the menu the 'original' prompt is shown, so an explore run is
+    # guaranteed to go off-menu (drops the open-ended "something else" line).
+    "seed_menu": [s for s in STRATEGY_LISTS["default"] if not s.startswith("Something else")],
+    # Ban the widest menu we have: 'default' plus the cognitive-bias traps.
+    "merged_v1": [s for s in STRATEGY_LISTS["merged_v1"] if not s.startswith("Something else")],
+    # Nothing off-limits: the "STRATEGIES TO NOT USE" block is removed entirely.
+    "none": [],
+}
+DEFAULT_BANNED_STRATEGIES = "default"
+
 _PROFILE_SENTINEL = "{ANSWERING_SYSTEM_PROFILE}"
 _STRATEGIES_SENTINEL = "{EXAMPLE_STRATEGIES}"
+_BANNED_STRATEGIES_SENTINEL = "{BANNED_STRATEGIES}"
 
 
 def format_strategies(strategies: list) -> str:
@@ -200,6 +225,19 @@ def with_strategies(template: str, strategies: list) -> str:
     the example strategies) are returned unchanged.
     """
     return template.replace(_STRATEGIES_SENTINEL, format_strategies(strategies))
+
+
+def with_banned_strategies(template: str, strategies: list) -> str:
+    """Inject a banned-strategy menu into a make-harder prompt template.
+
+    An empty list removes the whole "STRATEGIES TO NOT USE" block rather than leaving a
+    dangling header. Templates without the sentinel (e.g. the original prompt, which
+    shows a menu to use instead of one to avoid) are returned unchanged.
+    """
+    block = f"STRATEGIES TO NOT USE:\n{_BANNED_STRATEGIES_SENTINEL}\n\n"
+    if not strategies:
+        return template.replace(block, "")
+    return template.replace(_BANNED_STRATEGIES_SENTINEL, format_strategies(strategies))
 
 
 PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
@@ -280,8 +318,12 @@ RULES:
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
-- Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+- Think creatively and come up with a strategy that will result in a hard question for THIS seed.
+- DO NOT USE THE STRATEGIES in the list below.
 - DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW. Be creative and come up with your own strategy. 
+
+STRATEGIES TO NOT USE:
+{BANNED_STRATEGIES}
 
 Here are a few examples:
 Seed Question: What is pretraining-data deduplication?
@@ -1418,6 +1460,13 @@ def main():
              f"'--prompt explore', which has no strategy menu.",
     )
     parser.add_argument(
+        "--banned-strategies", choices=sorted(BANNED_STRATEGY_LISTS),
+        default=DEFAULT_BANNED_STRATEGIES,
+        help=f"Which banned-strategy menu to inject under 'STRATEGIES TO NOT USE' in the "
+             f"'--prompt explore' make-harder prompt (default: {DEFAULT_BANNED_STRATEGIES}; "
+             f"'none' drops the block). Ignored by '--prompt original'.",
+    )
+    parser.add_argument(
         "--verify-criterion", action="store_true",
         help="Before each research-server call (rounds 1+), retrieve papers for the harder "
              "question and ask Claude whether the verification criterion is itself correct. "
@@ -1454,8 +1503,11 @@ def main():
 
     base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
                      else PROMPT_TO_MAKE_HARDER_QUESTION)
-    harder_prompt = with_strategies(
-        with_profile(base_template, profile_text), STRATEGY_LISTS[args.strategies]
+    harder_prompt = with_banned_strategies(
+        with_strategies(
+            with_profile(base_template, profile_text), STRATEGY_LISTS[args.strategies]
+        ),
+        BANNED_STRATEGY_LISTS[args.banned_strategies],
     )
 
     seeds = list(args.seeds)
