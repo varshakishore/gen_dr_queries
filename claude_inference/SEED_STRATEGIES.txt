@@ -1,0 +1,8 @@
+Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).
+Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.
+Require multi-step reasoning, structured argumentation, or hierarchical planning.
+Require handling conflicting, incomplete, or low-quality evidence.
+Require universal quantification ("for all X, is Y true?") or reasoning about edge cases and exceptions.
+Require correcting a hidden misconception or establishing key knowns before answering.
+Embed a specific context that changes the answer (e.g., "explain to a policymaker with no ML background").
+Make a question that is unanswerable by current research, no existing work is available.
