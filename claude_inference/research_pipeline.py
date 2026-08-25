@@ -104,7 +104,7 @@ DEFAULT_PROFILE = "drtulu"
 # Example-strategy menus
 # ---------------------------------------------------------------------------
 # Each entry is a list of strategy descriptions shown to Claude under
-# "EXAMPLE STRATEGIES TO CONSIDER" in PROMPT_TO_MAKE_HARDER_QUESTION. Selected via
+# "EXAMPLE STRATEGIES TO CONSIDER" in PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT. Selected via
 # --strategies and numbered automatically at render time. Add new menus here to
 # steer generation toward a particular class of difficulty.
 STRATEGY_LISTS = {
@@ -170,7 +170,6 @@ STRATEGY_LISTS = {
         "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.", 
         "Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.", 
         "Presume that obtaining more information, increasing precision, taking action, or eliminating residual uncertainty is inherently valuable. A correct answer must assess whether it could materially change the relevant decision or outcome.", 
-        "Something else you think of that would be effective at exposing weaknesses in research systems!",
     ]
 }
 DEFAULT_STRATEGIES = "default"
@@ -189,7 +188,7 @@ BANNED_STRATEGY_LISTS = {
         "retrieved papers disagree rather than just report their results.",
         "Require recognition of an underlying false premise in the question.",
     ],
-    # Ban exactly the menu the 'original' prompt is shown, so an explore run is
+    # Ban exactly the menu the 'exploit' prompt is shown, so an explore run is
     # guaranteed to go off-menu (drops the open-ended "something else" line).
     "seed_menu": [s for s in STRATEGY_LISTS["default"] if not s.startswith("Something else")],
     # Ban the widest menu we have: 'default' plus the cognitive-bias traps.
@@ -199,9 +198,87 @@ BANNED_STRATEGY_LISTS = {
 }
 DEFAULT_BANNED_STRATEGIES = "default"
 
+# ---------------------------------------------------------------------------
+# Few-shot examples
+# ---------------------------------------------------------------------------
+# The worked examples shown under "Here are a few examples:" in BOTH make-harder prompts
+# (they are identical in the two templates). Round 0 of research_loop.py uses these; later
+# rounds swap in demonstrations drawn from the run itself via --few-shots-file.
+# `brainstorming` and `why_harder` are optional -- a shot missing them renders without
+# those keys -- but keep them where possible: they are what teaches the reasoning, not
+# just the output shape.
+FEW_SHOT_KEYS = ["brainstorming", "chosen_strategy", "updated_question", "why_harder",
+                 "verification_criterion"]
+
+DEFAULT_FEW_SHOTS = [
+    {
+        "seed_question": "What is pretraining-data deduplication?",
+        "brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
+        "chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
+        "updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
+        "why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
+        "verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+    },
+    {
+        "seed_question": "What is the role of attention sparsity in efficient transformers?",
+        "brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
+        "chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
+        "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
+        "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
+    },
+    {
+        "seed_question": "How does brown adipose tissue produce heat?",
+        "brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
+        "chosen_strategy": "False premise via conjunction of separately-documented facts.",
+        "updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
+        "why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
+        "verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
+    }
+]
+
+
 _PROFILE_SENTINEL = "{ANSWERING_SYSTEM_PROFILE}"
 _STRATEGIES_SENTINEL = "{EXAMPLE_STRATEGIES}"
 _BANNED_STRATEGIES_SENTINEL = "{BANNED_STRATEGIES}"
+_FEW_SHOTS_SENTINEL = "{FEW_SHOT_EXAMPLES}"
+
+
+def format_few_shots(shots: list) -> str:
+    """Render few-shot examples as the `Seed Question: ...` + JSON blocks the prompts use."""
+    out = []
+    for s in shots:
+        body = {k: s[k] for k in FEW_SHOT_KEYS if s.get(k)}
+        out.append(f"Seed Question: {s.get('seed_question', '').strip()}\n"
+                   + json.dumps(body, indent=0, ensure_ascii=False))
+    return "\n\n".join(out)
+
+
+def with_few_shots(template: str, shots: list) -> str:
+    """Inject the worked examples into a make-harder prompt template."""
+    return template.replace(_FEW_SHOTS_SENTINEL, format_few_shots(shots))
+
+
+def load_few_shots_file(path: Path | str) -> list:
+    """Read few-shot examples from a JSON file: a list of dicts keyed like DEFAULT_FEW_SHOTS."""
+    shots = json.loads(Path(path).read_text())
+    if not isinstance(shots, list) or not all(isinstance(s, dict) for s in shots):
+        raise ValueError(f"{path}: expected a JSON list of example objects")
+    missing = [i for i, s in enumerate(shots)
+               if not s.get("seed_question") or not s.get("updated_question")]
+    if missing:
+        raise ValueError(f"{path}: example(s) {missing} lack seed_question/updated_question")
+    return shots
+
+
+def load_strategy_file(path: Path | str) -> list:
+    """Read a strategy menu from a file: one strategy per line, `#` comments ignored.
+
+    Lets a caller (e.g. research_loop.py) supply a menu computed at runtime instead of
+    picking a hard-coded one from STRATEGY_LISTS / BANNED_STRATEGY_LISTS.
+    """
+    lines = [ln.strip() for ln in Path(path).read_text().splitlines()]
+    return [ln for ln in lines if ln and not ln.startswith("#")]
 
 
 def format_strategies(strategies: list) -> str:
@@ -231,7 +308,7 @@ def with_banned_strategies(template: str, strategies: list) -> str:
     """Inject a banned-strategy menu into a make-harder prompt template.
 
     An empty list removes the whole "STRATEGIES TO NOT USE" block rather than leaving a
-    dangling header. Templates without the sentinel (e.g. the original prompt, which
+    dangling header. Templates without the sentinel (e.g. the exploit prompt, which
     shows a menu to use instead of one to avoid) are returned unchanged.
     """
     block = f"STRATEGIES TO NOT USE:\n{_BANNED_STRATEGIES_SENTINEL}\n\n"
@@ -240,7 +317,7 @@ def with_banned_strategies(template: str, strategies: list) -> str:
     return template.replace(_BANNED_STRATEGIES_SENTINEL, format_strategies(strategies))
 
 
-PROMPT_TO_MAKE_HARDER_QUESTION = """You are an expert in constructing challenging research questions.
+PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT = """You are an expert in constructing challenging research questions.
 
 Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
 
@@ -249,8 +326,8 @@ ANSWERING SYSTEM PROFILE:
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
-  "brainstorming": "<think about distinct strategies and reason about why they may or may not work>",
-  "chosen_strategy": "<name and justify the single most promising strategy>",
+  "brainstorming": "<in under 4 sentences, reason about a couple strategies and why they might or might not work for THIS seed>",
+  "chosen_strategy": "<name and explain the single most promising strategy>",
   "updated_question": "<the rewritten question>",
   "why_harder": "<explanation of why this question might be hard for a deep research system>",
   "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
@@ -261,7 +338,7 @@ RULES:
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
-- Select whichever strategy best fits THIS seed; do not default to the strategies shown in the examples below.
+- Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
 - The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions). It is better to keep it simple.
 - The question should be in English.
 
@@ -269,32 +346,7 @@ EXAMPLE STRATEGIES TO CONSIDER:
 {EXAMPLE_STRATEGIES}
 
 Here are a few examples:
-Seed Question: What is pretraining-data deduplication?
-{
-"brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
-"chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
-"updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
-"why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
-"verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
-}
-
-Seed Question: What is the role of attention sparsity in efficient transformers?
-{
-"brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
-"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
-"updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
-"why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-"verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
-}
-
-Seed Question: How does brown adipose tissue produce heat?
-{
-"brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
-"chosen_strategy": "False premise via conjunction of separately-documented facts.",
-"updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
-"why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
-"verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
-}
+{FEW_SHOT_EXAMPLES}
 """
 
 PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE = """You are an expert in constructing challenging research questions.
@@ -306,8 +358,8 @@ ANSWERING SYSTEM PROFILE:
 
 OUTPUT FORMAT (valid JSON, no extra text):
 {
-  "brainstorming": "<think about distinct strategies and reason about why they may or may not work>",
-  "chosen_strategy": "<name and justify the single most promising strategy>",
+  "brainstorming": "<in under 4 sentences, reason about a couple strategies and why they might or might not work for THIS seed>",
+  "chosen_strategy": "<name and explain the single most promising strategy>",
   "updated_question": "<the rewritten question>",
   "why_harder": "<explanation of why this question might be hard for a deep research system>",
   "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
@@ -326,32 +378,7 @@ STRATEGIES TO NOT USE:
 {BANNED_STRATEGIES}
 
 Here are a few examples:
-Seed Question: What is pretraining-data deduplication?
-{
-"brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
-"chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
-"updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
-"why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
-"verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
-}
-
-Seed Question: What is the role of attention sparsity in efficient transformers?
-{
-"brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
-"chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
-"updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
-"why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-"verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
-}
-
-Seed Question: How does brown adipose tissue produce heat?
-{
-"brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
-"chosen_strategy": "False premise via conjunction of separately-documented facts.",
-"updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
-"why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
-"verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
-}
+{FEW_SHOT_EXAMPLES}
 
 Reminder: Do not use the same strategies as the examples above.
 """
@@ -780,7 +807,8 @@ def _call_claude(
                 "cache_control": {"type": "ephemeral"},
             }]
         resp = client.messages.create(**kwargs)
-        response_text = resp.content[0].text
+        # Price the call BEFORE looking at its content, so a refusal or a truncated
+        # response still gets its (already-paid-for) input tokens into the log.
         usage_obj = getattr(resp, "usage", None)
         if usage_obj is not None:
             usage = {
@@ -794,6 +822,13 @@ def _call_claude(
                 ),
             }
         cost_usd, usage = price_call(model, usage)
+        # `content` is empty on a refusal and can lead with a non-text block, so join the
+        # text blocks rather than indexing: content[0].text raised IndexError on refusals
+        # and buried the cause as "list index out of range".
+        response_text = "".join(getattr(b, "text", "") for b in resp.content)
+        if not response_text.strip():
+            raise RuntimeError(f"empty response from {model} "
+                               f"(stop_reason={getattr(resp, 'stop_reason', None)!r})")
     except Exception as e:
         err = f"{type(e).__name__}: {e}"
         latency = time.perf_counter() - t0
@@ -1443,9 +1478,9 @@ def main():
              "Raise it for slow models, e.g. 7200 for Tongyi.",
     )
     parser.add_argument(
-        "--prompt", choices=["explore", "original"], default="explore",
+        "--prompt", choices=["explore", "exploit"], default="explore",
         help="Which make-harder system prompt to use (default: explore). "
-             "'explore' forbids reusing the example strategies; 'original' keeps the "
+             "'explore' forbids reusing the example strategies; 'exploit' keeps the "
              "in-context strategy menu.",
     )
     parser.add_argument(
@@ -1455,7 +1490,7 @@ def main():
     )
     parser.add_argument(
         "--strategies", choices=sorted(STRATEGY_LISTS), default=DEFAULT_STRATEGIES,
-        help=f"Which example-strategy menu to inject into the '--prompt original' "
+        help=f"Which example-strategy menu to inject into the '--prompt exploit' "
              f"make-harder prompt (default: {DEFAULT_STRATEGIES}). Ignored by "
              f"'--prompt explore', which has no strategy menu.",
     )
@@ -1464,7 +1499,24 @@ def main():
         default=DEFAULT_BANNED_STRATEGIES,
         help=f"Which banned-strategy menu to inject under 'STRATEGIES TO NOT USE' in the "
              f"'--prompt explore' make-harder prompt (default: {DEFAULT_BANNED_STRATEGIES}; "
-             f"'none' drops the block). Ignored by '--prompt original'.",
+             f"'none' drops the block). Ignored by '--prompt exploit'.",
+    )
+    parser.add_argument(
+        "--few-shots-file", default=None,
+        help="JSON file of worked examples (list of objects keyed like DEFAULT_FEW_SHOTS: "
+             "seed_question, brainstorming, chosen_strategy, updated_question, why_harder, "
+             "verification_criterion) shown under 'Here are a few examples:' INSTEAD of the "
+             "built-in three. Applies to both prompt variants.",
+    )
+    parser.add_argument(
+        "--strategies-file", default=None,
+        help="File of example strategies (one per line, '#' comments ok) used INSTEAD of "
+             "--strategies. For feeding a menu computed at runtime, e.g. by research_loop.py.",
+    )
+    parser.add_argument(
+        "--banned-strategies-file", default=None,
+        help="File of banned strategies (one per line, '#' comments ok) used INSTEAD of "
+             "--banned-strategies. An empty file drops the 'STRATEGIES TO NOT USE' block.",
     )
     parser.add_argument(
         "--verify-criterion", action="store_true",
@@ -1502,12 +1554,22 @@ def main():
     }
 
     base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
-                     else PROMPT_TO_MAKE_HARDER_QUESTION)
-    harder_prompt = with_banned_strategies(
-        with_strategies(
-            with_profile(base_template, profile_text), STRATEGY_LISTS[args.strategies]
+                     else PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT)
+    example_strategies = (load_strategy_file(args.strategies_file) if args.strategies_file
+                          else STRATEGY_LISTS[args.strategies])
+    banned_strategies = (load_strategy_file(args.banned_strategies_file)
+                         if args.banned_strategies_file
+                         else BANNED_STRATEGY_LISTS[args.banned_strategies])
+    few_shots = (load_few_shots_file(args.few_shots_file) if args.few_shots_file
+                 else DEFAULT_FEW_SHOTS)
+    harder_prompt = with_few_shots(
+        with_banned_strategies(
+            with_strategies(
+                with_profile(base_template, profile_text), example_strategies
+            ),
+            banned_strategies,
         ),
-        BANNED_STRATEGY_LISTS[args.banned_strategies],
+        few_shots,
     )
 
     seeds = list(args.seeds)
@@ -1600,6 +1662,10 @@ def main():
                 {
                     "run_id": run_id,
                     "model": args.model,
+                    "prompt_variant": args.prompt,
+                    "example_strategies": example_strategies,
+                    "banned_strategies": banned_strategies,
+                    "few_shot_seeds": [s.get("seed_question", "") for s in few_shots],
                     "grand_total_cost": asdict(grand_total),
                     "results": [result_to_dict(r) for r in all_results],
                 },

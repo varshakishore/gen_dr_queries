@@ -12,9 +12,10 @@ and an index.json mapping each index -> seed -> status (since the numbered
 filenames are not self-describing), plus per-seed cost/attempts and run totals.
 
 Seeds come from CLI args, a .txt --seeds-file, or (if neither is given) the HF
-dataset allenai/asta-user-interactions (optin_queries/train, tool=sqa), capped
-at --limit. Seeds whose sample_NNN.json already exists are skipped, so an
-interrupted run resumes by re-running the same command (--no-skip-existing forces).
+dataset varshak1/asta-user-interactions-filtered (filter_queries.py's output),
+keeping only usable=true rows, capped at --limit. Seeds whose sample_NNN.json
+already exists are skipped, so an interrupted run resumes by re-running the same
+command (--no-skip-existing forces).
 
 Examples:
   # seeds from the HF dataset (default source), 10 seeds, 5 in parallel
@@ -27,7 +28,7 @@ Examples:
   python research_pipeline_parallel.py --seeds-file seeds.txt --out-dir runs/exp1
 
 Usage:
-python research_pipeline_parallel.py --out-dir runs/sqa_50_100_explore --start 50 --limit 50 --concurrency 10 --prompt explore && python summarize_run.py runs/sqa_50_100_explore && python research_pipeline_parallel.py --out-dir runs/sqa_50_100_original --start 50 --limit 50 --concurrency 10 --prompt original && python summarize_run.py runs/sqa_50_100_original
+python research_pipeline_parallel.py --out-dir runs/sqa_50_100_explore --start 50 --limit 50 --concurrency 10 --prompt explore && python summarize_run.py runs/sqa_50_100_explore && python research_pipeline_parallel.py --out-dir runs/sqa_50_100_exploit --start 50 --limit 50 --concurrency 10 --prompt exploit && python summarize_run.py runs/sqa_50_100_exploit
 """
 
 import argparse
@@ -39,31 +40,45 @@ from pathlib import Path
 
 PIPELINE = Path(__file__).resolve().parent / "research_pipeline.py"
 
+# Rubric-labeled seeds from filter_queries.py (tool=sqa by construction).
+SEEDS_DATASET = "varshak1/asta-user-interactions-filtered"
+
 
 def load_seeds(args) -> list[str]:
+    """Seeds from CLI args, a --seeds-file, or (failing both) the HF dataset.
+
+    A `.txt` file is one seed per line, so it CANNOT carry a seed containing newlines --
+    a multi-line seed silently fragments into several. Use `.json` (a list of strings)
+    whenever the seeds are machine-generated; research_loop.py always does.
+    """
     seeds = list(args.seeds)
-    if args.seeds_file and args.seeds_file.endswith(".txt"):
-        with open(args.seeds_file) as f:
-            seeds.extend(line.strip() for line in f if line.strip())
+    if args.seeds_file:
+        path = Path(args.seeds_file)
+        if path.suffix == ".json":
+            loaded = json.loads(path.read_text())
+            if not isinstance(loaded, list) or not all(isinstance(x, str) for x in loaded):
+                raise ValueError(f"{path}: expected a JSON list of seed strings")
+            seeds.extend(x.strip() for x in loaded if x.strip())
+        elif path.suffix == ".txt":
+            seeds.extend(ln.strip() for ln in path.read_text().splitlines() if ln.strip())
+        else:
+            raise ValueError(f"{path}: --seeds-file must be .txt (one per line) or .json")
     elif not seeds:
         seeds.extend(load_hf_seeds(args))
     return seeds
 
 
 def load_hf_seeds(args) -> list[str]:
-    """Stream unique `query` strings (tool=sqa) from allenai/asta-user-interactions."""
+    """Stream unique `query` strings (usable=true) from the filter_queries.py dataset."""
     from datasets import load_dataset
 
-    ds = load_dataset(
-        "allenai/asta-user-interactions", "optin_queries",
-        split="train", streaming=True,
-    )
+    ds = load_dataset(SEEDS_DATASET, split="train", streaming=True)
     start = getattr(args, "start", 0) or 0
     need = (start + args.limit) if args.limit else None  # how many to collect before slicing
     seen: set[str] = set()
     out: list[str] = []
     for row in ds:
-        if row.get("tool") != "sqa":
+        if not row.get("usable"):
             continue
         q = (row.get("query") or "").strip()
         if not q or q in seen:
@@ -73,8 +88,8 @@ def load_hf_seeds(args) -> list[str]:
         if need and len(out) >= need:
             break
     sliced = out[start: (start + args.limit) if args.limit else None]
-    print(f"Loaded {len(sliced)} unique seed(s) from allenai/asta-user-interactions "
-          f"[optin_queries/train, tool=sqa, seeds {start}:{start + len(sliced)}]")
+    print(f"Loaded {len(sliced)} unique seed(s) from {SEEDS_DATASET} "
+          f"[train, usable=true, seeds {start}:{start + len(sliced)}]")
     return sliced
 
 
@@ -90,7 +105,7 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
                 "status": "SKIPPED", "returncode": None}
 
     cmd = [
-        args.python, str(PIPELINE), seed,
+        args.python, str(PIPELINE),
         "--output", str(result_path),
         "--run-id", tag,             # -> log file run-sample_NNN.jsonl in --log-dir
         "--log-dir", str(out_dir),
@@ -100,12 +115,19 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         "--server-url", args.server_url,
         "--quiet",                   # avoid interleaved per-attempt output across workers
     ]
+    trailing = ["--", seed]          # after `--`: a seed starting with '-' is not a flag
     if args.profile:
         cmd += ["--profile", args.profile]
     if args.strategies:
         cmd += ["--strategies", args.strategies]
     if args.banned_strategies:
         cmd += ["--banned-strategies", args.banned_strategies]
+    if args.few_shots_file:
+        cmd += ["--few-shots-file", str(args.few_shots_file)]
+    if args.strategies_file:
+        cmd += ["--strategies-file", str(args.strategies_file)]
+    if args.banned_strategies_file:
+        cmd += ["--banned-strategies-file", str(args.banned_strategies_file)]
     if args.timeout:
         cmd += ["--timeout", str(args.timeout)]
     if args.verify_criterion:
@@ -116,8 +138,8 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         if args.reranker_url:
             cmd += ["--reranker-url", args.reranker_url]
 
-    print(f"[start {idx:>3}/{args._n}] {seed}", flush=True)
-    proc = subprocess.run(cmd, capture_output=True, text=True)
+    print(f"[start {idx:>3}/{args._n}] {seed[:160]}", flush=True)
+    proc = subprocess.run(cmd + trailing, capture_output=True, text=True)
 
     # The pipeline catches its own errors and still writes --output; read status back.
     status = "UNKNOWN"
@@ -152,7 +174,7 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         console_name = console_path.name
 
     print(f"[done  {idx:>3}/{args._n}] [{status}] ${cost_usd:.4f} "
-          f"rc={proc.returncode} — {seed}", flush=True)
+          f"rc={proc.returncode} — {seed[:160]}", flush=True)
     row = {"index": idx, "seed": seed, "file": result_path.name,
            "log": f"run-{tag}.jsonl", "status": status,
            "returncode": proc.returncode, "cost_usd": cost_usd,
@@ -167,7 +189,9 @@ def main():
     p.add_argument("seeds", nargs="*",
                    help="Seed questions. If none given (and no .txt --seeds-file), "
                         "seeds are pulled from the allenai/asta-user-interactions HF dataset.")
-    p.add_argument("--seeds-file", help="A .txt file with one seed per line.")
+    p.add_argument("--seeds-file",
+                   help="A .txt file with one seed per line, or a .json list of seed "
+                        "strings (use .json if a seed can contain newlines).")
     p.add_argument("--out-dir", required=True, help="Folder for per-seed results, logs, and index.json.")
     p.add_argument("--concurrency", type=int, default=5, help="Max seeds in flight (default: 5).")
     # HF dataset source (used when no explicit seeds / .txt file are given)
@@ -178,7 +202,7 @@ def main():
                         "(e.g. --start 50 --limit 50 = seeds 50-99).")
     p.add_argument("--max-attempts", type=int, default=5)
     p.add_argument("--model", default="claude-sonnet-4-5")
-    p.add_argument("--prompt", choices=["explore", "original"], default="explore",
+    p.add_argument("--prompt", choices=["explore", "exploit"], default="explore",
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
                                      "(e.g. drtulu, tongyi).")
@@ -187,7 +211,16 @@ def main():
                         "(--banned-strategies); only used with --prompt explore.")
     p.add_argument("--strategies", help="Example-strategy menu name passed to the pipeline "
                                         "(e.g. default, jena_cog_biases). Only affects "
-                                        "--prompt original.")
+                                        "--prompt exploit.")
+    p.add_argument("--few-shots-file",
+                   help="JSON file of worked examples passed to the pipeline, shown instead "
+                        "of the built-in three. Applies to both prompt variants.")
+    p.add_argument("--strategies-file",
+                   help="File of example strategies (one per line) passed to the pipeline, "
+                        "used instead of --strategies. Only affects --prompt exploit.")
+    p.add_argument("--banned-strategies-file",
+                   help="File of banned strategies (one per line) passed to the pipeline, "
+                        "used instead of --banned-strategies. Only affects --prompt explore.")
     p.add_argument("--timeout", type=float,
                    help="Read timeout (s) per research-server call passed to the pipeline "
                         "(e.g. 7200 for slow models like Tongyi).")
@@ -209,7 +242,6 @@ def main():
                    help="Re-run seeds even if their sample_NNN.json already exists.")
     p.set_defaults(skip_existing=True)
     args = p.parse_args()
-
     seeds = load_seeds(args)
     if not seeds:
         p.error("No seed questions provided.")

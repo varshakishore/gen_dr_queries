@@ -19,7 +19,7 @@ This module, when called (`build_feedback`), does the following:
   2. SCORE     every cluster: how many of its questions the answering agent FAILED.
                FAILURE IS GOOD HERE: a failed question is one the generator successfully
                made hard. Each cluster is also broken down per `source_run`, i.e. per
-               generation prompt (original vs explore), so prompts can be compared strategy 
+               generation prompt (exploit vs explore), so prompts can be compared strategy 
                by strategy.
   3. SELECT    the focus strategies to target next round (default ranking: works often or
                reasonably often but is currently RARE), and attach few-shot examples sampled 

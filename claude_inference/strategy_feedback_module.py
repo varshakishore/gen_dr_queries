@@ -19,7 +19,7 @@ This module, when called (`build_feedback`), does the following:
   2. SCORE     every cluster: how many of its questions the answering agent FAILED.
                FAILURE IS GOOD HERE: a failed question is one the generator successfully
                made hard. Each cluster is also broken down per `source_run`, i.e. per
-               generation prompt (original vs explore), so prompts can be compared strategy 
+               generation prompt (exploit vs explore), so prompts can be compared strategy 
                by strategy.
   3. SELECT    the focus strategies to target next round (default ranking: works often or
                reasonably often but is currently RARE), and attach few-shot examples sampled 
@@ -42,7 +42,7 @@ examples : list[QuestionExample] | list[dict]
                                               (dataset instances: drtulu_verdict=="FAILED")
       source_run             (str, "")        label of the generation prompt / run variant
                                               that produced it (e.g. "explore",
-                                              "original"). Drives the per-prompt comparison.
+                                              "exploit"). Drives the per-prompt comparison.
       seed_question          (str, "")        the original question it was derived from
       verification_criterion (str, "")        what the grader checked
       round                  (int|None)       0 = seed as-is, 1..N = harder rewrites
@@ -93,7 +93,9 @@ A plain JSON-serializable dict (write it with `write_feedback`):
     "generated_at": ISO-8601 UTC,
     "clustering": {cluster_mode:"seeded", assign_method, num_seeds,
                    num_seed_clusters_used, num_new_clusters,
-                   + cluster_model/merged_new_clusters/new_cluster_labels   [llm]
+                   + cluster_model/usage/merged_new_clusters/new_cluster_labels  [llm]
+                     (`usage` = tokens spent clustering; price it with the caller's
+                      pricing table -- this module deliberately knows nothing about cost)
                    + embedding_model/seed_max_distance/nearest_seed_distance_{min,mean,max}
                                                                             [embedding]},
     "source_runs": [...],            # the generation prompts present in the input
@@ -113,7 +115,8 @@ A plain JSON-serializable dict (write it with `write_feedback`):
       "rationale": one-line explanation of why it was picked,
       "by_source_run": {prompt: {num_questions, num_failed, failure_rate}},
       "few_shot_failures": [         # sampled from the inputs, FAILED questions only
-        {seed_question, updated_question, strategy, verification_criterion, source_run}
+        {seed_question, updated_question, strategy, verification_criterion,
+         brainstorming, why_harder, source_run}
       ]
     }, ...
   ],
@@ -127,8 +130,8 @@ A plain JSON-serializable dict (write it with `write_feedback`):
   "cluster_comparison": [            # EVERY cluster (all seeds incl. empty ones + new ones)
     {cluster_id, description, num_questions, num_failed, failure_rate,
      by_source_run: {prompt: {...}},
-     instances: [{index, seed_question, updated_question, strategy,
-                  verification_criterion, failed, source_run, round}]}   # if include_instances
+     instances: [{index, seed_question, updated_question, strategy, verification_criterion,
+                  failed, source_run, round, brainstorming, why_harder}]}  # if include_instances
   ]
 }
 
@@ -264,6 +267,8 @@ class QuestionExample:
             "drtulu_verdict": "FAILED" if self.failed else "PASSED",
             "source_run": self.source_run,
             "round": self.round,
+            "brainstorming": self.extra.get("brainstorming", ""),
+            "why_harder": self.extra.get("why_harder", ""),
         }
 
 
@@ -378,6 +383,10 @@ def load_examples_from_runs(
                         seed_question=result.get("seed", ""),
                         verification_criterion=harder.get("verification_criterion", ""),
                         round=round_idx,
+                        # kept so downstream consumers can rebuild a full worked example
+                        # (research_loop.py turns failures into prompt few-shots)
+                        extra={"brainstorming": harder.get("brainstorming", ""),
+                               "why_harder": harder.get("why_harder", "")},
                     )
                     (deciding if is_deciding else other).append((run_key, ex))
 
@@ -454,13 +463,42 @@ def _parse_json_array(text: str) -> list:
     return json.loads(text[a:b + 1])
 
 
-def _llm_text(client, provider: str, model: str, prompt: str, max_tokens: int) -> str:
+def _usage_of(resp, provider: str) -> dict:
+    """Token usage from a provider response, in the shape research_pipeline prices."""
+    u = getattr(resp, "usage", None)
+    if u is None:
+        return {}
+    if provider == "anthropic":
+        return {
+            "input_tokens": getattr(u, "input_tokens", 0) or 0,
+            "output_tokens": getattr(u, "output_tokens", 0) or 0,
+            "cache_creation_input_tokens": getattr(u, "cache_creation_input_tokens", 0) or 0,
+            "cache_read_input_tokens": getattr(u, "cache_read_input_tokens", 0) or 0,
+        }
+    return {  # openai
+        "input_tokens": getattr(u, "input_tokens", 0) or 0,
+        "output_tokens": getattr(u, "output_tokens", 0) or 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+    }
+
+
+def _accumulate(total: dict, add: dict) -> None:
+    for k, v in add.items():
+        total[k] = total.get(k, 0) + v
+
+
+def _llm_text(client, provider: str, model: str, prompt: str, max_tokens: int,
+              usage: dict | None = None) -> str:
+    """Call the model and return its text. `usage` accumulates token counts if given."""
     if provider == "anthropic":
         resp = client.messages.create(
             model=model,
             max_tokens=max_tokens,
             messages=[{"role": "user", "content": prompt}],
         )
+        if usage is not None:
+            _accumulate(usage, _usage_of(resp, provider))
         return "".join(getattr(b, "text", "") for b in resp.content)
 
     if provider == "openai":
@@ -469,6 +507,8 @@ def _llm_text(client, provider: str, model: str, prompt: str, max_tokens: int) -
             input=prompt,
             max_output_tokens=max_tokens,
         )
+        if usage is not None:
+            _accumulate(usage, _usage_of(resp, provider))
         return resp.output_text
 
     raise ValueError(f"unknown LLM provider: {provider!r}")
@@ -479,7 +519,8 @@ def _norm(x: Any) -> str:
 
 
 def consolidate_new_clusters(new_labels: dict, examples: dict, provider: str,
-                             model: str, client, max_tokens: int = 4000) -> dict:
+                             model: str, client, max_tokens: int = 4000,
+                             usage: dict | None = None) -> dict:
     """Merge near-duplicate NEW clusters into broad themes.
 
     `new_labels` maps a new-cluster index to its name; `examples` maps the same index to a
@@ -500,6 +541,7 @@ def consolidate_new_clusters(new_labels: dict, examples: dict, provider: str,
             model,
             _MERGE_PROMPT.format(cluster_block=cluster_block),
             max_tokens,
+            usage,
         )
     )
 
@@ -570,6 +612,7 @@ def assign_llm(
             raise ValueError(f"unknown LLM provider: {provider!r}")
         
     n_seeds = len(seeds)
+    usage: dict = {}                     # accumulated across every batch + the merge pass
     seed_block = "\n".join(f"{i + 1}. {s}" for i, s in enumerate(seeds))
     new_examples: dict[int, str] = {}  # a representative strategy per new cluster
 
@@ -596,7 +639,8 @@ def assign_llm(
         strat_block = "\n".join(f"[{i}] {s}" for i, s in batch)
         prompt = _LLM_PROMPT.format(seed_block=seed_block, new_so_far=new_so_far,
                                     strat_block=strat_block)
-        for obj in _parse_json_array(_llm_text(client, provider, model, prompt, max_tokens)):
+        for obj in _parse_json_array(
+                _llm_text(client, provider, model, prompt, max_tokens, usage)):
             try:
                 i = int(obj["i"])
                 cl = str(obj["cluster"]).strip()
@@ -622,7 +666,7 @@ def assign_llm(
     if merge and len(new_order) > 1:
         _stage(f"  merging {len(new_order)} new clusters")
         merged = consolidate_new_clusters(
-            new_labels, new_examples, provider, model, client
+            new_labels, new_examples, provider, model, client, usage=usage
         )
         remap = merged["remap"]
         assignments = [remap.get(a, a) if a >= n_seeds else a for a in assignments]
@@ -637,6 +681,7 @@ def assign_llm(
         "method": "llm",
         "provider": provider,
         "model": model,
+        "usage": usage,
     }
 
 
@@ -861,7 +906,7 @@ def select_focus(nodes: list[dict], total: int, *, min_failure_rate: float = 0.3
 def source_run_breakdown(leaves: Sequence[int], examples: Sequence[QuestionExample]) -> dict:
     """Per-source_run {num_questions, num_failed, failure_rate} for a cluster's members.
 
-    Lets a cluster be compared across generation prompts — e.g. whether 'original' or
+    Lets a cluster be compared across generation prompts — e.g. whether 'exploit' or
     'explore' hit this strategy more, and whose questions stumped the agent more often.
     """
     agg: dict[str, dict] = defaultdict(lambda: {"num_questions": 0, "num_failed": 0})
@@ -902,6 +947,8 @@ def few_shot_failures(node: dict, examples: Sequence[QuestionExample], *,
             "updated_question": q,
             "strategy": ex.strategy,
             "verification_criterion": ex.verification_criterion,
+            "brainstorming": ex.extra.get("brainstorming", ""),
+            "why_harder": ex.extra.get("why_harder", ""),
             "source_run": ex.source_run,
             "drtulu_verdict": "FAILED",
         })
@@ -1002,7 +1049,9 @@ def build_feedback(
         "num_new_clusters": n_new,
     }
     if assign_method == "llm":
-        cluster_source["cluster_model"] = cluster_model
+        # the model actually used (cluster_model may be None = provider default)
+        cluster_source["cluster_model"] = assignment.get("model") or cluster_model
+        cluster_source["usage"] = assignment.get("usage") or {}
         cluster_source["merged_new_clusters"] = merge_new_clusters
         cluster_source["new_cluster_labels"] = [
             assignment.get("new_labels", {}).get(assignment["n_seeds"] + k) for k in range(n_new)
