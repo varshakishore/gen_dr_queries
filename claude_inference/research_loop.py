@@ -10,7 +10,8 @@ strategy feedback after every round.
 Each round:
 
   1. SPLIT   the round's seeds between the two make-harder prompts by an independent coin
-             flip per seed (--prompt-mix, default 0.5 -> 50/50 explore vs exploit), and run
+             balanced split (--prompt-mix, default 0.5 -> an even explore/exploit
+             split each round, with which seeds go where randomised), and run
              research_pipeline_parallel.py once per side into
              <out-dir>/round_KK/explore/ and <out-dir>/round_KK/exploit/.
              Separate dirs keep the `source_run` labels that make the per-prompt comparison
@@ -87,12 +88,14 @@ Requires ANTHROPIC_API_KEY (generation + clustering) and a research server on --
 """
 
 import argparse
+import datetime as dt
 import json
 import os
 import random
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -118,6 +121,16 @@ NOVEL_PREFIX = "[novel strategy not in seed menu] "
 # ---------------------------------------------------------------------------
 # Menu files
 # ---------------------------------------------------------------------------
+
+
+def _hms(seconds: float) -> str:
+    """Elapsed seconds as a compact h/m/s string."""
+    s = int(round(seconds))
+    if s < 60:
+        return f"{seconds:.1f}s"
+    h, rem = divmod(s, 3600)
+    m, sec = divmod(rem, 60)
+    return (f"{h}h {m}m {sec}s" if h else f"{m}m {sec}s")
 
 
 def write_menu(path: Path, items: list, header: str) -> Path:
@@ -290,11 +303,21 @@ def derive_menus(feedback: dict, prev_banned: list, *, base_banned: list,
 
 
 def split_by_prompt(seeds: list, rng: random.Random, p_explore: float) -> dict:
-    """Independent coin flip per seed -> {'explore': [...], 'exploit': [...]}."""
-    out = {"explore": [], "exploit": []}
-    for s in seeds:
-        out["explore" if rng.random() < p_explore else "exploit"].append(s)
-    return out
+    """Split a round's seeds -> {'explore': [...], 'exploit': [...]}.
+
+    Balanced, not an independent coin flip per seed: `p_explore` sets the SHARE of the
+    round that goes to explore, and which seeds go where is randomised. An independent
+    flip puts both seeds on one side half the time at 2 seeds/round, and that round then
+    yields no evidence at all for the other prompt -- its by_source_run block is empty and
+    the per-prompt comparison for that round is gone. Shares of 0.0 / 1.0 still send
+    everything one way.
+    """
+    shuffled = list(seeds)
+    rng.shuffle(shuffled)
+    n_explore = int(round(len(shuffled) * p_explore))
+    if seeds and 0.0 < p_explore < 1.0:      # never starve a side by rounding
+        n_explore = min(max(n_explore, 1), len(shuffled) - 1) if len(shuffled) > 1 else n_explore
+    return {"explore": shuffled[:n_explore], "exploit": shuffled[n_explore:]}
 
 
 def run_side(seeds: list, prompt: str, round_dir: Path, args,
@@ -412,12 +435,15 @@ def run_verification(out_dir: Path, args, remaining_usd: float | None = None) ->
         cmd += ["--reranker-url", args.reranker_url]
 
     print(f"\n{'=' * 70}\nVERIFY: re-checking the harvest's criteria\n{'=' * 70}")
+    t0 = time.perf_counter()
     proc = subprocess.run(cmd)
+    elapsed = time.perf_counter() - t0
     if proc.returncode != 0 or not out.exists():
         print(f"[verify] verification failed (rc={proc.returncode}); "
               f"the rounds themselves are unaffected", file=sys.stderr)
         return {}
     return {"report": str(out), "kept_set": str(out.with_suffix(".kept.json")),
+            "elapsed_s": round(elapsed, 1),
             **json.loads(out.read_text()).get("totals", {})}
 
 
@@ -438,9 +464,10 @@ def main():
     p.add_argument("--feedback-every", "-n", type=int, default=10,
                    help="N: questions per round; feedback runs after each (default: 10).")
     p.add_argument("--prompt-mix", type=float, default=0.5,
-                   help="P(explore) per seed; 0.5 = 50/50 explore vs exploit (default: 0.5).")
+                   help="Share of each round's seeds given to the explore prompt; "
+                        "0.5 = an even split (default: 0.5).")
     p.add_argument("--random-seed", type=int, default=0,
-                   help="RNG seed for the per-seed prompt coin flips (default: 0).")
+                   help="RNG seed for the explore/exploit assignment (default: 0).")
     p.add_argument("--feedback-scope", choices=["all", "last"], default="all",
                    help="Score every round so far ('all', default) or only the round just "
                         "finished ('last'). 'all' gives stabler rates; 'last' reacts faster.")
@@ -569,7 +596,9 @@ def main():
     print(f"{len(seeds)} question(s) in {len(rounds)} round(s) of "
           f"<= {args.feedback_every}, P(explore)={args.prompt_mix} -> {out_dir}/")
 
+    t_start = time.perf_counter()
     manifest = {"total": len(seeds), "budget_usd": args.budget_usd or None,
+                "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
                 "feedback_every": args.feedback_every,
                 "prompt_mix": args.prompt_mix, "random_seed": args.random_seed,
                 "feedback_scope": args.feedback_scope, "model": args.model,
@@ -587,6 +616,7 @@ def main():
         banned_file = write_menu(round_dir / "banned_strategies.txt", banned_menu,
                                  f"round {k}: STRATEGIES TO NOT USE ('explore' prompt)")
 
+        t_round = time.perf_counter()
         split = split_by_prompt(round_seeds, rng, args.prompt_mix)
         print(f"\n{'=' * 70}\nROUND {k}: {len(round_seeds)} seed(s) — "
               f"{len(split['explore'])} explore / {len(split['exploit'])} exploit\n"
@@ -612,8 +642,9 @@ def main():
             indexes.append(ix)
             spent += round_stats([ix])["cost_usd"]
         stats = round_stats(indexes)
+        gen_elapsed = time.perf_counter() - t_round
         print(f"\n[round {k}] {stats['num_failed_found']}/{stats['num_seeds']} FAILED_FOUND, "
-              f"${stats['cost_usd']:.4f}, statuses {stats['statuses']}")
+              f"${stats['cost_usd']:.4f}, {_hms(gen_elapsed)}, statuses {stats['statuses']}")
 
         record = {"round": k, "dir": str(round_dir),
                   "num_explore": len(split["explore"]),
@@ -621,11 +652,14 @@ def main():
                   "example_strategies": example_menu, "banned_strategies": banned_menu,
                   "few_shot_seeds": {k: [x["seed_question"] for x in v]
                                      for k, v in few_shots.items() if v},
+                  "generation_elapsed_s": round(gen_elapsed, 1),
                   **stats}
 
         if k < len(rounds) - 1:
             scope = round_dirs if args.feedback_scope == "all" else [round_dir]
+            t_fb = time.perf_counter()
             feedback = compute_feedback(scope, round_dir, example_file, args)
+            record["feedback_elapsed_s"] = round(time.perf_counter() - t_fb, 1)
             if feedback:
                 clustering_cost = ((feedback.get("meta", {}).get("clustering") or {})
                                    .get("cost_usd") or 0.0)
@@ -686,6 +720,7 @@ def main():
 
     manifest["total_cost_usd"] = round(spent + (manifest.get("verification") or {})
                                        .get("cost_usd", 0.0), 4)
+    manifest["elapsed_s"] = round(time.perf_counter() - t_start, 1)
     (out_dir / "loop.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
 
     total_cost = sum(r["cost_usd"] for r in manifest["rounds"])
@@ -695,9 +730,12 @@ def main():
     for r in manifest["rounds"]:
         rate = (r["num_failed_found"] / r["num_seeds"]) if r["num_seeds"] else 0.0
         clu = r.get("clustering_cost_usd") or 0.0
+        gen_t = r.get("generation_elapsed_s") or 0.0
+        fb_t = r.get("feedback_elapsed_s") or 0.0
         print(f"  round {r['round']:>2}  {r['num_failed_found']:>3}/{r['num_seeds']:<3} "
               f"FAILED_FOUND ({rate:.0%})  ${r['cost_usd']:.4f} gen"
               + (f" + ${clu:.4f} cluster" if clu else "")
+              + f"  {_hms(gen_t)} gen" + (f" + {_hms(fb_t)} fb" if fb_t else "")
               + f"  [{r['num_explore']}e/{r['num_exploit']}x]")
     total_clu = sum(r.get("clustering_cost_usd") or 0.0 for r in manifest["rounds"])
     print(f"\nTotal: {total_ff}/{total_q} FAILED_FOUND, ${total_cost:.4f} generation"
@@ -705,7 +743,10 @@ def main():
     v = manifest.get("verification")
     if v:
         print(f"Verified: {v['kept']}/{v['checked']} criteria upheld "
-              f"({v['keep_rate']:.0%}, +${v['cost_usd']:.4f}) -> {v['kept_set']}")
+              f"({v['keep_rate']:.0%}, +${v['cost_usd']:.4f}, {_hms(v.get('elapsed_s') or 0)})"
+              f" -> {v['kept_set']}")
+    print(f"Wall clock: {_hms(manifest['elapsed_s'])}"
+          + (f"  ({_hms(manifest['elapsed_s'] / total_q)} per seed)" if total_q else ""))
     print(f"Manifest: {out_dir / 'loop.json'}")
 
 
