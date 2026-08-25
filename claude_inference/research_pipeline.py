@@ -1056,6 +1056,8 @@ def verify_criterion(
             "rewritten_query": retrieved.get("rewritten_query"),
             "keyword_query": retrieved.get("keyword_query"),
             "search_filters": retrieved.get("search_filters"),
+            # None = retrieval ran WITHOUT reranking (see retrieve_papers.build_reranker)
+            "reranker": retrieved.get("reranker"),
             "n_snippets": retrieved.get("n_snippets"),
             "n_keyword_papers": retrieved.get("n_keyword_papers"),
             "elapsed_s": retrieved.get("elapsed_s"),

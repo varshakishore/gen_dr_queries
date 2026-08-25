@@ -1,0 +1,1419 @@
+{
+  "run_id": "sample_003",
+  "model": "claude-sonnet-4-5",
+  "prompt_variant": "explore",
+  "example_strategies": [
+    "cross-context translation and comparability challenges",
+    "gap, absence, and underdocumented domain reasoning",
+    "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+    "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+    "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+    "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+    "cross-context translation and implementation gaps",
+    "interpretive framework and normative reasoning",
+    "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    "Something else you think of that would be effective at exposing weaknesses in research systems!"
+  ],
+  "banned_strategies": [
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+    "Require recognition of an underlying false premise in the question.",
+    "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+  ],
+  "few_shot_seeds": [
+    "ABAS-II psychometric properties",
+    "What is pretraining-data deduplication?",
+    "What is the role of attention sparsity in efficient transformers?"
+  ],
+  "grand_total_cost": {
+    "input_tokens": 8004,
+    "output_tokens": 788,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.035832,
+    "calls": 2
+  },
+  "results": [
+    {
+      "seed": "How does varying the drug to polymer ratio of methotrexate to PLGA affect the particle size  of polyvinyl alcohol (PVA) coated nanoparticles synthesized via nanoprecipitation?",
+      "final_status": "ALREADY_HARD",
+      "error": null,
+      "cost": {
+        "input_tokens": 8004,
+        "output_tokens": 788,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.035832,
+        "calls": 2
+      },
+      "attempts": [
+        {
+          "attempt": 0,
+          "harder": {
+            "brainstorming": "",
+            "chosen_strategy": "seed (no modification)",
+            "updated_question": "How does varying the drug to polymer ratio of methotrexate to PLGA affect the particle size  of polyvinyl alcohol (PVA) coated nanoparticles synthesized via nanoprecipitation?",
+            "why_harder": "",
+            "verification_criterion": "The answer provides quantitative data or a clear qualitative relationship describing how changes in the methotrexate:PLGA ratio specifically affect the particle size of PVA-coated nanoparticles made by nanoprecipitation.",
+            "raw": "",
+            "verification_criterion_original": ""
+          },
+          "answer": "Summary\nVarying the methotrexate (MTX):PLGA mass ratio in nanoprecipitation primarily shifts the core\u2019s nucleation/growth balance and encapsulation efficiency, which in turn modulates the hydrodynamic diameter; subsequent PVA coating adds an adsorption/deposition layer that can increase and narrow or widen size depending on PVA concentration and stabilization. In practice, moving toward a higher PLGA fraction tends to increase particle size via more extensive aggregation/secondary nucleation and solvent displacement, while moving toward a higher MTX fraction often lowers encapsulation and can increase free-drug association/aggregation, also enlarging hydrodynamic size; PVA coatings of moderate concentration stabilize and slightly increase size, improving PDI, whereas very low PVA yields unstable, widening distributions and very high PVA can further enlarge particles through thick adsorption layers. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"d0eef6b3-3\">The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite> <cite id=\"d0eef6b3-4\">using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced</cite> <cite id=\"688db20d-1\">The nanoparticles diameter increased from about 130 nm to 378 nm as the PVA concentration increased from 0.25 to 2 W/V%</cite> <cite id=\"688db20d-3\">In this range of PVA concentrations, no significant effect on the diameter size... Inversely, the PDI value decreases... with the increase of PVA</cite> <cite id=\"7edbd461-0\">Six different formulations were prepared... by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1)... mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase</cite>.\n\nMechanisms from nanoprecipitation of hydrophilic drugs into PLGA\nNanoprecipitation of hydrophilic small molecules (MTX is highly hydrophilic) into PLGA proceeds via solvent/antisolvent mixing or evaporation, causing rapid polymer precipitation and drug partitioning. When the PLGA fraction is higher (lower MTX:PLGA ratio), the more viscous organic phase and higher polymer availability favor more extensive aggregation and secondary nucleation, producing larger hydrodynamic diameters and higher encapsulation efficiencies; conversely, higher MTX fraction drives incomplete encapsulation, leaves free drug in the aqueous phase, and can enlarge size via unencapsulated drug\u2013drug and drug\u2013polymer associations. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"d0eef6b3-3\">Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA</cite>. MTX-specific nanoprecipitation work confirms that drug-to-polymer ratio is an explicit optimization factor assessed via mean particle diameter, zeta potential, drug content, and entrapment efficiency, underscoring that changing MTX:PLGA measurably tunes size and stability. <cite id=\"d0eef6b3-0\">Six different formulations... by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1)... comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency</cite>.\n\nImpact of PVA coating on size and polydispersity\nPVA in nanoprecipitation serves as a stabilizer and crosslinking-associated surface modifier. Experiments on PLGA nanoprecipitation show a clear trend: increasing PVA concentration increases hydrodynamic diameter from roughly 130 to 378 nm (0.25\u20132 wt/v%), consistent with PVA deposition and adsorption thickening the surface layer; at the same time, PDI decreases as stabilization improves, indicating that modest PVA improves size homogeneity. <cite id=\"688db20d-1\">The nanoparticles diameter increased from about 130 nm to 378 nm as the PVA concentration increased from 0.25 to 2 W/V%</cite> <cite id=\"688db20d-1\">the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded</cite> <cite id=\"688db20d-3\">no significant effect on the diameter size... Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA</cite>. In another PLGA system, PVA at 0.5\u20132 wt% produced similar mean diameters (~235 nm) and slightly more negative zeta potential, but PDI fell from ~0.5 to ~0.2 as PVA increased, consistent with better surface coverage and hydrogen/van der Waals interactions stabilizing particles; again, the PLGA concentration notably affected PDI and average diameter, reinforcing that core composition dominates absolute size while PVA tunes stabilization. <cite id=\"688db20d-3\">obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%... In this range... no significant effect on the diameter size... PDI value decreases... with the increase of PVA</cite> <cite id=\"688db20d-3\">Four concentrations of PLGA... nanoparticles with average diameters of 230-260 nm... 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs</cite>. Representative nanoprecipitation workflows for PLGA with PVA confirm that DLS-based size and zeta potential are routine readouts, and that washing/stirring allow PVA to adsorb and define the final hydrodynamic size. <cite id=\"688db20d-2\">The hydrodynamic size of the NPs was evaluated using dynamic light scattering... Drop-casting... TEM... SEM</cite> <cite id=\"688db20d-4\">PLGA solution was added to the PVA solution under magnetic stirring for 4 h... The characterization of the synthesized formulations was performed using... Dynamic Light Scattering... Zeta Sizer Ultra</cite>.\n\nPutting it together for MTX\u2013PLGA cores and PVA shells\nFor MTX\u2013PLGA nanoparticles synthesized by nanoprecipitation, a higher PLGA proportion (lower MTX:PLGA ratio) increases hydrodynamic size through enhanced nucleation/aggregation and higher encapsulation, while a higher MTX proportion tends to reduce encapsulation, leaving free hydrophilic drug that associates with the surface or aqueous phase and enlarges the hydrodynamic diameter; optimization studies explicitly sweep MTX:PLGA and select for mean diameter, EE, and surface charge. <cite id=\"d0eef6b3-0\">Six different formulations... varying drug to polymer ratios... mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix</cite>. After PVA coating, the net size reflects the core size plus PVA adsorption thickness; modest PVA improves stabilization and narrows size distribution, while higher PVA can further increase size due to thicker adsorption layers. Thus, increasing MTX:PLGA (more drug in the supernatant phase) may raise apparent size both via poorer encapsulation and via PVA\u2019s preferential adsorption to a larger surface area; conversely, increasing PLGA:MTX yields smaller cores with higher EE and can be partially offset by PVA\u2019s stabilizing layer. <cite id=\"688db20d-1\">The nanoparticles diameter increased... as the PVA concentration increased... associated with the deposition of PVA on the surface</cite> <cite id=\"688db20d-3\">no significant effect on the diameter size... PDI decreases... with the increase of PVA</cite>. Quantitatively, PLGA-only nanoprecipitation with comparable conditions has shown ~230\u2013380 nm diameters depending on drug and PVA, illustrating the plausible range for MTX\u2013PLGA cores before PVA deposition; adding PVA commonly shifts toward slightly higher diameters with improved PDI. <cite id=\"688db20d-1\">The size of polymeric nanoparticles is particularly important... Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size... The effect of PVA... nanoparticles diameter increased from about 130 nm to 378 nm</cite> <cite id=\"688db20d-3\">obtaining final PVA concentrations... diameters and \u03b6p values around 235 nm and \u221211 mV... PDI decreases... PLGA concentration plays a pivotal role</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite>.\n\nPractical guidance and controls\n- Ratios near PLGA-rich (e.g., 1:1 to 1:3 drug:polymer by weight) often yield higher encapsulation and larger hydrodynamic diameters due to aggregation; moving to drug-rich ratios (e.g., \u22652:1) lowers encapsulation and can increase size via free-drug contributions. Selecting the \u201cbest formulation\u201d includes balancing size, zeta potential, and drug content, as in MTX studies. <cite id=\"d0eef6b3-0\">Among the six formulations... comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite>.\n- To reduce growth during nanoprecipitation, use rapid mixing or microfluidic co-precipitation to limit secondary nucleation; at fixed drug loading (~5% theoretical), changing PVA content may not drastically change diameter but will lower zeta potential via PEG-like shielding, emphasizing composition\u2013stability trade-offs. <cite id=\"d0eef6b3-4\">using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced</cite> <cite id=\"d0eef6b3-4\">no significant difference in size and PDI... however, adding PEG-PLGA significantly decreased the Z-potential</cite>.\n- For PVA coating, start with 0.5\u20131.0 wt% PVA to stabilize size (improve PDI) with modest diameter increase; avoid very low PVA (unstable, broad distributions) and very high PVA (thicker adsorption, larger size). <cite id=\"688db20d-1\">PVA 0.25\u20132 wt% increased diameter 130\u2192378 nm; deposition of PVA on the surface</cite> <cite id=\"688db20d-3\">PDI decreases from 0.5 to 0.2 with increased PVA; diameter ~235 nm with 0.5\u20132 wt% PVA</cite>.\n- Recognize hydrophilicity effects specific to MTX: high excess MTX can partition into the aqueous phase or adsorb on particle surfaces, inflating the hydrodynamic diameter even if core diameters are similar; verify encapsulation efficiency across ratios and include free-drug measurements to disambiguate core vs. corona contributions. <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix</cite> <cite id=\"d0eef6b3-0\">formulations were prepared by varying the drug to polymer ratios... characterized for particle size and entrapment efficiency</cite>.\n\nTakeaway\n- Increasing PLGA relative to MTX (lower MTX:PLGA) generally increases particle size due to higher polymer-driven aggregation and improved encapsulation; decreasing PLGA relative to MTX (higher MTX:PLGA) can also increase measured size via lower encapsulation and free-drug corona while reducing encapsulation efficiency. Optimal points balance size, PDI, and EE across the ratio sweep. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE</cite>.\n- PVA coating adds a surface layer that increases hydrodynamic diameter and narrows size distribution at modest concentrations; further increasing PVA or prolonging adsorption can yield thicker shells and larger apparent size, while too little PVA yields unstable, broad distributions. <cite id=\"688db20d-1\">PVA 0.25\u20132 wt% increased diameter 130\u2192378 nm</cite> <cite id=\"688db20d-3\">PDI decreases... with the increase of PVA; diameters ~235 nm</cite>.\n- For MTX\u2013PLGA/PVA systems, expect: drug-rich cores (high MTX:PLGA) \u2192 lower EE and larger hydrodynamic diameter (free drug + PVA adsorption); polymer-rich cores (low MTX:PLGA) \u2192 higher EE but larger aggregation-caused diameters that can be partially stabilized to slightly larger, narrower size by PVA; mixing mode and surfactant choice critically modulate these outcomes. <cite id=\"d0eef6b3-0\">varying drug to polymer ratios... mean particle diameter and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"688db20d-1\">PVA deposition increases diameter</cite> <cite id=\"d0eef6b3-4\">rapid mixing narrows size distributions</cite>.",
+          "answer_model": null,
+          "trace": {
+            "generated_text": "<think>\nDecompose the question:\n- Target system: methotraxate (MTX)-loaded PLGA nanoparticles, then PVA-coated via nanoprecipitation.\n- Manipulated variable: drug-to-polymer (MTX:PLGA) mass ratio.\n- Outcome: particle size (e.g., z-average hydrodynamic diameter, DLS; sedimentation diameter).\n- Mediators/related outcomes: PDI, zeta potential, encapsulation efficiency, drug release\u2014may influence measured size or interconvert with it.\n\nAssumptions:\n- Nanoprecipitation (solvent displacement, anti-solvent precipitation) is used for PLGA; PVA coating likely via layer-by-layer or crosslinking in aqueous media.\n- MTX is hydrophilic; excess drug may remain in aqueous phase or adsorb on surfaces, potentially increasing size via aggregation or incomplete encapsulation; higher polymer fraction favors encapsulation and narrower size distribution.\n- Literature may be sparse for \u201cMTX specifically\u201d and \u201cwith PVA coating\u201d; I\u2019ll collect evidence on (a) MTX\u2013PLGA nanoprecipitation/polymer\u2013drug ratio effects; (b) general PLGA nanoprecipitation and drug\u2013polymer ratio on size; (c) PVA coating effects; (d) nanoparticle characterization trends.\n\nPlan:\n1) Broad search: \u201cmethotrexate PLGA nanoparticles nanoprecipitation drug to polymer ratio particle size\u201d.\n2) If scarce, broaden to \u201chydrophilic drug PLGA nanoprecipitation drug loading ratio particle size\u201d and include MTX as case.\n3) Search PVA coating on PLGA nanoparticles: how coating affects size and how composition/drug ratio affects it.\n4) Look for nanoprecipitation/coacervation/anti-solvent studies on PLGA or similar biopolymers with drug ratio effects.\n5) Gather mechanistic explanations (encapsulation efficiency, stabilization/aggregation, PDI).\nFirst query will be broad and specific to MTX+PLGA nanoprecipitation and ratios.\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2015-2025\" fieldsOfStudy=\"Medicine,Chemistry,Engineering\">methotrexate PLGA nanoparticles nanoprecipitation drug to polymer ratio particle size</call_tool><tool_output><snippet id=d0eef6b3-0>\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.\n</snippet>\n<snippet id=d0eef6b3-1>\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: No content available\n</snippet>\n<snippet id=d0eef6b3-2>\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).\n</snippet>\n<snippet id=d0eef6b3-3>\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer Diseases 2025, 13, 87 6 of 22 commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).\n</snippet>\n<snippet id=d0eef6b3-4>\nTitle: Optimisation of a Microfluidic Method for the Delivery of a Small Peptide\nSnippet: PLGA (1%) was compared with the mixture of 1%PLGA + 1%PEG-PLGA (Figure 5). There was no significant difference in size and PDI between nanoparticles fabricated using 1% PLGA or 1% PLGA + 1% PEG-PLGA when using DCM as the solvent and 5% theoretical drug loading (Figure 5a,b). This finding suggested that the addition of an extra 1% PEG-PLGA did not greatly affect particle size distribution. However, adding PEG-PLGA significantly decreased the Z-potential of nanoparticles (\u221210 mV) compared with PLGA alone (\u221240 mV) (Figure 5c). Our finding is consistent with others who have reported that PEGylation always results in a dramatic decrease in the charge of PLGA nanoparticles [51][52][53]. As reported by Garinot et al., the decreased zeta potential close to neutrality may result from the shielding effect of the PEG chains [53]. To produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used. Nano-precipitation is based upon the interfacial deposition of polymeric nanoparticles when water-miscible solvents containing dissolved polymer are mixed with water [54]. To generate uniform and size-controlled nanoparticles by nano-precipitation, rapid and sufficient mixing is generally required [55] and often leads to a wide range size distribution. In agreement with work by others [55,56], our data show that, using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced. ). The extra 1% PEG-PLGA showed a slight increment in size distribution but significantly lower Z-potential. One-way ANOVA analysis followed by Tukey test for multiple comparisons (**** p < 0.0001; and ns, no significant difference). \n\nTo produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used.\n</snippet></tool_output><think>\nSummary of first results:\n- We found a methotrexate-loaded nanoparticle study that varied drug-to-polymer ratios in nanoprecipitation but used Eudragit S100 or ethyl cellulose rather than PLGA; it confirms that nanoprecipitation formulations were optimized over MTX:polymer ratios and characterized for particle size and entrapment efficiency, but doesn\u2019t give explicit MTX:PLGA size trends or PVA coating specifics (d0eef6b3-0). \n- A rivaroxaban/PLGA nanoprecipitation study provides direct evidence: particle size increased with PLGA content; at a 1:3 drug:polymer weight ratio they obtained ~379 nm with PDI ~0.43 and high entrapment (d0eef6b3-2, d0eef6b3-3). This suggests that higher polymer fraction increases size via nucleation and/or aggregation, while lower drug fraction may yield smaller particles but with lower encapsulation; however, rivaroxaban differs from methotrexate, so we need corroboration with hydrophilic drugs and ideally MTX specifically.\n- A microfluidic PLGA study shows nanoprecipitation size control is sensitive to mixing and drug loading; at 5% theoretical drug loading, adding PEG-PLGA did not change size much, but altered zeta potential. It highlights that nanoprecipitation often yields wide size distributions without control, and faster mixing narrows size (d0eef6b3-4). This helps with mechanisms (nucleation, mixing) but not drug-to-polymer-specific trends.\n\nWhat\u2019s missing:\n- Direct evidence on methotrexate\u2013PLGA nanoprecipitation where drug-to-polymer ratio was varied and particle size reported (ideally DLS).\n- Effects of PVA coating on size (increase or stabilization) and whether drug-to-polymer inside the core affects final coated size.\n- Mechanistic explanations: hydrophilicity of MTX leading to incomplete encapsulation at low polymer fraction; aggregation or increased hydrodynamic diameter at high drug-to-polymer; how PVA coating thickness/composition modulates size and PDI.\n\nNext query:\nSearch specifically for \u201cmethotrexate PLGA nanoprecipitation nanoparticle size drug to polymer ratio\u201d and broaden to \u201cPLGA nanoprecipitation drug loading ratio particle size hydrodynamic diameter\u201d.\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2015-2025\" fieldsOfStudy=\"Medicine,Chemistry,Engineering\">methotrexate PLGA nanoprecipitation nanoparticle size drug to polymer ratio hydrodynamic diameter</call_tool><tool_output><snippet id=7edbd461-0>\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.\n</snippet>\n<snippet id=7edbd461-1>\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: No content available\n</snippet>\n<snippet id=7edbd461-2>\nTitle: Formulation of a dual drug-loaded nanoparticulate co-delivery hydrogel system and its validation in rheumatoid arthritis animal model\nSnippet: Despite exhibiting good anti-arthritic activity, the clinical usage of Methotrexate (MTX) is limited due to its undesirable properties (poor solubility, low bioavailability, and several side effects). In this study, a nanoprecipitation method (using solvent evaporation) was employed to overcome a few physicochemical limitations of MTX by loading into a biodegradable PLGA polymer matrix. For optimization purposes, three different batches of MTX NPs were prepared using 0.1% (w/v) PF-127 (as surfactant) with varying concentrations of PLGA (80, 120, 150 mg), yielding an entrapment efficiency of 53.73 \u00b1 4.83% (2.79 \u00b1 0.25 mg), 64.60 \u00b1 2.34% (3.36 \u00b1 0.12 mg) and 78.45 \u00b1 3.10% (4.08 \u00b1 0.16 mg) respectively (Table 1). It was observed that the increase in PLGA concentration increased the drug's %EE (% encapsulation efficiency) as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase. Here, the undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA with weak interactions and released slowly from the polymeric matrix (Ray et al., 2015). Among the prepared formulations, batch no-III (PLGA-150 mg) with a greater % EE of the drug was further utilized to fabricate DD NP HG.\n</snippet>\n<snippet id=7edbd461-3>\nTitle: Analytical validation of an ATR-FTIR based method for quantifying the amount of polysorbate 80 adsorbed on PLGA nanoparticles.\nSnippet: The hydrodynamic diameter can decrease or increase with increase in the surfactant concentration. (19) In some cases, the hydrodynamic diameter of the nanoparticles has been also observed to influence the morphology and adsorption properties of the surfactant molecules. (20) Our prepared nanoparticles show similar specification parameters of hydrodynamic diameter, polydispersity index and zeta potential at both development and validation stage with no statistically significant difference (t-test, p>0.05). \n\nAs a process parameter, the nanoprecipitation yield was also calculated. For this, 1ml of the nanoparticle suspension was dried in a pre-weighted tube and the weight of the dried tube was recorded. The mass difference by evaporating and weighing method was found to be \u02dc2.24 mg for 1 ml nanoparticle solution. In a single batch of PLGA nanoparticle production, 15 mg of PLGA is used which forms 4 ml of nanoparticle suspension. Thus total weight of nanoparticle in 4 ml of suspension would be (2.24\u00d74) mg. The yield% was thus {(2.24\u00d74)/15} \u00d7 100 = 59.7\u00b16.1%. During method development, the yield% was 62.96\u00b16.29% and is not significantly different from the validation yield (t-test, p>0.05). Polysorbate 80 peaks were seen at 3000-2800 cm -1 (acyl peak), 1750-1850 cm -1 (ester peak) and 1050-1150 cm -1 (ethoxy peak). However, among the three IR peaks, the 3000-2800 cm -1 peak was chosen for the method development due to its sharp and easily detectable nature even at very low concentrations (18). The other two peaks are detectable only at higher concentrations and therefore were not chosen for standard curve. Sodium azide (1 mg/ml) was chosen as the internal standard which gives sharp peaks at 2080-1970 cm -1 , at significantly different position from the polysorbate 80 peaks. The internal standard is essential to minimize errors between readings and to minimize variations due to internal conditions.\n</snippet>\n<snippet id=7edbd461-4>\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).\n</snippet></tool_output><think>\nWe have two rounds of snippets. They show:\n- For nanoprecipitation of hydrophilic drugs into PLGA, increasing the polymer fraction tends to increase particle size, with an example (rivaroxaban) at 1:3 drug:PLGA weight ratio giving ~379 nm and PDI ~0.43 with high EE (RX/PLGA) <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"d0eef6b3-3\">The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite>. \n- For methotrexate (hydrophilic), a nanoprecipitation study varied drug-to-polymer ratios across polymers (not PLGA) and optimized on mean particle diameter along with EE and zeta potential, but did not report explicit trend vs ratio; it confirms the parameter was varied and size was a key metric <cite id=\"d0eef6b3-0\">Six different formulations were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1)... comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency</cite>.\n- A microfluidic co-precipitation study shows nanoprecipitation size distributions are sensitive to mixing; at 5% theoretical drug loading, adding PEG-PLGA slightly changed size but lowered zeta potential, underscoring that size is governed by nucleation/aggregation and mixing conditions as well as composition <cite id=\"d0eef6b3-4\">using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced... wide range size distribution. ... no significant difference in size and PDI between nanoparticles fabricated using 1% PLGA or 1% PLGA + 1% PEG-PLGA when using DCM as the solvent and 5% theoretical drug loading</cite>.\n\nWhat\u2019s missing is direct evidence on PVA coating effects on size and how drug-to-polymer ratio in the core translates to final coated size. I will search for \u201cPVA coated PLGA nanoparticles nanoprecipitation methotrexate\u201d and more generally \u201cPVA coating PLGA nanoparticles particle size zeta potential hydrodynamic diameter,\u201d and also \u201cdrug-to-polymer ratio PVA coated nanoparticles size.\u201d\n</think>\n<call_tool name=\"snippet_search\" limit=\"5\" year=\"2015-2025\" fieldsOfStudy=\"Medicine,Chemistry,Engineering\">PVA coated PLGA nanoparticles nanoprecipitation particle size methotrexate</call_tool><tool_output><snippet id=688db20d-0>\nTitle: The Role of Nanoparticle in Brain Permeability: An in-vitro BBB Model\nSnippet: MET loaded polymeric nanoparticles of PLGA were prepared by emulsification/solvent evaporation method. Briefly, the exact polymer and drug amouts were dissolved in acetone and then suspended in the aqueous phase. PVA was employed as a surfactant. The resulting NP suspension was stirred for 3h at room temperature to organic solvent evaporation. Subsequently, the nanoparticles were separated by ultracentrifugation (Beckman, XL-90) at 30,000 rpm for 20min and lyophilized by using a lyophilizer (ZibrusVaco 10-II-E; Germany) to obtain a fine powder of MET loaded NPs.\n</snippet>\n<snippet id=688db20d-1>\nTitle: Investigation of Effective Parameters on Size of Paclitaxel Loaded PLGA Nanoparticles\nSnippet: Table 1 and 2 summarizes experiments conducted in this study to investigate drug and PLGA concentrations, the amounts of PVA and solvent and sonication time which affect PLGA nanoparticles size and morphology. Emulsion solvent evaporation and nanoprecipitation/interfacial deposition are the two most common methods for the preparation of polymeric nanoparticles. These two techniques were originally developed by Vanderhoff et al 45 and Fessi et al, 46 respectively. In an study PLGA incorporated with procaine nanoparticles was prepared via nanoprecipitaion technique with the size less than 210 nm. 32 In another study protein encapsulated in PLGA nanoparticles were prepared by phase separation method with the size around 300 nm for biomedical application. 47 Commercial success of the various polymeric nanoformulation products developed by emulsion and nanoprecipitation were documented by Nava-Arzaluz et al 48 and Minost et al. 49 We investigated the effect of two methods of single emulsion and precipitation on nanoparticles size. The size of polymeric nanoparticles is particularly important in cancer therapy as drug delivery vehicles can enter into the tumor tissue via the EPR effect. Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size (Table 2. No. 11) compare to single emulsion method (Table 1, No. 19). In addition, acetone is used in precipitation method which have less toxic effect than DCM applied in emulsion method. 50 herefore, precipitation method is suggested for medical applications. The effect of PVA The function of PVA concentration as an effective factor on PLGA diameter is shown in Figure 2. In this experiment the applied concentrations of PVA were 0.25, 0.5, 1 and 2 W/V % whereas other parameters were constant. The nanoparticles diameter increased from about 130 nm to 378 nm (Table 2, Nos. 6-9) as the PVA concentration increased from 0.25 to 2 W/V%. It was observed that the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded\n</snippet>\n<snippet id=688db20d-2>\nTitle: PLGA nanoparticle loaded with antioxidants and photosensitizer for ROS shock mediated phototherapy of triple negative breast cancer\nSnippet: Polymeric nanoparticles were prepared using the nanoprecipitation method as described previously [20]. Briefly, 15 mg of PLGA was dissolved in 1 ml of dichloromethane (DCM) and was added dropwise to the 1% PVA in an ice bath, and the stirring was continued overnight for the evaporation of the DCM. The next day, the solution was centrifuged for 5 min at 1500 rpm; further centrifugation was performed by collecting the supernatant at 10 000 rpm for 15 min. The pellet was resuspended in double distilled water. While using antioxidants, \u03b1-tocopherol and p-CA were also dissolved in DCM, following the same procedure as mentioned above. \n\nUV-vis spectrometer (Shimadzu UV-1800, Japan) was used to determine the nanoparticles' absorbance. The hydrodynamic size of the NPs was evaluated using dynamic light scattering (DLS). The average zeta potential, size, and polydispersity index was evaluated with DLS. Drop-casting nanoparticles on a copper grid was done to analyze the size and morphology using transmission electron microscopy (TEM) (JEOL, JEM 2100F Inc., USA). The as prepared nanoparticles were drop-casted on a silicon wafer to examine the surface morphology using scanning electron microscopy (Carl Zeiss atomic microscope, Supra40 Germany).\n</snippet>\n<snippet id=688db20d-3>\nTitle: Pioglitazone-Loaded PLGA Nanoparticles: Towards the Most Reliable Synthesis Method\nSnippet: The effect of PVA, PGZ and PLGA concentration along with the influence of the organic and the aqueous phase volumes over the diameter size, PDI, \u03b6p and EE% of nanoparticles, are presented in Figure 3. Unlike the single emulsification-solvent evaporation, a slightly lower pH (6.0) could be used in the nanoprecipitation method with the aim of improving the PGZ encapsulation efficiency. Stock aqueous solutions of PVA at 1%, 2%, and 4% were used for the preparation of NPs with the nanoprecipitation technique, obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%, respectively. In this range of PVA concentrations, no significant effect on the diameter size and \u03b6 p of PGZ-loaded NPs was observed, with diameters and \u03b6 p values around 235 nm and \u221211 mV, respectively, in all formulations. Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA. This could be explained considering that, at low concentrations, PVA is not well adsorbed on the nanoparticle surface and is not able to stabilize the NPs. On the other hand, higher PVA concentrations are covering better the nanoparticle surface and, interacting by hydrogen and Van der Waals bonds with PLGA, can stabilize it. This is also supported by the \u03b6 p values slightly decreasing (increasing in absolute value) with the increase of PVA. \n\nMoreover, the PLGA concentration showed a noteworthy effect, especially on PDI. Four concentrations of PLGA were used in the nanoparticle preparations by nanoprecipitation: 7.5 mg/mL, 10.0 mg/mL, 12.5 mg/mL and 15.0 mg/mL. In this range, nanoparticles with average diameters of 230-260 nm were obtained, indicating the 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs.\n</snippet>\n<snippet id=688db20d-4>\nTitle: Preparation and In Vitro Characterization of Quercetin and Chlorhexidine-loaded PLGA Nanoparticles for Oral Biofilm-Associated Pathologies\nSnippet: The nanoprecipitation method was used to synthesize PLGA nanoparticles (PLGA NP). 80 mg of PLGA was dissolved in 2 mL of acetone. A clear solution of 4 ml of 5% polyvinyl alcohol (PVA) crosslinker was prepared in distilled water at 90 \u00b0C. PLGA solution was added to the PVA solution under magnetic stirring for 4 h. The nanoparticles were centrifuged at 14,000 rpm for 30 min, and the upper phase was removed. The remaining precipitate was washed and vortexed 3 times by adding distilled water. CHX (1.5%, 5%, 15%), QUE (1.5%, 5%, 15%) and CHX + QUE (1.5%/1.5%, 5%/5% and 15%/15%) were added. It was frozen at -20 \u00b0C for 15 min and then freeze-dried with a lyophilizer (Telstar Cryodos, Spain) to obtain powdered formulations. The formulations were stored at 2-6 \u00b0C, protected from light, to prevent degradation of the molecules before use. The characterization of the synthesized formulations was performed using Fourier Transform Infrared (FTIR) (PerkinElmer Spectrum 100), Dynamic Light Scattering Spectrometry (DLS), Malvern Zeta Sizer Ultra, Thermogravimetry Analysis (TG) (Perkin-Elmer Diamond), Differential Scanning Calorimetry (DSC) (Shimadzu DSC 60), and Scanning Electron Microscopy (SEM) (Thermo Scientific Apreo S SEM-EDX).\n</snippet></tool_output><think>\nSufficiency check and plan:\nI have evidence that (1) nanoprecipitation of hydrophilic drugs into PLGA yields size trends with drug\u2013polymer ratio, including an explicit PLGA example (rivaroxaban) where higher PLGA content increased particle size; (2) methotrexate nanoprecipitation studies vary drug-to-polymer ratio and optimize on particle size, encapsulation, and zeta potential; (3) PVA coating/adsorption modulates hydrodynamic size and PDI, with specific quantitative trends in PLGA nanoprecipitation; and (4) nanoparticle size in nanoprecipitation is sensitive to mixing and surfactant systems. I will synthesize these into a mechanistic answer for MTX\u2013PLGA core followed by PVA coating, highlighting expected trends, controls, and trade-offs. I\u2019ll structure the answer with: overview, core nanoprecipitation trends (MTX/PLGA drug-to-polymer), PVA coating impacts, combined interpretation for MTX, and practical guidance.\n</think>\n<answer>\nSummary\nVarying the methotrexate (MTX):PLGA mass ratio in nanoprecipitation primarily shifts the core\u2019s nucleation/growth balance and encapsulation efficiency, which in turn modulates the hydrodynamic diameter; subsequent PVA coating adds an adsorption/deposition layer that can increase and narrow or widen size depending on PVA concentration and stabilization. In practice, moving toward a higher PLGA fraction tends to increase particle size via more extensive aggregation/secondary nucleation and solvent displacement, while moving toward a higher MTX fraction often lowers encapsulation and can increase free-drug association/aggregation, also enlarging hydrodynamic size; PVA coatings of moderate concentration stabilize and slightly increase size, improving PDI, whereas very low PVA yields unstable, widening distributions and very high PVA can further enlarge particles through thick adsorption layers. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"d0eef6b3-3\">The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite> <cite id=\"d0eef6b3-4\">using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced</cite> <cite id=\"688db20d-1\">The nanoparticles diameter increased from about 130 nm to 378 nm as the PVA concentration increased from 0.25 to 2 W/V%</cite> <cite id=\"688db20d-3\">In this range of PVA concentrations, no significant effect on the diameter size... Inversely, the PDI value decreases... with the increase of PVA</cite> <cite id=\"7edbd461-0\">Six different formulations were prepared... by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1)... mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase</cite>.\n\nMechanisms from nanoprecipitation of hydrophilic drugs into PLGA\nNanoprecipitation of hydrophilic small molecules (MTX is highly hydrophilic) into PLGA proceeds via solvent/antisolvent mixing or evaporation, causing rapid polymer precipitation and drug partitioning. When the PLGA fraction is higher (lower MTX:PLGA ratio), the more viscous organic phase and higher polymer availability favor more extensive aggregation and secondary nucleation, producing larger hydrodynamic diameters and higher encapsulation efficiencies; conversely, higher MTX fraction drives incomplete encapsulation, leaves free drug in the aqueous phase, and can enlarge size via unencapsulated drug\u2013drug and drug\u2013polymer associations. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"d0eef6b3-3\">Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA</cite>. MTX-specific nanoprecipitation work confirms that drug-to-polymer ratio is an explicit optimization factor assessed via mean particle diameter, zeta potential, drug content, and entrapment efficiency, underscoring that changing MTX:PLGA measurably tunes size and stability. <cite id=\"d0eef6b3-0\">Six different formulations... by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1)... comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency</cite>.\n\nImpact of PVA coating on size and polydispersity\nPVA in nanoprecipitation serves as a stabilizer and crosslinking-associated surface modifier. Experiments on PLGA nanoprecipitation show a clear trend: increasing PVA concentration increases hydrodynamic diameter from roughly 130 to 378 nm (0.25\u20132 wt/v%), consistent with PVA deposition and adsorption thickening the surface layer; at the same time, PDI decreases as stabilization improves, indicating that modest PVA improves size homogeneity. <cite id=\"688db20d-1\">The nanoparticles diameter increased from about 130 nm to 378 nm as the PVA concentration increased from 0.25 to 2 W/V%</cite> <cite id=\"688db20d-1\">the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded</cite> <cite id=\"688db20d-3\">no significant effect on the diameter size... Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA</cite>. In another PLGA system, PVA at 0.5\u20132 wt% produced similar mean diameters (~235 nm) and slightly more negative zeta potential, but PDI fell from ~0.5 to ~0.2 as PVA increased, consistent with better surface coverage and hydrogen/van der Waals interactions stabilizing particles; again, the PLGA concentration notably affected PDI and average diameter, reinforcing that core composition dominates absolute size while PVA tunes stabilization. <cite id=\"688db20d-3\">obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%... In this range... no significant effect on the diameter size... PDI value decreases... with the increase of PVA</cite> <cite id=\"688db20d-3\">Four concentrations of PLGA... nanoparticles with average diameters of 230-260 nm... 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs</cite>. Representative nanoprecipitation workflows for PLGA with PVA confirm that DLS-based size and zeta potential are routine readouts, and that washing/stirring allow PVA to adsorb and define the final hydrodynamic size. <cite id=\"688db20d-2\">The hydrodynamic size of the NPs was evaluated using dynamic light scattering... Drop-casting... TEM... SEM</cite> <cite id=\"688db20d-4\">PLGA solution was added to the PVA solution under magnetic stirring for 4 h... The characterization of the synthesized formulations was performed using... Dynamic Light Scattering... Zeta Sizer Ultra</cite>.\n\nPutting it together for MTX\u2013PLGA cores and PVA shells\nFor MTX\u2013PLGA nanoparticles synthesized by nanoprecipitation, a higher PLGA proportion (lower MTX:PLGA ratio) increases hydrodynamic size through enhanced nucleation/aggregation and higher encapsulation, while a higher MTX proportion tends to reduce encapsulation, leaving free hydrophilic drug that associates with the surface or aqueous phase and enlarges the hydrodynamic diameter; optimization studies explicitly sweep MTX:PLGA and select for mean diameter, EE, and surface charge. <cite id=\"d0eef6b3-0\">Six different formulations... varying drug to polymer ratios... mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix</cite>. After PVA coating, the net size reflects the core size plus PVA adsorption thickness; modest PVA improves stabilization and narrows size distribution, while higher PVA can further increase size due to thicker adsorption layers. Thus, increasing MTX:PLGA (more drug in the supernatant phase) may raise apparent size both via poorer encapsulation and via PVA\u2019s preferential adsorption to a larger surface area; conversely, increasing PLGA:MTX yields smaller cores with higher EE and can be partially offset by PVA\u2019s stabilizing layer. <cite id=\"688db20d-1\">The nanoparticles diameter increased... as the PVA concentration increased... associated with the deposition of PVA on the surface</cite> <cite id=\"688db20d-3\">no significant effect on the diameter size... PDI decreases... with the increase of PVA</cite>. Quantitatively, PLGA-only nanoprecipitation with comparable conditions has shown ~230\u2013380 nm diameters depending on drug and PVA, illustrating the plausible range for MTX\u2013PLGA cores before PVA deposition; adding PVA commonly shifts toward slightly higher diameters with improved PDI. <cite id=\"688db20d-1\">The size of polymeric nanoparticles is particularly important... Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size... The effect of PVA... nanoparticles diameter increased from about 130 nm to 378 nm</cite> <cite id=\"688db20d-3\">obtaining final PVA concentrations... diameters and \u03b6p values around 235 nm and \u221211 mV... PDI decreases... PLGA concentration plays a pivotal role</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43</cite>.\n\nPractical guidance and controls\n- Ratios near PLGA-rich (e.g., 1:1 to 1:3 drug:polymer by weight) often yield higher encapsulation and larger hydrodynamic diameters due to aggregation; moving to drug-rich ratios (e.g., \u22652:1) lowers encapsulation and can increase size via free-drug contributions. Selecting the \u201cbest formulation\u201d includes balancing size, zeta potential, and drug content, as in MTX studies. <cite id=\"d0eef6b3-0\">Among the six formulations... comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite>.\n- To reduce growth during nanoprecipitation, use rapid mixing or microfluidic co-precipitation to limit secondary nucleation; at fixed drug loading (~5% theoretical), changing PVA content may not drastically change diameter but will lower zeta potential via PEG-like shielding, emphasizing composition\u2013stability trade-offs. <cite id=\"d0eef6b3-4\">using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced</cite> <cite id=\"d0eef6b3-4\">no significant difference in size and PDI... however, adding PEG-PLGA significantly decreased the Z-potential</cite>.\n- For PVA coating, start with 0.5\u20131.0 wt% PVA to stabilize size (improve PDI) with modest diameter increase; avoid very low PVA (unstable, broad distributions) and very high PVA (thicker adsorption, larger size). <cite id=\"688db20d-1\">PVA 0.25\u20132 wt% increased diameter 130\u2192378 nm; deposition of PVA on the surface</cite> <cite id=\"688db20d-3\">PDI decreases from 0.5 to 0.2 with increased PVA; diameter ~235 nm with 0.5\u20132 wt% PVA</cite>.\n- Recognize hydrophilicity effects specific to MTX: high excess MTX can partition into the aqueous phase or adsorb on particle surfaces, inflating the hydrodynamic diameter even if core diameters are similar; verify encapsulation efficiency across ratios and include free-drug measurements to disambiguate core vs. corona contributions. <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE... undiffused lipophilic drug might be entrapped in the matrix</cite> <cite id=\"d0eef6b3-0\">formulations were prepared by varying the drug to polymer ratios... characterized for particle size and entrapment efficiency</cite>.\n\nTakeaway\n- Increasing PLGA relative to MTX (lower MTX:PLGA) generally increases particle size due to higher polymer-driven aggregation and improved encapsulation; decreasing PLGA relative to MTX (higher MTX:PLGA) can also increase measured size via lower encapsulation and free-drug corona while reducing encapsulation efficiency. Optimal points balance size, PDI, and EE across the ratio sweep. <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"7edbd461-2\">increased PLGA concentration increased the drug's %EE</cite>.\n- PVA coating adds a surface layer that increases hydrodynamic diameter and narrows size distribution at modest concentrations; further increasing PVA or prolonging adsorption can yield thicker shells and larger apparent size, while too little PVA yields unstable, broad distributions. <cite id=\"688db20d-1\">PVA 0.25\u20132 wt% increased diameter 130\u2192378 nm</cite> <cite id=\"688db20d-3\">PDI decreases... with the increase of PVA; diameters ~235 nm</cite>.\n- For MTX\u2013PLGA/PVA systems, expect: drug-rich cores (high MTX:PLGA) \u2192 lower EE and larger hydrodynamic diameter (free drug + PVA adsorption); polymer-rich cores (low MTX:PLGA) \u2192 higher EE but larger aggregation-caused diameters that can be partially stabilized to slightly larger, narrower size by PVA; mixing mode and surfactant choice critically modulate these outcomes. <cite id=\"d0eef6b3-0\">varying drug to polymer ratios... mean particle diameter and entrapment efficiency</cite> <cite id=\"d0eef6b3-2\">Particle size increased with the PLGA content</cite> <cite id=\"688db20d-1\">PVA deposition increases diameter</cite> <cite id=\"d0eef6b3-4\">rapid mixing narrows size distributions</cite>.\n</answer>",
+            "total_tokens": 11803,
+            "tool_call_count": 3,
+            "stopped_reason": "natural",
+            "tool_calls": [
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.\n\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: No content available\n\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).\n\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer Diseases 2025, 13, 87 6 of 22 commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).\n\nTitle: Optimisation of a Microfluidic Method for the Delivery of a Small Peptide\nSnippet: PLGA (1%) was compared with the mixture of 1%PLGA + 1%PEG-PLGA (Figure 5). There was no significant difference in size and PDI between nanoparticles fabricated using 1% PLGA or 1% PLGA + 1% PEG-PLGA when using DCM as the solvent and 5% theoretical drug loading (Figure 5a,b). This finding suggested that the addition of an extra 1% PEG-PLGA did not greatly affect particle size distribution. However, adding PEG-PLGA significantly decreased the Z-potential of nanoparticles (\u221210 mV) compared with PLGA alone (\u221240 mV) (Figure 5c). Our finding is consistent with others who have reported that PEGylation always results in a dramatic decrease in the charge of PLGA nanoparticles [51][52][53]. As reported by Garinot et al., the decreased zeta potential close to neutrality may result from the shielding effect of the PEG chains [53]. To produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used. Nano-precipitation is based upon the interfacial deposition of polymeric nanoparticles when water-miscible solvents containing dissolved polymer are mixed with water [54]. To generate uniform and size-controlled nanoparticles by nano-precipitation, rapid and sufficient mixing is generally required [55] and often leads to a wide range size distribution. In agreement with work by others [55,56], our data show that, using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced. ). The extra 1% PEG-PLGA showed a slight increment in size distribution but significantly lower Z-potential. One-way ANOVA analysis followed by Tukey test for multiple comparisons (**** p < 0.0001; and ns, no significant difference). \n\nTo produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used.",
+                "called": true,
+                "timeout": false,
+                "runtime": 8.965128421783447,
+                "error": "",
+                "call_id": "d0eef6b3",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6566533557191885,
+                      "paper": {
+                        "corpusId": "209393659",
+                        "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "authors": [
+                          "Ayesha Siddiqua Gazi",
+                          "A. Krishnasailaja"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5101/nbe.v11i4.p351-360?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5101/nbe.v11i4.p351-360, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1126
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6490549473900307,
+                      "paper": {
+                        "corpusId": "209393659",
+                        "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "authors": [
+                          "Ayesha Siddiqua Gazi",
+                          "A. Krishnasailaja"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5101/nbe.v11i4.p351-360?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5101/nbe.v11i4.p351-360, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 110
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6031259330126724,
+                      "paper": {
+                        "corpusId": "277182698",
+                        "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                        "authors": [
+                          "M. Elbadr",
+                          "Heba A. Galal",
+                          "H. Hetta",
+                          "Hassabelrasoul Elfadil",
+                          "Fawaz E Alanazi",
+                          "Shereen Fawzy",
+                          "Hashim M Aljohani",
+                          "Noura H. Abd Ellah",
+                          "Marwa F. Ali",
+                          "A. Dyab",
+                          "E. Ahmed"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941519, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                        "snippetKind": "body",
+                        "section": "Fabrication and Characterization of RX/PLGA Nanoparticles",
+                        "snippetOffset": {
+                          "start": 14893,
+                          "end": 15877
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 76,
+                              "end": 80,
+                              "matchedPaperCorpusId": "219318007"
+                            },
+                            {
+                              "start": 80,
+                              "end": 83,
+                              "matchedPaperCorpusId": "247010667"
+                            },
+                            {
+                              "start": 83,
+                              "end": 86,
+                              "matchedPaperCorpusId": "256443839"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 87
+                            },
+                            {
+                              "start": 88,
+                              "end": 182
+                            },
+                            {
+                              "start": 183,
+                              "end": 321
+                            },
+                            {
+                              "start": 322,
+                              "end": 433
+                            },
+                            {
+                              "start": 434,
+                              "end": 546
+                            },
+                            {
+                              "start": 547,
+                              "end": 663
+                            },
+                            {
+                              "start": 664,
+                              "end": 742
+                            },
+                            {
+                              "start": 743,
+                              "end": 789
+                            },
+                            {
+                              "start": 790,
+                              "end": 984
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6023227938861395,
+                      "paper": {
+                        "corpusId": "277182698",
+                        "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                        "authors": [
+                          "M. Elbadr",
+                          "Heba A. Galal",
+                          "H. Hetta",
+                          "Hassabelrasoul Elfadil",
+                          "Fawaz E Alanazi",
+                          "Shereen Fawzy",
+                          "Hashim M Aljohani",
+                          "Noura H. Abd Ellah",
+                          "Marwa F. Ali",
+                          "A. Dyab",
+                          "E. Ahmed"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941519, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer Diseases 2025, 13, 87 6 of 22 commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                        "snippetKind": "body",
+                        "section": "Fabrication and Characterization of RX/PLGA Nanoparticles",
+                        "snippetOffset": {
+                          "start": 13358,
+                          "end": 14372
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 76,
+                              "end": 80,
+                              "matchedPaperCorpusId": "219318007"
+                            },
+                            {
+                              "start": 80,
+                              "end": 83,
+                              "matchedPaperCorpusId": "247010667"
+                            },
+                            {
+                              "start": 83,
+                              "end": 86,
+                              "matchedPaperCorpusId": "256443839"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 87
+                            },
+                            {
+                              "start": 88,
+                              "end": 182
+                            },
+                            {
+                              "start": 183,
+                              "end": 351
+                            },
+                            {
+                              "start": 352,
+                              "end": 463
+                            },
+                            {
+                              "start": 464,
+                              "end": 576
+                            },
+                            {
+                              "start": 577,
+                              "end": 693
+                            },
+                            {
+                              "start": 694,
+                              "end": 772
+                            },
+                            {
+                              "start": 773,
+                              "end": 819
+                            },
+                            {
+                              "start": 820,
+                              "end": 1014
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5641559643285724,
+                      "paper": {
+                        "corpusId": "237937365",
+                        "title": "Optimisation of a Microfluidic Method for the Delivery of a Small Peptide",
+                        "authors": [
+                          "Felicity Y. Han",
+                          "Weizhi Xu",
+                          "Vinod Kumar",
+                          "Cedric S Cui",
+                          "Xaria X. Li",
+                          "Xingyu Jiang",
+                          "T. Woodruff",
+                          "A. Whittaker",
+                          "Maree T. Smith"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC8468767, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "PLGA (1%) was compared with the mixture of 1%PLGA + 1%PEG-PLGA (Figure 5). There was no significant difference in size and PDI between nanoparticles fabricated using 1% PLGA or 1% PLGA + 1% PEG-PLGA when using DCM as the solvent and 5% theoretical drug loading (Figure 5a,b). This finding suggested that the addition of an extra 1% PEG-PLGA did not greatly affect particle size distribution. However, adding PEG-PLGA significantly decreased the Z-potential of nanoparticles (\u221210 mV) compared with PLGA alone (\u221240 mV) (Figure 5c). Our finding is consistent with others who have reported that PEGylation always results in a dramatic decrease in the charge of PLGA nanoparticles [51][52][53]. As reported by Garinot et al., the decreased zeta potential close to neutrality may result from the shielding effect of the PEG chains [53]. To produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used. Nano-precipitation is based upon the interfacial deposition of polymeric nanoparticles when water-miscible solvents containing dissolved polymer are mixed with water [54]. To generate uniform and size-controlled nanoparticles by nano-precipitation, rapid and sufficient mixing is generally required [55] and often leads to a wide range size distribution. In agreement with work by others [55,56], our data show that, using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced. ). The extra 1% PEG-PLGA showed a slight increment in size distribution but significantly lower Z-potential. One-way ANOVA analysis followed by Tukey test for multiple comparisons (**** p < 0.0001; and ns, no significant difference). \n\nTo produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used.",
+                        "snippetKind": "body",
+                        "section": "Effect of Polymer",
+                        "snippetOffset": {
+                          "start": 28695,
+                          "end": 30542
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 676,
+                              "end": 680,
+                              "matchedPaperCorpusId": "37242468"
+                            },
+                            {
+                              "start": 680,
+                              "end": 684,
+                              "matchedPaperCorpusId": "20992599"
+                            },
+                            {
+                              "start": 684,
+                              "end": 688,
+                              "matchedPaperCorpusId": "12172256"
+                            },
+                            {
+                              "start": 825,
+                              "end": 829,
+                              "matchedPaperCorpusId": "12172256"
+                            },
+                            {
+                              "start": 1108,
+                              "end": 1112,
+                              "matchedPaperCorpusId": "205867423"
+                            },
+                            {
+                              "start": 1241,
+                              "end": 1245,
+                              "matchedPaperCorpusId": "53624380"
+                            },
+                            {
+                              "start": 1330,
+                              "end": 1334,
+                              "matchedPaperCorpusId": "53624380"
+                            },
+                            {
+                              "start": 1334,
+                              "end": 1337,
+                              "matchedPaperCorpusId": "96953052"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 74
+                            },
+                            {
+                              "start": 75,
+                              "end": 275
+                            },
+                            {
+                              "start": 276,
+                              "end": 391
+                            },
+                            {
+                              "start": 392,
+                              "end": 529
+                            },
+                            {
+                              "start": 530,
+                              "end": 689
+                            },
+                            {
+                              "start": 690,
+                              "end": 830
+                            },
+                            {
+                              "start": 831,
+                              "end": 941
+                            },
+                            {
+                              "start": 942,
+                              "end": 1113
+                            },
+                            {
+                              "start": 1114,
+                              "end": 1296
+                            },
+                            {
+                              "start": 1297,
+                              "end": 1500
+                            },
+                            {
+                              "start": 1501,
+                              "end": 1503
+                            },
+                            {
+                              "start": 1504,
+                              "end": 1609
+                            },
+                            {
+                              "start": 1610,
+                              "end": 1734
+                            },
+                            {
+                              "start": 1737,
+                              "end": 1847
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "16fee011-4178-4b98-9fe4-b32228a48636",
+                    "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                    "url": "",
+                    "snippet": "The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6566533557191885,
+                    "error": null
+                  },
+                  {
+                    "id": "c4caa2a7-bc54-46d3-87e7-0c038c8cb283",
+                    "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6490549473900307,
+                    "error": null
+                  },
+                  {
+                    "id": "c3863c83-4bdd-4fec-827f-0ff0cb0c2023",
+                    "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                    "url": "",
+                    "snippet": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6031259330126724,
+                    "error": null
+                  },
+                  {
+                    "id": "6375637e-14c4-4335-957f-617f182359fe",
+                    "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                    "url": "",
+                    "snippet": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer Diseases 2025, 13, 87 6 of 22 commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6023227938861395,
+                    "error": null
+                  },
+                  {
+                    "id": "55add2ef-fdaf-475c-b812-10ed87002624",
+                    "title": "Optimisation of a Microfluidic Method for the Delivery of a Small Peptide",
+                    "url": "",
+                    "snippet": "PLGA (1%) was compared with the mixture of 1%PLGA + 1%PEG-PLGA (Figure 5). There was no significant difference in size and PDI between nanoparticles fabricated using 1% PLGA or 1% PLGA + 1% PEG-PLGA when using DCM as the solvent and 5% theoretical drug loading (Figure 5a,b). This finding suggested that the addition of an extra 1% PEG-PLGA did not greatly affect particle size distribution. However, adding PEG-PLGA significantly decreased the Z-potential of nanoparticles (\u221210 mV) compared with PLGA alone (\u221240 mV) (Figure 5c). Our finding is consistent with others who have reported that PEGylation always results in a dramatic decrease in the charge of PLGA nanoparticles [51][52][53]. As reported by Garinot et al., the decreased zeta potential close to neutrality may result from the shielding effect of the PEG chains [53]. To produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used. Nano-precipitation is based upon the interfacial deposition of polymeric nanoparticles when water-miscible solvents containing dissolved polymer are mixed with water [54]. To generate uniform and size-controlled nanoparticles by nano-precipitation, rapid and sufficient mixing is generally required [55] and often leads to a wide range size distribution. In agreement with work by others [55,56], our data show that, using a rapid mixing microfluidic method to co-precipitate the drug and polymer, more uniform and size-controlled nanoparticles are produced. ). The extra 1% PEG-PLGA showed a slight increment in size distribution but significantly lower Z-potential. One-way ANOVA analysis followed by Tukey test for multiple comparisons (**** p < 0.0001; and ns, no significant difference). \n\nTo produce drug-loaded polymeric nanoparticles, nanoprecipitation and emulsionbased methods are commonly used.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5641559643285724,
+                    "error": null
+                  }
+                ],
+                "query": "methotrexate PLGA nanoparticles nanoprecipitation drug to polymer ratio particle size",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2015-2025",
+                  "fieldsOfStudy": "Medicine,Chemistry,Engineering"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.\n\nTitle: Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique\nSnippet: No content available\n\nTitle: Formulation of a dual drug-loaded nanoparticulate co-delivery hydrogel system and its validation in rheumatoid arthritis animal model\nSnippet: Despite exhibiting good anti-arthritic activity, the clinical usage of Methotrexate (MTX) is limited due to its undesirable properties (poor solubility, low bioavailability, and several side effects). In this study, a nanoprecipitation method (using solvent evaporation) was employed to overcome a few physicochemical limitations of MTX by loading into a biodegradable PLGA polymer matrix. For optimization purposes, three different batches of MTX NPs were prepared using 0.1% (w/v) PF-127 (as surfactant) with varying concentrations of PLGA (80, 120, 150 mg), yielding an entrapment efficiency of 53.73 \u00b1 4.83% (2.79 \u00b1 0.25 mg), 64.60 \u00b1 2.34% (3.36 \u00b1 0.12 mg) and 78.45 \u00b1 3.10% (4.08 \u00b1 0.16 mg) respectively (Table 1). It was observed that the increase in PLGA concentration increased the drug's %EE (% encapsulation efficiency) as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase. Here, the undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA with weak interactions and released slowly from the polymeric matrix (Ray et al., 2015). Among the prepared formulations, batch no-III (PLGA-150 mg) with a greater % EE of the drug was further utilized to fabricate DD NP HG.\n\nTitle: Analytical validation of an ATR-FTIR based method for quantifying the amount of polysorbate 80 adsorbed on PLGA nanoparticles.\nSnippet: The hydrodynamic diameter can decrease or increase with increase in the surfactant concentration. (19) In some cases, the hydrodynamic diameter of the nanoparticles has been also observed to influence the morphology and adsorption properties of the surfactant molecules. (20) Our prepared nanoparticles show similar specification parameters of hydrodynamic diameter, polydispersity index and zeta potential at both development and validation stage with no statistically significant difference (t-test, p>0.05). \n\nAs a process parameter, the nanoprecipitation yield was also calculated. For this, 1ml of the nanoparticle suspension was dried in a pre-weighted tube and the weight of the dried tube was recorded. The mass difference by evaporating and weighing method was found to be \u02dc2.24 mg for 1 ml nanoparticle solution. In a single batch of PLGA nanoparticle production, 15 mg of PLGA is used which forms 4 ml of nanoparticle suspension. Thus total weight of nanoparticle in 4 ml of suspension would be (2.24\u00d74) mg. The yield% was thus {(2.24\u00d74)/15} \u00d7 100 = 59.7\u00b16.1%. During method development, the yield% was 62.96\u00b16.29% and is not significantly different from the validation yield (t-test, p>0.05). Polysorbate 80 peaks were seen at 3000-2800 cm -1 (acyl peak), 1750-1850 cm -1 (ester peak) and 1050-1150 cm -1 (ethoxy peak). However, among the three IR peaks, the 3000-2800 cm -1 peak was chosen for the method development due to its sharp and easily detectable nature even at very low concentrations (18). The other two peaks are detectable only at higher concentrations and therefore were not chosen for standard curve. Sodium azide (1 mg/ml) was chosen as the internal standard which gives sharp peaks at 2080-1970 cm -1 , at significantly different position from the polysorbate 80 peaks. The internal standard is essential to minimize errors between readings and to minimize variations due to internal conditions.\n\nTitle: Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model\nSnippet: RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                "called": true,
+                "timeout": false,
+                "runtime": 5.922747373580933,
+                "error": "",
+                "call_id": "7edbd461",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.6929929695841144,
+                      "paper": {
+                        "corpusId": "209393659",
+                        "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "authors": [
+                          "Ayesha Siddiqua Gazi",
+                          "A. Krishnasailaja"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5101/nbe.v11i4.p351-360?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5101/nbe.v11i4.p351-360, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.",
+                        "snippetKind": "abstract",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 1126
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.6268442391989348,
+                      "paper": {
+                        "corpusId": "209393659",
+                        "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "authors": [
+                          "Ayesha Siddiqua Gazi",
+                          "A. Krishnasailaja"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5101/nbe.v11i4.p351-360?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5101/nbe.v11i4.p351-360, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                        "snippetKind": "title",
+                        "section": null,
+                        "snippetOffset": {
+                          "start": 0,
+                          "end": 110
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": null
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.620350541593722,
+                      "paper": {
+                        "corpusId": "257232223",
+                        "title": "Formulation of a dual drug-loaded nanoparticulate co-delivery hydrogel system and its validation in rheumatoid arthritis animal model",
+                        "authors": [
+                          "Prakash Haloi",
+                          "B. Lokesh",
+                          "Saurabh Chawla",
+                          "V. Konkimalla"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9980407, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Despite exhibiting good anti-arthritic activity, the clinical usage of Methotrexate (MTX) is limited due to its undesirable properties (poor solubility, low bioavailability, and several side effects). In this study, a nanoprecipitation method (using solvent evaporation) was employed to overcome a few physicochemical limitations of MTX by loading into a biodegradable PLGA polymer matrix. For optimization purposes, three different batches of MTX NPs were prepared using 0.1% (w/v) PF-127 (as surfactant) with varying concentrations of PLGA (80, 120, 150 mg), yielding an entrapment efficiency of 53.73 \u00b1 4.83% (2.79 \u00b1 0.25 mg), 64.60 \u00b1 2.34% (3.36 \u00b1 0.12 mg) and 78.45 \u00b1 3.10% (4.08 \u00b1 0.16 mg) respectively (Table 1). It was observed that the increase in PLGA concentration increased the drug's %EE (% encapsulation efficiency) as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase. Here, the undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA with weak interactions and released slowly from the polymeric matrix (Ray et al., 2015). Among the prepared formulations, batch no-III (PLGA-150 mg) with a greater % EE of the drug was further utilized to fabricate DD NP HG.",
+                        "snippetKind": "body",
+                        "section": "Preparation of MTX-PLGA loaded nanoparticles (MTX NP)",
+                        "snippetOffset": {
+                          "start": 8361,
+                          "end": 9639
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 1123,
+                              "end": 1141,
+                              "matchedPaperCorpusId": "98799277"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 200
+                            },
+                            {
+                              "start": 201,
+                              "end": 389
+                            },
+                            {
+                              "start": 390,
+                              "end": 719
+                            },
+                            {
+                              "start": 720,
+                              "end": 959
+                            },
+                            {
+                              "start": 960,
+                              "end": 1142
+                            },
+                            {
+                              "start": 1143,
+                              "end": 1278
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5763485537746063,
+                      "paper": {
+                        "corpusId": "224839323",
+                        "title": "Analytical validation of an ATR-FTIR based method for quantifying the amount of polysorbate 80 adsorbed on PLGA nanoparticles.",
+                        "authors": [
+                          "Nabodita Sinha",
+                          "Abhayraj S. Joshi",
+                          "A. Thakur"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "GREEN",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.26434/chemrxiv.12746561.v1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.26434/chemrxiv.12746561.v1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The hydrodynamic diameter can decrease or increase with increase in the surfactant concentration. (19) In some cases, the hydrodynamic diameter of the nanoparticles has been also observed to influence the morphology and adsorption properties of the surfactant molecules. (20) Our prepared nanoparticles show similar specification parameters of hydrodynamic diameter, polydispersity index and zeta potential at both development and validation stage with no statistically significant difference (t-test, p>0.05). \n\nAs a process parameter, the nanoprecipitation yield was also calculated. For this, 1ml of the nanoparticle suspension was dried in a pre-weighted tube and the weight of the dried tube was recorded. The mass difference by evaporating and weighing method was found to be \u02dc2.24 mg for 1 ml nanoparticle solution. In a single batch of PLGA nanoparticle production, 15 mg of PLGA is used which forms 4 ml of nanoparticle suspension. Thus total weight of nanoparticle in 4 ml of suspension would be (2.24\u00d74) mg. The yield% was thus {(2.24\u00d74)/15} \u00d7 100 = 59.7\u00b16.1%. During method development, the yield% was 62.96\u00b16.29% and is not significantly different from the validation yield (t-test, p>0.05). Polysorbate 80 peaks were seen at 3000-2800 cm -1 (acyl peak), 1750-1850 cm -1 (ester peak) and 1050-1150 cm -1 (ethoxy peak). However, among the three IR peaks, the 3000-2800 cm -1 peak was chosen for the method development due to its sharp and easily detectable nature even at very low concentrations (18). The other two peaks are detectable only at higher concentrations and therefore were not chosen for standard curve. Sodium azide (1 mg/ml) was chosen as the internal standard which gives sharp peaks at 2080-1970 cm -1 , at significantly different position from the polysorbate 80 peaks. The internal standard is essential to minimize errors between readings and to minimize variations due to internal conditions.",
+                        "snippetKind": "body",
+                        "section": "Results",
+                        "snippetOffset": {
+                          "start": 16079,
+                          "end": 18004
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 98,
+                              "end": 102,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1508,
+                              "end": 1512,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 97
+                            },
+                            {
+                              "start": 98,
+                              "end": 270
+                            },
+                            {
+                              "start": 271,
+                              "end": 510
+                            },
+                            {
+                              "start": 513,
+                              "end": 585
+                            },
+                            {
+                              "start": 586,
+                              "end": 710
+                            },
+                            {
+                              "start": 711,
+                              "end": 787
+                            },
+                            {
+                              "start": 788,
+                              "end": 822
+                            },
+                            {
+                              "start": 823,
+                              "end": 940
+                            },
+                            {
+                              "start": 941,
+                              "end": 1014
+                            },
+                            {
+                              "start": 1015,
+                              "end": 1018
+                            },
+                            {
+                              "start": 1019,
+                              "end": 1071
+                            },
+                            {
+                              "start": 1072,
+                              "end": 1125
+                            },
+                            {
+                              "start": 1126,
+                              "end": 1204
+                            },
+                            {
+                              "start": 1205,
+                              "end": 1331
+                            },
+                            {
+                              "start": 1332,
+                              "end": 1513
+                            },
+                            {
+                              "start": 1514,
+                              "end": 1628
+                            },
+                            {
+                              "start": 1629,
+                              "end": 1799
+                            },
+                            {
+                              "start": 1800,
+                              "end": 1925
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5751597005307355,
+                      "paper": {
+                        "corpusId": "277182698",
+                        "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                        "authors": [
+                          "M. Elbadr",
+                          "Heba A. Galal",
+                          "H. Hetta",
+                          "Hassabelrasoul Elfadil",
+                          "Fawaz E Alanazi",
+                          "Shereen Fawzy",
+                          "Hashim M Aljohani",
+                          "Noura H. Abd Ellah",
+                          "Marwa F. Ali",
+                          "A. Dyab",
+                          "E. Ahmed"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941519, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                        "snippetKind": "body",
+                        "section": "Fabrication and Characterization of RX/PLGA Nanoparticles",
+                        "snippetOffset": {
+                          "start": 14893,
+                          "end": 15877
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 76,
+                              "end": 80,
+                              "matchedPaperCorpusId": "219318007"
+                            },
+                            {
+                              "start": 80,
+                              "end": 83,
+                              "matchedPaperCorpusId": "247010667"
+                            },
+                            {
+                              "start": 83,
+                              "end": 86,
+                              "matchedPaperCorpusId": "256443839"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 87
+                            },
+                            {
+                              "start": 88,
+                              "end": 182
+                            },
+                            {
+                              "start": 183,
+                              "end": 321
+                            },
+                            {
+                              "start": 322,
+                              "end": 433
+                            },
+                            {
+                              "start": 434,
+                              "end": 546
+                            },
+                            {
+                              "start": 547,
+                              "end": 663
+                            },
+                            {
+                              "start": 664,
+                              "end": 742
+                            },
+                            {
+                              "start": 743,
+                              "end": 789
+                            },
+                            {
+                              "start": 790,
+                              "end": 984
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "3003a2ea-8de3-4bc1-b2f1-5317cc0fd8d1",
+                    "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                    "url": "",
+                    "snippet": "The aim of this study was to develop and characterize methotrexate-loaded polymeric nanoparticles by nanoprecipitation technique. Eudragit\u00ae S 100 and ethyl cellulose were employed to develop methotrexate-loaded nanoparticles by nanoprecipitation technique. Six different formulations (f1, f2, f3, f4, f5 and f6) were prepared with each polymer by varying the drug to polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1 and 2:1). Dimethyl sulfoxide (DMSO) was used as a solvent and Tween\u00ae 20 as a surfactant. Among the six formulations of polymeric nanoparticles prepared by nanoprecipitation technique, F4 formulation was considered as a best formulation with each polymer. Based on comparison results of mean particle diameter, zeta potential, drug content and entrapment efficiency, Eudragit\u00ae S 100 was considered to be the most suitable polymer for preparation of methotrexate-loaded nanoparticles by nanoprecipitation technique. Based upon the evaluation studies, the best formulation was characterized for scanning electron microscopy (SEM), particle size, zeta potential and anti-cancer activity in MCF-7 cell line by MTT assay.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6929929695841144,
+                    "error": null
+                  },
+                  {
+                    "id": "d7c16c4c-e0c2-4663-9e35-374397a1b020",
+                    "title": "Preparation and Characterization of Methotrexate Loaded Polymeric Nanoparticles by Nanoprecipitation Technique",
+                    "url": "",
+                    "snippet": "",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.6268442391989348,
+                    "error": null
+                  },
+                  {
+                    "id": "ea7ad757-a028-4a06-adec-f1ae7442ddc3",
+                    "title": "Formulation of a dual drug-loaded nanoparticulate co-delivery hydrogel system and its validation in rheumatoid arthritis animal model",
+                    "url": "",
+                    "snippet": "Despite exhibiting good anti-arthritic activity, the clinical usage of Methotrexate (MTX) is limited due to its undesirable properties (poor solubility, low bioavailability, and several side effects). In this study, a nanoprecipitation method (using solvent evaporation) was employed to overcome a few physicochemical limitations of MTX by loading into a biodegradable PLGA polymer matrix. For optimization purposes, three different batches of MTX NPs were prepared using 0.1% (w/v) PF-127 (as surfactant) with varying concentrations of PLGA (80, 120, 150 mg), yielding an entrapment efficiency of 53.73 \u00b1 4.83% (2.79 \u00b1 0.25 mg), 64.60 \u00b1 2.34% (3.36 \u00b1 0.12 mg) and 78.45 \u00b1 3.10% (4.08 \u00b1 0.16 mg) respectively (Table 1). It was observed that the increase in PLGA concentration increased the drug's %EE (% encapsulation efficiency) as the increase in viscosity of the organic phase hampered the diffusion of the drug from the organic phase to the aqueous phase. Here, the undiffused lipophilic drug might be entrapped in the matrix of alkyl chains of PLGA with weak interactions and released slowly from the polymeric matrix (Ray et al., 2015). Among the prepared formulations, batch no-III (PLGA-150 mg) with a greater % EE of the drug was further utilized to fabricate DD NP HG.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.620350541593722,
+                    "error": null
+                  },
+                  {
+                    "id": "611c5974-cc8b-4fae-a891-48b0f0dc1416",
+                    "title": "Analytical validation of an ATR-FTIR based method for quantifying the amount of polysorbate 80 adsorbed on PLGA nanoparticles.",
+                    "url": "",
+                    "snippet": "The hydrodynamic diameter can decrease or increase with increase in the surfactant concentration. (19) In some cases, the hydrodynamic diameter of the nanoparticles has been also observed to influence the morphology and adsorption properties of the surfactant molecules. (20) Our prepared nanoparticles show similar specification parameters of hydrodynamic diameter, polydispersity index and zeta potential at both development and validation stage with no statistically significant difference (t-test, p>0.05). \n\nAs a process parameter, the nanoprecipitation yield was also calculated. For this, 1ml of the nanoparticle suspension was dried in a pre-weighted tube and the weight of the dried tube was recorded. The mass difference by evaporating and weighing method was found to be \u02dc2.24 mg for 1 ml nanoparticle solution. In a single batch of PLGA nanoparticle production, 15 mg of PLGA is used which forms 4 ml of nanoparticle suspension. Thus total weight of nanoparticle in 4 ml of suspension would be (2.24\u00d74) mg. The yield% was thus {(2.24\u00d74)/15} \u00d7 100 = 59.7\u00b16.1%. During method development, the yield% was 62.96\u00b16.29% and is not significantly different from the validation yield (t-test, p>0.05). Polysorbate 80 peaks were seen at 3000-2800 cm -1 (acyl peak), 1750-1850 cm -1 (ester peak) and 1050-1150 cm -1 (ethoxy peak). However, among the three IR peaks, the 3000-2800 cm -1 peak was chosen for the method development due to its sharp and easily detectable nature even at very low concentrations (18). The other two peaks are detectable only at higher concentrations and therefore were not chosen for standard curve. Sodium azide (1 mg/ml) was chosen as the internal standard which gives sharp peaks at 2080-1970 cm -1 , at significantly different position from the polysorbate 80 peaks. The internal standard is essential to minimize errors between readings and to minimize variations due to internal conditions.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5763485537746063,
+                    "error": null
+                  },
+                  {
+                    "id": "61ef8bf7-8ff3-4b2a-a887-35c54da68ea0",
+                    "title": "Immunomodulatory Effect of Rivaroxaban Nanoparticles Alone and in Combination with Sitagliptin on Diabetic Rat Model",
+                    "url": "",
+                    "snippet": "RX was encapsulated inside PLGA polymer using the nano-precipitation method [18,37,38]. Nanoprecipitation is a simple and reproducible method that gives particles of different sizes. PLGA (poly (lactic-co-glycolic acid)) is a synthetic, biocompatible, and biodegradable polymer commonly used in nanoparticle formulations. The drug and polymer were dissolved in acetone at different weight ratios to test PLGA's encapsulation ability. The organic phase was then injected into an aqueous phase containing PF-127 to prevent nanoparticle aggregation. The addition of the organic phase caused the transparent solution to turn milky white, indicating nanoprecipitation. All RX/PLGA nanoparticles exhibited high entrapment efficiency, exceeding 90%. Particle size increased with the PLGA content. The RX/PLGA nanoparticles prepared at a 1:3 weight ratio, with an entrapment efficiency of 97.03%, a size of 379.15 nm, and a PDI of 0.43, were selected for further in vivo evaluation (Table 1).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5751597005307355,
+                    "error": null
+                  }
+                ],
+                "query": "methotrexate PLGA nanoprecipitation nanoparticle size drug to polymer ratio hydrodynamic diameter",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2015-2025",
+                  "fieldsOfStudy": "Medicine,Chemistry,Engineering"
+                }
+              },
+              {
+                "tool_name": "snippet_search",
+                "output": "Title: The Role of Nanoparticle in Brain Permeability: An in-vitro BBB Model\nSnippet: MET loaded polymeric nanoparticles of PLGA were prepared by emulsification/solvent evaporation method. Briefly, the exact polymer and drug amouts were dissolved in acetone and then suspended in the aqueous phase. PVA was employed as a surfactant. The resulting NP suspension was stirred for 3h at room temperature to organic solvent evaporation. Subsequently, the nanoparticles were separated by ultracentrifugation (Beckman, XL-90) at 30,000 rpm for 20min and lyophilized by using a lyophilizer (ZibrusVaco 10-II-E; Germany) to obtain a fine powder of MET loaded NPs.\n\nTitle: Investigation of Effective Parameters on Size of Paclitaxel Loaded PLGA Nanoparticles\nSnippet: Table 1 and 2 summarizes experiments conducted in this study to investigate drug and PLGA concentrations, the amounts of PVA and solvent and sonication time which affect PLGA nanoparticles size and morphology. Emulsion solvent evaporation and nanoprecipitation/interfacial deposition are the two most common methods for the preparation of polymeric nanoparticles. These two techniques were originally developed by Vanderhoff et al 45 and Fessi et al, 46 respectively. In an study PLGA incorporated with procaine nanoparticles was prepared via nanoprecipitaion technique with the size less than 210 nm. 32 In another study protein encapsulated in PLGA nanoparticles were prepared by phase separation method with the size around 300 nm for biomedical application. 47 Commercial success of the various polymeric nanoformulation products developed by emulsion and nanoprecipitation were documented by Nava-Arzaluz et al 48 and Minost et al. 49 We investigated the effect of two methods of single emulsion and precipitation on nanoparticles size. The size of polymeric nanoparticles is particularly important in cancer therapy as drug delivery vehicles can enter into the tumor tissue via the EPR effect. Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size (Table 2. No. 11) compare to single emulsion method (Table 1, No. 19). In addition, acetone is used in precipitation method which have less toxic effect than DCM applied in emulsion method. 50 herefore, precipitation method is suggested for medical applications. The effect of PVA The function of PVA concentration as an effective factor on PLGA diameter is shown in Figure 2. In this experiment the applied concentrations of PVA were 0.25, 0.5, 1 and 2 W/V % whereas other parameters were constant. The nanoparticles diameter increased from about 130 nm to 378 nm (Table 2, Nos. 6-9) as the PVA concentration increased from 0.25 to 2 W/V%. It was observed that the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded\n\nTitle: PLGA nanoparticle loaded with antioxidants and photosensitizer for ROS shock mediated phototherapy of triple negative breast cancer\nSnippet: Polymeric nanoparticles were prepared using the nanoprecipitation method as described previously [20]. Briefly, 15 mg of PLGA was dissolved in 1 ml of dichloromethane (DCM) and was added dropwise to the 1% PVA in an ice bath, and the stirring was continued overnight for the evaporation of the DCM. The next day, the solution was centrifuged for 5 min at 1500 rpm; further centrifugation was performed by collecting the supernatant at 10 000 rpm for 15 min. The pellet was resuspended in double distilled water. While using antioxidants, \u03b1-tocopherol and p-CA were also dissolved in DCM, following the same procedure as mentioned above. \n\nUV-vis spectrometer (Shimadzu UV-1800, Japan) was used to determine the nanoparticles' absorbance. The hydrodynamic size of the NPs was evaluated using dynamic light scattering (DLS). The average zeta potential, size, and polydispersity index was evaluated with DLS. Drop-casting nanoparticles on a copper grid was done to analyze the size and morphology using transmission electron microscopy (TEM) (JEOL, JEM 2100F Inc., USA). The as prepared nanoparticles were drop-casted on a silicon wafer to examine the surface morphology using scanning electron microscopy (Carl Zeiss atomic microscope, Supra40 Germany).\n\nTitle: Pioglitazone-Loaded PLGA Nanoparticles: Towards the Most Reliable Synthesis Method\nSnippet: The effect of PVA, PGZ and PLGA concentration along with the influence of the organic and the aqueous phase volumes over the diameter size, PDI, \u03b6p and EE% of nanoparticles, are presented in Figure 3. Unlike the single emulsification-solvent evaporation, a slightly lower pH (6.0) could be used in the nanoprecipitation method with the aim of improving the PGZ encapsulation efficiency. Stock aqueous solutions of PVA at 1%, 2%, and 4% were used for the preparation of NPs with the nanoprecipitation technique, obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%, respectively. In this range of PVA concentrations, no significant effect on the diameter size and \u03b6 p of PGZ-loaded NPs was observed, with diameters and \u03b6 p values around 235 nm and \u221211 mV, respectively, in all formulations. Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA. This could be explained considering that, at low concentrations, PVA is not well adsorbed on the nanoparticle surface and is not able to stabilize the NPs. On the other hand, higher PVA concentrations are covering better the nanoparticle surface and, interacting by hydrogen and Van der Waals bonds with PLGA, can stabilize it. This is also supported by the \u03b6 p values slightly decreasing (increasing in absolute value) with the increase of PVA. \n\nMoreover, the PLGA concentration showed a noteworthy effect, especially on PDI. Four concentrations of PLGA were used in the nanoparticle preparations by nanoprecipitation: 7.5 mg/mL, 10.0 mg/mL, 12.5 mg/mL and 15.0 mg/mL. In this range, nanoparticles with average diameters of 230-260 nm were obtained, indicating the 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs.\n\nTitle: Preparation and In Vitro Characterization of Quercetin and Chlorhexidine-loaded PLGA Nanoparticles for Oral Biofilm-Associated Pathologies\nSnippet: The nanoprecipitation method was used to synthesize PLGA nanoparticles (PLGA NP). 80 mg of PLGA was dissolved in 2 mL of acetone. A clear solution of 4 ml of 5% polyvinyl alcohol (PVA) crosslinker was prepared in distilled water at 90 \u00b0C. PLGA solution was added to the PVA solution under magnetic stirring for 4 h. The nanoparticles were centrifuged at 14,000 rpm for 30 min, and the upper phase was removed. The remaining precipitate was washed and vortexed 3 times by adding distilled water. CHX (1.5%, 5%, 15%), QUE (1.5%, 5%, 15%) and CHX + QUE (1.5%/1.5%, 5%/5% and 15%/15%) were added. It was frozen at -20 \u00b0C for 15 min and then freeze-dried with a lyophilizer (Telstar Cryodos, Spain) to obtain powdered formulations. The formulations were stored at 2-6 \u00b0C, protected from light, to prevent degradation of the molecules before use. The characterization of the synthesized formulations was performed using Fourier Transform Infrared (FTIR) (PerkinElmer Spectrum 100), Dynamic Light Scattering Spectrometry (DLS), Malvern Zeta Sizer Ultra, Thermogravimetry Analysis (TG) (Perkin-Elmer Diamond), Differential Scanning Calorimetry (DSC) (Shimadzu DSC 60), and Scanning Electron Microscopy (SEM) (Thermo Scientific Apreo S SEM-EDX).",
+                "called": true,
+                "timeout": false,
+                "runtime": 0.8239502906799316,
+                "error": "",
+                "call_id": "688db20d",
+                "raw_output": {
+                  "data": [
+                    {
+                      "score": 0.5851507642582474,
+                      "paper": {
+                        "corpusId": "1616491",
+                        "title": "The Role of Nanoparticle in Brain Permeability: An in-vitro BBB Model",
+                        "authors": [
+                          "Niusha Nikandish",
+                          "L. Hosseinzadeh",
+                          "Abbas Hemati Azandaryani",
+                          "K. Derakhshandeh"
+                        ],
+                        "openAccessInfo": {
+                          "license": null,
+                          "status": null,
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC5018268, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "MET loaded polymeric nanoparticles of PLGA were prepared by emulsification/solvent evaporation method. Briefly, the exact polymer and drug amouts were dissolved in acetone and then suspended in the aqueous phase. PVA was employed as a surfactant. The resulting NP suspension was stirred for 3h at room temperature to organic solvent evaporation. Subsequently, the nanoparticles were separated by ultracentrifugation (Beckman, XL-90) at 30,000 rpm for 20min and lyophilized by using a lyophilizer (ZibrusVaco 10-II-E; Germany) to obtain a fine powder of MET loaded NPs.",
+                        "snippetKind": "body",
+                        "section": "Preparation of MET loaded nanoparticles",
+                        "snippetOffset": {
+                          "start": 4102,
+                          "end": 4670
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 102
+                            },
+                            {
+                              "start": 103,
+                              "end": 212
+                            },
+                            {
+                              "start": 213,
+                              "end": 246
+                            },
+                            {
+                              "start": 247,
+                              "end": 345
+                            },
+                            {
+                              "start": 346,
+                              "end": 568
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.582000142317267,
+                      "paper": {
+                        "corpusId": "4949689",
+                        "title": "Investigation of Effective Parameters on Size of Paclitaxel Loaded PLGA Nanoparticles",
+                        "authors": [
+                          "F. Madani",
+                          "Seyedeh Sara Esnaashari",
+                          "Basil Mujokoro",
+                          "F. Dorkoosh",
+                          "M. Khosravani",
+                          "Mahdi Adabi"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC5896398, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Table 1 and 2 summarizes experiments conducted in this study to investigate drug and PLGA concentrations, the amounts of PVA and solvent and sonication time which affect PLGA nanoparticles size and morphology. Emulsion solvent evaporation and nanoprecipitation/interfacial deposition are the two most common methods for the preparation of polymeric nanoparticles. These two techniques were originally developed by Vanderhoff et al 45 and Fessi et al, 46 respectively. In an study PLGA incorporated with procaine nanoparticles was prepared via nanoprecipitaion technique with the size less than 210 nm. 32 In another study protein encapsulated in PLGA nanoparticles were prepared by phase separation method with the size around 300 nm for biomedical application. 47 Commercial success of the various polymeric nanoformulation products developed by emulsion and nanoprecipitation were documented by Nava-Arzaluz et al 48 and Minost et al. 49 We investigated the effect of two methods of single emulsion and precipitation on nanoparticles size. The size of polymeric nanoparticles is particularly important in cancer therapy as drug delivery vehicles can enter into the tumor tissue via the EPR effect. Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size (Table 2. No. 11) compare to single emulsion method (Table 1, No. 19). In addition, acetone is used in precipitation method which have less toxic effect than DCM applied in emulsion method. 50 herefore, precipitation method is suggested for medical applications. The effect of PVA The function of PVA concentration as an effective factor on PLGA diameter is shown in Figure 2. In this experiment the applied concentrations of PVA were 0.25, 0.5, 1 and 2 W/V % whereas other parameters were constant. The nanoparticles diameter increased from about 130 nm to 378 nm (Table 2, Nos. 6-9) as the PVA concentration increased from 0.25 to 2 W/V%. It was observed that the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded",
+                        "snippetKind": "body",
+                        "section": "Comparison of two methods single emulsion and precipitation",
+                        "snippetOffset": {
+                          "start": 6173,
+                          "end": 8326
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 431,
+                              "end": 433,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 451,
+                              "end": 453,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 602,
+                              "end": 604,
+                              "matchedPaperCorpusId": "11026717"
+                            },
+                            {
+                              "start": 762,
+                              "end": 764,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 916,
+                              "end": 918,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 937,
+                              "end": 939,
+                              "matchedPaperCorpusId": null
+                            },
+                            {
+                              "start": 1494,
+                              "end": 1496,
+                              "matchedPaperCorpusId": null
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 209
+                            },
+                            {
+                              "start": 210,
+                              "end": 363
+                            },
+                            {
+                              "start": 364,
+                              "end": 467
+                            },
+                            {
+                              "start": 468,
+                              "end": 604
+                            },
+                            {
+                              "start": 605,
+                              "end": 764
+                            },
+                            {
+                              "start": 765,
+                              "end": 1041
+                            },
+                            {
+                              "start": 1042,
+                              "end": 1199
+                            },
+                            {
+                              "start": 1200,
+                              "end": 1374
+                            },
+                            {
+                              "start": 1375,
+                              "end": 1496
+                            },
+                            {
+                              "start": 1497,
+                              "end": 1566
+                            },
+                            {
+                              "start": 1567,
+                              "end": 1803
+                            },
+                            {
+                              "start": 1804,
+                              "end": 1883
+                            },
+                            {
+                              "start": 1884,
+                              "end": 1944
+                            },
+                            {
+                              "start": 1945,
+                              "end": 2153
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5624257772651193,
+                      "paper": {
+                        "corpusId": "261428962",
+                        "title": "PLGA nanoparticle loaded with antioxidants and photosensitizer for ROS shock mediated phototherapy of triple negative breast cancer",
+                        "authors": [
+                          "Hima Sree Buddhiraju",
+                          "Jayalakshmi Balaraman",
+                          "Dheeraj Dehariya",
+                          "Monika Pebam",
+                          "K. Eswar",
+                          "A. Rengan"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBYNCND",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1748-605X/acf5b9?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1748-605X/acf5b9, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "Polymeric nanoparticles were prepared using the nanoprecipitation method as described previously [20]. Briefly, 15 mg of PLGA was dissolved in 1 ml of dichloromethane (DCM) and was added dropwise to the 1% PVA in an ice bath, and the stirring was continued overnight for the evaporation of the DCM. The next day, the solution was centrifuged for 5 min at 1500 rpm; further centrifugation was performed by collecting the supernatant at 10 000 rpm for 15 min. The pellet was resuspended in double distilled water. While using antioxidants, \u03b1-tocopherol and p-CA were also dissolved in DCM, following the same procedure as mentioned above. \n\nUV-vis spectrometer (Shimadzu UV-1800, Japan) was used to determine the nanoparticles' absorbance. The hydrodynamic size of the NPs was evaluated using dynamic light scattering (DLS). The average zeta potential, size, and polydispersity index was evaluated with DLS. Drop-casting nanoparticles on a copper grid was done to analyze the size and morphology using transmission electron microscopy (TEM) (JEOL, JEM 2100F Inc., USA). The as prepared nanoparticles were drop-casted on a silicon wafer to examine the surface morphology using scanning electron microscopy (Carl Zeiss atomic microscope, Supra40 Germany).",
+                        "snippetKind": "body",
+                        "section": "Preparation and characterization of PLGA polymeric nanoparticles",
+                        "snippetOffset": {
+                          "start": 7129,
+                          "end": 8380
+                        },
+                        "annotations": {
+                          "refMentions": [
+                            {
+                              "start": 97,
+                              "end": 101,
+                              "matchedPaperCorpusId": "218634954"
+                            }
+                          ],
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 102
+                            },
+                            {
+                              "start": 103,
+                              "end": 298
+                            },
+                            {
+                              "start": 299,
+                              "end": 457
+                            },
+                            {
+                              "start": 458,
+                              "end": 511
+                            },
+                            {
+                              "start": 512,
+                              "end": 636
+                            },
+                            {
+                              "start": 639,
+                              "end": 737
+                            },
+                            {
+                              "start": 738,
+                              "end": 822
+                            },
+                            {
+                              "start": 823,
+                              "end": 905
+                            },
+                            {
+                              "start": 906,
+                              "end": 1067
+                            },
+                            {
+                              "start": 1068,
+                              "end": 1251
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5571691181892838,
+                      "paper": {
+                        "corpusId": "247133215",
+                        "title": "Pioglitazone-Loaded PLGA Nanoparticles: Towards the Most Reliable Synthesis Method",
+                        "authors": [
+                          "Biagio Todaro",
+                          "Aldo Moscardini",
+                          "S. Luin"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "GOLD",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC8910508, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The effect of PVA, PGZ and PLGA concentration along with the influence of the organic and the aqueous phase volumes over the diameter size, PDI, \u03b6p and EE% of nanoparticles, are presented in Figure 3. Unlike the single emulsification-solvent evaporation, a slightly lower pH (6.0) could be used in the nanoprecipitation method with the aim of improving the PGZ encapsulation efficiency. Stock aqueous solutions of PVA at 1%, 2%, and 4% were used for the preparation of NPs with the nanoprecipitation technique, obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%, respectively. In this range of PVA concentrations, no significant effect on the diameter size and \u03b6 p of PGZ-loaded NPs was observed, with diameters and \u03b6 p values around 235 nm and \u221211 mV, respectively, in all formulations. Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA. This could be explained considering that, at low concentrations, PVA is not well adsorbed on the nanoparticle surface and is not able to stabilize the NPs. On the other hand, higher PVA concentrations are covering better the nanoparticle surface and, interacting by hydrogen and Van der Waals bonds with PLGA, can stabilize it. This is also supported by the \u03b6 p values slightly decreasing (increasing in absolute value) with the increase of PVA. \n\nMoreover, the PLGA concentration showed a noteworthy effect, especially on PDI. Four concentrations of PLGA were used in the nanoparticle preparations by nanoprecipitation: 7.5 mg/mL, 10.0 mg/mL, 12.5 mg/mL and 15.0 mg/mL. In this range, nanoparticles with average diameters of 230-260 nm were obtained, indicating the 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs.",
+                        "snippetKind": "body",
+                        "section": "A Rational Optimization of the Nanoprecipitation Formulation Parameters",
+                        "snippetOffset": {
+                          "start": 23047,
+                          "end": 24846
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 386
+                            },
+                            {
+                              "start": 387,
+                              "end": 605
+                            },
+                            {
+                              "start": 606,
+                              "end": 816
+                            },
+                            {
+                              "start": 817,
+                              "end": 907
+                            },
+                            {
+                              "start": 908,
+                              "end": 1063
+                            },
+                            {
+                              "start": 1064,
+                              "end": 1235
+                            },
+                            {
+                              "start": 1236,
+                              "end": 1353
+                            },
+                            {
+                              "start": 1356,
+                              "end": 1435
+                            },
+                            {
+                              "start": 1436,
+                              "end": 1578
+                            },
+                            {
+                              "start": 1579,
+                              "end": 1720
+                            },
+                            {
+                              "start": 1721,
+                              "end": 1799
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "score": 0.5520444798224419,
+                      "paper": {
+                        "corpusId": "289552576",
+                        "title": "Preparation and In Vitro Characterization of Quercetin and Chlorhexidine-loaded PLGA Nanoparticles for Oral Biofilm-Associated Pathologies",
+                        "authors": [
+                          "\u0130. \u0130nce",
+                          "Yeliz Y\u0131ld\u0131r\u0131m",
+                          "G. Emingil",
+                          "Bar\u0131\u015f G\u00fcm\u00fc\u015fta\u015f",
+                          "N. Yakar",
+                          "G\u00fcven \u00d6zdemir",
+                          "A. Kantarci"
+                        ],
+                        "openAccessInfo": {
+                          "license": "CCBY",
+                          "status": "HYBRID",
+                          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC13309419, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                        }
+                      },
+                      "snippet": {
+                        "text": "The nanoprecipitation method was used to synthesize PLGA nanoparticles (PLGA NP). 80 mg of PLGA was dissolved in 2 mL of acetone. A clear solution of 4 ml of 5% polyvinyl alcohol (PVA) crosslinker was prepared in distilled water at 90 \u00b0C. PLGA solution was added to the PVA solution under magnetic stirring for 4 h. The nanoparticles were centrifuged at 14,000 rpm for 30 min, and the upper phase was removed. The remaining precipitate was washed and vortexed 3 times by adding distilled water. CHX (1.5%, 5%, 15%), QUE (1.5%, 5%, 15%) and CHX + QUE (1.5%/1.5%, 5%/5% and 15%/15%) were added. It was frozen at -20 \u00b0C for 15 min and then freeze-dried with a lyophilizer (Telstar Cryodos, Spain) to obtain powdered formulations. The formulations were stored at 2-6 \u00b0C, protected from light, to prevent degradation of the molecules before use. The characterization of the synthesized formulations was performed using Fourier Transform Infrared (FTIR) (PerkinElmer Spectrum 100), Dynamic Light Scattering Spectrometry (DLS), Malvern Zeta Sizer Ultra, Thermogravimetry Analysis (TG) (Perkin-Elmer Diamond), Differential Scanning Calorimetry (DSC) (Shimadzu DSC 60), and Scanning Electron Microscopy (SEM) (Thermo Scientific Apreo S SEM-EDX).",
+                        "snippetKind": "body",
+                        "section": "Preparation of chlorhexidine (CHX)/quercetin (QUE) loaded poly(lactic-co-glycolic acid) (PLGA) nanoparticles",
+                        "snippetOffset": {
+                          "start": 4826,
+                          "end": 6062
+                        },
+                        "annotations": {
+                          "refMentions": null,
+                          "sentences": [
+                            {
+                              "start": 0,
+                              "end": 81
+                            },
+                            {
+                              "start": 82,
+                              "end": 129
+                            },
+                            {
+                              "start": 130,
+                              "end": 238
+                            },
+                            {
+                              "start": 239,
+                              "end": 315
+                            },
+                            {
+                              "start": 316,
+                              "end": 409
+                            },
+                            {
+                              "start": 410,
+                              "end": 494
+                            },
+                            {
+                              "start": 495,
+                              "end": 561
+                            },
+                            {
+                              "start": 562,
+                              "end": 592
+                            },
+                            {
+                              "start": 593,
+                              "end": 726
+                            },
+                            {
+                              "start": 727,
+                              "end": 840
+                            },
+                            {
+                              "start": 841,
+                              "end": 1236
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "retrievalVersion": "pa1-v1"
+                },
+                "documents": [
+                  {
+                    "id": "67f7d970-3aa6-413e-9bac-ba6559b3eb56",
+                    "title": "The Role of Nanoparticle in Brain Permeability: An in-vitro BBB Model",
+                    "url": "",
+                    "snippet": "MET loaded polymeric nanoparticles of PLGA were prepared by emulsification/solvent evaporation method. Briefly, the exact polymer and drug amouts were dissolved in acetone and then suspended in the aqueous phase. PVA was employed as a surfactant. The resulting NP suspension was stirred for 3h at room temperature to organic solvent evaporation. Subsequently, the nanoparticles were separated by ultracentrifugation (Beckman, XL-90) at 30,000 rpm for 20min and lyophilized by using a lyophilizer (ZibrusVaco 10-II-E; Germany) to obtain a fine powder of MET loaded NPs.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5851507642582474,
+                    "error": null
+                  },
+                  {
+                    "id": "069703bc-3070-49d0-8c30-87d149e18931",
+                    "title": "Investigation of Effective Parameters on Size of Paclitaxel Loaded PLGA Nanoparticles",
+                    "url": "",
+                    "snippet": "Table 1 and 2 summarizes experiments conducted in this study to investigate drug and PLGA concentrations, the amounts of PVA and solvent and sonication time which affect PLGA nanoparticles size and morphology. Emulsion solvent evaporation and nanoprecipitation/interfacial deposition are the two most common methods for the preparation of polymeric nanoparticles. These two techniques were originally developed by Vanderhoff et al 45 and Fessi et al, 46 respectively. In an study PLGA incorporated with procaine nanoparticles was prepared via nanoprecipitaion technique with the size less than 210 nm. 32 In another study protein encapsulated in PLGA nanoparticles were prepared by phase separation method with the size around 300 nm for biomedical application. 47 Commercial success of the various polymeric nanoformulation products developed by emulsion and nanoprecipitation were documented by Nava-Arzaluz et al 48 and Minost et al. 49 We investigated the effect of two methods of single emulsion and precipitation on nanoparticles size. The size of polymeric nanoparticles is particularly important in cancer therapy as drug delivery vehicles can enter into the tumor tissue via the EPR effect. Our results indicated that paclitaxel-loaded nanoparticles prepared with precipitation had smaller size (Table 2. No. 11) compare to single emulsion method (Table 1, No. 19). In addition, acetone is used in precipitation method which have less toxic effect than DCM applied in emulsion method. 50 herefore, precipitation method is suggested for medical applications. The effect of PVA The function of PVA concentration as an effective factor on PLGA diameter is shown in Figure 2. In this experiment the applied concentrations of PVA were 0.25, 0.5, 1 and 2 W/V % whereas other parameters were constant. The nanoparticles diameter increased from about 130 nm to 378 nm (Table 2, Nos. 6-9) as the PVA concentration increased from 0.25 to 2 W/V%. It was observed that the size of the nanoparticles enhances in the precipitation method with increasing PVA concentration which can be associated with the deposition of PVA on the surface of paclitaxel-loaded",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.582000142317267,
+                    "error": null
+                  },
+                  {
+                    "id": "bfcd0107-13bb-44fa-9cd8-4845ea7cd9f5",
+                    "title": "PLGA nanoparticle loaded with antioxidants and photosensitizer for ROS shock mediated phototherapy of triple negative breast cancer",
+                    "url": "",
+                    "snippet": "Polymeric nanoparticles were prepared using the nanoprecipitation method as described previously [20]. Briefly, 15 mg of PLGA was dissolved in 1 ml of dichloromethane (DCM) and was added dropwise to the 1% PVA in an ice bath, and the stirring was continued overnight for the evaporation of the DCM. The next day, the solution was centrifuged for 5 min at 1500 rpm; further centrifugation was performed by collecting the supernatant at 10 000 rpm for 15 min. The pellet was resuspended in double distilled water. While using antioxidants, \u03b1-tocopherol and p-CA were also dissolved in DCM, following the same procedure as mentioned above. \n\nUV-vis spectrometer (Shimadzu UV-1800, Japan) was used to determine the nanoparticles' absorbance. The hydrodynamic size of the NPs was evaluated using dynamic light scattering (DLS). The average zeta potential, size, and polydispersity index was evaluated with DLS. Drop-casting nanoparticles on a copper grid was done to analyze the size and morphology using transmission electron microscopy (TEM) (JEOL, JEM 2100F Inc., USA). The as prepared nanoparticles were drop-casted on a silicon wafer to examine the surface morphology using scanning electron microscopy (Carl Zeiss atomic microscope, Supra40 Germany).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5624257772651193,
+                    "error": null
+                  },
+                  {
+                    "id": "cf21a4fc-73f1-48d0-afe5-b88d9c8aea6c",
+                    "title": "Pioglitazone-Loaded PLGA Nanoparticles: Towards the Most Reliable Synthesis Method",
+                    "url": "",
+                    "snippet": "The effect of PVA, PGZ and PLGA concentration along with the influence of the organic and the aqueous phase volumes over the diameter size, PDI, \u03b6p and EE% of nanoparticles, are presented in Figure 3. Unlike the single emulsification-solvent evaporation, a slightly lower pH (6.0) could be used in the nanoprecipitation method with the aim of improving the PGZ encapsulation efficiency. Stock aqueous solutions of PVA at 1%, 2%, and 4% were used for the preparation of NPs with the nanoprecipitation technique, obtaining final PVA concentrations within the aqueous phase of 0.5%, 1%, and 2%, respectively. In this range of PVA concentrations, no significant effect on the diameter size and \u03b6 p of PGZ-loaded NPs was observed, with diameters and \u03b6 p values around 235 nm and \u221211 mV, respectively, in all formulations. Inversely, the PDI value decreases approximately from 0.5 to 0.2 with the increase of PVA. This could be explained considering that, at low concentrations, PVA is not well adsorbed on the nanoparticle surface and is not able to stabilize the NPs. On the other hand, higher PVA concentrations are covering better the nanoparticle surface and, interacting by hydrogen and Van der Waals bonds with PLGA, can stabilize it. This is also supported by the \u03b6 p values slightly decreasing (increasing in absolute value) with the increase of PVA. \n\nMoreover, the PLGA concentration showed a noteworthy effect, especially on PDI. Four concentrations of PLGA were used in the nanoparticle preparations by nanoprecipitation: 7.5 mg/mL, 10.0 mg/mL, 12.5 mg/mL and 15.0 mg/mL. In this range, nanoparticles with average diameters of 230-260 nm were obtained, indicating the 10 mg/mL formulation as optimal (231 \u00b1 7 nm). The PLGA concentration plays a pivotal role in the development of uniform NPs.",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5571691181892838,
+                    "error": null
+                  },
+                  {
+                    "id": "9bc647c2-841c-47c4-9220-762b33d02341",
+                    "title": "Preparation and In Vitro Characterization of Quercetin and Chlorhexidine-loaded PLGA Nanoparticles for Oral Biofilm-Associated Pathologies",
+                    "url": "",
+                    "snippet": "The nanoprecipitation method was used to synthesize PLGA nanoparticles (PLGA NP). 80 mg of PLGA was dissolved in 2 mL of acetone. A clear solution of 4 ml of 5% polyvinyl alcohol (PVA) crosslinker was prepared in distilled water at 90 \u00b0C. PLGA solution was added to the PVA solution under magnetic stirring for 4 h. The nanoparticles were centrifuged at 14,000 rpm for 30 min, and the upper phase was removed. The remaining precipitate was washed and vortexed 3 times by adding distilled water. CHX (1.5%, 5%, 15%), QUE (1.5%, 5%, 15%) and CHX + QUE (1.5%/1.5%, 5%/5% and 15%/15%) were added. It was frozen at -20 \u00b0C for 15 min and then freeze-dried with a lyophilizer (Telstar Cryodos, Spain) to obtain powdered formulations. The formulations were stored at 2-6 \u00b0C, protected from light, to prevent degradation of the molecules before use. The characterization of the synthesized formulations was performed using Fourier Transform Infrared (FTIR) (PerkinElmer Spectrum 100), Dynamic Light Scattering Spectrometry (DLS), Malvern Zeta Sizer Ultra, Thermogravimetry Analysis (TG) (Perkin-Elmer Diamond), Differential Scanning Calorimetry (DSC) (Shimadzu DSC 60), and Scanning Electron Microscopy (SEM) (Thermo Scientific Apreo S SEM-EDX).",
+                    "text": "",
+                    "summary": null,
+                    "score": 0.5520444798224419,
+                    "error": null
+                  }
+                ],
+                "query": "PVA coated PLGA nanoparticles nanoprecipitation particle size methotrexate",
+                "input_params": {
+                  "limit": "5",
+                  "year": "2015-2025",
+                  "fieldsOfStudy": "Medicine,Chemistry,Engineering"
+                }
+              }
+            ]
+          },
+          "judgment": {
+            "criterion_satisfied": false,
+            "criterion_reasoning": "The verification criterion requires quantitative data or a clear qualitative relationship describing how changes in the methotrexate:PLGA ratio specifically affect particle size of PVA-coated nanoparticles made by nanoprecipitation. While the answer discusses MTX:PLGA ratios extensively and provides substantial information about PVA coating effects, it fails to provide actual quantitative data showing how varying MTX:PLGA ratios affect particle size. Reference [5] mentions that six MTX formulations were prepared at different drug:polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1, 2:1) and characterized for 'mean particle diameter,' but crucially, no actual particle size values for these different ratios are provided. Reference [1] provides data for rivaroxaban (RX), not methotrexate. The answer conflates data from non-MTX systems with MTX-specific systems and makes general qualitative statements ('higher PLGA increases size,' 'higher MTX can increase size via free drug') without backing them with MTX-specific quantitative evidence from nanoprecipitation with PVA coating.",
+            "other_issues": [
+              "Data substitution: The answer heavily relies on reference [1] which describes rivaroxaban/PLGA nanoparticles, not methotrexate/PLGA, yet presents this as if it directly answers the MTX-specific question.",
+              "Missing critical data: Reference [5] is the only MTX-specific nanoprecipitation study cited, but the answer never provides the actual particle size measurements for the different MTX:PLGA ratios mentioned in that paper.",
+              "Overgeneralization: The answer extrapolates findings from paclitaxel and other drug systems to make claims about MTX behavior without MTX-specific evidence.",
+              "Structural issues: The answer is excessively long and repetitive, with multiple sections restating similar points without adding new quantitative MTX:PLGA ratio-to-size data.",
+              "PVA coating ambiguity: Most cited studies use PVA as a stabilizer in the aqueous phase during synthesis, not necessarily as a distinct 'coating' step, yet the answer treats PVA effects as a separate coating phenomenon.",
+              "Mechanistic speculation: Claims about MTX hydrophilicity driving specific size changes are not directly supported by the MTX-specific references provided."
+            ],
+            "summary": "The answer fails to satisfy the verification criterion because it does not provide quantitative data showing how varying MTX:PLGA ratios specifically affect particle size in PVA-coated nanoparticles made by nanoprecipitation. While reference [5] describes MTX formulations at different ratios, the actual particle size values are never reported. The answer substitutes data from non-MTX systems (rivaroxaban, paclitaxel) and presents overgeneralized qualitative relationships without MTX-specific quantitative support.",
+            "verdict": "FAILED",
+            "raw": "```json\n{\n  \"criterion_satisfied\": false,\n  \"criterion_reasoning\": \"The verification criterion requires quantitative data or a clear qualitative relationship describing how changes in the methotrexate:PLGA ratio specifically affect particle size of PVA-coated nanoparticles made by nanoprecipitation. While the answer discusses MTX:PLGA ratios extensively and provides substantial information about PVA coating effects, it fails to provide actual quantitative data showing how varying MTX:PLGA ratios affect particle size. Reference [5] mentions that six MTX formulations were prepared at different drug:polymer ratios (1:1, 1:1.5, 1:2, 1:3, 1.5:1, 2:1) and characterized for 'mean particle diameter,' but crucially, no actual particle size values for these different ratios are provided. Reference [1] provides data for rivaroxaban (RX), not methotrexate. The answer conflates data from non-MTX systems with MTX-specific systems and makes general qualitative statements ('higher PLGA increases size,' 'higher MTX can increase size via free drug') without backing them with MTX-specific quantitative evidence from nanoprecipitation with PVA coating.\",\n  \"other_issues\": [\n    \"Data substitution: The answer heavily relies on reference [1] which describes rivaroxaban/PLGA nanoparticles, not methotrexate/PLGA, yet presents this as if it directly answers the MTX-specific question.\",\n    \"Missing critical data: Reference [5] is the only MTX-specific nanoprecipitation study cited, but the answer never provides the actual particle size measurements for the different MTX:PLGA ratios mentioned in that paper.\",\n    \"Overgeneralization: The answer extrapolates findings from paclitaxel and other drug systems to make claims about MTX behavior without MTX-specific evidence.\",\n    \"Structural issues: The answer is excessively long and repetitive, with multiple sections restating similar points without adding new quantitative MTX:PLGA ratio-to-size data.\",\n    \"PVA coating ambiguity: Most cited studies use PVA as a stabilizer in the aqueous phase during synthesis, not necessarily as a distinct 'coating' step, yet the answer treats PVA effects as a separate coating phenomenon.\",\n    \"Mechanistic speculation: Claims about MTX hydrophilicity driving specific size changes are not directly supported by the MTX-specific references provided.\"\n  ],\n  \"summary\": \"The answer fails to satisfy the verification criterion because it does not provide quantitative data showing how varying MTX:PLGA ratios specifically affect particle size in PVA-coated nanoparticles made by nanoprecipitation. While reference [5] describes MTX formulations at different ratios, the actual particle size values are never reported. The answer substitutes data from non-MTX systems (rivaroxaban, paclitaxel) and presents overgeneralized qualitative relationships without MTX-specific quantitative support.\",\n  \"verdict\": \"FAILED\"\n}\n```"
+          },
+          "criterion_check": null
+        }
+      ]
+    }
+  ]
+}

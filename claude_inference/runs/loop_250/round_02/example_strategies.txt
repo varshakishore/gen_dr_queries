@@ -1,0 +1,12 @@
+# round 2: EXAMPLE STRATEGIES TO CONSIDER ('exploit' prompt)
+Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.
+Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.
+Make a question that is unanswerable by current research, no existing work is available.
+Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.
+Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.
+Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.
+Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.
+gap, absence, and underdocumented domain reasoning
+cross-context translation and comparability challenges
+Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.
+Something else you think of that would be effective at exposing weaknesses in research systems!

@@ -1,0 +1,46 @@
+clustering: seeded[llm=claude-opus-4-6]
+  seeds: 10/11 used, 5 new cluster(s)
+    new cluster: hidden assumptions, validity conditions, and inference traps
+    new cluster: gap, absence, and underdocumented domain reasoning
+    new cluster: cross-context translation and comparability challenges
+    new cluster: constraint satisfaction and evidence filtering
+    new cluster: condition-dependent performance reversal reasoning
+round:  131 questions (81 FAILED, overall failure rate 0.618)
+source_runs: exploit, explore
+selected 15 focus strategies, 50 few-shot failure examples total
+  [1.00 fail |  1 q |    1% | 1 ex |                     ] Present a familiar, dominant, or seemingly well-understood e
+  [0.85 fail | 13 q |   10% | 5 ex |                     ] Frame the question around a misleading assumption, false dic
+  [0.75 fail |  4 q |    3% | 3 ex |                     ] Make a question that is unanswerable by current research, no
+  [0.82 fail | 17 q |   13% | 5 ex |                     ] Use a concept whose meaning, boundary, or classification is 
+  [0.79 fail | 14 q |   11% | 5 ex |                     ] Frame the available evidence as though what was selected, me
+  [0.67 fail |  3 q |    2% | 2 ex |                     ] Ask about a past event, decision, prediction, or apparent tr
+  [0.67 fail |  3 q |    2% | 2 ex |                     ] Make the apparent evidential support misleading because of s
+  [0.67 fail |  6 q |    5% | 4 ex |                     ] [novel strategy not in seed menu] gap, absence, and underdoc
+  [0.54 fail | 13 q |   10% | 5 ex |                     ] [novel strategy not in seed menu] cross-context translation 
+  [0.50 fail |  4 q |    3% | 2 ex |                     ] Require careful quantitative reasoning about base rates, den
+  [0.55 fail | 20 q |   15% | 5 ex |                     ] [novel strategy not in seed menu] hidden assumptions, validi
+  [0.47 fail | 15 q |   11% | 5 ex |                     ] [novel strategy not in seed menu] constraint satisfaction an
+  [0.38 fail | 13 q |   10% | 5 ex |                     ] Require synthesis across differing viewpoints, stakeholder i
+  [0.33 fail |  3 q |    2% | 1 ex |                     ] Require universal quantification ('for all X, is Y true?') o
+  [0.00 fail |  0 q |    0% | 0 ex |               unused] Something else you think of that would be effective at expos
+skipped 1 ineligible strategies
+  [0.00 fail |  2 q |    2% | failure_rate 0.00 < min_failure_rate=0.25] [novel strategy not in seed menu] condition-dependent perfor
+
+cluster comparison (fail_rate n=num_questions, per source_run):
+  cluster       overall             exploit             explore
+  seed.1     0.75 n=4            0.50 n=2            1.00 n=2  
+  seed.2     0.67 n=3            1.00 n=1            0.50 n=2  
+  seed.3     1.00 n=1                     -          1.00 n=1  
+  seed.4     0.85 n=13           0.80 n=10           1.00 n=3  
+  seed.5     0.82 n=17           0.83 n=12           0.80 n=5  
+  seed.6     0.33 n=3            0.33 n=3                     -
+  seed.7     0.50 n=4            0.67 n=3            0.00 n=1  
+  seed.8     0.79 n=14           0.80 n=10           0.75 n=4  
+  seed.9     0.38 n=13           0.17 n=6            0.57 n=7  
+  seed.10    0.67 n=3            0.67 n=3                     -
+  seed.11    0.00 n=0                     -                   -
+  new.1      0.55 n=20           0.71 n=7            0.46 n=13 
+  new.2      0.67 n=6            1.00 n=1            0.60 n=5  
+  new.3      0.54 n=13           1.00 n=2            0.45 n=11 
+  new.4      0.47 n=15                    -          0.47 n=15 
+  new.5      0.00 n=2                     -          0.00 n=2  

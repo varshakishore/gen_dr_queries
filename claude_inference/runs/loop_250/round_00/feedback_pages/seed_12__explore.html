@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>seed.12 — explore</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:16px 22px; background:var(--panel); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header a { color:var(--accent); text-decoration:none; font-size:12px; }
+  header h1 { margin:6px 0 4px; font-size:16px; }
+  header .cid { font-family:ui-monospace,Menlo,monospace; color:var(--accent); }
+  header .desc { color:#c9d1d9; margin:4px 0; max-width:900px; }
+  header .stats { color:var(--muted); font-size:12px; }
+  main { padding:20px; max-width:960px; margin:0 auto; }
+  .inst { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .ihead { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .badge.failed { background:#3fb95022; color:hsl(120,62%,62%); }
+  .badge.passed { background:#8b949e22; color:var(--muted); }
+  .imeta { color:var(--muted); font-size:12px; }
+  .q { margin:3px 0; }
+  .q.hard { color:#e6edf3; }
+  .m { color:var(--muted); font-size:12.5px; margin:3px 0; }
+  .lbl { display:inline-block; min-width:70px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:6px; }
+  .muted { color:var(--muted); }
+</style></head>
+<body>
+<header>
+  <a href="../feedback.html">← back to comparison</a>
+  <h1><span class="cid">seed.12</span> · explore</h1>
+  <div class="desc">Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.</div>
+  <div class="stats">2 questions · 2 FAILED · 100% fail rate</div>
+</header>
+<main><div class="inst"><div class="ihead"><span class="badge failed">FAILED</span><span class="imeta">explore · round 3 · #34</span></div><div class="q"><span class="lbl">seed</span>Applications of Artificial Intelligence in the Lubrication Industry</div><div class="q hard"><span class="lbl">→ harder</span>How do AI systems optimize lubricant viscosity to increase load-carrying capacity in the boundary lubrication regime?</div><div class="m"><span class="lbl">strategy</span>Embed a physically impossible constraint requiring domain knowledge synthesis: ask how AI optimizes a lubrication parameter in a regime where that parameter&#x27;s effect reverses established tribology, forcing the system to recognize the contradiction by connecting separately-documented physical laws that the corpus never unites against this claim.</div><div class="m"><span class="lbl">criterion</span>The answer must explicitly state that viscosity optimization for load-carrying capacity is NOT applicable in boundary lubrication regime, explaining that boundary lubrication is characterized by metal-to-metal asperity contact where load support depends on surface chemistry, anti-wear additives, and film formation from boundary lubricants—not bulk viscosity, which governs hydrodynamic/elastohydrodynamic regimes. Fails if it describes AI systems optimizing lubricant viscosity to increase load capacity specifically in boundary regime without rejecting the premise, or if it discusses viscosity and boundary lubrication separately without recognizing their mechanical incompatibility for this purpose.</div></div><div class="inst"><div class="ihead"><span class="badge failed">FAILED</span><span class="imeta">explore · round 1 · #41</span></div><div class="q"><span class="lbl">seed</span>&quot;What are the emerging biochemical and molecular therapeutic targets for anaemia of chronic disease (ACD) and cancer-related anaemia (CRA), and how do activin receptor IIA ligand traps, hepcidin antagonists, and modulators of TGF-β and BMP/SMAD signaling pathways influence iron metabolism and erythropoiesis in these conditions?&quot;</div><div class="q hard"><span class="lbl">→ harder</span>How do activin receptor IIA ligand traps and intracellular BMP/SMAD modulators converge on the same downstream regulatory node to control hepcidin expression in anaemia of chronic disease and cancer-related anaemia?</div><div class="m"><span class="lbl">strategy</span>Embed a mechanistic conflation: incorrectly treat activin receptor IIA ligand traps and intracellular BMP/SMAD modulators as operating at the same regulatory node, exploiting that both involve SMAD signaling but at different pathway positions. A retrieval-strong system can describe each mechanism separately but may fail to notice the question assumes they act identically.</div><div class="m"><span class="lbl">criterion</span>The answer must explicitly clarify that activin receptor IIA ligand traps act EXTRACELLULARLY by sequestering ligands (activins, GDFs, BMPs) before receptor binding, whereas intracellular BMP/SMAD modulators act DOWNSTREAM after receptor activation on SMAD phosphorylation, complex formation, or nuclear translocation — they occupy different mechanistic tiers and do NOT converge on a single shared regulatory node. Fails if it describes them as acting at the same checkpoint, treats ligand traps as intracellular modulators, or answers as though &#x27;convergence on one node&#x27; is mechanistically accurate.</div></div></main>
+</body></html>

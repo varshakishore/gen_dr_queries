@@ -1,0 +1,12 @@
+# round 3: EXAMPLE STRATEGIES TO CONSIDER ('exploit' prompt)
+Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.
+cross-context translation and comparability challenges
+gap, absence, and underdocumented domain reasoning
+Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.
+Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.
+Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.
+Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.
+interpretive framework and normative reasoning
+cross-context translation and implementation gaps
+Make a question that is unanswerable by current research, no existing work is available.
+Something else you think of that would be effective at exposing weaknesses in research systems!

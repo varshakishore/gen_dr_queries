@@ -1,0 +1,4 @@
+# round 0: STRATEGIES TO NOT USE ('explore' prompt)
+Make a question that is unanswerable by current research, no existing work is available.
+Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.
+Require recognition of an underlying false premise in the question.

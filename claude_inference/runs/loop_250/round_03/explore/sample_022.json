@@ -1,0 +1,53 @@
+{
+  "run_id": "sample_022",
+  "model": "claude-sonnet-4-5",
+  "prompt_variant": "explore",
+  "example_strategies": [
+    "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+    "cross-context translation and comparability challenges",
+    "gap, absence, and underdocumented domain reasoning",
+    "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+    "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+    "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+    "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+    "interpretive framework and normative reasoning",
+    "cross-context translation and implementation gaps",
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    "Something else you think of that would be effective at exposing weaknesses in research systems!"
+  ],
+  "banned_strategies": [
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+    "Require recognition of an underlying false premise in the question.",
+    "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+  ],
+  "few_shot_seeds": [
+    "Comparative Study on Surgical Trainees' Performance in Laparoscopic Surgery: Origami Box Folding Exercise vs. Outside the Box Knot Tying Exercise",
+    "What is pretraining-data deduplication?",
+    "What is the role of attention sparsity in efficient transformers?"
+  ],
+  "grand_total_cost": {
+    "input_tokens": 231,
+    "output_tokens": 78,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "cost_usd": 0.001863,
+    "calls": 1
+  },
+  "results": [
+    {
+      "seed": "G fap staining procedures",
+      "final_status": "ERROR",
+      "error": "Judging failed: empty response from claude-sonnet-4-5 (stop_reason='refusal')",
+      "cost": {
+        "input_tokens": 231,
+        "output_tokens": 78,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 0,
+        "cost_usd": 0.001863,
+        "calls": 1
+      },
+      "attempts": []
+    }
+  ]
+}

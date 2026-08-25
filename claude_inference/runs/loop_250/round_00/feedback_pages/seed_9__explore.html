@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>seed.9 — explore</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:16px 22px; background:var(--panel); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header a { color:var(--accent); text-decoration:none; font-size:12px; }
+  header h1 { margin:6px 0 4px; font-size:16px; }
+  header .cid { font-family:ui-monospace,Menlo,monospace; color:var(--accent); }
+  header .desc { color:#c9d1d9; margin:4px 0; max-width:900px; }
+  header .stats { color:var(--muted); font-size:12px; }
+  main { padding:20px; max-width:960px; margin:0 auto; }
+  .inst { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .ihead { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .badge.failed { background:#3fb95022; color:hsl(120,62%,62%); }
+  .badge.passed { background:#8b949e22; color:var(--muted); }
+  .imeta { color:var(--muted); font-size:12px; }
+  .q { margin:3px 0; }
+  .q.hard { color:#e6edf3; }
+  .m { color:var(--muted); font-size:12.5px; margin:3px 0; }
+  .lbl { display:inline-block; min-width:70px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:6px; }
+  .muted { color:var(--muted); }
+</style></head>
+<body>
+<header>
+  <a href="../feedback.html">← back to comparison</a>
+  <h1><span class="cid">seed.9</span> · explore</h1>
+  <div class="desc">Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.</div>
+  <div class="stats">1 questions · 0 FAILED · 0% fail rate</div>
+</header>
+<main><div class="inst"><div class="ihead"><span class="badge passed">PASSED</span><span class="imeta">explore · round 3 · #57</span></div><div class="q"><span class="lbl">seed</span>&quot;In the context of semi-arid cropping systems, including those in the Northern Great Plains, how do agrobiodiversity (measured by factors like the number of crop species in rotation and spatial diversity through intercropping) and the provision of essential ecosystem services contribute to the long-term stability of these systems? Specifically:
+
+Can you provide examples of how different crop rotations or intercropping systems enhance stability in semi-arid environments? What are the underlying mechanisms (e.g., pest and disease regulation, resource use efficiency)? Cite relevant studies.
+What are the key pollinator abundance and diversity and soil carbon sequestration rates in semi-arid agricultural systems, and how do these relate to the overall stability and resilience of these systems in the face of environmental variability? Provide any relevant data or studies, ideally focusing on the Northern Great Plains or similar regions.&quot;</div><div class="q hard"><span class="lbl">→ harder</span>In Northern Great Plains semi-arid cropping, at what quantitative agrobiodiversity thresholds—specific rotation diversity levels (number of species), pollinator abundance densities (individuals/ha or species richness), or soil carbon accumulation rates (Mg C/ha/yr)—do stability benefits saturate or transition from marginal to robust? Cite magnitude data from studies and explain where dose-response relationships indicate critical tipping points.</div><div class="m"><span class="lbl">strategy</span>Require quantitative threshold inference from heterogeneous magnitude data: ask at what specific agrobiodiversity levels (rotation diversity counts, pollinator densities, soil C rates) stability benefits saturate or transition in semi-arid NGP systems, forcing the system to compare magnitudes across studies that report different diversity levels but don&#x27;t compute the threshold themselves.</div><div class="m"><span class="lbl">criterion</span>The answer must cite at least two NGP semi-arid studies with different agrobiodiversity magnitudes for the same outcome (e.g., rotations of 2 vs 3 vs 4+ species and their yield stability; pollinator densities of X vs Y individuals and resulting pollination rates; soil C rates at different diversity levels) and explicitly compare those magnitudes to argue for a saturation point, threshold, or linear relationship. It must state whether the cited data show diminishing returns, a critical threshold, or continued linear benefit, naming the specific diversity values at which the pattern changes. Fails if it lists diversity benefits without quantitative comparison across levels, treats all increases as equally beneficial without magnitude analysis, or does not attempt to identify where in the dose-response curve the transition occurs using the numbers from its retrieved studies.</div></div></main>
+</body></html>

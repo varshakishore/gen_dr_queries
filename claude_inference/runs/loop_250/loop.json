@@ -1,0 +1,347 @@
+{
+  "total": 250,
+  "budget_usd": 125.0,
+  "started_at": "2026-08-25T07:55:39.825174+00:00",
+  "feedback_every": 50,
+  "prompt_mix": 0.5,
+  "random_seed": 0,
+  "feedback_scope": "all",
+  "model": "claude-sonnet-4-5",
+  "base_banned_strategies": [
+    "Make a question that is unanswerable by current research, no existing work is available.",
+    "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+    "Require recognition of an underlying false premise in the question."
+  ],
+  "rounds": [
+    {
+      "round": 0,
+      "dir": "runs/loop_250/round_00",
+      "num_explore": 25,
+      "num_exploit": 25,
+      "example_strategies": [
+        "Require synthesis across 5+ sources or clearly disjoint domains (e.g., political science + economics).",
+        "Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.",
+        "Require multi-step reasoning, structured argumentation, or hierarchical planning.",
+        "Require handling conflicting, incomplete, or low-quality evidence.",
+        "Require universal quantification ('for all X, is Y true?') or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.",
+        "Require correcting a hidden misconception or establishing key knowns before answering.",
+        "Embed a specific context that changes the answer (e.g., 'explain to a policymaker with no ML background').",
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+        "Treat a correlation, temporal coincidence, or apparent empirical pattern as though it established a causal relationship. A correct answer must consider confounding, reverse causation, selection, or chance and reject unsupported causal framing.",
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result.",
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+        "Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.",
+        "Presume that obtaining more information, increasing precision, taking action, or eliminating residual uncertainty is inherently valuable. A correct answer must assess whether it could materially change the relevant decision or outcome."
+      ],
+      "banned_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question."
+      ],
+      "few_shot_seeds": {
+        "explore": [
+          "What is pretraining-data deduplication?",
+          "What is the role of attention sparsity in efficient transformers?",
+          "How does brown adipose tissue produce heat?"
+        ],
+        "exploit": [
+          "What is pretraining-data deduplication?",
+          "What is the role of attention sparsity in efficient transformers?",
+          "How does brown adipose tissue produce heat?"
+        ]
+      },
+      "generation_elapsed_s": 2117.5,
+      "num_seeds": 50,
+      "statuses": {
+        "ALREADY_HARD": 4,
+        "ERROR": 4,
+        "EXHAUSTED": 1,
+        "FAILED_FOUND": 41
+      },
+      "num_failed_found": 41,
+      "cost_usd": 4.9846,
+      "claude_calls": 239,
+      "feedback_elapsed_s": 18.1,
+      "clustering_cost_usd": 0.0653,
+      "feedback": "runs/loop_250/round_00/feedback.json",
+      "feedback_scope_dirs": [
+        "runs/loop_250/round_00"
+      ],
+      "next_menus": {
+        "num_focus_strategies": 15,
+        "num_example_strategies": 11,
+        "num_banned_strategies": 4,
+        "fresh_bans": [
+          "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+        ],
+        "ban_reasons": {
+          "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result.": "failure_rate 0.17 < min_failure_rate=0.25"
+        },
+        "bans_dropped_at_cap": []
+      }
+    },
+    {
+      "round": 1,
+      "dir": "runs/loop_250/round_01",
+      "num_explore": 25,
+      "num_exploit": 25,
+      "example_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+        "Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.",
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+        "Require universal quantification ('for all X, is Y true?') or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.",
+        "Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+        "Require synthesis across differing viewpoints, stakeholder incentives, or theoretical frameworks.",
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+        "Something else you think of that would be effective at exposing weaknesses in research systems!"
+      ],
+      "banned_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question.",
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+      ],
+      "few_shot_seeds": {
+        "explore": [
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s",
+          "Analyzing the factors in appartment buying        decision clients in Dhaka city.",
+          "What is pretraining-data deduplication?"
+        ],
+        "exploit": [
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s",
+          "Among those computational experiments that are technically replicable, which studies are most relevant and valuable for replication?",
+          "\"link between doctoral programs and the productive sector\""
+        ]
+      },
+      "generation_elapsed_s": 2163.2,
+      "num_seeds": 50,
+      "statuses": {
+        "ALREADY_HARD": 7,
+        "ERROR": 3,
+        "FAILED_FOUND": 40
+      },
+      "num_failed_found": 40,
+      "cost_usd": 4.8054,
+      "claude_calls": 229,
+      "feedback_elapsed_s": 55.4,
+      "clustering_cost_usd": 0.1426,
+      "feedback": "runs/loop_250/round_01/feedback.json",
+      "feedback_scope_dirs": [
+        "runs/loop_250/round_00",
+        "runs/loop_250/round_01"
+      ],
+      "next_menus": {
+        "num_focus_strategies": 15,
+        "num_example_strategies": 11,
+        "num_banned_strategies": 4,
+        "fresh_bans": [],
+        "ban_reasons": {},
+        "bans_dropped_at_cap": []
+      }
+    },
+    {
+      "round": 2,
+      "dir": "runs/loop_250/round_02",
+      "num_explore": 25,
+      "num_exploit": 25,
+      "example_strategies": [
+        "Present a familiar, dominant, or seemingly well-understood explanation as settled despite meaningful uncertainty or contradictory evidence. A correct answer must update beliefs according to evidence quality and calibrate confidence to what is actually established.",
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+        "gap, absence, and underdocumented domain reasoning",
+        "cross-context translation and comparability challenges",
+        "Require careful quantitative reasoning about base rates, denominators, magnitudes, probabilities, effect sizes, or levels of aggregation rather than merely quoting headline figures.",
+        "Something else you think of that would be effective at exposing weaknesses in research systems!"
+      ],
+      "banned_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question.",
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+      ],
+      "few_shot_seeds": {
+        "explore": [
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s",
+          "ABAS-II psychometric properties",
+          "Comparative Study on Surgical Trainees' Performance in Laparoscopic Surgery: Origami Box Folding Exercise vs. Outside the Box Knot Tying Exercise"
+        ],
+        "exploit": [
+          "\"link between doctoral programs and the productive sector\"",
+          "\"what are the most specific and sensitive determinants of stressed volume status, with respect to hypo and hyper-volemia, within critical care medicine - including any history, physical finding, pathology result and point of care ultrasound finding. look for either high or very lower likelihood ratios if sensitivity and specificity are not found.\"",
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s"
+        ]
+      },
+      "generation_elapsed_s": 2273.7,
+      "num_seeds": 50,
+      "statuses": {
+        "ALREADY_HARD": 5,
+        "ERROR": 2,
+        "FAILED_FOUND": 43
+      },
+      "num_failed_found": 43,
+      "cost_usd": 4.7796,
+      "claude_calls": 229,
+      "feedback_elapsed_s": 69.2,
+      "clustering_cost_usd": 0.208,
+      "feedback": "runs/loop_250/round_02/feedback.json",
+      "feedback_scope_dirs": [
+        "runs/loop_250/round_00",
+        "runs/loop_250/round_01",
+        "runs/loop_250/round_02"
+      ],
+      "next_menus": {
+        "num_focus_strategies": 16,
+        "num_example_strategies": 11,
+        "num_banned_strategies": 4,
+        "fresh_bans": [],
+        "ban_reasons": {},
+        "bans_dropped_at_cap": []
+      }
+    },
+    {
+      "round": 3,
+      "dir": "runs/loop_250/round_03",
+      "num_explore": 25,
+      "num_exploit": 25,
+      "example_strategies": [
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+        "cross-context translation and comparability challenges",
+        "gap, absence, and underdocumented domain reasoning",
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+        "interpretive framework and normative reasoning",
+        "cross-context translation and implementation gaps",
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Something else you think of that would be effective at exposing weaknesses in research systems!"
+      ],
+      "banned_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question.",
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+      ],
+      "few_shot_seeds": {
+        "explore": [
+          "Comparative Study on Surgical Trainees' Performance in Laparoscopic Surgery: Origami Box Folding Exercise vs. Outside the Box Knot Tying Exercise",
+          "What is pretraining-data deduplication?",
+          "What is the role of attention sparsity in efficient transformers?"
+        ],
+        "exploit": [
+          "Among those computational experiments that are technically replicable, which studies are most relevant and valuable for replication?",
+          "2.\tWhat are the key concepts and variables related to the role of schema therapy interventions in rebuilding personal identity after divorce, and how are these relationships explained?",
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s"
+        ]
+      },
+      "generation_elapsed_s": 2297.2,
+      "num_seeds": 50,
+      "statuses": {
+        "ALREADY_HARD": 6,
+        "ERROR": 5,
+        "EXHAUSTED": 1,
+        "FAILED_FOUND": 38
+      },
+      "num_failed_found": 38,
+      "cost_usd": 5.2716,
+      "claude_calls": 241,
+      "feedback_elapsed_s": 81.2,
+      "clustering_cost_usd": 0.2878,
+      "feedback": "runs/loop_250/round_03/feedback.json",
+      "feedback_scope_dirs": [
+        "runs/loop_250/round_00",
+        "runs/loop_250/round_01",
+        "runs/loop_250/round_02",
+        "runs/loop_250/round_03"
+      ],
+      "next_menus": {
+        "num_focus_strategies": 16,
+        "num_example_strategies": 11,
+        "num_banned_strategies": 4,
+        "fresh_bans": [],
+        "ban_reasons": {},
+        "bans_dropped_at_cap": []
+      }
+    },
+    {
+      "round": 4,
+      "dir": "runs/loop_250/round_04",
+      "num_explore": 25,
+      "num_exploit": 25,
+      "example_strategies": [
+        "cross-context translation and comparability challenges",
+        "gap, absence, and underdocumented domain reasoning",
+        "Frame the available evidence as though what was selected, measured, or recorded perfectly represented the underlying population or construct. A correct answer must identify the relevant selection effect, missing cases, or measurement limitation.",
+        "Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.",
+        "Make the apparent evidential support misleading because of source provenance or evidence quality, such as false attribution, shared source ancestry, retraction, failed replication, publication bias, or unequal methodological strength. A correct answer must evaluate the evidence rather than count citations or repeat the claim.",
+        "Frame the question around a misleading assumption, false dichotomy, anchor, or substituted question. A correct answer must identify and repair the framing rather than simply answer within it.",
+        "cross-context translation and implementation gaps",
+        "interpretive framework and normative reasoning",
+        "Use a concept whose meaning, boundary, or classification is ambiguous, contested, field-dependent, or genuinely continuous. A correct answer must clarify the relevant definition or explain why no unique cutoff exists.",
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Something else you think of that would be effective at exposing weaknesses in research systems!"
+      ],
+      "banned_strategies": [
+        "Make a question that is unanswerable by current research, no existing work is available.",
+        "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+        "Require recognition of an underlying false premise in the question.",
+        "Require reconciliation of apparently conflicting findings by examining differences in methods, populations, settings, time periods, or experimental conditions rather than simply choosing the majority result."
+      ],
+      "few_shot_seeds": {
+        "explore": [
+          "ABAS-II psychometric properties",
+          "What is pretraining-data deduplication?",
+          "What is the role of attention sparsity in efficient transformers?"
+        ],
+        "exploit": [
+          "38.\tTo what extent are the topics and learning goals of the Jump$tart standards reflected in England’s financial education curriculum? For each domain, provide year levels, teaching approaches, and examples of content:\no\tIncome: Career planning, taxes, earnings, pensions\no\tSpending: Budgeting, purchasing decisions, payment options\no\tSaving: Emergency savings, interest, savings goals\no\tInvestment: Asset types, diversification, inflation\no\tCredit: Credit scores, interest rates, credit cards\no\tRisk Management: Insurance, fraud prevention, identity theft",
+          "\"Examine the organizational structure of human resources recruitment in the education systems of Iran and Finland since the 2020s",
+          "2.\tAssociated Concepts and Variables: What are the most significant key concepts and variables (e.g., hope-building, academic vitality, resilience, active engagement, dynamic learning environment) that are correlated with the implementation of the Dynamic Field Program?"
+        ]
+      },
+      "generation_elapsed_s": 2363.6,
+      "num_seeds": 50,
+      "statuses": {
+        "ALREADY_HARD": 4,
+        "ERROR": 2,
+        "EXHAUSTED": 2,
+        "FAILED_FOUND": 42
+      },
+      "num_failed_found": 42,
+      "cost_usd": 5.3317,
+      "claude_calls": 247
+    }
+  ],
+  "verification": {
+    "report": "runs/loop_250/verified.json",
+    "kept_set": "runs/loop_250/verified.kept.json",
+    "elapsed_s": 1299.8,
+    "checked": 204,
+    "kept": 155,
+    "dropped": 49,
+    "keep_rate": 0.7598,
+    "criteria_rewritten": 33,
+    "by_label": {
+      "correct": 122,
+      "error": 3,
+      "incorrect": 33,
+      "insufficient_evidence": 13,
+      "partly_correct": 33
+    },
+    "cost_usd": 18.3752
+  },
+  "total_cost_usd": 44.2517,
+  "elapsed_s": 12739.1
+}

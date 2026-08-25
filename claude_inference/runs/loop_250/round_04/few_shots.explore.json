@@ -1,0 +1,26 @@
+[
+  {
+    "seed_question": "ABAS-II psychometric properties",
+    "brainstorming": "The seed is a straightforward survey: retrieve ABAS-II validation papers and list reliability/validity coefficients. One option is to require causal reasoning about why psychometrics differ across populations, but those explanations may be retrievable. A stronger option exploits that the system can easily retrieve 'good psychometrics' results from norming samples but struggles with conditional reasoning: force it to determine whether properties generalize to a context where assumptions are violated, requiring it to PREDICT rather than report.",
+    "chosen_strategy": "Require conditional prediction beyond reported data: ask whether psychometric properties hold under assumption-violating conditions not directly studied in the retrieved literature.",
+    "updated_question": "Do ABAS-II psychometric properties remain valid when administered to non-native English speakers via interpreter?",
+    "why_harder": "A system can retrieve ABAS-II reliability and validity from norming studies, but those samples assume direct English administration. Answering whether properties generalize to interpreter-mediated administration requires reasoning about untested conditions: whether translation/interpretation introduces construct-irrelevant variance, whether normed cut-scores apply, and whether the test's psychometric foundations (standard error, factor structure) hold when administration violates standardization. This demands conditional inference rather than fact retrieval.",
+    "verification_criterion": "The answer must explicitly state that interpreter administration violates ABAS-II standardization procedures AND that psychometric properties (reliability, validity, normative comparisons) established in the norming sample cannot be assumed to hold under these altered conditions. It must identify at least one specific psychometric threat: e.g., interpretation could introduce measurement error affecting reliability, or cultural/linguistic differences could alter construct validity of specific domains. Fails if it simply reports norming-sample psychometrics without addressing whether they apply to interpreter-mediated administration, or if it asserts the properties do generalize without evidence from interpreter-administration studies."
+  },
+  {
+    "seed_question": "What is pretraining-data deduplication?",
+    "brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
+    "chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
+    "updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
+    "why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
+    "verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+  },
+  {
+    "seed_question": "What is the role of attention sparsity in efficient transformers?",
+    "brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
+    "chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
+    "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
+    "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
+    "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
+  }
+]

@@ -1,0 +1,110 @@
+{
+  "model": "claude-sonnet-4-5",
+  "max_attempts": 5,
+  "total_cost_usd": 1.0175304,
+  "total_claude_calls": 47,
+  "avg_make_harder_calls_failed_found": 3.142857142857143,
+  "num_failed_found": 7,
+  "samples": [
+    {
+      "index": 1,
+      "seed": "agent-based research mostly involves quantitative analysis and experimentation. what methods could enable AI agents to conduct qualitative research and could cognitive frameworks (e.g. analogy, metaphor, image schemas) play a role by providing representational machinery?",
+      "file": "sample_001.json",
+      "log": "run-sample_001.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.08603459999999999,
+      "claude_calls": 4,
+      "attempts": 2
+    },
+    {
+      "index": 2,
+      "seed": "semantic framing and conceptual blending as used in research process",
+      "file": "sample_002.json",
+      "log": "run-sample_002.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.1344912,
+      "claude_calls": 6,
+      "attempts": 3
+    },
+    {
+      "index": 3,
+      "seed": "Scaling up end-to-end information retrieval models",
+      "file": "sample_003.json",
+      "log": "run-sample_003.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.0796686,
+      "claude_calls": 4,
+      "attempts": 2
+    },
+    {
+      "index": 4,
+      "seed": "Steering protein diffusion model with multiple constraints",
+      "file": "sample_004.json",
+      "log": "run-sample_004.jsonl",
+      "status": "ERROR",
+      "returncode": 0,
+      "cost_usd": 0.001752,
+      "claude_calls": 1,
+      "attempts": 0,
+      "console": "sample_004.console.txt"
+    },
+    {
+      "index": 5,
+      "seed": "Continual learning methods for scientific assistants that incorporate new literature and findings",
+      "file": "sample_005.json",
+      "log": "run-sample_005.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.1628058,
+      "claude_calls": 8,
+      "attempts": 4
+    },
+    {
+      "index": 6,
+      "seed": "yeast species impact on wine characteristics",
+      "file": "sample_006.json",
+      "log": "run-sample_006.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.1489152,
+      "claude_calls": 6,
+      "attempts": 3
+    },
+    {
+      "index": 7,
+      "seed": "polyploidy in apple and other plant offspring/triploid parent genetic material viability",
+      "file": "sample_007.json",
+      "log": "run-sample_007.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.0897306,
+      "claude_calls": 4,
+      "attempts": 2
+    },
+    {
+      "index": 8,
+      "seed": "do scientific question-answering systems respond primarily to a preponderance of evidence, recency, strongest finding, or anything else?",
+      "file": "sample_008.json",
+      "log": "run-sample_008.jsonl",
+      "status": "FAILED_FOUND",
+      "returncode": 0,
+      "cost_usd": 0.27187439999999996,
+      "claude_calls": 12,
+      "attempts": 6
+    },
+    {
+      "index": 9,
+      "seed": "how strong does a single finding need to be to change how an LLM uses its parametric knowledge?",
+      "file": "sample_009.json",
+      "log": "run-sample_009.jsonl",
+      "status": "ALREADY_HARD",
+      "returncode": 0,
+      "cost_usd": 0.042258000000000004,
+      "claude_calls": 2,
+      "attempts": 1
+    }
+  ]
+}

@@ -977,16 +977,19 @@ def retrieve_papers(
     if extra_filters:
         search_filters.update({k: v for k, v in extra_filters.items() if v})
 
+    # Hoisted out of the PaperFinder call so the choice can be reported back to the
+    # caller: whether reranking actually ran is otherwise invisible downstream.
+    reranker_obj = build_reranker(
+        reranker,
+        model_name=reranker_model,
+        url=reranker_url,
+        batch_size=rerank_batch_size,
+        timeout=rerank_timeout,
+        max_doc_tokens=rerank_max_doc_tokens,
+    )
     paper_finder = PaperFinder(
         retriever=FullTextRetriever(n_retrieval=n_retrieval, n_keyword_srch=n_keyword_srch),
-        reranker=build_reranker(
-            reranker,
-            model_name=reranker_model,
-            url=reranker_url,
-            batch_size=rerank_batch_size,
-            timeout=rerank_timeout,
-            max_doc_tokens=rerank_max_doc_tokens,
-        ),
+        reranker=reranker_obj,
         context_threshold=context_threshold,
         n_rerank=n_rerank,
         max_date=max_date,
@@ -1035,6 +1038,12 @@ def retrieve_papers(
         "n_snippets": len(snippet_results),
         "n_keyword_papers": len(search_api_results),
         "n_reranked_passages": len(reranked),
+        # None when nothing reranked (kind 'none', or 'auto' with no URL configured):
+        # unreranked keyword papers keep score 0.0 and sort last, which biases a
+        # downstream judge toward "the literature does not cover X".
+        "reranker": ({"model": getattr(reranker_obj, "model", None),
+                      "endpoint": getattr(reranker_obj, "endpoint", None)}
+                     if reranker_obj is not None else None),
         "papers": papers,
         "elapsed_s": round(time.time() - t0, 2),
         # Token usage of the decomposition call (None when --no-decompose, or when the

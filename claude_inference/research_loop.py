@@ -9,9 +9,10 @@ strategy feedback after every round.
 
 Each round:
 
-  1. SPLIT   the round's seeds between the two make-harder prompts by an independent coin
-             balanced split (--prompt-mix, default 0.5 -> an even explore/exploit
-             split each round, with which seeds go where randomised), and run
+  1. SPLIT   the round's seeds between the two make-harder prompts by a balanced split
+             (--prompt-mix, default 0.5 -> an even explore/exploit split each round, with
+             which seeds go where randomised) -- or, with --both-prompts, run every seed
+             through BOTH prompts for a paired comparison -- and run
              research_pipeline_parallel.py once per side into
              <out-dir>/round_KK/explore/ and <out-dir>/round_KK/exploit/.
              Separate dirs keep the `source_run` labels that make the per-prompt comparison
@@ -463,6 +464,14 @@ def main():
                    help="M: total questions (seeds) to generate across all rounds (default: 50).")
     p.add_argument("--feedback-every", "-n", type=int, default=10,
                    help="N: questions per round; feedback runs after each (default: 10).")
+    p.add_argument("--both-prompts", action="store_true",
+                   help="Run EVERY seed through both prompts instead of splitting the round "
+                        "between them: a paired explore-vs-exploit comparison on identical "
+                        "seeds (2x the runs). --prompt-mix is ignored.")
+    p.add_argument("--no-feedback", action="store_true",
+                   help="One round, no clustering and no menu updates -- just generate with "
+                        "the starting menus (plus --verify-after if given). Same as setting "
+                        "--feedback-every to the seed count.")
     p.add_argument("--prompt-mix", type=float, default=0.5,
                    help="Share of each round's seeds given to the explore prompt; "
                         "0.5 = an even split (default: 0.5).")
@@ -583,8 +592,8 @@ def main():
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    rounds = [seeds[i:i + args.feedback_every]
-              for i in range(0, len(seeds), args.feedback_every)]
+    every = len(seeds) if args.no_feedback else args.feedback_every
+    rounds = [seeds[i:i + every] for i in range(0, len(seeds), every)]
     base_banned = list(RP.BANNED_STRATEGY_LISTS[args.banned_strategies])
     example_menu = list(RP.STRATEGY_LISTS[args.strategies])
     banned_menu = list(base_banned)
@@ -593,13 +602,16 @@ def main():
     few_shots = {"explore": list(RP.DEFAULT_FEW_SHOTS), "exploit": list(RP.DEFAULT_FEW_SHOTS)}
     rng = random.Random(args.random_seed)
 
-    print(f"{len(seeds)} question(s) in {len(rounds)} round(s) of "
-          f"<= {args.feedback_every}, P(explore)={args.prompt_mix} -> {out_dir}/")
+    print(f"{len(seeds)} seed(s) in {len(rounds)} round(s) of <= {every}, "
+          + ("both prompts on every seed" if args.both_prompts
+             else f"explore share {args.prompt_mix}")
+          + (", no feedback" if len(rounds) == 1 else "")
+          + f" -> {out_dir}/")
 
     t_start = time.perf_counter()
     manifest = {"total": len(seeds), "budget_usd": args.budget_usd or None,
                 "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-                "feedback_every": args.feedback_every,
+                "feedback_every": every, "both_prompts": args.both_prompts,
                 "prompt_mix": args.prompt_mix, "random_seed": args.random_seed,
                 "feedback_scope": args.feedback_scope, "model": args.model,
                 "base_banned_strategies": base_banned, "rounds": []}
@@ -617,7 +629,8 @@ def main():
                                  f"round {k}: STRATEGIES TO NOT USE ('explore' prompt)")
 
         t_round = time.perf_counter()
-        split = split_by_prompt(round_seeds, rng, args.prompt_mix)
+        split = ({"explore": list(round_seeds), "exploit": list(round_seeds)}
+                 if args.both_prompts else split_by_prompt(round_seeds, rng, args.prompt_mix))
         print(f"\n{'=' * 70}\nROUND {k}: {len(round_seeds)} seed(s) — "
               f"{len(split['explore'])} explore / {len(split['exploit'])} exploit\n"
               f"  menus: {len(example_menu)} example, {len(banned_menu)} banned\n{'=' * 70}")
@@ -738,13 +751,20 @@ def main():
               + f"  {_hms(gen_t)} gen" + (f" + {_hms(fb_t)} fb" if fb_t else "")
               + f"  [{r['num_explore']}e/{r['num_exploit']}x]")
     total_clu = sum(r.get("clustering_cost_usd") or 0.0 for r in manifest["rounds"])
-    print(f"\nTotal: {total_ff}/{total_q} FAILED_FOUND, ${total_cost:.4f} generation"
+    print(f"\nBroke the system: {total_ff}/{total_q} FAILED_FOUND")
+    print(f"Generation: ${total_cost:.4f}"
           + (f" + ${total_clu:.4f} clustering" if total_clu else ""))
     v = manifest.get("verification")
     if v:
         print(f"Verified: {v['kept']}/{v['checked']} criteria upheld "
-              f"({v['keep_rate']:.0%}, +${v['cost_usd']:.4f}, {_hms(v.get('elapsed_s') or 0)})"
-              f" -> {v['kept_set']}")
+              f"({v['keep_rate']:.0%}, {_hms(v.get('elapsed_s') or 0)}) -> {v['kept_set']}")
+        print(f"Verification: ${v['cost_usd']:.4f}")
+    # The grand total is the number that matters and the one --budget-usd caps; keep the
+    # components above it so no single line can be mistaken for the whole bill.
+    print(f"GRAND TOTAL: ${manifest['total_cost_usd']:.4f}"
+          + (f"  ({total_cost + total_clu:.2f} generation + "
+             f"{v['cost_usd']:.2f} verification)" if v else "")
+          + (f"  [cap ${manifest['budget_usd']:.2f}]" if manifest.get("budget_usd") else ""))
     print(f"Wall clock: {_hms(manifest['elapsed_s'])}"
           + (f"  ({_hms(manifest['elapsed_s'] / total_q)} per seed)" if total_q else ""))
     print(f"Manifest: {out_dir / 'loop.json'}")

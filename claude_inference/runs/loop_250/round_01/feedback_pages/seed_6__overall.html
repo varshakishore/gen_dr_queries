@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>seed.6 — all questions</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:16px 22px; background:var(--panel); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header a { color:var(--accent); text-decoration:none; font-size:12px; }
+  header h1 { margin:6px 0 4px; font-size:16px; }
+  header .cid { font-family:ui-monospace,Menlo,monospace; color:var(--accent); }
+  header .desc { color:#c9d1d9; margin:4px 0; max-width:900px; }
+  header .stats { color:var(--muted); font-size:12px; }
+  main { padding:20px; max-width:960px; margin:0 auto; }
+  .inst { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .ihead { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .badge.failed { background:#3fb95022; color:hsl(120,62%,62%); }
+  .badge.passed { background:#8b949e22; color:var(--muted); }
+  .imeta { color:var(--muted); font-size:12px; }
+  .q { margin:3px 0; }
+  .q.hard { color:#e6edf3; }
+  .m { color:var(--muted); font-size:12.5px; margin:3px 0; }
+  .lbl { display:inline-block; min-width:70px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:6px; }
+  .muted { color:var(--muted); }
+</style></head>
+<body>
+<header>
+  <a href="../feedback.html">← back to comparison</a>
+  <h1><span class="cid">seed.6</span> · all questions</h1>
+  <div class="desc">Require universal quantification (&#x27;for all X, is Y true?&#x27;) or reasoning about edge cases and exceptions. However, keep the scope reasonably bounded so that an answer could adequately address it, and not so broad that any answer would necessarily be incomplete.</div>
+  <div class="stats">3 questions · 1 FAILED · 33% fail rate</div>
+</header>
+<main><div class="inst"><div class="ihead"><span class="badge failed">FAILED</span><span class="imeta">exploit · round 1 · #10</span></div><div class="q"><span class="lbl">seed</span>&quot;The Role of Communication Skills in Enhancing Customer Relationships in Tourism Institutions.&quot;</div><div class="q hard"><span class="lbl">→ harder</span>Why does communication-skills training uniformly strengthen customer relationships across all tourism service contexts?</div><div class="m"><span class="lbl">strategy</span>Embed a false universal premise: assume communication training uniformly strengthens customer relationships across all tourism contexts, when retrieved evidence shows context-dependent effects (cultural norms, service standardization, employee discretion) that the system must synthesize to reject the premise.</div><div class="m"><span class="lbl">criterion</span>The answer must reject the uniform-effect premise by identifying at least two context-specific moderators from the tourism literature (e.g., cultural context such as individualist vs collectivist norms, service standardization level, or employee role discretion) and explain how communication training effects differ across these conditions. Fails if it affirms that training uniformly strengthens relationships, or if it lists benefits without explaining variation in effectiveness across contexts.</div></div><div class="inst"><div class="ihead"><span class="badge passed">PASSED</span><span class="imeta">exploit · round 1 · #83</span></div><div class="q"><span class="lbl">seed</span>Adjuntion of singularities holds for foliations defined by closed meromorphic 1 forms</div><div class="q hard"><span class="lbl">→ harder</span>When does resolution of singularities fail for foliations defined by closed meromorphic 1-forms, and why do results conflict?</div><div class="m"><span class="lbl">strategy</span>Require reconciliation of conflicting evidence across different settings: force the system to explain when resolution of singularities succeeds versus fails for foliations from closed meromorphic 1-forms, rather than issuing a blanket yes/no.</div><div class="m"><span class="lbl">criterion</span>The answer must show that its retrieved sources give different verdicts on resolution (some affirming success, others describing failure or obstruction) and attribute the conflict to at least one concrete distinguishing condition such as dimension (e.g., dimension 2 versus higher), singularity type (e.g., reduced versus non-reduced), or setting (e.g., algebraic versus analytic, smooth ambient space versus singular). Fails if it asserts resolution always works or always fails without qualification, or if the sources it retrieves do not actually report conflicting outcomes for foliations from closed meromorphic 1-forms.</div></div><div class="inst"><div class="ihead"><span class="badge passed">PASSED</span><span class="imeta">exploit · round 2 · #84</span></div><div class="q"><span class="lbl">seed</span>Adjuntion of singularities holds for foliations defined by closed meromorphic 1 forms</div><div class="q hard"><span class="lbl">→ harder</span>Does the adjunction formula for canonical bundles hold without correction terms at all singularities of foliations defined by closed meromorphic 1-forms?</div><div class="m"><span class="lbl">strategy</span>False universal quantification: assert that a mathematical property (adjunction formula) holds without exception for ALL singularities, when it actually requires correction terms or fails at certain singular types. The system must identify the exceptions and the needed corrections.</div><div class="m"><span class="lbl">criterion</span>The answer must state that the adjunction formula does NOT hold without correction terms at singularities. It must mention at least one type of correction term required at singular points, specifically naming residues, Baum-Bott indices, or similar singularity contributions to the canonical class. Fails if it affirms the formula holds everywhere without correction, or if it discusses adjunction/canonical bundles in the smooth case only without addressing what happens at the singular loci of the foliation.</div></div></main>
+</body></html>

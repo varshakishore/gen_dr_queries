@@ -1,0 +1,45 @@
+clustering: seeded[llm=claude-opus-4-6]
+  seeds: 10/11 used, 5 new cluster(s)
+    new cluster: causal, counterfactual, and dependency reasoning
+    new cluster: quantitative reasoning and base-rate traps
+    new cluster: construct validity, measurement conflation, and proxy-outcome dissociation
+    new cluster: methodological dependency and procedural reasoning
+    new cluster: cross-context extrapolation and reconciliation of conflicting evidence
+round:  266 questions (162 FAILED, overall failure rate 0.609)
+source_runs: exploit, explore
+selected 16 focus strategies, 67 few-shot failure examples total
+  [1.00 fail |  7 q |    3% | 5 ex |                     ] cross-context translation and comparability challenges
+  [0.86 fail | 14 q |    5% | 5 ex |                     ] gap, absence, and underdocumented domain reasoning
+  [0.87 fail | 23 q |    9% | 5 ex |                     ] Frame the available evidence as though what was selected, me
+  [0.71 fail |  7 q |    3% | 5 ex |                     ] Ask about a past event, decision, prediction, or apparent tr
+  [0.71 fail |  7 q |    3% | 5 ex |                     ] Make the apparent evidential support misleading because of s
+  [0.77 fail | 31 q |   12% | 5 ex |                     ] Frame the question around a misleading assumption, false dic
+  [0.67 fail |  6 q |    2% | 4 ex |                     ] cross-context translation and implementation gaps
+  [0.57 fail |  7 q |    3% | 4 ex |                     ] interpretive framework and normative reasoning
+  [0.66 fail | 47 q |   18% | 5 ex |                     ] Use a concept whose meaning, boundary, or classification is 
+  [0.50 fail |  2 q |    1% | 1 ex |                     ] Make a question that is unanswerable by current research, no
+  [0.50 fail | 10 q |    4% | 5 ex |                     ] [novel strategy not in seed menu] methodological dependency 
+  [0.54 fail | 39 q |   15% | 5 ex |                     ] [novel strategy not in seed menu] construct validity, measur
+  [0.43 fail |  7 q |    3% | 3 ex |                     ] [novel strategy not in seed menu] quantitative reasoning and
+  [0.47 fail | 32 q |   12% | 5 ex |                     ] [novel strategy not in seed menu] causal, counterfactual, an
+  [0.19 fail | 27 q |   10% | 5 ex | new-underrepresented] [novel strategy not in seed menu] cross-context extrapolatio
+  [0.00 fail |  0 q |    0% | 0 ex |               unused] Something else you think of that would be effective at expos
+
+cluster comparison (fail_rate n=num_questions, per source_run):
+  cluster       overall             exploit             explore
+  seed.1     0.71 n=7            1.00 n=2            0.60 n=5  
+  seed.2     1.00 n=7            1.00 n=3            1.00 n=4  
+  seed.3     0.86 n=14           1.00 n=5            0.78 n=9  
+  seed.4     0.71 n=7            0.80 n=5            0.50 n=2  
+  seed.5     0.87 n=23           0.86 n=14           0.89 n=9  
+  seed.6     0.77 n=31           0.86 n=14           0.71 n=17 
+  seed.7     0.66 n=47           0.83 n=24           0.48 n=23 
+  seed.8     0.57 n=7            0.50 n=4            0.67 n=3  
+  seed.9     0.67 n=6            1.00 n=2            0.50 n=4  
+  seed.10    0.50 n=2            0.00 n=1            1.00 n=1  
+  seed.11    0.00 n=0                     -                   -
+  new.1      0.47 n=32           0.86 n=7            0.36 n=25 
+  new.2      0.43 n=7            0.75 n=4            0.00 n=3  
+  new.3      0.54 n=39           0.73 n=11           0.46 n=28 
+  new.4      0.50 n=10           0.50 n=2            0.50 n=8  
+  new.5      0.19 n=27           0.44 n=9            0.06 n=18 

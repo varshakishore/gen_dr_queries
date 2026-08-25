@@ -1,0 +1,12 @@
+Run ID: sample_001
+Logging every call to: runs/loop_250/round_03/explore/run-sample_001.jsonl
+
+######################################################################
+FINAL SUMMARY
+######################################################################
+- [ERROR            ] (0 attempts, $0.0000, 0 Claude calls) Flowing Active Liquids in a Pipe: Hysteretic Response of Polar Flocks to External Fields
+    error: Generating seed criterion failed: empty response from claude-sonnet-4-5 (stop_reason='refusal')
+
+Total cost: $0.0000 (0 Claude calls, 0 input + 0 output tokens)
+Run log written to: runs/loop_250/round_03/explore/run-sample_001.jsonl
+Final results written to: runs/loop_250/round_03/explore/sample_001.json

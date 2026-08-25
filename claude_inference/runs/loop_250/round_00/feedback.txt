@@ -1,0 +1,48 @@
+clustering: seeded[llm=claude-opus-4-6]
+  seeds: 15/18 used, 1 new cluster(s)
+    new cluster: critical evaluation of evidence applicability and validity
+round:  67 questions (41 FAILED, overall failure rate 0.612)
+source_runs: exploit, explore
+selected 15 focus strategies, 30 few-shot failure examples total
+  [1.00 fail |  1 q |    1% | 1 ex |                     ] Make a question that is unanswerable by current research, no
+  [1.00 fail |  1 q |    1% | 1 ex |                     ] Ask about a past event, decision, prediction, or apparent tr
+  [1.00 fail |  1 q |    1% | 1 ex |                     ] Present a familiar, dominant, or seemingly well-understood e
+  [1.00 fail |  3 q |    4% | 3 ex |                     ] Frame the question around a misleading assumption, false dic
+  [0.92 fail | 12 q |   18% | 5 ex |                     ] Use a concept whose meaning, boundary, or classification is 
+  [0.67 fail |  3 q |    4% | 2 ex |                     ] Require universal quantification ('for all X, is Y true?') o
+  [0.67 fail |  3 q |    4% | 2 ex |                     ] Require careful quantitative reasoning about base rates, den
+  [0.73 fail | 11 q |   16% | 5 ex |                     ] Frame the available evidence as though what was selected, me
+  [0.50 fail |  4 q |    6% | 2 ex |                     ] Require synthesis across differing viewpoints, stakeholder i
+  [0.50 fail |  4 q |    6% | 2 ex |                     ] Make the apparent evidential support misleading because of s
+  [0.55 fail | 11 q |   16% | 5 ex |                     ] Treat a correlation, temporal coincidence, or apparent empir
+  [0.25 fail |  4 q |    6% | 1 ex |                     ] [novel strategy not in seed menu] critical evaluation of evi
+  [0.00 fail |  0 q |    0% | 0 ex |               unused] Require synthesis across 5+ sources or clearly disjoint doma
+  [0.00 fail |  0 q |    0% | 0 ex |               unused] Require correcting a hidden misconception or establishing ke
+  [0.00 fail |  0 q |    0% | 0 ex |               unused] Embed a specific context that changes the answer (e.g., 'exp
+skipped 4 ineligible strategies
+  [0.17 fail |  6 q |    9% | failure_rate 0.17 < min_failure_rate=0.25] Require reconciliation of apparently conflicting findings by
+  [0.00 fail |  1 q |    1% | failure_rate 0.00 < min_failure_rate=0.25] Require multi-step reasoning, structured argumentation, or h
+  [0.00 fail |  1 q |    1% | failure_rate 0.00 < min_failure_rate=0.25] Require handling conflicting, incomplete, or low-quality evi
+  [0.00 fail |  1 q |    1% | failure_rate 0.00 < min_failure_rate=0.25] Presume that obtaining more information, increasing precisio
+
+cluster comparison (fail_rate n=num_questions, per source_run):
+  cluster       overall             exploit             explore
+  seed.1     0.00 n=0                     -                   -
+  seed.2     0.50 n=4            0.00 n=1            0.67 n=3  
+  seed.3     0.00 n=1                     -          0.00 n=1  
+  seed.4     0.00 n=1                     -          0.00 n=1  
+  seed.5     0.67 n=3            0.50 n=2            1.00 n=1  
+  seed.6     0.00 n=0                     -                   -
+  seed.7     0.00 n=0                     -                   -
+  seed.8     1.00 n=1            1.00 n=1                     -
+  seed.9     0.67 n=3            1.00 n=2            0.00 n=1  
+  seed.10    0.73 n=11           0.78 n=9            0.50 n=2  
+  seed.11    0.55 n=11           0.80 n=5            0.33 n=6  
+  seed.12    1.00 n=3            1.00 n=1            1.00 n=2  
+  seed.13    0.92 n=12           0.86 n=7            1.00 n=5  
+  seed.14    0.50 n=4            1.00 n=1            0.33 n=3  
+  seed.15    0.17 n=6            0.00 n=5            1.00 n=1  
+  seed.16    1.00 n=1            1.00 n=1                     -
+  seed.17    1.00 n=1                     -          1.00 n=1  
+  seed.18    0.00 n=1            0.00 n=1                     -
+  new.1      0.25 n=4            1.00 n=1            0.00 n=3  

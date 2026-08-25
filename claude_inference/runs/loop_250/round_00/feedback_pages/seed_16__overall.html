@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>seed.16 — all questions</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:16px 22px; background:var(--panel); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header a { color:var(--accent); text-decoration:none; font-size:12px; }
+  header h1 { margin:6px 0 4px; font-size:16px; }
+  header .cid { font-family:ui-monospace,Menlo,monospace; color:var(--accent); }
+  header .desc { color:#c9d1d9; margin:4px 0; max-width:900px; }
+  header .stats { color:var(--muted); font-size:12px; }
+  main { padding:20px; max-width:960px; margin:0 auto; }
+  .inst { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .ihead { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .badge.failed { background:#3fb95022; color:hsl(120,62%,62%); }
+  .badge.passed { background:#8b949e22; color:var(--muted); }
+  .imeta { color:var(--muted); font-size:12px; }
+  .q { margin:3px 0; }
+  .q.hard { color:#e6edf3; }
+  .m { color:var(--muted); font-size:12.5px; margin:3px 0; }
+  .lbl { display:inline-block; min-width:70px; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-right:6px; }
+  .muted { color:var(--muted); }
+</style></head>
+<body>
+<header>
+  <a href="../feedback.html">← back to comparison</a>
+  <h1><span class="cid">seed.16</span> · all questions</h1>
+  <div class="desc">Ask about a past event, decision, prediction, or apparent trend in a way that invites hindsight, outcome bias, or distortion from recent attention. A correct answer must use the information and historical baseline appropriate to the time.</div>
+  <div class="stats">1 questions · 1 FAILED · 100% fail rate</div>
+</header>
+<main><div class="inst"><div class="ihead"><span class="badge failed">FAILED</span><span class="imeta">exploit · round 1 · #2</span></div><div class="q"><span class="lbl">seed</span>Among those computational experiments that are technically replicable, which studies are most relevant and valuable for replication?</div><div class="q hard"><span class="lbl">→ harder</span>Which computational studies that became highly cited or controversial should have been prioritized for replication at the time of publication?</div><div class="m"><span class="lbl">strategy</span>Temporal framing that invites hindsight bias: treat retrospective influence as though it were a prospective selection criterion, forcing the system to recognize that replication decisions must be made under uncertainty before outcomes are known.</div><div class="m"><span class="lbl">criterion</span>The answer must explicitly recognize the temporal impossibility: that citation counts, controversy levels, and downstream influence are NOT available at publication time, so &#x27;should have been prioritized&#x27; cannot use those retrospective signals as selection criteria. It must either propose genuinely prospective indicators (e.g., theoretical scope, parameter sensitivity, or stakeholder reliance on the claim) or state that retrospective influence cannot guide ex-ante prioritization. Fails if it treats &#x27;became highly cited&#x27; as a workable replication filter or lists studies by their eventual impact without noting this hindsight problem.</div></div></main>
+</body></html>
