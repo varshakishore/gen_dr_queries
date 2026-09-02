@@ -3,9 +3,11 @@
 Shows, in one self-contained page (no server, no external assets):
   * a cluster-comparison table — every cluster (in seeded mode: each seed strategy plus
     novel clusters) with its FAIL_RATE broken down per source_run, so generation prompts
-    (e.g. original vs explore) can be compared strategy by strategy;
-  * the focus strategies, each with its per-subset rates and expandable few-shot failures; and
-  * the ineligible strategies — the inverse set, with the selection threshold(s) each missed.
+    (e.g. original vs explore) can be compared strategy by strategy; and
+  * every strategy cluster as a card, in `rank_by` order, with its statistics (failure rate,
+    cluster size, failed/not-failed split, share of the round, seed vs new), its per-subset
+    rates and its expandable few-shot failures. Nothing is filtered out — the whole ranked
+    list is shown, weakest clusters included.
 
 Colour language matches EvalTree/build_viewer.py: green = higher failure rate (a strategy
 that stumps the agent, which is GOOD here). Use standalone or let build_strategy_feedback
@@ -233,15 +235,25 @@ def _examples(examples: list[dict]) -> str:
     )
 
 
-def _focus_cards(feedback: dict, source_runs: list[str], colors: dict, href_map: dict) -> str:
-    focus = feedback.get("focus_strategies", [])
-    max_size = max((s["num_questions"] for s in focus), default=1)
+def _cluster_cards(feedback: dict, source_runs: list[str], colors: dict, href_map: dict) -> str:
+    """Every strategy cluster as a card, in the order the feedback ranked them.
+
+    Nothing is filtered: unused clusters (0 questions this round) and clusters that never
+    stumped the agent are shown too, just at the bottom of the ranking. Pies are scaled
+    against cluster_comparison so they stay comparable with the table above.
+    """
+    clusters = feedback.get("strategy_clusters", [])
+    if not clusters:
+        return "<p class='muted'>No strategy_clusters in this feedback file.</p>"
+    max_size = max((c["num_questions"] for c in feedback.get("cluster_comparison", [])),
+                   default=max((s["num_questions"] for s in clusters), default=1))
     cards = []
-    for s in focus:
+    for s in clusters:
         cid = s["cluster_id"]
+        size, failed = s["num_questions"], s.get("num_failed", 0)
+        not_failed = s.get("num_not_failed", size - failed)
         hue = _hue(s["failure_rate"])
-        pie = _pie_cell(s["num_questions"], s.get("num_failed", 0), max_size, "overall",
-                        href_map.get((cid, "overall")))
+        pie = _pie_cell(size, failed, max_size, "overall", href_map.get((cid, "overall")))
         subset_bits = []
         for run in source_runs:
             b = s.get("by_source_run", {}).get(run, {})
@@ -249,71 +261,28 @@ def _focus_cards(feedback: dict, source_runs: list[str], colors: dict, href_map:
                 f'<span class="sub"><b>{html.escape(_short(run))}</b> '
                 f'{_pie_cell(b.get("num_questions", 0), b.get("num_failed", 0), max_size, _short(run), href_map.get((cid, run)))}</span>'
             )
+        kind = "seed" if s.get("is_seed") else "new"
+        stats = (f'{size} question(s) · {failed} failed / {not_failed} not failed · '
+                 f'{s["share"] * 100:.0f}% of the round · score {s["score"]:.2f}'
+                 if size else
+                 "Unused — the generator did not try this strategy at all this round.")
         cards.append(
-            '<div class="card">'
+            f'<div class="card{"" if size else " unused"}">'
             '<div class="chead">'
             f'<span class="rank">#{s["rank"]}</span>'
-            f'<span class="cid">{html.escape(s["cluster_id"])}</span>'
-            f'<span class="tag {s.get("selected_for", "")}">{html.escape(s.get("selected_for", ""))}</span>'
+            f'<span class="cid">{html.escape(cid)}</span>'
+            f'<span class="tag {kind}">{kind}</span>'
             f'<span class="big" style="color:hsl({hue},62%,62%)">{s["failure_rate"]:.2f} FAIL</span>'
-            f'<span class="frac">{s["num_failed"]}/{s["num_questions"]} · {round(s["share"]*100)}% of round</span>'
+            f'<span class="frac">{failed}/{size} · {round(s["share"] * 100)}% of round</span>'
             f'<span class="cardpie">{pie}</span>'
             "</div>"
             f'<div class="cdesc">{html.escape(s["description"])}</div>'
             f'<div class="subs">{"".join(subset_bits)}</div>'
-            f'<div class="rat">{html.escape(s.get("rationale", ""))}</div>'
+            f'<div class="rat">{html.escape(stats)}</div>'
             + _examples(s.get("few_shot_failures", []))
             + "</div>"
         )
     return "".join(cards)
-
-
-def _ineligible_table(feedback: dict, source_runs: list[str], href_map: dict) -> str:
-    """The inverse of the focus list: clusters that missed a threshold, and which one.
-
-    Compact by design — these are the rejects, so no few-shot examples, just the pie, the
-    per-subset rates and a chip per failed check. Scaled against cluster_comparison so the
-    pies stay comparable with the table above.
-    """
-    rows = feedback.get("ineligible_strategies")
-    if rows is None:
-        return ""   # feedback JSON predates ineligible_strategies
-    if not rows:
-        return ('<h2>Ineligible strategies</h2>'
-                "<p class='muted'>None — every cluster met the selection thresholds.</p>")
-    max_size = max((c["num_questions"] for c in feedback.get("cluster_comparison", [])),
-                   default=max((r["num_questions"] for r in rows), default=1))
-    head = "".join(f"<th>{html.escape(_short(r))}</th>" for r in source_runs)
-    body = []
-    for r in rows:
-        cid = r["cluster_id"]
-        chips = "".join(f'<span class="why">{html.escape(w)}</span>'
-                        for w in r.get("excluded_for", []))
-        subset_cells = "".join(
-            f'<td class="pcell">'
-            f'{_pie_cell(b.get("num_questions", 0), b.get("num_failed", 0), max_size, _short(run), href_map.get((cid, run)))}'
-            "</td>"
-            for run, b in ((run, r.get("by_source_run", {}).get(run, {})) for run in source_runs)
-        )
-        body.append(
-            "<tr>"
-            f'<td class="cid">{html.escape(cid)}</td>'
-            f'<td class="desc">{html.escape(r["description"])}'
-            f'<div class="whys">{chips}</div></td>'
-            f'<td class="pcell">'
-            f'{_pie_cell(r["num_questions"], r.get("num_failed", 0), max_size, "overall", href_map.get((cid, "overall")))}'
-            "</td>"
-            + subset_cells
-            + "</tr>"
-        )
-    return (
-        f'<h2>Ineligible strategies <span class="count">{len(rows)} not fed back</span></h2>'
-        '<div class="legend">Clusters that did NOT make the focus list, with the selection '
-        'threshold(s) each one missed.</div>'
-        '<table class="cmp"><thead><tr>'
-        "<th>cluster</th><th>strategy · why not</th><th>overall</th>" + head +
-        "</tr></thead><tbody>" + "".join(body) + "</tbody></table>"
-    )
 
 
 def _meta_html(meta: dict) -> str:
@@ -323,6 +292,7 @@ def _meta_html(meta: dict) -> str:
         ("model", meta.get("model", "")),
         ("instances", meta.get("num_instances", "")),
         ("overall FAIL", f'{meta.get("overall_failure_rate", 0):.2f}'),
+        ("ranked by", meta.get("ranking", {}).get("rank_by", "?")),
     ]
     cl = meta.get("clustering", {})
     if cl.get("cluster_mode") == "seeded":
@@ -350,13 +320,16 @@ def build_html(feedback: dict, href_map: dict | None = None) -> str:
     source_runs = meta.get("source_runs", [])
     colors = _subset_colors(source_runs)
     title = "Strategy feedback — " + meta.get("clustering", {}).get("cluster_mode", "")
+    clusters = feedback.get("strategy_clusters", [])
+    rank_by = meta.get("ranking", {}).get("rank_by", "")
     return _TEMPLATE.format(
         title=html.escape(title),
         meta=_meta_html(meta),
         legend=_legend(source_runs, colors),
         comparison=_comparison_table(feedback, source_runs, colors, href_map),
-        focus=_focus_cards(feedback, source_runs, colors, href_map),
-        ineligible=_ineligible_table(feedback, source_runs, href_map),
+        clusters_count=f"{len(clusters)} cluster(s)"
+                       + (f", ranked by {html.escape(rank_by)}" if rank_by else ""),
+        clusters=_cluster_cards(feedback, source_runs, colors, href_map),
         notes=html.escape(meta.get("notes", "")),
     )
 
@@ -419,13 +392,10 @@ _TEMPLATE = r"""<!DOCTYPE html>
   .chead {{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }}
   .rank {{ font-weight:700; color:var(--muted); }}
   .tag {{ font-size:11px; padding:2px 8px; border-radius:999px; background:#1f6feb22; color:var(--accent); }}
-  .tag.volume {{ background:#a371f722; color:#a371f7; }}
-  .tag.failure_rate {{ background:#3fb95022; color:hsl(120,62%,60%); }}
-  .tag.new-underrepresented {{ background:#f0883e22; color:#f0883e; }}
-  .tag.unused {{ background:#8b949e22; color:var(--muted); }}
+  .tag.seed {{ background:#1f6feb22; color:var(--accent); }}
+  .tag.new {{ background:#f0883e22; color:#f0883e; }}
+  .card.unused {{ opacity:.62; }}
   h2 .count {{ text-transform:none; letter-spacing:0; font-weight:400; color:#6e7681; margin-left:8px; }}
-  .whys {{ display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }}
-  .why {{ font-size:11px; padding:2px 8px; border-radius:999px; background:#f8514922; color:#f85149; }}
   .big {{ font-weight:700; }}
   .cdesc {{ margin:10px 0; color:#c9d1d9; }}
   .subs {{ display:flex; flex-wrap:wrap; gap:8px 18px; margin:8px 0; }}
@@ -446,9 +416,11 @@ _TEMPLATE = r"""<!DOCTYPE html>
   <h2>Cluster comparison</h2>
   {legend}
   {comparison}
-  <h2>Focus strategies</h2>
-  {focus}
-  {ineligible}
+  <h2>Strategy clusters <span class="count">{clusters_count}</span></h2>
+  <div class="legend">Every cluster, nothing filtered out — the ranking sets the order only.
+  <b>seed</b> = off the seed strategy menu, <b>new</b> = discovered as novel. Clusters the
+  generator never tried this round sit at the bottom with 0 questions.</div>
+  {clusters}
   <h2>Notes</h2>
   <p class="muted">{notes}</p>
 </main>
