@@ -181,6 +181,7 @@ def _shot(rec: dict) -> dict:
         "brainstorming": rec.get("brainstorming", ""),
         "chosen_strategy": strategy,
         "updated_question": rec.get("updated_question", ""),
+        "required_reasoning_process": rec.get("required_reasoning_process") or [],
         "why_harder": rec.get("why_harder", ""),
         "verification_criterion": rec.get("verification_criterion", ""),
     }
