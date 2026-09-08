@@ -56,7 +56,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from pathlib import Path
 
-from anthropic import Anthropic
+import llm_client
 
 import research_pipeline as RP
 from strategy_feedback_module import load_examples_from_runs
@@ -116,7 +116,8 @@ def check_one(ex, client, logger, args) -> dict:
             logger=logger,
             seed=ex.seed_question,
             attempt=ex.round if ex.round is not None else 1,
-            retrieval_kwargs={"reranker": args.reranker, "reranker_url": args.reranker_url},
+            retrieval_kwargs={"reranker": args.reranker, "reranker_url": args.reranker_url,
+                              "decomposer_model": args.decomposer_model},
             n_context_papers=args.verify_n_papers,
             max_chars_per_paper=args.verify_max_chars_per_paper,
         )
@@ -183,13 +184,27 @@ def main():
                         "spend can exceed it by up to --concurrency checks.")
     p.add_argument("--refresh", action="store_true",
                    help="Re-check questions already labelled in --out.")
-    p.add_argument("--model", default="claude-sonnet-4-5")
+    p.add_argument("--model", default="claude-sonnet-4-5",
+                   help="Meta-judge model. Accepts a Claude id or an OpenAI one "
+                        "(e.g. gpt-5.6-terra); the provider is inferred from the id.")
+    p.add_argument("--decomposer-model", default=None,
+                   help="Model for retrieve_papers' query decomposition (default: "
+                        "retrieve_papers' own). Independent of --model.")
     p.add_argument("--verify-n-papers", type=int, default=RP.VERIFY_N_PAPERS)
     p.add_argument("--verify-max-chars-per-paper", type=int,
                    default=RP.VERIFY_MAX_CHARS_PER_PAPER)
     p.add_argument("--reranker", default="auto", choices=["auto", "none", "vllm"])
     p.add_argument("--reranker-url", default=None)
+    llm_client.add_provider_arg(p)
     args = p.parse_args()
+    llm_client.configure_from_args(args)
+    if missing := llm_client.require_api_key(args.model):
+        p.error(f"{missing} Needed for the meta-judge.")
+    # Retrieval always runs here. The decomposer follows --model unless overridden.
+    args.decomposer_model = RP.effective_decomposer_model(args.decomposer_model, args.model)
+    if args.decomposer_model and (
+            missing := llm_client.require_api_key(args.decomposer_model)):
+        p.error(missing + llm_client.decomposer_hint(args.model, args.decomposer_model))
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -211,13 +226,18 @@ def main():
     todo = [e for e in examples if e.updated_question not in done]
     if args.limit:
         todo = todo[:args.limit]
+    # Name both models and their providers: the decomposer follows --model by default,
+    # and "is this run touching only one provider?" should not need a code read.
+    print(f"Meta-judge: {args.model} ({llm_client.resolve_provider(args.model)})  |  "
+          f"decomposer: {args.decomposer_model} "
+          f"({llm_client.resolve_provider(args.decomposer_model)})")
     print(f"Verifying {len(todo)} of {len(examples)} question(s), "
           f"{args.concurrency} at a time -> {out_path}")
     if not todo:
         print("Nothing to do.")
 
     logger = LockedRunLogger(out_path.with_suffix(".jsonl"), run_id=out_path.stem)
-    client = Anthropic()
+    client = llm_client.make_client(args.model)
     rows = list(done.values())
     lock = threading.Lock()
 

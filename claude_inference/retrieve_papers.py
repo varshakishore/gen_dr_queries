@@ -119,11 +119,36 @@ SNIPPET_SEARCH_FIELDS = [
 # paper/batch caps out at 500 ids per POST.
 METADATA_BATCH_SIZE = 500
 
-# Query decomposition model. ScholarQA uses anthropic/claude-sonnet-4-20250514 (via litellm);
-# claude-sonnet-4-5 is the nearest live equivalent -- that snapshot is deprecated (retires
-# 2026-06-15). Decomposition is a small structured-extraction task, so this is not a
-# capability-sensitive choice; override with --decomposer-model.
-DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-5"
+# Query decomposition model, per provider, so a run stays on one provider end-to-end.
+#
+# ONE RULE for every entry: the nearest tier to ScholarQA's choice, which is
+# anthropic/claude-sonnet-4-20250514 (via litellm) -- a sonnet-class model. Do not
+# substitute a cheaper tier here just because decomposition is "only" structured
+# extraction: this step writes the search queries and year/venue/field filters, so it
+# decides which papers come back, and therefore what the meta-judge sees and which
+# criteria survive. Retrieval quality is the thing to hold constant across providers.
+#   anthropic  claude-sonnet-4-5 -- nearest live equivalent to ScholarQA's snapshot,
+#              which is deprecated (retires 2026-06-15).
+#   openai     gpt-5.6-terra -- the sonnet-class tier ($2/$12 per M vs sonnet's $3/$15).
+#              NOT luna ($0.20/$1.20): that is below even claude-haiku-4-5 ($1/$5), so
+#              it would silently drop three capability tiers on a provider switch.
+# Decomposition is ~4% of a verified run's spend, so trading it down buys little. To
+# spend less anyway, pass --decomposer-model gpt-5.6-luna explicitly.
+#
+# Even tier-matched, a provider switch still shifts retrieval -- runs are comparable
+# within a provider, not necessarily across one. The model used is recorded per call in
+# `retrieval.decomposer_model`. Override with --decomposer-model (any provider's id;
+# llm_client picks the provider off it).
+DEFAULT_DECOMPOSER_MODELS = {
+    "anthropic": "claude-sonnet-4-5",
+    "openai": "gpt-5.6-terra",
+}
+DEFAULT_CLAUDE_MODEL = DEFAULT_DECOMPOSER_MODELS["anthropic"]
+
+
+def default_decomposer_model(provider: str) -> str:
+    """The decomposition model for `provider`, falling back to the Anthropic default."""
+    return DEFAULT_DECOMPOSER_MODELS.get(provider, DEFAULT_CLAUDE_MODEL)
 # Default served model: Qwen3-Reranker-4B, via vLLM's Qwen3ForSequenceClassification conversion.
 # Needs --hf_overrides AND the qwen3 score template server-side -- see the module docstring.
 # Scores are a softmax over the no/yes token logits, i.e. [0, 1], so context_threshold compares
@@ -471,7 +496,7 @@ def decompose_query(
     model: str = DEFAULT_CLAUDE_MODEL,
     current_year: Optional[int] = None,
 ) -> LLMProcessedQuery:
-    """Ask Claude to split the query into a rewritten query, a keyword query, and S2 filters.
+    """Ask an LLM to split the query into a rewritten query, a keyword query, and S2 filters.
 
     Falls back to (query, "", {}) on any failure, exactly like ScholarQA does. The
     returned `usage` holds the call's token counts (None if no call completed) so the
@@ -487,36 +512,19 @@ def decompose_query(
     # a later step (refusal, JSON parse) sends us down the fallback path.
     usage: Optional[Dict[str, int]] = None
     try:
-        import anthropic
+        import llm_client
 
-        client = anthropic.Anthropic()
-        req = dict(
+        provider = llm_client.resolve_provider(model)
+        client = llm_client.make_client(model, provider)
+        text, usage = llm_client.call_json_schema(
+            client, provider,
             model=model,
-            max_tokens=2048,
             system=system_prompt,
-            messages=[{"role": "user", "content": query}],
+            user=query,
+            schema=DECOMPOSED_QUERY_SCHEMA,
+            schema_name="decomposed_query",
+            max_tokens=2048,
         )
-        output_config = {"format": {"type": "json_schema", "schema": DECOMPOSED_QUERY_SCHEMA}}
-        try:
-            response = client.messages.create(output_config=output_config, **req)
-        except TypeError:
-            # SDKs older than ~0.6x have no output_config kwarg (anthropic 0.54 raises
-            # "unexpected keyword argument"); extra_body puts it in the raw request body,
-            # which the API accepts either way.
-            response = client.messages.create(extra_body={"output_config": output_config}, **req)
-        usage_obj = getattr(response, "usage", None)
-        if usage_obj is not None:
-            usage = {
-                "input_tokens": getattr(usage_obj, "input_tokens", 0) or 0,
-                "output_tokens": getattr(usage_obj, "output_tokens", 0) or 0,
-                "cache_creation_input_tokens": getattr(
-                    usage_obj, "cache_creation_input_tokens", 0) or 0,
-                "cache_read_input_tokens": getattr(
-                    usage_obj, "cache_read_input_tokens", 0) or 0,
-            }
-        if response.stop_reason == "refusal":
-            raise RuntimeError("query decomposition refused by the model")
-        text = next(b.text for b in response.content if b.type == "text")
         decomposed = json.loads(text)
         logger.info("Decomposed query: %s", decomposed)
 
@@ -531,6 +539,10 @@ def decompose_query(
         if decomposed.get("field_of_study"):
             search_filters["fieldsOfStudy"] = decomposed["field_of_study"]
     except Exception as e:
+        # A refusal or an unparseable response was still billed; llm_client hands the
+        # usage back on the exception so the fallback does not lose those tokens.
+        if getattr(e, "usage", None):
+            usage = e.usage
         logger.warning("Error while decomposing query (%s); falling back to the raw query", e)
         return LLMProcessedQuery(
             rewritten_query=query, keyword_query=query, search_filters={}, usage=usage,

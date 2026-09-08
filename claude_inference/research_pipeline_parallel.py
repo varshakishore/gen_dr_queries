@@ -38,6 +38,9 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import llm_client
+import research_pipeline as RP
+
 PIPELINE = Path(__file__).resolve().parent / "research_pipeline.py"
 
 # Rubric-labeled seeds from filter_queries.py (tool=sqa by construction).
@@ -130,6 +133,7 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         cmd += ["--banned-strategies-file", str(args.banned_strategies_file)]
     if args.timeout:
         cmd += ["--timeout", str(args.timeout)]
+    cmd += llm_client.forward_provider_args(args)
     if args.verify_criterion:
         cmd += ["--verify-criterion",
                 "--verify-n-papers", str(args.verify_n_papers),
@@ -201,7 +205,10 @@ def main():
                    help="Skip the first N HF seeds before taking --limit "
                         "(e.g. --start 50 --limit 50 = seeds 50-99).")
     p.add_argument("--max-attempts", type=int, default=5)
-    p.add_argument("--model", default="claude-sonnet-4-5")
+    p.add_argument("--model", default="claude-sonnet-4-5",
+                   help="Generator/judge model forwarded to the pipeline. Accepts a Claude "
+                        "id or an OpenAI one (e.g. gpt-5.6-terra); the provider is inferred "
+                        "from the id unless --provider says otherwise.")
     p.add_argument("--prompt", choices=["explore", "exploit"], default="explore",
                    help="make-harder prompt variant passed to the pipeline (default: explore).")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
@@ -235,6 +242,15 @@ def main():
                    help="Per-paper char cap in the criterion-check context (default: 4000).")
     p.add_argument("--reranker", default="auto", choices=["auto", "none", "vllm"],
                    help="Reranker for criterion-check retrieval (default: auto).")
+    p.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto",
+                   help="Provider for --model, forwarded to the pipeline. 'auto' (default) "
+                        "infers it from the model id.")
+    p.add_argument("--reasoning-effort", choices=["minimal", "low", "medium", "high"],
+                   default=None,
+                   help="OpenAI models only: reasoning_effort forwarded to the pipeline.")
+    p.add_argument("--decomposer-model", default=None,
+                   help="Model for retrieve_papers' query decomposition under "
+                        "--verify-criterion; independent of --model.")
     p.add_argument("--reranker-url", default=None,
                    help="vLLM reranker base URL (env: VLLM_RERANK_URL).")
     p.add_argument("--python", default=sys.executable, help="Python interpreter for subprocesses.")
@@ -242,6 +258,17 @@ def main():
                    help="Re-run seeds even if their sample_NNN.json already exists.")
     p.set_defaults(skip_existing=True)
     args = p.parse_args()
+    llm_client.configure_from_args(args)
+    provider = llm_client.resolve_provider(args.model)
+    if missing := llm_client.require_api_key(args.model):
+        p.error(f"{missing} Needed for generation.")
+    if args.verify_criterion:
+        # Resolve what retrieval will really use -- it follows --model unless overridden.
+        args.decomposer_model = RP.effective_decomposer_model(args.decomposer_model,
+                                                              args.model)
+        if args.decomposer_model and (
+                missing := llm_client.require_api_key(args.decomposer_model)):
+            p.error(missing + llm_client.decomposer_hint(args.model, args.decomposer_model))
     seeds = load_seeds(args)
     if not seeds:
         p.error("No seed questions provided.")
@@ -250,7 +277,8 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
     args._n = len(seeds)
     workers = max(1, min(args.concurrency, len(seeds)))
-    print(f"Running {len(seeds)} seed(s), {workers} at a time -> {out_dir}/")
+    print(f"Running {len(seeds)} seed(s), {workers} at a time -> {out_dir}/  "
+          f"[{args.model} via {provider}]")
 
     rows: list[dict] = [None] * len(seeds)
     with ThreadPoolExecutor(max_workers=workers) as ex:
@@ -268,7 +296,7 @@ def main():
     avg_attempts_ff = (sum(ff_attempts) / len(ff_attempts)) if ff_attempts else None
 
     (out_dir / "index.json").write_text(json.dumps(
-        {"model": args.model, "max_attempts": args.max_attempts,
+        {"model": args.model, "provider": provider, "max_attempts": args.max_attempts,
          "total_cost_usd": total_cost, "total_claude_calls": total_calls,
          "avg_make_harder_calls_failed_found": avg_attempts_ff,
          "num_failed_found": len(ff_attempts),

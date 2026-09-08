@@ -7,8 +7,9 @@ This module, when called (`build_feedback`), does the following:
                if it matches no seed. Two interchangeable methods:
                  * "llm"       — LLM reads each strategy and picks seed-vs-new, naming
                                  novel clusters; near-duplicate new clusters are then merged
-                                 into broad themes. Defaults to claude-opus-4-1. This
-                                 needs ANTHROPIC_API_KEY only.
+                                 into broad themes. Defaults to the cluster_provider's
+                                 own model (claude-opus-4-6 / gpt-5.6-luna), so it needs
+                                 that provider's key only.
                  * "embedding" — Not currently used but keeping as an option. Computes
                                  cosine nearest-seed with a distance threshold; anything
                                  farther than the threshold from every seed spawns a new
@@ -57,7 +58,9 @@ seed_strategies_file : str | None
 
 Options (all keyword-only, shown with defaults):
     assign_method="llm"           "llm" | "embedding"  (see above)
-    cluster_model="claude-opus-4-6"   [llm] model doing the cluster assignment
+    cluster_provider="anthropic"  [llm] "anthropic" | "openai"
+    cluster_model=None            [llm] model doing the cluster assignment;
+                                  None = cluster_provider's default
     merge_new_clusters=True       [llm] consolidate near-duplicate new clusters
     batch_size=25                 [llm] strategies per assignment call
     embedding_model="text-embedding-3-small"   [embedding] embedding model if using embeddings
@@ -181,7 +184,7 @@ from typing import Any, Iterable, Sequence
 EMBEDDING_PREFIX = "The model has the following capability: "
 
 DEFAULT_ANTHROPIC_CLUSTER_MODEL = "claude-opus-4-6"
-DEFAULT_OPENAI_CLUSTER_MODEL = "gpt-4o-mini"
+DEFAULT_OPENAI_CLUSTER_MODEL = "gpt-5.6-luna"
 DEFAULT_CLUSTER_MODEL = DEFAULT_ANTHROPIC_CLUSTER_MODEL
 
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
@@ -967,7 +970,7 @@ def build_feedback(
     # clustering
     assign_method: str = "llm",
     cluster_provider: str = "anthropic",
-    cluster_model: str = DEFAULT_CLUSTER_MODEL,
+    cluster_model: str | None = None,   # None -> assign_llm picks the provider's default
     merge_new_clusters: bool = True,
     batch_size: int = 25,
     embedding_model: str = DEFAULT_EMBEDDING_MODEL,

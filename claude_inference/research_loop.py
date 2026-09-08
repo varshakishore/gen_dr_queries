@@ -85,7 +85,8 @@ Examples:
   python research_loop.py --out-dir runs/loop2 --total 40 --feedback-every 10 \
       --prompt-mix 1.0 --feedback-scope last
 
-Requires ANTHROPIC_API_KEY (generation + clustering) and a research server on --server-url.
+Requires the API key for whichever provider serves --model / --cluster-model
+(ANTHROPIC_API_KEY or OPENAI_API_KEY) and a research server on --server-url.
 """
 
 import argparse
@@ -100,6 +101,7 @@ import time
 from pathlib import Path
 from types import SimpleNamespace
 
+import llm_client
 import research_pipeline as RP
 from research_pipeline_parallel import load_seeds
 from strategy_feedback_module import (
@@ -343,6 +345,7 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         "--strategies-file", str(example_file),
         "--banned-strategies-file", str(banned_file),
     ]
+    cmd += llm_client.forward_provider_args(args)
     if few_shots_file:
         cmd += ["--few-shots-file", str(few_shots_file)]
     if args.profile:
@@ -402,6 +405,7 @@ def compute_feedback(run_dirs: list, round_dir: Path, example_file: Path, args) 
     feedback = build_feedback(
         examples,
         RP.load_strategy_file(example_file),
+        cluster_provider=cluster_provider(args),
         cluster_model=args.cluster_model,
         min_failure_rate=args.min_failure_rate,
         max_share=args.max_share,
@@ -422,6 +426,18 @@ def compute_feedback(run_dirs: list, round_dir: Path, example_file: Path, args) 
     return feedback
 
 
+def cluster_provider(args) -> str:
+    """Which provider clusters strategies.
+
+    'auto' follows the model ids already chosen: --cluster-model if one was given, else
+    --model, so `--model gpt-5.6-terra` moves clustering across with generation rather
+    than leaving the loop half on each provider.
+    """
+    if args.cluster_provider != "auto":
+        return args.cluster_provider
+    return llm_client.resolve_provider(args.cluster_model or args.model)
+
+
 def run_verification(out_dir: Path, args, remaining_usd: float | None = None) -> dict:
     """Post-filter the harvest with verify_questions.py. Returns its totals."""
     out = out_dir / "verified.json"
@@ -430,6 +446,7 @@ def run_verification(out_dir: Path, args, remaining_usd: float | None = None) ->
            "--verify-n-papers", str(args.verify_n_papers),
            "--verify-max-chars-per-paper", str(args.verify_max_chars_per_paper),
            "--reranker", args.reranker]
+    cmd += llm_client.forward_provider_args(args)
     if remaining_usd is not None:
         cmd += ["--budget-usd", f"{remaining_usd:.4f}"]
     if args.reranker_url:
@@ -525,7 +542,13 @@ def main():
 
     fbk = p.add_argument_group("feedback (see strategy_feedback_module.py)")
     fbk.add_argument("--cluster-model", default=None,
-                     help="Model for strategy clustering (default: the module's).")
+                     help="Model for strategy clustering (default: the clustering "
+                          "provider's own default).")
+    fbk.add_argument("--cluster-provider", choices=["auto", "anthropic", "openai"],
+                     default="auto",
+                     help="Provider for strategy clustering. 'auto' (default) follows "
+                          "--cluster-model's id, or --model's when no cluster model is set, "
+                          "so the whole loop moves providers together.")
     fbk.add_argument("--min-failure-rate", type=float, default=0.25)
     fbk.add_argument("--max-share", type=float, default=0.5)
     fbk.add_argument("--min-cluster-size", type=int, default=0)
@@ -536,7 +559,17 @@ def main():
     gen = p.add_argument_group("generation (forwarded to the pipeline)")
     gen.add_argument("--concurrency", type=int, default=5)
     gen.add_argument("--max-attempts", type=int, default=5)
-    gen.add_argument("--model", default="claude-sonnet-4-5")
+    gen.add_argument("--model", default="claude-sonnet-4-5",
+                     help="Generator/judge model for every round. Accepts a Claude id or an "
+                          "OpenAI one (e.g. gpt-5.6-terra); provider inferred from the id.")
+    gen.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto",
+                     help="Provider for --model (default: auto, inferred from the model id).")
+    gen.add_argument("--reasoning-effort",
+                     choices=["minimal", "low", "medium", "high"], default=None,
+                     help="OpenAI models only: reasoning_effort for every generation call.")
+    gen.add_argument("--decomposer-model", default=None,
+                     help="Model for retrieve_papers' query decomposition during "
+                          "verification; independent of --model.")
     gen.add_argument("--profile", help="Answering-system profile (e.g. drtulu, tongyi).")
     gen.add_argument("--server-url", default="http://localhost:8007/ask")
     gen.add_argument("--timeout", type=float)
@@ -561,8 +594,18 @@ def main():
     # Fail here rather than in every subprocess: without a key each seed dies on argparse
     # and the whole round comes back SUBPROCESS_FAILED with the reason buried in a
     # per-seed console capture.
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        p.error("ANTHROPIC_API_KEY is not set (generation and clustering both need it).")
+    llm_client.configure_from_args(args)
+    for label, model in (("generation", args.model),
+                         ("clustering", args.cluster_model or args.model)):
+        if missing := llm_client.require_api_key(model):
+            p.error(f"{missing} Needed for {label}.")
+    if args.verify_criterion or args.verify_after:
+        # Resolve what retrieval will really use -- it follows --model unless overridden.
+        args.decomposer_model = RP.effective_decomposer_model(args.decomposer_model,
+                                                             args.model)
+        if args.decomposer_model and (
+                missing := llm_client.require_api_key(args.decomposer_model)):
+            p.error(missing + llm_client.decomposer_hint(args.model, args.decomposer_model))
     if args.verify_after and not os.environ.get("S2_API_KEY"):
         print("[verify] WARNING: S2_API_KEY is not set; the post-hoc criterion check will "
               "be rate limited hard by Semantic Scholar.", file=sys.stderr)

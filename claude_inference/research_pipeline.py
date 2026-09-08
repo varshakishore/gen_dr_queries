@@ -39,9 +39,10 @@ from pathlib import Path
 from typing import Optional
 
 import requests
-from anthropic import Anthropic
 
+import llm_client
 from cite_utils import build_doc_index, numbered_plaintext, references_block
+from llm_client import price_call, resolve_provider
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -50,27 +51,14 @@ from cite_utils import build_doc_index, numbered_plaintext, references_block
 RESEARCH_SERVER_URL = "http://localhost:8007/ask"
 RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 
+# Default generator/judge model. Any id llm_client routes to OpenAI (gpt-*, o3-*)
+# works here too -- see llm_client for how the provider is picked from the id.
 CLAUDE_MODEL = "claude-sonnet-4-5"
 MAX_ATTEMPTS = 5
 
-# Per-million-token pricing in USD (input, output).
-# Sources: Anthropic pricing pages, verified for the 4.x family.
-# Cache writes are billed at 1.25x input; cache hits at 0.10x input.
-# Extend this table when adding new models.
-MODEL_PRICING = {
-    "claude-opus-4-8":   {"input": 5.00,  "output": 25.00},
-    "claude-opus-4-7":   {"input": 5.00,  "output": 25.00},
-    "claude-opus-4-6":   {"input": 5.00,  "output": 25.00},
-    "claude-opus-4-5":   {"input": 5.00,  "output": 25.00},
-    "claude-opus-4-1":   {"input": 15.00, "output": 75.00},
-    "claude-opus-4-0":   {"input": 15.00, "output": 75.00},
-    "claude-sonnet-4-6": {"input": 3.00,  "output": 15.00},
-    "claude-sonnet-4-5": {"input": 3.00,  "output": 15.00},
-    "claude-haiku-4-5":  {"input": 1.00,  "output": 5.00},
-    "claude-sonnet-5":  {"input": 3.00,  "output": 15.00},
-}
-CACHE_WRITE_MULTIPLIER = 1.25
-CACHE_READ_MULTIPLIER = 0.10
+# MODEL_PRICING and the cache multipliers now live in llm_client, so both providers
+# bill off one table -- add a new model's rates there. `price_call` stays re-exported
+# from here for importers (compare_claude.py, research_loop.py) that took it from here.
 
 
 # ---------------------------------------------------------------------------
@@ -540,13 +528,18 @@ class RunLogger:
         cost_usd: float,
         latency_s: float,
         error: Optional[str] = None,
+        provider: Optional[str] = None,
     ) -> None:
+        # `kind` stays "claude_call" whichever provider served it: summarize_run.py and
+        # loop_report.py key off that string, and renaming it would orphan every log
+        # already on disk. `provider` is the field to read.
         self._write({
             "kind": "claude_call",
             "seed": seed,
             "attempt": attempt,
             "purpose": purpose,
             "model": model,
+            "provider": provider,
             "system": system,
             "messages": messages,
             "response_text": response_text,
@@ -645,47 +638,6 @@ class CostBucket:
         self.calls += other.calls
 
 
-_PRICING_WARNED: set = set()
-
-
-def price_call(model: str, usage: dict) -> tuple[float, dict]:
-    """Compute cost in USD for one Claude call. Returns (cost, normalized_usage).
-
-    `usage` mirrors the fields on the Anthropic SDK's Usage object:
-      input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens.
-    Unknown models are priced at $0 with a one-time warning printed to stderr.
-    """
-    rates = MODEL_PRICING.get(model)
-    if rates is None:
-        if model not in _PRICING_WARNED:
-            print(
-                f"[cost] WARNING: no pricing entry for model {model!r}; "
-                "cost will be reported as $0. Add it to MODEL_PRICING.",
-                file=sys.stderr,
-            )
-            _PRICING_WARNED.add(model)
-        rates = {"input": 0.0, "output": 0.0}
-
-    input_tokens = int(usage.get("input_tokens") or 0)
-    output_tokens = int(usage.get("output_tokens") or 0)
-    cache_write = int(usage.get("cache_creation_input_tokens") or 0)
-    cache_read = int(usage.get("cache_read_input_tokens") or 0)
-
-    cost = (
-        input_tokens * rates["input"]
-        + output_tokens * rates["output"]
-        + cache_write * rates["input"] * CACHE_WRITE_MULTIPLIER
-        + cache_read * rates["input"] * CACHE_READ_MULTIPLIER
-    ) / 1_000_000
-
-    return cost, {
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
-        "cache_creation_input_tokens": cache_write,
-        "cache_read_input_tokens": cache_read,
-    }
-
-
 # ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
@@ -752,6 +704,31 @@ class SeedResult:
 # Helpers
 # ---------------------------------------------------------------------------
 
+def effective_decomposer_model(decomposer_model: Optional[str],
+                               model: str) -> Optional[str]:
+    """Which model retrieve_papers will decompose with, given the flag and --model.
+
+    An explicit --decomposer-model wins. Otherwise it follows `model`'s provider, so
+    `--model gpt-5.6-terra` yields an all-OpenAI run needing only OPENAI_API_KEY rather
+    than reaching Anthropic for this one step. Callers pass the result to retrieval
+    explicitly, so the choice is visible in the log rather than resolved down inside
+    retrieve_papers.
+
+    Note the decomposer picks the papers, so its provider shifts retrieval and hence what
+    the meta-judge sees -- see retrieve_papers.DEFAULT_DECOMPOSER_MODELS.
+
+    Imported inside the function to keep the retrieval stack optional for runs without
+    --verify-criterion; returns None if it is not installed, leaving the check to skip.
+    """
+    if decomposer_model:
+        return decomposer_model
+    try:
+        from retrieve_papers import default_decomposer_model
+    except ImportError:
+        return None
+    return default_decomposer_model(resolve_provider(model))
+
+
 def extract_json(text: str) -> dict:
     """Pull the first JSON object out of a string, tolerating code fences."""
     fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
@@ -767,11 +744,11 @@ def extract_json(text: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Claude calls
+# LLM calls
 # ---------------------------------------------------------------------------
 
-def _call_claude(
-    client: Anthropic,
+def _call_llm(
+    client,
     *,
     model: str,
     system: Optional[str],
@@ -782,12 +759,18 @@ def _call_claude(
     attempt: int,
     purpose: str,
     log_messages: Optional[list] = None,
+    provider: Optional[str] = None,
 ) -> tuple[str, CostBucket]:
-    """Single Claude call wrapped with logging + cost accounting.
+    """Single Claude-or-GPT call wrapped with logging + cost accounting.
+
+    `provider` defaults to whatever `model`'s id resolves to (see llm_client); the
+    request shape, the reasoning-token headroom, and the usage field names all live
+    there, so nothing above this function branches on provider.
 
     `log_messages`, if given, is logged instead of the real `messages` — used to
     redact the bulky research answer from the judge prompt in the log.
     """
+    provider = resolve_provider(model, provider)
     logged_messages = log_messages if log_messages is not None else messages
     t0 = time.perf_counter()
     err: Optional[str] = None
@@ -796,46 +779,24 @@ def _call_claude(
     cost_usd = 0.0
 
     try:
-        kwargs = {"model": model, "max_tokens": max_tokens, "messages": messages}
-        if system is not None:
-            # Cache the (static, reused) system prompt so repeated calls within the
-            # 5-min TTL read it at 0.10x instead of full input price. Only the harder-
-            # question generator passes a system prompt; the judge passes None.
-            kwargs["system"] = [{
-                "type": "text",
-                "text": system,
-                "cache_control": {"type": "ephemeral"},
-            }]
-        resp = client.messages.create(**kwargs)
-        # Price the call BEFORE looking at its content, so a refusal or a truncated
-        # response still gets its (already-paid-for) input tokens into the log.
-        usage_obj = getattr(resp, "usage", None)
-        if usage_obj is not None:
-            usage = {
-                "input_tokens": getattr(usage_obj, "input_tokens", 0),
-                "output_tokens": getattr(usage_obj, "output_tokens", 0),
-                "cache_creation_input_tokens": getattr(
-                    usage_obj, "cache_creation_input_tokens", 0
-                ),
-                "cache_read_input_tokens": getattr(
-                    usage_obj, "cache_read_input_tokens", 0
-                ),
-            }
+        response_text, usage = llm_client.call_text(
+            client, provider, model=model, system=system,
+            messages=messages, max_tokens=max_tokens,
+        )
         cost_usd, usage = price_call(model, usage)
-        # `content` is empty on a refusal and can lead with a non-text block, so join the
-        # text blocks rather than indexing: content[0].text raised IndexError on refusals
-        # and buried the cause as "list index out of range".
-        response_text = "".join(getattr(b, "text", "") for b in resp.content)
-        if not response_text.strip():
-            raise RuntimeError(f"empty response from {model} "
-                               f"(stop_reason={getattr(resp, 'stop_reason', None)!r})")
     except Exception as e:
+        # A response that arrived but carried no usable text was still billed, so
+        # recover its usage: otherwise a refusal or a reasoning-truncated call drops
+        # its (already-paid-for) input tokens from both the log and the cost total.
+        if isinstance(e, llm_client.EmptyResponse) and e.usage:
+            cost_usd, usage = price_call(model, e.usage)
         err = f"{type(e).__name__}: {e}"
         latency = time.perf_counter() - t0
         logger.log_claude_call(
             seed=seed, attempt=attempt, purpose=purpose, model=model,
             system=system, messages=logged_messages, response_text=response_text,
             usage=usage, cost_usd=cost_usd, latency_s=latency, error=err,
+            provider=provider,
         )
         raise
 
@@ -844,6 +805,7 @@ def _call_claude(
         seed=seed, attempt=attempt, purpose=purpose, model=model,
         system=system, messages=logged_messages, response_text=response_text,
         usage=usage, cost_usd=cost_usd, latency_s=latency, error=None,
+        provider=provider,
     )
 
     bucket = CostBucket(
@@ -858,7 +820,7 @@ def _call_claude(
 
 
 def generate_seed_criterion(
-    client: Anthropic,
+    client,
     model: str,
     seed: str,
     logger: RunLogger,
@@ -866,7 +828,7 @@ def generate_seed_criterion(
     """Generate one atomic verification criterion for the seed question (round 0)."""
     prompt = PROMPT_FOR_SEED_CRITERION.format(question=seed)
     messages = [{"role": "user", "content": prompt}]
-    raw, bucket = _call_claude(
+    raw, bucket = _call_llm(
         client, model=model, system=None, messages=messages,
         max_tokens=800, logger=logger, seed=seed, attempt=0, purpose="seed_criterion",
     )
@@ -875,7 +837,7 @@ def generate_seed_criterion(
 
 
 def harder_question_gen(
-    client: Anthropic,
+    client,
     model: str,
     seed: str,
     prior_attempts: list,
@@ -906,7 +868,7 @@ def harder_question_gen(
         )
 
     messages = [{"role": "user", "content": user_content}]
-    raw, bucket = _call_claude(
+    raw, bucket = _call_llm(
         client, model=model, system=harder_prompt, messages=messages,
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
@@ -939,7 +901,7 @@ def format_answer_for_judge(answer: str, trace: object) -> str:
 
 
 def judge_answer(
-    client: Anthropic,
+    client,
     model: str,
     question: str,
     criterion: str,
@@ -961,7 +923,7 @@ def judge_answer(
                f"see results file>",
     )
     log_messages = [{"role": "user", "content": log_prompt}]
-    raw, bucket = _call_claude(
+    raw, bucket = _call_llm(
         client, model=model, system=None, messages=messages,
         max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="judge",
         log_messages=log_messages,
@@ -1019,7 +981,7 @@ def format_search_results_context(
 
 
 def verify_criterion(
-    client: Anthropic,
+    client,
     model: str,
     question: str,
     why_harder: str,
@@ -1033,9 +995,11 @@ def verify_criterion(
 ) -> tuple[CriterionCheck, CostBucket]:
     """Retrieve papers for `question`, then judge whether `criterion` is itself correct.
 
-    retrieve_papers() runs its own Claude call for query decomposition using its own
-    client. That call is not logged as a claude_call, but its usage is reported back and
-    folded into the returned CostBucket (and into the criterion_check log record).
+    retrieve_papers() runs its own LLM call for query decomposition, with its own client
+    and its own (independently selectable) model — so the decomposer can sit on a
+    different provider than the meta-judge. That call is not logged as a claude_call,
+    but its usage is reported back and folded into the returned CostBucket (and into
+    the criterion_check log record).
     """
     # Imported lazily so the pipeline still runs without the retrieval stack installed.
     from retrieve_papers import retrieve_papers
@@ -1063,7 +1027,7 @@ def verify_criterion(
             "elapsed_s": retrieved.get("elapsed_s"),
         }
         # retrieve_papers' query-decomposition call bills to us; price it here since it
-        # never passes through _call_claude.
+        # never passes through _call_llm.
         decompose_usage = retrieved.get("decompose_usage")
         if decompose_usage:
             decompose_model = retrieved.get("decomposer_model") or model
@@ -1103,7 +1067,7 @@ def verify_criterion(
     )}]
 
     try:
-        raw, bucket = _call_claude(
+        raw, bucket = _call_llm(
             client, model=model, system=None, messages=messages,
             max_tokens=3000, logger=logger, seed=seed, attempt=attempt,
             purpose="verify_criterion", log_messages=log_messages,
@@ -1226,7 +1190,7 @@ def query_research_system(
 # ---------------------------------------------------------------------------
 
 def process_seed(
-    client: Anthropic,
+    client,
     model: str,
     seed: str,
     logger: RunLogger,
@@ -1461,7 +1425,10 @@ def main():
     parser.add_argument("--max-attempts", type=int, default=MAX_ATTEMPTS,
                         help=f"Max attempts per seed (default: {MAX_ATTEMPTS}).")
     parser.add_argument("--model", default=CLAUDE_MODEL,
-                        help=f"Anthropic model (default: {CLAUDE_MODEL}).")
+                        help=f"Generator/judge model (default: {CLAUDE_MODEL}). Accepts a "
+                             f"Claude id or an OpenAI one (e.g. gpt-5.6-terra); the "
+                             f"provider is inferred from the id unless --provider says "
+                             f"otherwise.")
     parser.add_argument("--output", help="Optional path to write final JSON results.")
     parser.add_argument(
         "--log-dir", default="./logs",
@@ -1546,14 +1513,25 @@ def main():
         "--reranker-url", default=None,
         help="Base URL of the vLLM reranker, e.g. http://gpu-host:8000 (env: VLLM_RERANK_URL).",
     )
+    parser.add_argument(
+        "--decomposer-model", default=None,
+        help="Model for retrieve_papers' query decomposition during --verify-criterion "
+             "(default: retrieve_papers' own default). Independent of --model, so the "
+             "cheap structured-extraction step can stay on a cheap model.",
+    )
+    llm_client.add_provider_arg(parser)
     args = parser.parse_args()
+    llm_client.configure_from_args(args)
 
     profile_text = ANSWERING_SYSTEM_PROFILES[args.profile]
 
+    decomposer = effective_decomposer_model(args.decomposer_model, args.model)
     retrieval_kwargs = {
         "reranker": args.reranker,
         "reranker_url": args.reranker_url,
     }
+    if decomposer:
+        retrieval_kwargs["decomposer_model"] = decomposer
 
     base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
                      else PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT)
@@ -1583,8 +1561,12 @@ def main():
     if not seeds:
         parser.error("No seed questions provided.")
 
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        parser.error("ANTHROPIC_API_KEY environment variable is not set.")
+    missing_key = llm_client.require_api_key(args.model)
+    if missing_key:
+        parser.error(missing_key)
+    if args.verify_criterion and decomposer:
+        if missing_key := llm_client.require_api_key(decomposer):
+            parser.error(missing_key + llm_client.decomposer_hint(args.model, decomposer))
 
     if args.verify_criterion and not os.environ.get("S2_API_KEY"):
         print(
@@ -1599,7 +1581,15 @@ def main():
     print(f"Run ID: {run_id}")
     print(f"Logging every call to: {log_path}")
 
-    client = Anthropic()
+    provider = resolve_provider(args.model)
+    print(f"Model: {args.model} (provider: {provider}"
+          + (f", reasoning_effort: {args.reasoning_effort}"
+             if provider == llm_client.OPENAI and args.reasoning_effort else "")
+          + ")")
+    if args.verify_criterion and decomposer:
+        print(f"Decomposer: {decomposer} "
+              f"(provider: {resolve_provider(decomposer)})")
+    client = llm_client.make_client(args.model)
 
     all_results: list[SeedResult] = []
     grand_total = CostBucket()

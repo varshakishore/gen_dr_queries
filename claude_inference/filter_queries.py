@@ -48,6 +48,8 @@ from pathlib import Path
 
 from openai import OpenAI
 
+import llm_client
+
 SOURCE_DATASET = "allenai/asta-user-interactions"
 SOURCE_CONFIG = "optin_queries"
 SOURCE_SPLIT = "train"
@@ -108,11 +110,9 @@ COLUMNS = ("query", "thread_id", "english", "clarity", "research_question",
            "request_type", "usable", "filter_model")
 
 # USD per 1M tokens, (input, output). Override for other models with --price-in/--price-out.
-PRICING = {
-    "gpt-5.6-luna": (0.20, 1.20),
-    "gpt-5.6-terra": (2.00, 12.00),
-    "gpt-5.6-sol": (4.00, 20.00),
-}
+# Derived from the pipeline's single pricing table so the two never drift; override
+# per-run with --price-in / --price-out.
+PRICING = {m: (r["input"], r["output"]) for m, r in llm_client.MODEL_PRICING.items()}
 
 _write_lock = threading.Lock()
 

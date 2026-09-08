@@ -51,7 +51,10 @@ def load_run(run_dir: Path):
 
 def console_summary(index, samples):
     print("#" * 70)
-    print(f"RUN: model={index.get('model')}  max_attempts={index.get('max_attempts')}")
+    provider = index.get("provider")
+    print(f"RUN: model={index.get('model')}"
+          + (f" ({provider})" if provider else "")
+          + f"  max_attempts={index.get('max_attempts')}")
     print("#" * 70)
     counts = Counter(s["status"] for s in samples)
     for st, n in sorted(counts.items(), key=lambda kv: -kv[1]):
