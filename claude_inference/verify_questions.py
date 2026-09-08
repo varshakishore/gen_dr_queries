@@ -57,8 +57,8 @@ from dataclasses import asdict
 from pathlib import Path
 
 import llm_client
-
 import research_pipeline as RP
+from anthropic import Anthropic
 from strategy_feedback_module import load_examples_from_runs
 
 KEEP_LABELS = ("correct", "partly_correct")
@@ -99,6 +99,7 @@ def check_one(ex, client, logger, args) -> dict:
         "seed_question": ex.seed_question,
         "question": ex.updated_question,
         "strategy": ex.strategy,
+        "required_reasoning_process": ex.extra.get("required_reasoning_process") or [],
         "source_run": ex.source_run,
         "round": ex.round,
         "criterion_original": ex.verification_criterion,
