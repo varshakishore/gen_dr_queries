@@ -21,7 +21,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from view_answer import render_sample, render_compare, VERDICT_COLOR, VERDICT_LABEL
+from view_answer import VERDICT_COLOR, VERDICT_LABEL, render_compare, render_sample
 
 
 def load_run(run_dir: Path):
@@ -150,6 +150,11 @@ def card_html(s) -> str:
         cc = last.get("criterion_check") or {}
         parts.append(f'<div class="field"><b>Final question</b><div>{esc(h.get("updated_question"))}</div></div>')
         parts.append(f'<div class="field"><b>Strategy</b><div>{esc(h.get("chosen_strategy"))}</div></div>')
+        if h.get("required_reasoning_process"):
+            steps = "".join(f"<li>{esc(s)}</li>"
+                            for s in h["required_reasoning_process"])
+            parts.append(f'<div class="field"><b>Required reasoning process</b>'
+                         f'<ol>{steps}</ol></div>')
         parts.append(f'<div class="field"><b>Verification criterion</b><div>{esc(h.get("verification_criterion"))}</div></div>')
         if h.get("verification_criterion_original"):
             parts.append(f'<div class="field"><b>Criterion before rewrite</b>'
