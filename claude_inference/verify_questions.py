@@ -111,7 +111,6 @@ def check_one(ex, client, logger, args) -> dict:
             client,
             model=args.model,
             question=ex.updated_question,
-            why_harder=ex.extra.get("why_harder", ""),
             criterion=ex.verification_criterion,
             logger=logger,
             seed=ex.seed_question,

@@ -454,9 +454,6 @@ LABEL DEFINITIONS (for judging the verification criterion itself):
 Question:
 {question}
 
-Generator's rationale for why the question is difficult:
-{why_harder}
-
 Verification criterion being evaluated:
 {criterion}
 
@@ -984,7 +981,6 @@ def verify_criterion(
     client,
     model: str,
     question: str,
-    why_harder: str,
     criterion: str,
     logger: RunLogger,
     seed: str,
@@ -1052,14 +1048,14 @@ def verify_criterion(
         raise
 
     prompt = PROMPT_TO_VERIFY_VERIFICATION_CRITERIA.format(
-        question=question, why_harder=why_harder, criterion=criterion,
+        question=question, criterion=criterion,
         search_results_context=context,
     )
     messages = [{"role": "user", "content": prompt}]
     # Keep the bulky retrieved context out of the claude_call log record; the
     # criterion_check record carries its size and the queries that produced it.
     log_messages = [{"role": "user", "content": PROMPT_TO_VERIFY_VERIFICATION_CRITERIA.format(
-        question=question, why_harder=why_harder, criterion=criterion,
+        question=question, criterion=criterion,
         search_results_context=(
             f"<{retrieval_meta['n_context_papers']} papers omitted: "
             f"{retrieval_meta['context_chars']} chars>"
@@ -1255,13 +1251,13 @@ def process_seed(
             print(f"    Criterion: {harder.verification_criterion}")
 
         # Step 1b — check the criterion itself before spending a research-server call on
-        # it. Rounds 1+ only: round 0's criterion comes from generate_seed_criterion, has
-        # no why_harder to supply, and is often the "any non-empty answer" escape hatch.
+        # it. Rounds 1+ only: round 0's criterion comes from generate_seed_criterion and
+        # is often the "any non-empty answer" escape hatch, which there is nothing to check.
         criterion_check = None
         if verify_criteria and attempt > 0:
             try:
                 criterion_check, bucket = verify_criterion(
-                    client, model, harder.updated_question, harder.why_harder,
+                    client, model, harder.updated_question,
                     harder.verification_criterion, logger, seed, attempt,
                     retrieval_kwargs=retrieval_kwargs,
                     n_context_papers=n_context_papers,
