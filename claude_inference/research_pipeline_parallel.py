@@ -127,7 +127,13 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
         cmd += ["--banned-strategies", args.banned_strategies]
     if args.few_shots_file:
         cmd += ["--few-shots-file", str(args.few_shots_file)]
-    if args.strategies_file:
+    # A per-seed menu wins over the round-wide one: research_loop samples a fresh example
+    # menu for every seed, so each seed sees its own draw from the strategy pool. Falls
+    # back to the shared file when this seed has no menu (explore side, or round 0).
+    seed_menu = Path(args.strategies_dir) / f"{tag}.txt" if args.strategies_dir else None
+    if seed_menu and seed_menu.exists():
+        cmd += ["--strategies-file", str(seed_menu)]
+    elif args.strategies_file:
         cmd += ["--strategies-file", str(args.strategies_file)]
     if args.banned_strategies_file:
         cmd += ["--banned-strategies-file", str(args.banned_strategies_file)]
@@ -225,6 +231,11 @@ def main():
     p.add_argument("--strategies-file",
                    help="File of example strategies (one per line) passed to the pipeline, "
                         "used instead of --strategies. Only affects --prompt exploit.")
+    p.add_argument("--strategies-dir",
+                   help="Directory of per-seed example-strategy menus, named sample_NNN.txt "
+                        "to match this run's seed numbering. A seed with a menu here uses it "
+                        "instead of --strategies-file, so every seed can be shown its own "
+                        "sample of the strategy pool. Only affects --prompt exploit.")
     p.add_argument("--banned-strategies-file",
                    help="File of banned strategies (one per line) passed to the pipeline, "
                         "used instead of --banned-strategies. Only affects --prompt explore.")

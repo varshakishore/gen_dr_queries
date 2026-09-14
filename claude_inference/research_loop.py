@@ -19,19 +19,28 @@ Each round:
              in the feedback work; strategy_feedback_module globs `*/sample_*.json` under a
              round dir, so both sides are picked up by passing the round dir alone.
 
-  2. FEED    the round dirs (all of them so far, or just this one -- see --feedback-scope)
-     BACK    through strategy_feedback_module.build_feedback, and rewrite the two menus:
+  2. FEED    every round dir so far through strategy_feedback_module.build_feedback --
+     BACK    always cumulatively, since the quota below is a lifetime count -- and rewrite
+             the two menus from its `strategy_clusters`:
 
-               EXAMPLE STRATEGIES TO CONSIDER  <- focus_strategies
-                   what works but is under-used, plus seeds never tried. Injected into
+               EXAMPLE STRATEGIES TO CONSIDER  <- a fresh sample PER SEED
+                   --max-example-strategies drawn without replacement from every cluster
+                   not over the quota, P(pick) monotone in a smoothed failure rate times
+                   (1 - share): what works, favouring what the generator under-uses.
+                   Sampling rather than taking the top N keeps a mid-ranked cluster from
+                   starving -- it would otherwise never be tried again, never accumulate
+                   evidence, and never climb. Drawn per SEED rather than per round
+                   (--menu-sample), so one round exercises the whole pool: measured over 35
+                   seeds with a pool of 11 and a cap of 6, every strategy appeared in some
+                   seed's menu, at rates from 80% down to 20% by weight. Written to
+                   round_KK/menus/sample_NNN.txt and injected into
                    PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT (the 'exploit' prompt).
 
-               STRATEGIES TO NOT USE           <- ineligible_strategies
-                   the ruts (over-represented) and the duds (tried >= --ban-min-evidence
-                   times and still below min_failure_rate). Injected into
-                   PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE (the 'explore' prompt).
-                   Clusters excluded merely for being small are NOT banned -- too little
-                   evidence to write them off.
+               STRATEGIES TO NOT USE           <- the harvest quota
+                   the base bans, plus every cluster that has yielded more than
+                   --ban-after-failures system-breaking questions: we have enough
+                   questions of that type, so retire it and push the generator elsewhere.
+                   Injected into PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE ('explore').
 
                "Here are a few examples:"       <- failures from the run itself
                    Round 0 shows the built-in DEFAULT_FEW_SHOTS. Afterwards each prompt
@@ -51,11 +60,21 @@ Each round:
              and the same strategy may legitimately be recommended to one prompt while
              banned from the other.
 
+             The ban list is REBUILT from scratch every round, not accumulated. It can be,
+             because the quota re-derives itself: num_failed only grows, so a retired
+             strategy is still over the quota next round. That avoids storing ban strings,
+             which would silently lapse -- novel cluster descriptions are LLM-written and
+             churn completely between rounds (measured: 0 of 5 survive a round).
+
              The three strategies the prompt's own few-shot examples demonstrate stay
-             banned in every round; dynamic bans accumulate across rounds up to
-             --max-banned-strategies (oldest dropped first), since a strategy stops
-             looking over-represented as soon as it is banned, and un-banning it would
-             just oscillate.
+             banned for 'explore' in every round, but are NOT withheld from 'exploit' --
+             that reason is specific to explore, and exploit exists to work known-good
+             strategies. A base ban leaves the exploit pool only by crossing the quota.
+
+             Feedback is clustered against cluster_seeds.txt (menu + bans), not the example
+             menu, so a retired strategy keeps a stable seed.N identity instead of being
+             rediscovered as a fresh new.N each round -- which is what keeps the quota able
+             to see it at all.
 
 Round 0 starts from the built-in menus (--strategies / --banned-strategies). The last
 round is not followed by a feedback call -- there is nothing left to feed it to.
@@ -67,8 +86,12 @@ round is not followed by a feedback call -- there is nothing left to feed it to.
              but paid only on questions worth keeping, and it cannot end a seed mid-run.
              Writes <out-dir>/verified.json (+ .kept.json, the filtered set).
 
-Each round dir holds the menus it was actually run with (example_strategies.txt,
-banned_strategies.txt), the worked examples each prompt was shown (few_shots.exploit.json
+Each round dir holds the menus it was actually run with (menus/sample_NNN.txt, one
+per exploit seed; example_strategy_pool.txt, what they were drawn from;
+example_strategies.txt, the single round-wide draw used by --menu-sample round and as a
+fallback; banned_strategies.txt; cluster_seeds.txt), the worked examples each prompt was
+shown
+(few_shots.exploit.json
 / few_shots.explore.json; round 0's are the built-in three), the seed split
 (explore.seeds.json / exploit.seeds.json), and the
 feedback it produced (feedback.json + feedback.txt). <out-dir>/loop.json is the manifest.
@@ -81,9 +104,9 @@ Examples:
   # 50 questions in rounds of 10, feedback 4 times, 10 seeds in flight
   python research_loop.py --out-dir runs/loop1 --total 50 --feedback-every 10 --concurrency 10
 
-  # only explore, and score the round on its own rather than cumulatively
+  # only explore, retiring a strategy after it has yielded 10 hard questions
   python research_loop.py --out-dir runs/loop2 --total 40 --feedback-every 10 \
-      --prompt-mix 1.0 --feedback-scope last
+      --prompt-mix 1.0 --ban-after-failures 10
 
 Requires the API key for whichever provider serves --model / --cluster-model
 (ANTHROPIC_API_KEY or OPENAI_API_KEY) and a research server on --server-url.
@@ -207,7 +230,7 @@ def _pad(shots: list, defaults: list, n: int) -> list:
     return shots[:n]
 
 
-def derive_few_shots(feedback: dict, example_menu: list, banned_menu: list, *,
+def derive_few_shots(feedback: dict, example_strategies: list, banned_menu: list, *,
                      defaults: list, n: int = 3) -> tuple[list, list]:
     """The next round's worked examples, sampled per prompt from the set that prompt needs.
 
@@ -227,15 +250,20 @@ def derive_few_shots(feedback: dict, example_menu: list, banned_menu: list, *,
     so `n` examples show `n` strategies. Short lists are padded from `defaults`, so the
     prompt always carries n worked examples.
     """
-    menu_keys = {_norm(e) for e in example_menu}
+    # `example_strategies` is the whole exploit POOL, not one seed's draw: any pool entry
+    # may be the strategy a given seed is shown, so all of them are fair game to demo.
+    menu_keys = {_norm(e) for e in example_strategies}
     focus_buckets = [
         [_shot(x) for x in (f.get("few_shot_failures") or [])]
-        for f in feedback["focus_strategies"]
+        for f in feedback["strategy_clusters"]
         if _norm(_clean(f["description"])) in menu_keys
     ]
 
-    # `ineligible_strategies` carries no examples, so the banned clusters' failures come
-    # from cluster_comparison; biggest failure counts first, as the clearest demonstrations.
+    # The banned clusters' failures come from cluster_comparison rather than from the
+    # ban list, which carries no examples; biggest failure counts first, as the clearest
+    # demonstrations. NOTE these are now the strategies that hit the harvest quota, i.e.
+    # the BEST performers -- explore is shown them as negative examples, so watch for it
+    # imitating them instead of avoiding them.
     banned_keys = {_norm(b) for b in banned_menu}
     banned_clusters = [c for c in feedback.get("cluster_comparison", [])
                        if _norm(_clean(c["description"])) in banned_keys]
@@ -250,53 +278,121 @@ def derive_few_shots(feedback: dict, example_menu: list, banned_menu: list, *,
     return exploit, explore
 
 
-def derive_menus(feedback: dict, prev_banned: list, *, base_banned: list,
-                 max_examples: int, max_banned: int, ban_min_evidence: int,
-                 keep_open_ended: bool = True) -> tuple[list, list, dict]:
-    """Turn one feedback dict into the next round's (example_menu, banned_menu, provenance).
+def _smoothed_weight(row: dict, total: int) -> float:
+    """Sampling weight for one cluster: smoothed failure rate, damped by its share.
 
-    Examples come from `focus_strategies` (works-but-rare, plus never-tried seeds), bans
-    from `ineligible_strategies` -- but only the clusters that are over-represented or that
-    have been tried at least `ban_min_evidence` times and still under-perform. A cluster
-    left out merely for being small is neither recommended nor banned.
+    Raw failure_rate is noise at small n -- a 1/1 cluster scores 1.00 and outranks a 20/23
+    one -- and a never-tried cluster scores 0.0, which is an absorbing state: weight 0 means
+    it is never sampled, so it stays untried forever. The Beta(1,1) posterior mean
+    (f + 1) / (q + 2) fixes both ends: 1/1 -> 0.67, 20/23 -> 0.84, 0/0 -> 0.50, a real
+    "unknown" prior. The (1 - share) factor throttles ruts continuously -- sampling a
+    strategy raises its share and so lowers its own weight next round.
     """
-    examples = _dedup(
-        c for c in (_clean(f["description"]) for f in feedback["focus_strategies"]) if c
-    )[:max_examples]
-    if keep_open_ended:
-        # The tail is a seed line in the built-in menus, so it can come back through
-        # focus_strategies; dedup again so it is not listed twice. It sits outside
-        # max_examples -- it is an escape hatch, not one of the ranked picks.
-        examples = _dedup(examples + [OPEN_ENDED_TAIL])
+    q = row.get("num_questions", 0) or 0
+    f = row.get("num_failed", 0) or 0
+    share = q / total if total else 0.0
+    return max(((f + 1) / (q + 2)) * (1.0 - share), 1e-9)
 
-    fresh_bans, ban_reasons = [], {}
-    for r in feedback["ineligible_strategies"]:
-        d = _clean(r["description"])
+
+def _weighted_sample(rows: list, k: int, rng: random.Random) -> list:
+    """`k` rows sampled without replacement, P(pick) monotone in row['weight'].
+
+    Efraimidis-Spirakis A-Res: key each row with u ** (1 / w) and keep the k largest. One
+    pass, no renormalising as rows are drawn. Note that drawing k > 1 without replacement
+    compresses the inclusion probabilities toward k/n -- higher weight is always likelier,
+    but the ratio between two weights is not preserved.
+    """
+    keyed = [(rng.random() ** (1.0 / r["weight"]), r) for r in rows]
+    keyed.sort(key=lambda kr: kr[0], reverse=True)
+    return [r for _, r in keyed[:k]]
+
+
+def sample_menu(pool: list, cap: int, rng: random.Random,
+                keep_open_ended: bool = True) -> list:
+    """One EXAMPLE STRATEGIES menu: `cap` strategies drawn from `pool` by weight.
+
+    Called once per seed, so each seed is shown its own draw and the pool gets exercised
+    across a round instead of one menu being frozen for all of it. A strategy left out of
+    one seed's menu is very likely in another's, which is what makes a low-weight strategy
+    get tried somewhere rather than nowhere.
+    """
+    picked = _weighted_sample(pool, cap, rng)
+    picked.sort(key=lambda r: r.get("rank") or 0)        # present the menu in ranked order
+    menu = _dedup([r["strategy"] for r in picked])
+    if keep_open_ended:
+        menu = _dedup(menu + [OPEN_ENDED_TAIL])
+    return menu
+
+
+def derive_menus(feedback: dict, *, base_banned: list, ban_after_failures: int,
+                 keep_open_ended: bool = True) -> tuple[list, list, list, dict]:
+    """Turn one feedback dict into the next round's ban list and strategy pool. Returns
+    `(pool, banned_menu, cluster_seeds, provenance)`.
+
+    `pool` is every strategy eligible for the exploit menu, each with the sampling weight
+    `sample_menu` draws by -- this function selects nothing itself, it just decides what is
+    retired and what remains available.
+
+    The ban list is a HARVEST QUOTA, recomputed from scratch every round: a strategy is
+    banned once it has yielded more than `ban_after_failures` system-breaking questions --
+    we have enough questions of that type, so retire it and push the generator elsewhere.
+    Recomputing rather than accumulating is what makes this safe: `num_failed` only ever
+    grows (feedback is always scored over every round so far), so a quota ban re-derives
+    identically next round without being stored anywhere. That matters because novel
+    cluster names churn completely between rounds -- measured at 0 of 5 novel descriptions
+    surviving a round -- so a stored ban string would stop matching and silently lapse.
+
+    The base bans stay banned for `explore` every round (they are the strategies its own
+    few-shot examples demonstrate) but are NOT withheld from `exploit`: that reason is
+    specific to explore, and exploit exists to work known-good strategies. A base ban
+    leaves the exploit pool only if it crosses the quota like any other cluster.
+
+    `cluster_seeds` is what the NEXT round is clustered against, and is deliberately not the
+    example menu: it keeps every strategy, bans included, so a retired strategy stays a
+    stable `seed.N` with a fixed description instead of being re-discovered as a fresh
+    `new.N` under a new name -- and novel clusters are where the churn lives.
+    """
+    total = (feedback.get("meta") or {}).get("num_instances", 0)
+    rows = []
+    for c in feedback.get("strategy_clusters") or []:
+        d = _clean(c.get("description", ""))
         if not d:
             continue
-        reasons = r.get("excluded_for") or []
-        over_represented = any("over-represented" in x for x in reasons)
-        unproductive = (any(x.startswith("failure_rate") for x in reasons)
-                       and r["num_questions"] >= ban_min_evidence)
-        if over_represented or unproductive:
-            fresh_bans.append(d)
-            ban_reasons[d] = "; ".join(reasons)
+        rows.append({**c, "_strategy": d, "_weight": _smoothed_weight(c, total)})
 
-    # base bans are permanent; dynamic ones accumulate, oldest dropped when over the cap
+    over_quota = [r for r in rows if (r.get("num_failed") or 0) > ban_after_failures]
+    quota_keys = {_norm(r["_strategy"]) for r in over_quota}
+    banned = _dedup(list(base_banned) + [r["_strategy"] for r in over_quota])
+
+    # exploit draws from everything not retired -- base bans included, since those are
+    # banned only for explore. The open-ended tail is a fixed menu line, not a draw.
+    tail_key = _norm(OPEN_ENDED_TAIL)
+    pool = [{"strategy": r["_strategy"], "weight": r["_weight"], "rank": r.get("rank"),
+             "num_failed": r.get("num_failed"), "num_questions": r.get("num_questions"),
+             "failure_rate": r.get("failure_rate")}
+            for r in rows
+            if _norm(r["_strategy"]) not in quota_keys
+            and _norm(r["_strategy"]) != tail_key]
+
+    cluster_seeds = _dedup([r["_strategy"] for r in rows] + list(base_banned)
+                           + ([OPEN_ENDED_TAIL] if keep_open_ended else []))
+
     base_keys = {_norm(b) for b in base_banned}
-    dynamic = _dedup([b for b in prev_banned if _norm(b) not in base_keys] + fresh_bans)
-    keep = max(0, max_banned - len(base_banned))
-    cut = max(0, len(dynamic) - keep)
-    dropped, dynamic = dynamic[:cut], dynamic[cut:]
-    banned = _dedup(list(base_banned) + dynamic)
-
-    return examples, banned, {
-        "num_focus_strategies": len(feedback["focus_strategies"]),
-        "num_example_strategies": len(examples),
+    return pool, banned, cluster_seeds, {
+        "num_clusters": len(rows),
         "num_banned_strategies": len(banned),
-        "fresh_bans": fresh_bans,
-        "ban_reasons": ban_reasons,
-        "bans_dropped_at_cap": dropped,
+        "exploit_pool_size": len(pool),
+        "ban_after_failures": ban_after_failures,
+        # recomputed each round, so the full set is recorded -- a quota ban that flickers
+        # (its cluster dissolved and re-formed below the quota) is invisible otherwise.
+        "quota_bans": [{"strategy": r["_strategy"], "num_failed": r.get("num_failed"),
+                        "num_questions": r.get("num_questions"),
+                        "failure_rate": r.get("failure_rate")} for r in over_quota],
+        "base_bans_over_quota": [r["_strategy"] for r in over_quota
+                                 if _norm(r["_strategy"]) in base_keys],
+        "pool": [{"strategy": r["strategy"], "weight": round(r["weight"], 4),
+                   "num_failed": r["num_failed"], "num_questions": r["num_questions"]}
+                  for r in pool],
     }
 
 
@@ -324,7 +420,8 @@ def split_by_prompt(seeds: list, rng: random.Random, p_explore: float) -> dict:
 
 
 def run_side(seeds: list, prompt: str, round_dir: Path, args,
-             example_file: Path, banned_file: Path, few_shots_file: Path | None = None) -> dict:
+             example_file: Path, banned_file: Path, few_shots_file: Path | None = None,
+             strategies_dir: Path | None = None) -> dict:
     """Run the parallel driver for one prompt variant of one round. Returns its index.json."""
     out_dir = round_dir / prompt
     # JSON, not one-per-line: a seed containing newlines would otherwise fragment into
@@ -346,6 +443,8 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         "--banned-strategies-file", str(banned_file),
     ]
     cmd += llm_client.forward_provider_args(args)
+    if strategies_dir:
+        cmd += ["--strategies-dir", str(strategies_dir)]
     if few_shots_file:
         cmd += ["--few-shots-file", str(few_shots_file)]
     if args.profile:
@@ -370,6 +469,28 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
     return {"samples": [], "returncode": proc.returncode}
 
 
+def write_seed_menus(round_dir: Path, n_seeds: int, pool: list, args,
+                     rng: random.Random) -> tuple[Path, dict]:
+    """One sampled menu per exploit seed, named to match the driver's sample_NNN numbering.
+
+    The driver indexes its seeds from 1, so seed i gets menus/sample_{i:03d}.txt. Returns
+    the directory plus how many of the round's menus each strategy landed in -- the compact
+    audit trail, since recording every menu in loop.json would swamp it (the files stay on
+    disk for the full detail).
+    """
+    menu_dir = round_dir / "menus"
+    menu_dir.mkdir(parents=True, exist_ok=True)
+    counts: dict = {}
+    for i in range(1, n_seeds + 1):
+        menu = sample_menu(pool, args.max_example_strategies, rng,
+                           keep_open_ended=args.open_ended_tail)
+        write_menu(menu_dir / f"sample_{i:03d}.txt", menu,
+                   f"exploit seed {i}: EXAMPLE STRATEGIES TO CONSIDER (per-seed sample)")
+        for m in menu:
+            counts[m] = counts.get(m, 0) + 1
+    return menu_dir, counts
+
+
 def round_stats(indexes: list) -> dict:
     """Roll per-prompt index.json files up into one round summary."""
     from collections import Counter
@@ -384,7 +505,7 @@ def round_stats(indexes: list) -> dict:
     }
 
 
-def compute_feedback(run_dirs: list, round_dir: Path, example_file: Path, args) -> dict:
+def compute_feedback(run_dirs: list, round_dir: Path, cluster_seed_file: Path, args) -> dict:
     """Cluster + score everything in `run_dirs`, writing feedback.json / feedback.txt."""
     fb_path = round_dir / "feedback.json"
     if fb_path.exists() and not args.refresh_feedback:
@@ -400,16 +521,15 @@ def compute_feedback(run_dirs: list, round_dir: Path, example_file: Path, args) 
               file=sys.stderr, flush=True)
         return {}
 
-    # Cluster against the menu this round actually ran with, so cluster ids line up with
-    # what the generator was shown rather than with a stale built-in list.
+    # Cluster against every strategy in play, NOT the example menu -- a strategy retired
+    # by the quota is off the menu but must stay a stable seed.N here, or its questions
+    # re-cluster as a fresh new.N under a new LLM-written name every round and the quota
+    # can no longer see them. See derive_menus.
     feedback = build_feedback(
         examples,
-        RP.load_strategy_file(example_file),
+        RP.load_strategy_file(cluster_seed_file),
         cluster_provider=cluster_provider(args),
         cluster_model=args.cluster_model,
-        min_failure_rate=args.min_failure_rate,
-        max_share=args.max_share,
-        min_cluster_size=args.min_cluster_size,
         rank_by=args.rank_by,
         examples_per_strategy=args.examples_per_strategy,
     )
@@ -494,9 +614,6 @@ def main():
                         "0.5 = an even split (default: 0.5).")
     p.add_argument("--random-seed", type=int, default=0,
                    help="RNG seed for the explore/exploit assignment (default: 0).")
-    p.add_argument("--feedback-scope", choices=["all", "last"], default="all",
-                   help="Score every round so far ('all', default) or only the round just "
-                        "finished ('last'). 'all' gives stabler rates; 'last' reacts faster.")
     p.add_argument("--budget-usd", type=float, default=0.0,
                    help="Hard spend cap for the whole loop, generation + verification "
                         "(0 = no limit). Checked after each prompt side finishes, so the "
@@ -519,14 +636,23 @@ def main():
                      choices=sorted(RP.BANNED_STRATEGY_LISTS),
                      help=f"Banned-strategy menu round 0 starts from, and whose entries stay "
                           f"banned in every round (default: {RP.DEFAULT_BANNED_STRATEGIES}).")
-    men.add_argument("--max-example-strategies", type=int, default=10,
-                     help="Cap on the derived EXAMPLE STRATEGIES menu (default: 10).")
-    men.add_argument("--max-banned-strategies", type=int, default=12,
-                     help="Cap on the derived STRATEGIES TO NOT USE list, base bans included "
-                          "(default: 12).")
-    men.add_argument("--ban-min-evidence", type=int, default=3,
-                     help="Questions a cluster needs before a low failure rate gets it banned "
-                          "(default: 3).")
+    men.add_argument("--max-example-strategies", type=int, default=6,
+                     help="How many strategies each EXAMPLE STRATEGIES menu holds "
+                          "(default: 6). Drawn without replacement from the un-retired "
+                          "pool, weighted by smoothed failure rate x (1 - share). Set it "
+                          "BELOW the pool size or the draw is a no-op -- every seed then "
+                          "sees the whole pool and the weights do nothing.")
+    men.add_argument("--menu-sample", choices=("seed", "round"), default="seed",
+                     help="Draw a fresh example menu per SEED (default) or once per round. "
+                          "Per-seed exercises the whole pool within a round, so a "
+                          "low-weight strategy gets tried somewhere rather than nowhere; "
+                          "per-round freezes one draw for every seed in the round.")
+    men.add_argument("--ban-after-failures", type=int, default=15,
+                     help="Harvest quota: retire a strategy once it has produced MORE than "
+                          "this many system-breaking questions (default: 15). It is then "
+                          "banned from 'explore' and dropped from the 'exploit' pool. The "
+                          "count is cumulative over the whole loop, so this is a lifetime "
+                          "quota per strategy, not a per-round rate.")
     men.add_argument("--few-shots-per-round", type=int, default=3,
                      help="Worked examples shown in each prompt (default: 3). Rounds 1+ "
                           "sample them from the run: 'exploit' from the failures of its "
@@ -549,9 +675,6 @@ def main():
                      help="Provider for strategy clustering. 'auto' (default) follows "
                           "--cluster-model's id, or --model's when no cluster model is set, "
                           "so the whole loop moves providers together.")
-    fbk.add_argument("--min-failure-rate", type=float, default=0.25)
-    fbk.add_argument("--max-share", type=float, default=0.5)
-    fbk.add_argument("--min-cluster-size", type=int, default=0)
     fbk.add_argument("--rank-by", default="underrepresented",
                      choices=["underrepresented", "diverse", "failure_rate", "volume"])
     fbk.add_argument("--examples-per-strategy", type=int, default=5)
@@ -638,12 +761,27 @@ def main():
     every = len(seeds) if args.no_feedback else args.feedback_every
     rounds = [seeds[i:i + every] for i in range(0, len(seeds), every)]
     base_banned = list(RP.BANNED_STRATEGY_LISTS[args.banned_strategies])
-    example_menu = list(RP.STRATEGY_LISTS[args.strategies])
+    # Round 0 has no feedback, so every built-in strategy carries the same weight -- the
+    # 0.5 Beta prior an untried cluster gets -- making the first round's per-seed draws a
+    # uniform subset rather than a ranked one.
+    # The tail is excluded from the pool and appended to every menu instead, matching what
+    # derive_menus does, so it never consumes one of the --max-example-strategies slots.
+    pool = [{"strategy": t, "weight": 0.5, "rank": i, "num_failed": None,
+             "num_questions": None, "failure_rate": None}
+            for i, t in enumerate(RP.STRATEGY_LISTS[args.strategies], start=1)
+            if _norm(t) != _norm(OPEN_ENDED_TAIL)]
     banned_menu = list(base_banned)
+    # What feedback clusters against: every strategy in play, menu + bans. Kept separate
+    # from the menu so a quota-retired strategy keeps a stable cluster identity.
+    cluster_seeds = _dedup([r["strategy"] for r in pool] + base_banned)
     # Round 0 runs on the built-ins, but they are still written per round and passed
     # explicitly, so every round's artifacts are uniform and diffable.
     few_shots = {"explore": list(RP.DEFAULT_FEW_SHOTS), "exploit": list(RP.DEFAULT_FEW_SHOTS)}
     rng = random.Random(args.random_seed)
+    # A separate stream for menu sampling: drawing from `rng` would shift the
+    # explore/exploit split's sequence, so the split would stop being reproducible
+    # against runs made before sampling existed.
+    menu_rng = random.Random(args.random_seed + 1_000_003)
 
     print(f"{len(seeds)} seed(s) in {len(rounds)} round(s) of <= {every}, "
           + ("both prompts on every seed" if args.both_prompts
@@ -656,7 +794,7 @@ def main():
                 "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
                 "feedback_every": every, "both_prompts": args.both_prompts,
                 "prompt_mix": args.prompt_mix, "random_seed": args.random_seed,
-                "feedback_scope": args.feedback_scope, "model": args.model,
+                "ban_after_failures": args.ban_after_failures, "model": args.model,
                 "base_banned_strategies": base_banned, "rounds": []}
     round_dirs: list[Path] = []
     stopped_early = ""
@@ -665,18 +803,38 @@ def main():
     for k, round_seeds in enumerate(rounds):
         round_dir = out_dir / f"round_{k:02d}"
         round_dirs.append(round_dir)
-        example_file = write_menu(round_dir / "example_strategies.txt", example_menu,
-                                  f"round {k}: EXAMPLE STRATEGIES TO CONSIDER "
-                                  f"('exploit' prompt)")
+        pool_strategies = [r["strategy"] for r in pool]
+        # The pool is recorded for reference; it is never a prompt menu itself.
+        write_menu(round_dir / "example_strategy_pool.txt", pool_strategies,
+                   f"round {k}: the pool per-seed menus are sampled from")
+        # One round-wide draw: what exploit gets under --menu-sample round, and the
+        # fallback for any seed without its own menu file.
+        example_file = write_menu(
+            round_dir / "example_strategies.txt",
+            sample_menu(pool, args.max_example_strategies, menu_rng,
+                        keep_open_ended=args.open_ended_tail),
+            f"round {k}: EXAMPLE STRATEGIES TO CONSIDER ('exploit' prompt, one draw)")
         banned_file = write_menu(round_dir / "banned_strategies.txt", banned_menu,
                                  f"round {k}: STRATEGIES TO NOT USE ('explore' prompt)")
+        cluster_seed_file = write_menu(round_dir / "cluster_seeds.txt", cluster_seeds,
+                                       f"round {k}: strategies this round's feedback is "
+                                       f"clustered against (menu + bans)")
 
         t_round = time.perf_counter()
         split = ({"explore": list(round_seeds), "exploit": list(round_seeds)}
                  if args.both_prompts else split_by_prompt(round_seeds, rng, args.prompt_mix))
         print(f"\n{'=' * 70}\nROUND {k}: {len(round_seeds)} seed(s) — "
               f"{len(split['explore'])} explore / {len(split['exploit'])} exploit\n"
-              f"  menus: {len(example_menu)} example, {len(banned_menu)} banned\n{'=' * 70}")
+              f"  menus: {len(pool)} in the example pool"
+              f" (sample {args.max_example_strategies}/seed"
+              f"{' — pool <= cap, so every seed sees all of it' if len(pool) <= args.max_example_strategies else ''}"
+              f"), {len(banned_menu)} banned\n{'=' * 70}")
+
+        menu_dir, menu_counts = None, {}
+        if args.menu_sample == "seed" and split["exploit"]:
+            menu_dir, menu_counts = write_seed_menus(
+                round_dir, len(split["exploit"]), pool, args, menu_rng)
+            print(f"  sampled {len(split['exploit'])} per-seed menus -> {menu_dir}/")
 
         shot_files = {}
         for prompt, shots in few_shots.items():
@@ -694,7 +852,8 @@ def main():
                                  f"before round {k}/{prompt}")
                 break
             ix = run_side(side_seeds, prompt, round_dir, args,
-                          example_file, banned_file, shot_files.get(prompt))
+                          example_file, banned_file, shot_files.get(prompt),
+                          strategies_dir=menu_dir if prompt == "exploit" else None)
             indexes.append(ix)
             spent += round_stats([ix])["cost_usd"]
         stats = round_stats(indexes)
@@ -705,41 +864,55 @@ def main():
         record = {"round": k, "dir": str(round_dir),
                   "num_explore": len(split["explore"]),
                   "num_exploit": len(split["exploit"]),
-                  "example_strategies": example_menu, "banned_strategies": banned_menu,
+                  "example_strategy_pool": pool_strategies,
+                  "banned_strategies": banned_menu,
+                  "cluster_seeds": cluster_seeds,
+                  "menu_sample": args.menu_sample,
+                  # how many of this round's per-seed menus each strategy landed in
+                  "menu_draw_counts": dict(sorted(menu_counts.items(),
+                                                  key=lambda kv: -kv[1])),
                   "few_shot_seeds": {k: [x["seed_question"] for x in v]
                                      for k, v in few_shots.items() if v},
                   "generation_elapsed_s": round(gen_elapsed, 1),
                   **stats}
 
         if k < len(rounds) - 1:
-            scope = round_dirs if args.feedback_scope == "all" else [round_dir]
+            scope = round_dirs          # always cumulative: the quota is a lifetime count
             t_fb = time.perf_counter()
-            feedback = compute_feedback(scope, round_dir, example_file, args)
+            feedback = compute_feedback(scope, round_dir, cluster_seed_file, args)
             record["feedback_elapsed_s"] = round(time.perf_counter() - t_fb, 1)
             if feedback:
                 clustering_cost = ((feedback.get("meta", {}).get("clustering") or {})
                                    .get("cost_usd") or 0.0)
                 spent += clustering_cost
                 record["clustering_cost_usd"] = round(clustering_cost, 4)
-                example_menu, banned_menu, provenance = derive_menus(
-                    feedback, banned_menu,
+                pool, banned_menu, cluster_seeds, provenance = derive_menus(
+                    feedback,
                     base_banned=base_banned,
-                    max_examples=args.max_example_strategies,
-                    max_banned=args.max_banned_strategies,
-                    ban_min_evidence=args.ban_min_evidence,
+                    ban_after_failures=args.ban_after_failures,
                     keep_open_ended=args.open_ended_tail,
                 )
                 if not args.static_few_shots:
+                    # exploit's examples demonstrate the POOL, not one seed's draw: any
+                    # pool strategy may be the one a given seed is shown.
                     few_shots["exploit"], few_shots["explore"] = derive_few_shots(
-                        feedback, example_menu, banned_menu,
+                        feedback, [r["strategy"] for r in pool], banned_menu,
                         defaults=RP.DEFAULT_FEW_SHOTS, n=args.few_shots_per_round,
                     )
                 record["feedback"] = str(round_dir / "feedback.json")
-                record["feedback_scope_dirs"] = [str(d) for d in scope]
+                record["feedback_dirs"] = [str(d) for d in scope]
                 record["next_menus"] = provenance
-                print(f"[round {k}] next menus: {provenance['num_example_strategies']} example, "
+                print(f"[round {k}] next: pool of {provenance['exploit_pool_size']} un-retired "
+                      f"(sample {args.max_example_strategies}/seed), "
                       f"{provenance['num_banned_strategies']} banned "
-                      f"({len(provenance['fresh_bans'])} newly banned)")
+                      f"({len(provenance['quota_bans'])} over the "
+                      f"{args.ban_after_failures}-failure quota)")
+                if provenance['exploit_pool_size'] <= args.max_example_strategies:
+                    print(f"[round {k}] NOTE pool "
+                          f"({provenance['exploit_pool_size']}) <= "
+                          f"--max-example-strategies ({args.max_example_strategies}): every "
+                          f"seed will see the whole pool and the sampling weights do "
+                          f"nothing. Lower the cap to make them bite.", file=sys.stderr)
                 if not args.static_few_shots:
                     for prompt, shots in few_shots.items():
                         derived = sum(1 for x in shots if x not in RP.DEFAULT_FEW_SHOTS)
