@@ -57,10 +57,6 @@ RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 # works here too -- see llm_client for how the provider is picked from the id.
 CLAUDE_MODEL = "claude-sonnet-4-5"
 MAX_ATTEMPTS = 5
-# Output cap for the make-harder call. Was 2000, which `required_reasoning_process` pushed
-# past: a truncated response has no closing brace, so extract_json raises and the attempt
-# is lost after the input tokens are already paid for.
-MAKE_HARDER_MAX_TOKENS = 3000
 
 # MODEL_PRICING and the cache multipliers now live in llm_client, so both providers
 # bill off one table -- add a new model's rates there. `price_call` stays re-exported
@@ -1060,8 +1056,7 @@ def harder_question_gen(
     messages = [{"role": "user", "content": user_content}]
     raw, bucket = _call_llm(
         client, model=model, system=harder_prompt, messages=messages,
-        max_tokens=MAKE_HARDER_MAX_TOKENS, logger=logger, seed=seed, attempt=attempt,
-        purpose="harder",
+        max_tokens=3000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)
     return (
