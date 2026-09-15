@@ -54,6 +54,10 @@ RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 # works here too -- see llm_client for how the provider is picked from the id.
 CLAUDE_MODEL = "claude-sonnet-4-5"
 MAX_ATTEMPTS = 5
+# Output cap for the make-harder call. Was 2000, which `required_reasoning_process` pushed
+# past: a truncated response has no closing brace, so extract_json raises and the attempt
+# is lost after the input tokens are already paid for.
+MAKE_HARDER_MAX_TOKENS = 3000
 
 # MODEL_PRICING and the cache multipliers now live in llm_client, so both providers
 # bill off one table -- add a new model's rates there. `price_call` stays re-exported
@@ -209,7 +213,7 @@ DEFAULT_FEW_SHOTS = [
             "Audit each candidate study for confounding, then reason from absence of evidence rather than substituting the nearest finding that does exist."
         ],
         "why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
-        "verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+        "verification_criterion": "Answer must establish:\n- the causal question is unresolved by current research, not merely under-reported\n- no retrieved study varies deduplication while holding data volume, compute and model scale fixed\n- the missing evidence is a matched-compute run differing only in deduplication\n- any existing finding is correlational, not causal\n- Fails if it states a confident causal answer, or implies the literature resolves it"
     },
     {
         "seed_question": "What is the role of attention sparsity in efficient transformers?",
@@ -222,7 +226,7 @@ DEFAULT_FEW_SHOTS = [
             "Reconcile the conflict by comparing experimental conditions across studies to isolate the variable responsible for it."
         ],
         "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-        "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
+        "verification_criterion": "Answer must establish:\n- its retrieved sources disagree, some reporting sparse >= dense and others sparse < dense\n- the conflict is attributed to a concrete confound: sequence length, task type, or matched compute budget\n- Fails if it issues a single uniform verdict\n- Fails if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons"
     },
     {
         "seed_question": "How does brown adipose tissue produce heat?",
@@ -235,7 +239,7 @@ DEFAULT_FEW_SHOTS = [
             "Compose the separately documented facts into a refutation, prioritizing that correction over a fluent answer to the question as asked."
         ],
         "why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
-        "verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
+        "verification_criterion": "Answer must establish:\n- UCP1 uncouples oxidative phosphorylation, dissipating the proton gradient as heat rather than synthesizing ATP — it bypasses ATP synthase\n- UCP1/BAT mediates non-shivering thermogenesis, distinct from and an alternative to shivering (skeletal-muscle contraction)\n- Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent"
     }
 ]
 
@@ -345,6 +349,10 @@ RULES:
 - Consider whether some NON-OBVIOUS search would fully answer the question — an unusual query formulation, an adjacent field that studies the same thing under another name, or a review, registry or dataset that already did the work. Many questions have no such shortcut; do not manufacture one. But if one exists, the question is retrievable rather than hard: either revise the question so that no single search resolves it, or name that search in required_reasoning_process and make the criterion turn on what it still leaves unresolved.
 - Then DERIVE the verification criterion. It MUST enforce the reasoning process: an answer that skipped, faked, or botched the required reasoning has to FAIL even when it states a plausible-sounding conclusion. Beyond that, the criterion is where correctness lives — it must also pin down the specific entities, claims, distinctions and failure modes that make an answer right or wrong for THIS question. The reasoning process says HOW the answer must be reached; the criterion says WHAT must be true of it.
 - State as many distinct checks as the question actually needs — there is no fixed number and no one-check-per-step correspondence; a single step may need several checks, and several steps may collapse into one. You may add additional specific requirements, but they must clearly and directly arise from the question or the reasoning process.
+- Write the criterion as a bulleted checklist, not prose: the line "Answer must establish:", then one "- " bullet per check. Bullets are fragments rather than sentences. A bullet runs as long as it must to pin down its one concept, but no longer — prefer the shorter wording whenever it checks the same thing. Overall length should scale with the NUMBER of checks, not with elaboration of any one of them.
+- One bullet per check. Keep a compound in a SINGLE bullet when the relation between its parts is what is being checked — "both X and Y", "connect X to Y", "X does not follow without Y" — since splitting those lets an answer satisfy one half and pass. Split only requirements that are independently checkable.
+- Name instances only where the check IS that the answer must identify them; drop lists that merely illustrate a check the judge could already apply.
+- Add a "Fails if ..." bullet only for a wrong answer no bullet above already excludes — typically the most tempting one. Write several if several are needed, or none at all when the checks are already sufficient. Never restate a bullet as a "Fails if".
 - The judge sees only the question, these steps, and the answer — never the system's internal trace. So only require what a correct answer would visibly show; a step whose execution leaves no trace in a good answer should not be checked.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
@@ -384,6 +392,10 @@ RULES:
 - Consider whether some NON-OBVIOUS search would fully answer the question — an unusual query formulation, an adjacent field that studies the same thing under another name, or a review, registry or dataset that already did the work. Many questions have no such shortcut; do not manufacture one. But if one exists, the question is retrievable rather than hard: either revise the question so that no single search resolves it, or name that search in required_reasoning_process and make the criterion turn on what it still leaves unresolved.
 - Then DERIVE the verification criterion. It MUST enforce the reasoning process: an answer that skipped, faked, or botched the required reasoning has to FAIL even when it states a plausible-sounding conclusion. Beyond that, the criterion is where correctness lives — it must also pin down the specific entities, claims, distinctions and failure modes that make an answer right or wrong for THIS question. The reasoning process says HOW the answer must be reached; the criterion says WHAT must be true of it.
 - State as many distinct checks as the question actually needs — there is no fixed number and no one-check-per-step correspondence; a single step may need several checks, and several steps may collapse into one. You may add additional specific requirements, but they must clearly and directly arise from the question or the reasoning process.
+- Write the criterion as a bulleted checklist, not prose: the line "Answer must establish:", then one "- " bullet per check. Bullets are fragments rather than sentences. A bullet runs as long as it must to pin down its one concept, but no longer — prefer the shorter wording whenever it checks the same thing. Overall length should scale with the NUMBER of checks, not with elaboration of any one of them.
+- One bullet per check. Keep a compound in a SINGLE bullet when the relation between its parts is what is being checked — "both X and Y", "connect X to Y", "X does not follow without Y" — since splitting those lets an answer satisfy one half and pass. Split only requirements that are independently checkable.
+- Name instances only where the check IS that the answer must identify them; drop lists that merely illustrate a check the judge could already apply.
+- Add a "Fails if ..." bullet only for a wrong answer no bullet above already excludes — typically the most tempting one. Write several if several are needed, or none at all when the checks are already sufficient. Never restate a bullet as a "Fails if".
 - The judge sees only the question, these steps, and the answer — never the system's internal trace. So only require what a correct answer would visibly show; a step whose execution leaves no trace in a good answer should not be checked.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Think creatively and come up with a strategy that will result in a hard question for THIS seed.
@@ -429,6 +441,8 @@ You will be given:
 - The answer the research system produced, with inline [n] citation markers and a References section listing each cited paper snippet
 
 Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion. If the verification criterion is "Any non-empty answer is acceptable", then the verdict should be PASSED.
+
+The criterion is usually a checklist: a "must establish" line followed by one bullet per check, sometimes with one or more "Fails if ..." bullets at the end. It is satisfied ONLY when every bullet holds — satisfying most of them is not satisfying the criterion, so criterion_satisfied is false if any single bullet fails. Where one bullet states a compound ("both X and Y", "connect X to Y", "X does not follow without Y"), the relation is itself the requirement: an answer that establishes one half and not the other fails that bullet. Any "Fails if" bullet is sufficient but not necessary for failure — matching one means the answer fails, but an answer can equally fail by missing a check, and many criteria have no "Fails if" bullet at all.
 
 Reason about the required steps when you judge. The criterion was derived from them, so use them to tell a genuinely reasoned answer from one that asserts the right-sounding conclusion without doing the work. Two cautions: the steps are context for judging the criterion, NOT a separate checklist — an answer that reaches a correct result by a sound route you did not anticipate still passes; and you cannot see the system's internal trace, so judge only what the answer itself evidences.
 
