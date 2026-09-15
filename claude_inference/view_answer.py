@@ -16,12 +16,17 @@ summarize_run.py reuses render_sample() to generate these pages and link to them
 
 import argparse
 import json
+import re
 from pathlib import Path
 
-import re
-
 from cite_utils import (
-    CITE_CSS, abridge, build_doc_index, esc, render_answer, render_refs, render_searches,
+    CITE_CSS,
+    abridge,
+    build_doc_index,
+    esc,
+    render_answer,
+    render_refs,
+    render_searches,
 )
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title>
@@ -87,6 +92,7 @@ def render_attempt(att: dict, is_last: bool = False) -> str:
       <span class="aq">{esc(h.get('updated_question'))}</span></summary>
   <div class="qbox">
     <div><b>Question</b> {esc(h.get('updated_question'))}</div>
+    {f"<div><b>Reasoning process</b><ol>{''.join(f'<li>{esc(s)}</li>' for s in h['required_reasoning_process'])}</ol></div>" if h.get('required_reasoning_process') else ""}
     <div><b>Criterion</b> {esc(h.get('verification_criterion'))}</div>
     {cc_rows}
     <div><b>Judge</b> {esc(j.get('summary'))}</div>

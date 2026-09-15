@@ -158,9 +158,10 @@ import os
 import re
 import sys
 from collections import defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 # ---------------------------------------------------------------------------
 # Known strategies (the menu the generator is prompted with)
@@ -218,7 +219,7 @@ class QuestionExample:
     extra: dict = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, d: dict) -> "QuestionExample":
+    def from_dict(cls, d: dict) -> QuestionExample:
         """Coerce a dict to a QuestionExample, tolerating DRChallenge `dataset.json` instances.
 
         Accepts either `failed` (bool/0/1) or a verdict string under `drtulu_verdict` /
@@ -259,6 +260,7 @@ class QuestionExample:
             "source_run": self.source_run,
             "round": self.round,
             "brainstorming": self.extra.get("brainstorming", ""),
+            "required_reasoning_process": self.extra.get("required_reasoning_process") or [],
             "why_harder": self.extra.get("why_harder", ""),
         }
 
@@ -377,6 +379,8 @@ def load_examples_from_runs(
                         # kept so downstream consumers can rebuild a full worked example
                         # (research_loop.py turns failures into prompt few-shots)
                         extra={"brainstorming": harder.get("brainstorming", ""),
+                               "required_reasoning_process": harder.get(
+                                   "required_reasoning_process") or [],
                                "why_harder": harder.get("why_harder", "")},
                     )
                     (deciding if is_deciding else other).append((run_key, ex))
@@ -889,6 +893,7 @@ def few_shot_failures(node: dict, examples: Sequence[QuestionExample], *,
             "strategy": ex.strategy,
             "verification_criterion": ex.verification_criterion,
             "brainstorming": ex.extra.get("brainstorming", ""),
+            "required_reasoning_process": ex.extra.get("required_reasoning_process") or [],
             "why_harder": ex.extra.get("why_harder", ""),
             "source_run": ex.source_run,
             "drtulu_verdict": "FAILED",

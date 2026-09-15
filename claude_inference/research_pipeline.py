@@ -34,9 +34,8 @@ import re
 import sys
 import time
 import uuid
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Optional
 
 import requests
 
@@ -195,8 +194,8 @@ DEFAULT_BANNED_STRATEGIES = "default"
 # `brainstorming` and `why_harder` are optional -- a shot missing them renders without
 # those keys -- but keep them where possible: they are what teaches the reasoning, not
 # just the output shape.
-FEW_SHOT_KEYS = ["brainstorming", "chosen_strategy", "updated_question", "why_harder",
-                 "verification_criterion"]
+FEW_SHOT_KEYS = ["brainstorming", "chosen_strategy", "updated_question",
+                 "required_reasoning_process", "why_harder", "verification_criterion"]
 
 DEFAULT_FEW_SHOTS = [
     {
@@ -204,24 +203,39 @@ DEFAULT_FEW_SHOTS = [
         "brainstorming": "The current question can easily be answered by retrieving deduplication literature broadly. To make it harder, let's make the question unanswerable by asking a question that isn't answered by current literature.",
         "chosen_strategy": "Make the question unanswerable by asking a question that hasn't been resolved by current research.",
         "updated_question": "What is the causal contribution of pretraining-data deduplication to downstream reasoning, holding all else constant?",
+        "required_reasoning_process": [
+            "Treat the question as a causal-identification problem rather than a literature-summary request.",
+            "Search specifically for controlled comparisons — ablations and matched-compute runs — instead of sweeping the deduplication literature broadly; here the informative outcome of the search is that none exists.",
+            "Audit each candidate study for confounding, then reason from absence of evidence rather than substituting the nearest finding that does exist."
+        ],
         "why_harder": "A system can easily define deduplication, but it is much harder to determine its isolated causal effect on reasoning because existing studies do not cleanly vary only deduplication while holding other training factors fixed.",
-        "verification_criterion": "Because no controlled study isolates this effect, the answer must EXPLICITLY state the question is unresolved by current research, name the specific missing evidence, and qualify any partial findings as correlational not causal. Fails if it asserts a confident causal answer or implies the literature resolves it."
+        "verification_criterion": "Answer must establish:\n- the causal question is unresolved by current research, not merely under-reported\n- no retrieved study varies deduplication alone, holding the other training factors fixed\n- the missing evidence is a matched-compute run differing only in deduplication\n- any existing finding is correlational, not causal\n- Fails if it states a confident causal answer, or implies the literature resolves it"
     },
     {
         "seed_question": "What is the role of attention sparsity in efficient transformers?",
         "brainstorming": "Surveying efficient-transformer literature would let the system define sparsity and list methods, so a pure synthesis question is too easy. One option is multi-step reasoning about FLOPs tradeoffs, but those numbers can be retrieved and quoted directly. A stronger option exploits that benchmark results for sparse attention genuinely conflict across papers: the system can locate both 'sparse wins' and 'sparse loses' results, but is bad at the reasoning needed to reconcile them via confounds.",
         "chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
         "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
+        "required_reasoning_process": [
+            "Search adversarially for disconfirming results — papers reporting the intervention losing as well as those reporting it winning — rather than stopping at the first consistent set.",
+            "Detect that the retrieved results genuinely conflict, rather than presenting them side by side as if compatible.",
+            "Reconcile the conflict by comparing experimental conditions across studies to isolate the variable responsible for it."
+        ],
         "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-        "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
+        "verification_criterion": "Answer must establish:\n- its retrieved sources disagree, some reporting sparse >= dense and others sparse < dense\n- the conflict is traced to a named difference in experimental setup\n- Fails if it issues a single uniform verdict\n- Fails if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons"
     },
     {
         "seed_question": "How does brown adipose tissue produce heat?",
         "brainstorming": "The seed is a clean survey: retrieve BAT/UCP1 literature and summarize thermogenesis. A single-topic false premise (e.g. mislocating a function) fails, because if the corpus already frames it as a known misconception the system just retrieves the debunking. So embed a false CONJUNCTION whose refutation is not packaged anywhere: assert that (a) UCP1 drives ATP synthesis and (b) this powers shivering thermogenesis. Each underlying fact (UCP1 uncouples to make heat not ATP; BAT mediates NON-shivering thermogenesis) is documented separately as background, but no source refutes this composite because no one proposes it. A survey-strong, reasoning-weak system retrieves the facts yet writes fluently around the premise without noticing the contradiction.",
         "chosen_strategy": "False premise via conjunction of separately-documented facts.",
         "updated_question": "How does UCP1-driven ATP synthesis power shivering thermogenesis?",
+        "required_reasoning_process": [
+            "Test the question's premise against the retrieved mechanism before answering it, rather than accepting it as given.",
+            "Search the two mechanisms separately, since a direct search for the composite claim returns nothing — no source addresses it, because no one proposes it.",
+            "Compose the separately documented facts into a refutation, prioritizing that correction over a fluent answer to the question as asked."
+        ],
         "why_harder": "Surveying BAT thermogenesis returns UCP1=uncoupling=heat and BAT=non-shivering as separate background facts, but nothing in the corpus is framed as refuting 'ATP-powered shivering.' A non-reasoning synthesis can therefore produce a fluent answer that silently honors the premise. Rejecting it requires conjoining two facts the literature never assembles against this claim: that UCP1 bypasses ATP synthase, and that it is the non-shivering pathway.",
-        "verification_criterion": "The answer must reject BOTH embedded errors: (1) state that UCP1 uncouples oxidative phosphorylation and dissipates the proton gradient as heat rather than synthesizing ATP, i.e. it bypasses/short-circuits ATP synthase; and (2) state that UCP1/BAT mediates NON-shivering thermogenesis, which is distinct from and an alternative to shivering thermogenesis (skeletal-muscle contraction). Fails if it describes UCP1 as producing ATP, treats BAT/UCP1 as the mechanism of shivering, or answers fluently as though the premise were coherent."
+        "verification_criterion": "Answer must establish:\n- UCP1 uncouples oxidative phosphorylation, dissipating the proton gradient as heat rather than synthesizing ATP — it bypasses ATP synthase\n- UCP1/BAT mediates non-shivering thermogenesis, distinct from and an alternative to shivering (skeletal-muscle contraction)\n- Fails if it describes UCP1 as producing ATP\n- Fails if it treats BAT/UCP1 as the mechanism of shivering"
     }
 ]
 
@@ -317,6 +331,7 @@ OUTPUT FORMAT (valid JSON, no extra text):
   "brainstorming": "<in under 4 sentences, reason about a couple strategies and why they might or might not work for THIS seed>",
   "chosen_strategy": "<name and explain the single most promising strategy>",
   "updated_question": "<the rewritten question>",
+  "required_reasoning_process": ["<a reasoning operation the system must perform>", "<another>", "..."],
   "why_harder": "<explanation of why this question might be hard for a deep research system>",
   "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
 }
@@ -325,7 +340,17 @@ RULES:
 - Avoid questions that can easily be answered by retrieving information.
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
-- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- First work out required_reasoning_process: the reasoning OPERATIONS a system must perform to get this question right — the kind of retrieval, comparison, adjudication or inference the question demands, not the conclusions it should reach. Keep it SPARSE: typically 2-4 entries, each naming a distinct kind of reasoning work, in the order it has to happen. Write "reconcile findings that conflict across study populations", not "state that study A and study B disagree". If an entry could be satisfied by copying a sentence out of a single retrieved source, it is a content requirement, not a reasoning operation — move it to the verification criterion.
+- Name the KIND OF SEARCH and the KIND OF ANALYSIS each operation takes. Searches differ: a targeted lookup, a sweep across subfields, a hunt for disconfirming evidence, a search for a controlled comparison specifically, a search whose informative outcome is that nothing exists, a search of a neighbouring literature that never uses the question's vocabulary. So do analyses: reconciling conflicting results, causal identification, construct-validity checking, base-rate or denominator reasoning, adjudication between incompatible frameworks, composing facts no single source combines. Say which, rather than writing a generic "retrieve relevant evidence". Only spell this out where it genuinely bears on getting the question right: if an ordinary lookup is all a step takes, say that plainly. Do not invent an exotic search or analysis the question does not call for, and do not add an operation just to name a search or analysis type — a question needing one operation gets one entry.
+- Consider whether some NON-OBVIOUS search would fully answer the question — an unusual query formulation, an adjacent field that studies the same thing under another name, or a review, registry or dataset that already did the work. Many questions have no such shortcut; do not manufacture one. But if one exists, the question is retrievable rather than hard: either revise the question so that no single search resolves it, or name that search in required_reasoning_process and make the criterion turn on what it still leaves unresolved.
+- Then DERIVE the verification criterion. It MUST enforce the reasoning process: an answer that skipped, faked, or botched the required reasoning has to FAIL even when it states a plausible-sounding conclusion. Beyond that, the criterion is where correctness lives — it must also pin down the specific entities, claims, distinctions and failure modes that make an answer right or wrong for THIS question. The reasoning process says HOW the answer must be reached; the criterion says WHAT must be true of it.
+- CONCISENESS IS A HARD REQUIREMENT of the criterion, and it governs every rule below. Every word must change whether some answer passes or fails: if deleting a phrase would leave the same answers passing and the same answers failing, delete it. Name a class rather than listing its members, state a check once rather than restating it, and never elaborate or illustrate to make a check feel thorough. A shorter criterion that decides the same verdicts is always the better criterion.
+- State as many distinct checks as the question actually needs — there is no fixed number and no one-check-per-step correspondence; a single step may need several checks, and several steps may collapse into one. You may add additional specific requirements, but they must clearly and directly arise from the question or the reasoning process.
+- Write the criterion as a bulleted checklist, not prose: the line "Answer must establish:", then one "- " bullet per check. Bullets are fragments rather than sentences. A bullet runs as long as it must to pin down its one concept and no longer; length comes from the number of checks, never from elaborating one.
+- One bullet per check. Keep a compound in a SINGLE bullet when the relation between its parts is what is being checked — "both X and Y", "connect X to Y", "X does not follow without Y" — since splitting those lets an answer satisfy one half and pass. Split only requirements that are independently checkable.
+- Do not write bullets about the STATUS of the answer's conclusion — no "conditional conclusion: ...", no "calibration that ...", no "appropriate qualification of ...". A qualification belongs inside the bullet stating the claim it qualifies, not in a bullet of its own.
+- Add a "Fails if ..." bullet only for a wrong answer no bullet above already excludes — typically the most tempting one. Write several if several are needed, or none at all when the checks are already sufficient. Never restate a bullet as a "Fails if".
+- Every check must be specific and checkable, never vague or aspirational. The judge sees ONLY the question, the required reasoning process, and the answer — never the system's internal trace, and there is NO external answer key. So require only what a correct answer visibly shows: an operation leaving no trace in a good answer cannot be checked. No hollow existence-counts like "identify at least three implicit assumptions", and no bullet so generic it would fit another question.
 - Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
 - The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions). It is better to keep it simple.
 - The question should be in English.
@@ -349,6 +374,7 @@ OUTPUT FORMAT (valid JSON, no extra text):
   "brainstorming": "<in under 4 sentences, reason about a couple strategies and why they might or might not work for THIS seed>",
   "chosen_strategy": "<name and explain the single most promising strategy>",
   "updated_question": "<the rewritten question>",
+  "required_reasoning_process": ["<a reasoning operation the system must perform>", "<another>", "..."],
   "why_harder": "<explanation of why this question might be hard for a deep research system>",
   "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
 }
@@ -357,7 +383,17 @@ RULES:
 - Avoid questions that can easily be answered by retrieving information.
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
-- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- First work out required_reasoning_process: the reasoning OPERATIONS a system must perform to get this question right — the kind of retrieval, comparison, adjudication or inference the question demands, not the conclusions it should reach. Keep it SPARSE: typically 2-4 entries, each naming a distinct kind of reasoning work, in the order it has to happen. Write "reconcile findings that conflict across study populations", not "state that study A and study B disagree". If an entry could be satisfied by copying a sentence out of a single retrieved source, it is a content requirement, not a reasoning operation — move it to the verification criterion.
+- Name the KIND OF SEARCH and the KIND OF ANALYSIS each operation takes. Searches differ: a targeted lookup, a sweep across subfields, a hunt for disconfirming evidence, a search for a controlled comparison specifically, a search whose informative outcome is that nothing exists, a search of a neighbouring literature that never uses the question's vocabulary. So do analyses: reconciling conflicting results, causal identification, construct-validity checking, base-rate or denominator reasoning, adjudication between incompatible frameworks, composing facts no single source combines. Say which, rather than writing a generic "retrieve relevant evidence". Only spell this out where it genuinely bears on getting the question right: if an ordinary lookup is all a step takes, say that plainly. Do not invent an exotic search or analysis the question does not call for, and do not add an operation just to name a search or analysis type — a question needing one operation gets one entry.
+- Consider whether some NON-OBVIOUS search would fully answer the question — an unusual query formulation, an adjacent field that studies the same thing under another name, or a review, registry or dataset that already did the work. Many questions have no such shortcut; do not manufacture one. But if one exists, the question is retrievable rather than hard: either revise the question so that no single search resolves it, or name that search in required_reasoning_process and make the criterion turn on what it still leaves unresolved.
+- Then DERIVE the verification criterion. It MUST enforce the reasoning process: an answer that skipped, faked, or botched the required reasoning has to FAIL even when it states a plausible-sounding conclusion. Beyond that, the criterion is where correctness lives — it must also pin down the specific entities, claims, distinctions and failure modes that make an answer right or wrong for THIS question. The reasoning process says HOW the answer must be reached; the criterion says WHAT must be true of it.
+- CONCISENESS IS A HARD REQUIREMENT of the criterion, and it governs every rule below. Every word must change whether some answer passes or fails: if deleting a phrase would leave the same answers passing and the same answers failing, delete it. Name a class rather than listing its members, state a check once rather than restating it, and never elaborate or illustrate to make a check feel thorough. A shorter criterion that decides the same verdicts is always the better criterion.
+- State as many distinct checks as the question actually needs — there is no fixed number and no one-check-per-step correspondence; a single step may need several checks, and several steps may collapse into one. You may add additional specific requirements, but they must clearly and directly arise from the question or the reasoning process.
+- Write the criterion as a bulleted checklist, not prose: the line "Answer must establish:", then one "- " bullet per check. Bullets are fragments rather than sentences. A bullet runs as long as it must to pin down its one concept and no longer; length comes from the number of checks, never from elaborating one.
+- One bullet per check. Keep a compound in a SINGLE bullet when the relation between its parts is what is being checked — "both X and Y", "connect X to Y", "X does not follow without Y" — since splitting those lets an answer satisfy one half and pass. Split only requirements that are independently checkable.
+- Do not write bullets about the STATUS of the answer's conclusion — no "conditional conclusion: ...", no "calibration that ...", no "appropriate qualification of ...". A qualification belongs inside the bullet stating the claim it qualifies, not in a bullet of its own.
+- Add a "Fails if ..." bullet only for a wrong answer no bullet above already excludes — typically the most tempting one. Write several if several are needed, or none at all when the checks are already sufficient. Never restate a bullet as a "Fails if".
+- Every check must be specific and checkable, never vague or aspirational. The judge sees ONLY the question, the required reasoning process, the answer, and the answer's own sources — never the system's internal trace, and there is NO external answer key. So require only what a correct answer visibly shows: an operation leaving no trace in a good answer cannot be checked. No hollow existence-counts like "identify at least three implicit assumptions", and no bullet so generic it would fit another question.
 - Think creatively and come up with a strategy that will result in a hard question for THIS seed.
 - DO NOT USE THE STRATEGIES in the list below.
 - DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW. Be creative and come up with your own strategy. 
@@ -396,13 +432,21 @@ JUDGE_PROMPT_TEMPLATE = """You are an expert evaluator of deep research system o
 
 You will be given:
 - A research question
+- The reasoning steps a correct answer has to work through
 - The verification criterion that defines what a good answer must do
 - The answer the research system produced, with inline [n] citation markers and a References section listing each cited paper snippet
 
 Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion. If the verification criterion is "Any non-empty answer is acceptable", then the verdict should be PASSED.
 
+The criterion is usually a checklist: a "must establish" line followed by one bullet per check, sometimes with one or more "Fails if ..." bullets at the end. It is satisfied ONLY when every bullet holds — satisfying most of them is not satisfying the criterion, so criterion_satisfied is false if any single bullet fails. Where one bullet states a compound ("both X and Y", "connect X to Y", "X does not follow without Y"), the relation is itself the requirement: an answer that establishes one half and not the other fails that bullet. Any "Fails if" bullet is sufficient but not necessary for failure — matching one means the answer fails, but an answer can equally fail by missing a check, and many criteria have no "Fails if" bullet at all.
+
+Reason about the required steps when you judge. The criterion was derived from them, so use them to tell a genuinely reasoned answer from one that asserts the right-sounding conclusion without doing the work. Two cautions: the steps are context for judging the criterion, NOT a separate checklist — an answer that reaches a correct result by a sound route you did not anticipate still passes; and you cannot see the system's internal trace, so judge only what the answer itself evidences.
+
 QUESTION:
 {question}
+
+REQUIRED REASONING PROCESS:
+{steps}
 
 VERIFICATION CRITERION:
 {criterion}
@@ -518,14 +562,15 @@ class RunLogger:
         attempt: int,
         purpose: str,           # "make harder" or "judge"
         model: str,
-        system: Optional[str],
+        system: str | None,
         messages: list,
         response_text: str,
         usage: dict,
         cost_usd: float,
         latency_s: float,
-        error: Optional[str] = None,
-        provider: Optional[str] = None,
+        error: str | None = None,
+        provider: str | None = None,
+        stop_reason: str | None = None,
     ) -> None:
         # `kind` stays "claude_call" whichever provider served it: summarize_run.py and
         # loop_report.py key off that string, and renaming it would orphan every log
@@ -543,6 +588,9 @@ class RunLogger:
             "usage": usage,
             "cost_usd": cost_usd,
             "latency_s": latency_s,
+            # Without this a refusal or a max_tokens cutoff is indistinguishable from a
+            # model that simply wrote malformed JSON.
+            "stop_reason": stop_reason,
             "error": error,
         })
 
@@ -553,10 +601,10 @@ class RunLogger:
         attempt: int,
         url: str,
         request_json: dict,
-        response_status: Optional[int],
+        response_status: int | None,
         response_body,  # str | dict | None — depends on transport
         latency_s: float,
-        error: Optional[str] = None,
+        error: str | None = None,
     ) -> None:
         self._write({
             "kind": "research_call",
@@ -587,9 +635,9 @@ class RunLogger:
         question: str,
         criterion: str,
         retrieval: dict,
-        check: Optional[dict],
+        check: dict | None,
         latency_s: float,
-        error: Optional[str] = None,
+        error: str | None = None,
     ) -> None:
         """Log the meta-judge's verdict on the verification criterion itself.
 
@@ -644,6 +692,10 @@ class HarderQuestion:
     brainstorming: str
     chosen_strategy: str
     updated_question: str
+    # The ordered steps the answering system has to work through. Variable length: the
+    # verification_criterion is derived from these, with no one-check-per-step mapping.
+    # Empty for round-0 (unmodified seed) attempts.
+    required_reasoning_process: list
     why_harder: str
     verification_criterion: str  # single atomic criterion; may be replaced by a meta-judge rewrite
     raw: str = ""
@@ -682,10 +734,10 @@ class AttemptRecord:
     answer: str
     # None when the attempt stopped before the research server was queried, i.e. the
     # criterion check rejected the criterion.
-    judgment: Optional[Judgment] = None
+    judgment: Judgment | None = None
     trace: object = None
     answer_model: object = None   # model the research server self-reported
-    criterion_check: Optional[CriterionCheck] = None
+    criterion_check: CriterionCheck | None = None
 
 
 @dataclass
@@ -693,7 +745,7 @@ class SeedResult:
     seed: str
     attempts: list = field(default_factory=list)
     final_status: str = ""
-    error: Optional[str] = None
+    error: str | None = None
     cost: CostBucket = field(default_factory=CostBucket)
 
 
@@ -701,8 +753,8 @@ class SeedResult:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def effective_decomposer_model(decomposer_model: Optional[str],
-                               model: str) -> Optional[str]:
+def effective_decomposer_model(decomposer_model: str | None,
+                               model: str) -> str | None:
     """Which model retrieve_papers will decompose with, given the flag and --model.
 
     An explicit --decomposer-model wins. Otherwise it follows `model`'s provider, so
@@ -724,6 +776,37 @@ def effective_decomposer_model(decomposer_model: Optional[str],
     except ImportError:
         return None
     return default_decomposer_model(resolve_provider(model))
+
+
+class RefusalError(RuntimeError):
+    """The model stopped with stop_reason='refusal', leaving a truncated response.
+
+    Seen when a make-harder strategy asks for an elaborated false or physically
+    impossible premise; the partial text parses as neither JSON nor an answer.
+    """
+
+
+def as_steps(value) -> list:
+    """Coerce `required_reasoning_process` to a list of step strings.
+
+    Specified to the model as a JSON array, but a model sometimes returns one prose
+    string, and runs predating the field have nothing at all.
+    """
+    if not value:
+        return []
+    if isinstance(value, str):
+        return [value]
+    assert isinstance(value, list), (
+        f"required_reasoning_process must be a list or string, got {type(value).__name__}"
+    )
+    return [str(s).strip() for s in value if str(s).strip()]
+
+
+def format_steps(steps: list) -> str:
+    """Render the reasoning steps as the numbered block the judge prompt shows."""
+    if not steps:
+        return "(no reasoning process was recorded for this attempt)"
+    return "\n".join(f"{i}. {s}" for i, s in enumerate(steps, start=1))
 
 
 def extract_json(text: str) -> dict:
@@ -748,15 +831,15 @@ def _call_llm(
     client,
     *,
     model: str,
-    system: Optional[str],
+    system: str | None,
     messages: list,
     max_tokens: int,
     logger: RunLogger,
     seed: str,
     attempt: int,
     purpose: str,
-    log_messages: Optional[list] = None,
-    provider: Optional[str] = None,
+    log_messages: list | None = None,
+    provider: str | None = None,
 ) -> tuple[str, CostBucket]:
     """Single Claude-or-GPT call wrapped with logging + cost accounting.
 
@@ -770,8 +853,9 @@ def _call_llm(
     provider = resolve_provider(model, provider)
     logged_messages = log_messages if log_messages is not None else messages
     t0 = time.perf_counter()
-    err: Optional[str] = None
+    err: str | None = None
     response_text = ""
+    stop_reason: str | None = None
     usage: dict = {}
     cost_usd = 0.0
 
@@ -781,6 +865,9 @@ def _call_llm(
             messages=messages, max_tokens=max_tokens,
         )
         cost_usd, usage = price_call(model, usage)
+        # llm_client.call_text now owns the empty-response check this branch used to do.
+        # It returns only (text, usage), so `stop_reason` stays None and RefusalError is
+        # never raised from here — see the note on RefusalError.
     except Exception as e:
         # A response that arrived but carried no usable text was still billed, so
         # recover its usage: otherwise a refusal or a reasoning-truncated call drops
@@ -793,7 +880,7 @@ def _call_llm(
             seed=seed, attempt=attempt, purpose=purpose, model=model,
             system=system, messages=logged_messages, response_text=response_text,
             usage=usage, cost_usd=cost_usd, latency_s=latency, error=err,
-            provider=provider,
+            provider=provider, stop_reason=stop_reason,
         )
         raise
 
@@ -802,7 +889,7 @@ def _call_llm(
         seed=seed, attempt=attempt, purpose=purpose, model=model,
         system=system, messages=logged_messages, response_text=response_text,
         usage=usage, cost_usd=cost_usd, latency_s=latency, error=None,
-        provider=provider,
+        provider=provider, stop_reason=stop_reason,
     )
 
     bucket = CostBucket(
@@ -867,7 +954,7 @@ def harder_question_gen(
     messages = [{"role": "user", "content": user_content}]
     raw, bucket = _call_llm(
         client, model=model, system=harder_prompt, messages=messages,
-        max_tokens=2000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
+        max_tokens=3000, logger=logger, seed=seed, attempt=attempt, purpose="harder",
     )
     data = extract_json(raw)
     return (
@@ -875,6 +962,7 @@ def harder_question_gen(
             brainstorming=data.get("brainstorming", ""),
             chosen_strategy=data.get("chosen_strategy", ""),
             updated_question=data["updated_question"],
+            required_reasoning_process=as_steps(data.get("required_reasoning_process")),
             why_harder=data.get("why_harder", ""),
             verification_criterion=data.get("verification_criterion", ""),
             raw=raw,
@@ -907,15 +995,18 @@ def judge_answer(
     seed: str,
     attempt: int,
     trace: object = None,
+    steps: list | None = None,
 ) -> tuple[Judgment, CostBucket]:
     judge_answer_text = format_answer_for_judge(answer, trace)
+    steps_text = format_steps(as_steps(steps))
     prompt = JUDGE_PROMPT_TEMPLATE.format(
-        question=question, criterion=criterion, answer=judge_answer_text
+        question=question, steps=steps_text, criterion=criterion,
+        answer=judge_answer_text,
     )
     messages = [{"role": "user", "content": prompt}]
     # Log the prompt with the (bulky) answer redacted; it lives in the results file.
     log_prompt = JUDGE_PROMPT_TEMPLATE.format(
-        question=question, criterion=criterion,
+        question=question, steps=steps_text, criterion=criterion,
         answer=f"<answer + references omitted: {len(judge_answer_text)} chars — "
                f"see results file>",
     )
@@ -985,7 +1076,7 @@ def verify_criterion(
     logger: RunLogger,
     seed: str,
     attempt: int,
-    retrieval_kwargs: Optional[dict] = None,
+    retrieval_kwargs: dict | None = None,
     n_context_papers: int = VERIFY_N_PAPERS,
     max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
 ) -> tuple[CriterionCheck, CostBucket]:
@@ -1136,8 +1227,8 @@ def query_research_system(
     """
     request_json = {"question": question}
     t0 = time.perf_counter()
-    err: Optional[str] = None
-    status: Optional[int] = None
+    err: str | None = None
+    status: int | None = None
     body = None
     answer = ""
     trace = None
@@ -1196,14 +1287,14 @@ def process_seed(
     harder_prompt: str = PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
     timeout_s: float = RESEARCH_TIMEOUT_S,
     verify_criteria: bool = False,
-    retrieval_kwargs: Optional[dict] = None,
+    retrieval_kwargs: dict | None = None,
     n_context_papers: int = VERIFY_N_PAPERS,
     max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
     # Round 0 tests the seed as-is; rounds 1..N test harder rewrites.
-    for attempt in range(0, max_attempts + 1):
+    for attempt in range(max_attempts + 1):
         if verbose:
             print(f"\n{'=' * 70}")
             label = "Round 0 (testing seed as-is)" if attempt == 0 else f"Attempt {attempt}/{max_attempts}"
@@ -1222,6 +1313,7 @@ def process_seed(
                     brainstorming="",
                     chosen_strategy="seed (no modification)",
                     updated_question=seed,
+                    required_reasoning_process=[],
                     why_harder="",
                     verification_criterion=criterion,
                 )
@@ -1327,7 +1419,7 @@ def process_seed(
             judgment, bucket = judge_answer(
                 client, model, harder.updated_question,
                 harder.verification_criterion, answer, logger, seed, attempt,
-                trace=trace,
+                trace=trace, steps=harder.required_reasoning_process,
             )
             result.cost.add(bucket)
         except Exception as e:
@@ -1469,9 +1561,10 @@ def main():
     parser.add_argument(
         "--few-shots-file", default=None,
         help="JSON file of worked examples (list of objects keyed like DEFAULT_FEW_SHOTS: "
-             "seed_question, brainstorming, chosen_strategy, updated_question, why_harder, "
-             "verification_criterion) shown under 'Here are a few examples:' INSTEAD of the "
-             "built-in three. Applies to both prompt variants.",
+             "seed_question, brainstorming, chosen_strategy, updated_question, "
+             "required_reasoning_process, why_harder, verification_criterion) shown under "
+             "'Here are a few examples:' INSTEAD of the built-in three. Applies to both "
+             "prompt variants.",
     )
     parser.add_argument(
         "--strategies-file", default=None,
