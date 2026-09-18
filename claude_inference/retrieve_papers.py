@@ -970,8 +970,16 @@ def retrieve_papers(
     decomposer_model: str = DEFAULT_CLAUDE_MODEL,
     max_date: Optional[str] = None,
     extra_filters: Optional[Dict[str, str]] = None,
+    extra_queries: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """Run the full ScholarQA retrieval stage and return papers ranked by relevance.
+
+    `extra_queries` are searched IN ADDITION to the decomposed `query`, with their hits
+    poured into the same candidate pool. They do not enlarge the result: everything is
+    reranked together against the original `query` and cut to `n_rerank`, so extra queries
+    change WHICH papers come back, not how many. That keeps the caller's context size --
+    and therefore its bill -- fixed while letting a caller search for something the query
+    alone would not surface. They are searched verbatim, without decomposition.
 
     Returns a dict with keys: query, rewritten_query, keyword_query, search_filters,
     n_snippets, n_keyword_papers, n_reranked_passages, papers.
@@ -1026,11 +1034,37 @@ def retrieve_papers(
         search_api_results = []
     logger.info("Retrieved %d additional papers from keyword search", len(search_api_results))
 
+    # 3b. the caller's own queries, searched verbatim. Deduped against what the decomposed
+    # query already found, so an extra query that merely restates it adds nothing.
+    extra_results: List[Dict[str, Any]] = []
+    extra_query_stats = []
+    seen_ids = set(snippet_corpus_ids) | {r["corpus_id"] for r in search_api_results}
+    for eq in (extra_queries or []):
+        eq = (eq or "").strip()
+        if not eq:
+            continue
+        try:
+            snips = paper_finder.retrieve_passages(eq, **search_filters)
+            kws = paper_finder.retrieve_additional_papers(eq, **search_filters)
+        except Exception as e:                  # one bad query must not sink the retrieval
+            logger.warning("extra query %r failed: %s", eq[:80], e)
+            extra_query_stats.append({"query": eq, "n_new": 0, "error": f"{type(e).__name__}: {e}"})
+            continue
+        fresh = [r for r in (snips + kws) if r["corpus_id"] not in seen_ids]
+        seen_ids.update(r["corpus_id"] for r in fresh)
+        extra_results.extend(fresh)
+        extra_query_stats.append({"query": eq, "n_new": len(fresh)})
+    if extra_results:
+        logger.info("Retrieved %d additional papers from %d caller queries",
+                    len(extra_results), len(extra_query_stats))
+
     # keyword-search hits already carry metadata
     paper_metadata = {r["corpus_id"]: dict(r) for r in search_api_results}
+    paper_metadata.update({r["corpus_id"]: dict(r) for r in extra_results
+                           if r.get("title") or r.get("authors")})
 
     # 4. rerank passages + abstracts together against the ORIGINAL user query
-    candidates = snippet_results + search_api_results
+    candidates = snippet_results + search_api_results + extra_results
     reranked = paper_finder.rerank(query, candidates)
 
     # 5. metadata for whatever the keyword search did not cover
@@ -1049,6 +1083,9 @@ def retrieve_papers(
         "search_filters": search_filters,
         "n_snippets": len(snippet_results),
         "n_keyword_papers": len(search_api_results),
+        # what each caller-supplied query contributed that the decomposed query missed
+        "extra_queries": extra_query_stats,
+        "n_extra_papers": len(extra_results),
         "n_reranked_passages": len(reranked),
         # None when nothing reranked (kind 'none', or 'auto' with no URL configured):
         # unreranked keyword papers keep score 0.0 and sort last, which biases a

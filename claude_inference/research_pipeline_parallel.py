@@ -143,10 +143,17 @@ def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
     if args.verify_criterion:
         cmd += ["--verify-criterion",
                 "--verify-n-papers", str(args.verify_n_papers),
+                "--verify-max-extra-queries", str(args.verify_max_extra_queries),
                 "--verify-max-chars-per-paper", str(args.verify_max_chars_per_paper),
                 "--reranker", args.reranker]
+        if args.verify_propose_queries:
+            cmd += ["--verify-propose-queries"]
+        if args.include_seed_round:
+            cmd += ["--include-seed-round"]
         if args.reranker_url:
             cmd += ["--reranker-url", args.reranker_url]
+    if args.skip_seed_round:                    # independent of --verify-criterion
+        cmd += ["--skip-seed-round"]
 
     print(f"[start {idx:>3}/{args._n}] {seed[:160]}", flush=True)
     proc = subprocess.run(cmd + trailing, capture_output=True, text=True)
@@ -247,6 +254,17 @@ def main():
     p.add_argument("--verify-criterion", action="store_true",
                    help="Verify each harder question's criterion against retrieved S2 papers "
                         "before querying the research server. Needs S2_API_KEY.")
+    p.add_argument("--skip-seed-round", action="store_true",
+                   help="Start at attempt 1 rather than testing the unmodified seed. "
+                        "Forwarded to the pipeline; see its --skip-seed-round.")
+    p.add_argument("--include-seed-round", action="store_true",
+                   help="Also verify the round-0 criterion (the unmodified seed). Forwarded "
+                        "to the pipeline; see its --include-seed-round.")
+    p.add_argument("--verify-propose-queries", action="store_true",
+                   help="Ask the model for criterion-aware search queries before retrieving for the criterion check, on top of the question's own retrieval. Forwarded to the pipeline; see its --verify-propose-queries.")
+    p.add_argument("--verify-max-extra-queries", type=int, default=RP.VERIFY_MAX_EXTRA_QUERIES,
+                   help="Cap on criterion-aware queries per check (default: "
+                        f"{RP.VERIFY_MAX_EXTRA_QUERIES}); 0 disables them.")
     p.add_argument("--verify-n-papers", type=int, default=15,
                    help="Papers in the criterion-check context (default: 15).")
     p.add_argument("--verify-max-chars-per-paper", type=int, default=4000,

@@ -118,6 +118,8 @@ def check_one(ex, client, logger, args) -> dict:
             retrieval_kwargs={"reranker": args.reranker, "reranker_url": args.reranker_url,
                               "decomposer_model": args.decomposer_model},
             n_context_papers=args.verify_n_papers,
+            propose_queries=args.verify_propose_queries,
+            max_extra_queries=args.verify_max_extra_queries,
             max_chars_per_paper=args.verify_max_chars_per_paper,
         )
     except Exception as e:                      # one bad question must not sink the batch
@@ -189,6 +191,13 @@ def main():
     p.add_argument("--decomposer-model", default=None,
                    help="Model for retrieve_papers' query decomposition (default: "
                         "retrieve_papers' own). Independent of --model.")
+    p.add_argument("--verify-propose-queries", action="store_true",
+                   help="Ask the model for criterion-aware search queries before "
+                        "retrieving, on top of the question's own retrieval. See "
+                        "research_pipeline.py --verify-propose-queries.")
+    p.add_argument("--verify-max-extra-queries", type=int,
+                   default=RP.VERIFY_MAX_EXTRA_QUERIES,
+                   help="Cap on criterion-aware queries per check; 0 disables them.")
     p.add_argument("--verify-n-papers", type=int, default=RP.VERIFY_N_PAPERS)
     p.add_argument("--verify-max-chars-per-paper", type=int,
                    default=RP.VERIFY_MAX_CHARS_PER_PAPER)
@@ -249,6 +258,8 @@ def main():
             "selection": {"all_questions": args.all_questions,
                           "include_seed_round": args.include_seed_round,
                           "verify_n_papers": args.verify_n_papers,
+                          "verify_propose_queries": args.verify_propose_queries,
+                          "verify_max_extra_queries": args.verify_max_extra_queries,
                           "verify_max_chars_per_paper": args.verify_max_chars_per_paper,
                           "reranker": args.reranker,
                           "budget_usd": args.budget_usd or None},

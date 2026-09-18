@@ -456,10 +456,17 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
     if args.verify_criterion:
         cmd += ["--verify-criterion",
                 "--verify-n-papers", str(args.verify_n_papers),
+                "--verify-max-extra-queries", str(args.verify_max_extra_queries),
                 "--verify-max-chars-per-paper", str(args.verify_max_chars_per_paper),
                 "--reranker", args.reranker]
+        if args.verify_propose_queries:
+            cmd += ["--verify-propose-queries"]
+        if args.include_seed_round:
+            cmd += ["--include-seed-round"]
         if args.reranker_url:
             cmd += ["--reranker-url", args.reranker_url]
+    if args.skip_seed_round:                    # independent of --verify-criterion
+        cmd += ["--skip-seed-round"]
 
     print(f"\n--- {round_dir.name}/{prompt}: {len(seeds)} seed(s) ---", flush=True)
     proc = subprocess.run(cmd)
@@ -564,9 +571,14 @@ def run_verification(out_dir: Path, args, remaining_usd: float | None = None) ->
     cmd = [args.python, str(VERIFIER), str(out_dir), "--out", str(out),
            "--concurrency", str(args.concurrency), "--model", args.model,
            "--verify-n-papers", str(args.verify_n_papers),
+           "--verify-max-extra-queries", str(args.verify_max_extra_queries),
            "--verify-max-chars-per-paper", str(args.verify_max_chars_per_paper),
            "--reranker", args.reranker]
     cmd += llm_client.forward_provider_args(args)
+    if args.verify_propose_queries:
+        cmd += ["--verify-propose-queries"]
+    if args.include_seed_round:
+        cmd += ["--include-seed-round"]
     if remaining_usd is not None:
         cmd += ["--budget-usd", f"{remaining_usd:.4f}"]
     if args.reranker_url:
@@ -704,6 +716,23 @@ def main():
                      help="INLINE verification during generation: checks the criterion "
                           "before each research call and kills the seed if it is rejected. "
                           "Expensive and lossy; prefer --verify-after.")
+    gen.add_argument("--skip-seed-round", action="store_true",
+                     help="Start at attempt 1 rather than testing the unmodified seed. No "
+                          "seed can come back ALREADY_HARD, and every seed yields a "
+                          "generated rewrite -- which is what feeds strategy clustering, "
+                          "since round-0 attempts carry no strategy. Mutually exclusive "
+                          "with --include-seed-round.")
+    gen.add_argument("--include-seed-round", action="store_true",
+                     help="Also verify the round-0 criterion (the unmodified seed), which "
+                          "is skipped by default. Can turn an ALREADY_HARD seed into "
+                          "CRITERION_INVALID. Forwarded to generation and to "
+                          "--verify-after. Only meaningful with --verify-criterion or "
+                          "--verify-after.")
+    gen.add_argument("--verify-propose-queries", action="store_true",
+                     help="Ask the model for criterion-aware search queries before retrieving for the criterion check, on top of the question's own retrieval. Forwarded to the pipeline; see its --verify-propose-queries.")
+    gen.add_argument("--verify-max-extra-queries", type=int,
+                     default=RP.VERIFY_MAX_EXTRA_QUERIES,
+                     help="Cap on criterion-aware queries per check; 0 disables them.")
     gen.add_argument("--verify-n-papers", type=int, default=15)
     gen.add_argument("--verify-max-chars-per-paper", type=int, default=4000)
     gen.add_argument("--reranker", default="auto", choices=["auto", "none", "vllm"])

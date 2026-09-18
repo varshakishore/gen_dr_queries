@@ -41,7 +41,10 @@ from typing import Optional
 import requests
 
 import llm_client
-from cite_utils import build_doc_index, numbered_plaintext, references_block
+from cite_utils import (
+    build_doc_index, has_inline_citations, numbered_plaintext, references_block,
+    selected_refs,
+)
 from llm_client import price_call, resolve_provider
 
 # ---------------------------------------------------------------------------
@@ -82,8 +85,16 @@ ANSWERING_SYSTEM_PROFILES = {
         "over academic papers. The system retrieves from a corpus of papers and "
         "synthesizes a report. Difficulty must not come from requiring sources outside "
         "this corpus. The system is good at surveying a single well-studied topic and "
-        "producing a long well-structured report. It is bad at complex reasoning."
+        "producing a long well-structured report. It is bad at complex reasoning. The system cannot produce in-line citations."
     ),
+    "webthinker": (
+            'The answering system is an open "deep research" model that is trained to produce '
+            'attributed long-form answers and whose ONLY tool is search '
+            "over academic papers. The system retrieves from a corpus of papers and "
+            "synthesizes a report. Difficulty must not come from requiring sources outside "
+            "this corpus. The system is good at surveying a single well-studied topic and "
+            "producing a long well-structured report. It is bad at complex reasoning. The system cannot produce in-line citations."
+        ),
 }
 DEFAULT_PROFILE = "drtulu"
 
@@ -423,6 +434,91 @@ PASSED means: the criterion is satisfied AND there are no critical issues.
 FAILED means: the criterion is not satisfied OR there are serious problems (hallucinations, refusals, off-topic).
 """
 
+# Same task as JUDGE_PROMPT_TEMPLATE, for answering systems that cannot produce
+# inline citations (WebThinker, Tongyi). The Sources section lists what the system
+# retrieved, in trace order -- it is NOT a claim-level attribution, and nothing in
+# the answer points into it. Without saying so, the judge reads every claim as
+# uncited and fails the answer on format instead of substance, which would make
+# the FAILED_FOUND rate a property of the output format rather than the question.
+JUDGE_PROMPT_NO_INLINE_CITES = """You are an expert evaluator of deep research system outputs.
+
+You will be given:
+- A research question
+- The verification criterion that defines what a good answer must do
+- The answer the research system produced, followed by a SOURCES section
+
+IMPORTANT — how to read the SOURCES section: this answering system cannot produce inline citations. The SOURCES section lists the pages the system retrieved while researching, in the order it found them. It is a record of what the system consulted, NOT a claim-by-claim attribution: no sentence in the answer points to any particular source, and a source being listed does not mean it supports any specific claim. Some listed sources may not have been used at all.
+
+Therefore:
+- Do NOT penalise the answer for lacking inline citations or a bibliography; this system structurally cannot produce them.
+- Do NOT treat a claim as unsupported merely because no source is attached to it.
+- DO use the sources as context for spotting claims that contradict the retrieved material, or that concern entities absent from every source (a likely fabrication).
+
+Your job is to judge whether the answer satisfies the verification criterion, and to flag other issues you notice (factual errors, hallucinations, evasion, missing reasoning, structural problems, etc.) even if those issues are not part of the criterion. If the verification criterion is "Any non-empty answer is acceptable", then the verdict should be PASSED.
+
+QUESTION:
+{question}
+
+VERIFICATION CRITERION:
+{criterion}
+
+ANSWER:
+{answer}
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{{
+  "criterion_satisfied": <true | false>,
+  "criterion_reasoning": "<why the answer does or does not satisfy the criterion>",
+  "other_issues": ["<issue 1>", "<issue 2>", ...],
+  "summary": "<2-4 sentence overall summary of how the answer performed and what to push on next time>",
+  "verdict": "<PASSED | FAILED>"
+}}
+
+PASSED means: the criterion is satisfied AND there are no critical issues.
+FAILED means: the criterion is not satisfied OR there are serious problems (hallucinations, refusals, off-topic).
+"""
+
+VERIFY_MAX_EXTRA_QUERIES = 3
+
+# PROMPT_FOR_SEED_CRITERION hands underspecified seeds this escape hatch, and
+# JUDGE_PROMPT_TEMPLATE passes anything carrying it. 18% of round-0 criteria on disk are
+# this, so --include-seed-round skips them: there is no factual claim to check.
+SEED_CRITERION_ESCAPE_HATCH = "any non-empty answer is acceptable"
+
+
+def is_escape_hatch_criterion(criterion: str) -> bool:
+    return SEED_CRITERION_ESCAPE_HATCH in (criterion or "").strip().lower()
+
+PROMPT_TO_PROPOSE_VERIFY_QUERIES = """You are generating targeted literature-search queries to help fact-check a VERIFICATION CRITERION for a research question.
+
+Search results are already retrieved for the QUESTION itself. Your job is to propose only additional searches that would help determine whether the VERIFICATION CRITERION is factually correct.
+
+RULES:
+- Propose 0 to {max_queries} queries. Propose NONE if searching the question itself is likely to surface enough evidence to evaluate the criterion. An empty list is valid and should be common.
+- Each query must target a specific factual claim or necessary assumption made by the criterion; do not generate near-duplicate searches.
+- Prefer queries that could DISCRIMINATE between the criterion being correct and incorrect, rather than queries that merely provide general background.
+- Write queries that would help SETTLE the claim either way. For claims about absence, consensus, uniqueness, causality, or lack of evidence, actively consider searches for contradictory evidence.
+- Do not assume the criterion is correct. The purpose of the search is to verify it, not to find support for it.
+- Queries are run verbatim against a literature search engine. Use short, natural-language keyword phrases, not Boolean syntax or full questions.
+- Do not restate or paraphrase the QUESTION. 
+
+QUESTION:
+{question}
+
+VERIFICATION CRITERION:
+{criterion}
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{{
+  "queries": [
+    {{
+      "query": "<keyword phrase to search>"
+    }}
+  ]
+}}
+"""
+
+
 PROMPT_TO_VERIFY_VERIFICATION_CRITERIA = """You are an expert meta-evaluator for a deep-research benchmark with difficult questions. Your only task is to judge whether the VERIFICATION CRITERION itself is correct as an evaluation standard for the given question.
 
 Do NOT reward or penalize style, atomicity, verbosity, or formatting except where those affect whether the criterion states a correct requirement. Determine whether the criterion's factual expectations, premises, causal claims, comparisons, mechanisms, entities, time frames, required distinctions, and absence/uncertainty claims are true, evidence-supported, and fairly required by the harder question.
@@ -448,7 +544,7 @@ The provided search results are normally what you must work with. Use additional
 LABEL DEFINITIONS (for judging the verification criterion itself):
 - correct: The criterion's factual expectations are supported, accurately framed, and fairly required by the question. It can be used as-is to judge an answer.
 - partly_correct: The core expectation is directionally right, but some wording, scope, certainty, causal framing, entity mapping, or required distinction is materially imprecise. It should be revised before use.
-- incorrect: A factual expectation, premise, mechanism, comparison, required conclusion, or absence/uncertainty claim in the criterion is contradicted, unsupported, or unfairly required by the harder question.
+- incorrect: A factual expectation, premise, mechanism, comparison, required conclusion, or absence/uncertainty claim in the criterion is contradicted, unsupported, or unfairly required by the harder question. If the verification criterion requires something that is not necessary for a good answer to the question, label the criterion as incorrect
 - insufficient_evidence: The given evidence is not adequate to verify whether the criterion itself is correct.
 
 Question:
@@ -883,18 +979,36 @@ def harder_question_gen(
     )
 
 
-def format_answer_for_judge(answer: str, trace: object) -> str:
+def format_answer_for_judge(answer: str, trace: object) -> tuple[str, bool]:
     """Render an answer the way the HTML viewer does, in plain text.
+
+    Returns (text, inline_cites) -- the flag picks the judge prompt, because the
+    two cases ask the judge for different things.
 
     DR-Tulu's opaque `<cite id="...">` tags become inline [n] markers backed by a
     References section carrying each source's title, authors, and retrieved snippet,
     so the judge can check a claim against the text it cites rather than against the
-    system's own paraphrase of it. Answers with no `<cite>` tags (Tongyi, or any
-    response without a trace) pass through unchanged.
+    system's own paraphrase of it.
+
+    WebThinker emits no inline citations at all -- its refined article contains
+    zero URLs and zero [n] markers -- so there is nothing to resolve per claim.
+    Instead the sources its trace shows it consulted are appended as a flat list.
+    That is provenance, not attribution: it says what informed the report, never
+    which source backs a given sentence. JUDGE_PROMPT_NO_INLINE_CITES says so,
+    so the judge does not mark every claim uncited and fail the answer on a
+    formatting mismatch rather than on substance.
+
+    Answers with no citations and no usable trace (Tongyi) pass through unchanged.
     """
-    doc_index = build_doc_index(trace if isinstance(trace, dict) else {})
-    marked, refs = numbered_plaintext(answer, doc_index)
-    return marked + references_block(refs, include_snippets=True)
+    doc_index = build_doc_index(trace)
+    if has_inline_citations(answer):
+        marked, refs = numbered_plaintext(answer, doc_index)
+        return marked + references_block(refs, include_snippets=True), True
+    refs = selected_refs(doc_index)
+    return (answer or "") + references_block(
+        refs, include_snippets=True,
+        title="SOURCES (retrieved while researching; not claim-level citations)",
+    ), False
 
 
 def judge_answer(
@@ -908,13 +1022,14 @@ def judge_answer(
     attempt: int,
     trace: object = None,
 ) -> tuple[Judgment, CostBucket]:
-    judge_answer_text = format_answer_for_judge(answer, trace)
-    prompt = JUDGE_PROMPT_TEMPLATE.format(
+    judge_answer_text, inline_cites = format_answer_for_judge(answer, trace)
+    template = JUDGE_PROMPT_TEMPLATE if inline_cites else JUDGE_PROMPT_NO_INLINE_CITES
+    prompt = template.format(
         question=question, criterion=criterion, answer=judge_answer_text
     )
     messages = [{"role": "user", "content": prompt}]
     # Log the prompt with the (bulky) answer redacted; it lives in the results file.
-    log_prompt = JUDGE_PROMPT_TEMPLATE.format(
+    log_prompt = template.format(
         question=question, criterion=criterion,
         answer=f"<answer + references omitted: {len(judge_answer_text)} chars — "
                f"see results file>",
@@ -977,6 +1092,48 @@ def format_search_results_context(
     return "\n\n".join(blocks)
 
 
+def propose_verify_queries(
+    client,
+    model: str,
+    question: str,
+    criterion: str,
+    logger: RunLogger,
+    seed: str,
+    attempt: int,
+    max_queries: int = VERIFY_MAX_EXTRA_QUERIES,
+) -> tuple[list[str], CostBucket]:
+    """Criterion-aware search queries to run alongside the question's own retrieval.
+
+    Retrieval for the criterion check is driven by `retrieve_papers(question)`, so the
+    criterion's own requirements -- a named entity, a required distinction, a demanded
+    study design -- never reach the search engine. This asks for up to `max_queries`
+    searches that target them. The queries widen the candidate pool only: everything is
+    reranked together and cut to n_context_papers, so the verify prompt does not grow.
+
+    Returns `(queries, bucket)`, the query strings in prompt order (possibly empty -- the
+    prompt says an empty list should be common). A failure here is non-fatal: the check
+    falls back to question-only retrieval rather than losing the seed.
+    """
+    prompt = PROMPT_TO_PROPOSE_VERIFY_QUERIES.format(
+        question=question, criterion=criterion, max_queries=max_queries)
+    raw, bucket = _call_llm(
+        client, model=model, system=None,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=1200, logger=logger, seed=seed, attempt=attempt,
+        purpose="propose_verify_queries",
+    )
+    data = extract_json(raw)
+    out: list[str] = []
+    for q in (data.get("queries") or []):
+        # the schema asks for {"query": ...}; a bare string is accepted too
+        text = q.get("query") if isinstance(q, dict) else q
+        text = text.strip() if isinstance(text, str) else ""
+        if text and text not in out:
+            out.append(text)
+    # cap AFTER filtering, so a blank or duplicate entry does not eat a query slot
+    return out[:max_queries], bucket
+
+
 def verify_criterion(
     client,
     model: str,
@@ -988,6 +1145,8 @@ def verify_criterion(
     retrieval_kwargs: Optional[dict] = None,
     n_context_papers: int = VERIFY_N_PAPERS,
     max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
+    propose_queries: bool = False,
+    max_extra_queries: int = VERIFY_MAX_EXTRA_QUERIES,
 ) -> tuple[CriterionCheck, CostBucket]:
     """Retrieve papers for `question`, then judge whether `criterion` is itself correct.
 
@@ -1003,8 +1162,27 @@ def verify_criterion(
     t0 = time.perf_counter()
     retrieval_meta: dict = {}
     decompose_bucket = CostBucket()
+
+    # Criterion-aware queries, if enabled. Non-fatal: a failure here degrades to
+    # question-only retrieval rather than dropping the seed.
+    proposed: list[str] = []
+    propose_bucket = CostBucket()
+    propose_error = None
+    if propose_queries and max_extra_queries > 0:
+        try:
+            proposed, propose_bucket = propose_verify_queries(
+                client, model, question, criterion, logger, seed, attempt,
+                max_queries=max_extra_queries,
+            )
+        except Exception as e:
+            propose_error = f"{type(e).__name__}: {e}"
+
     try:
-        retrieved = retrieve_papers(question, **(retrieval_kwargs or {}))
+        retrieved = retrieve_papers(
+            question,
+            extra_queries=proposed or None,
+            **(retrieval_kwargs or {}),
+        )
         papers = retrieved.get("papers") or []
         context = format_search_results_context(
             papers, max_papers=n_context_papers, max_chars_per_paper=max_chars_per_paper
@@ -1021,6 +1199,13 @@ def verify_criterion(
             "n_snippets": retrieved.get("n_snippets"),
             "n_keyword_papers": retrieved.get("n_keyword_papers"),
             "elapsed_s": retrieved.get("elapsed_s"),
+            # criterion-aware pre-retrieval: the queries asked for and what they added.
+            # Empty list = the step ran and proposed nothing (the prompt says that should
+            # be common); None = the step was off.
+            "proposed_queries": proposed if propose_queries else None,
+            "extra_query_results": retrieved.get("extra_queries"),
+            "n_extra_papers": retrieved.get("n_extra_papers"),
+            "propose_error": propose_error,
         }
         # retrieve_papers' query-decomposition call bills to us; price it here since it
         # never passes through _call_llm.
@@ -1069,6 +1254,7 @@ def verify_criterion(
             purpose="verify_criterion", log_messages=log_messages,
         )
         bucket.add(decompose_bucket)
+        bucket.add(propose_bucket)
         data = extract_json(raw)
     except Exception as e:
         logger.log_criterion_check(
@@ -1199,11 +1385,19 @@ def process_seed(
     retrieval_kwargs: Optional[dict] = None,
     n_context_papers: int = VERIFY_N_PAPERS,
     max_chars_per_paper: int = VERIFY_MAX_CHARS_PER_PAPER,
+    propose_queries: bool = False,
+    max_extra_queries: int = VERIFY_MAX_EXTRA_QUERIES,
+    include_seed_round: bool = False,
+    skip_seed_round: bool = False,
 ) -> SeedResult:
     result = SeedResult(seed=seed)
 
-    # Round 0 tests the seed as-is; rounds 1..N test harder rewrites.
-    for attempt in range(0, max_attempts + 1):
+    # Round 0 tests the seed as-is; rounds 1..N test harder rewrites. skip_seed_round
+    # starts at 1, so ALREADY_HARD cannot occur and every seed yields a generated rewrite
+    # -- which is what feeds strategy clustering, since round-0 attempts are excluded from
+    # it (they carry no strategy). The cost is losing the "already hard" signal: a seed the
+    # system already fails gets hardened anyway, and may overshoot into unanswerable.
+    for attempt in range(1 if skip_seed_round else 0, max_attempts + 1):
         if verbose:
             print(f"\n{'=' * 70}")
             label = "Round 0 (testing seed as-is)" if attempt == 0 else f"Attempt {attempt}/{max_attempts}"
@@ -1251,10 +1445,17 @@ def process_seed(
             print(f"    Criterion: {harder.verification_criterion}")
 
         # Step 1b — check the criterion itself before spending a research-server call on
-        # it. Rounds 1+ only: round 0's criterion comes from generate_seed_criterion and
-        # is often the "any non-empty answer" escape hatch, which there is nothing to check.
+        # it. Rounds 1+ by default; --include-seed-round extends it to round 0, whose
+        # criterion comes from generate_seed_criterion. The escape hatch is skipped either
+        # way: "any non-empty answer is acceptable" states no fact to verify, and the judge
+        # passes it unconditionally.
         criterion_check = None
-        if verify_criteria and attempt > 0:
+        check_this_attempt = verify_criteria and (
+            attempt > 0
+            or (include_seed_round
+                and not is_escape_hatch_criterion(harder.verification_criterion))
+        )
+        if check_this_attempt:
             try:
                 criterion_check, bucket = verify_criterion(
                     client, model, harder.updated_question,
@@ -1262,6 +1463,8 @@ def process_seed(
                     retrieval_kwargs=retrieval_kwargs,
                     n_context_papers=n_context_papers,
                     max_chars_per_paper=max_chars_per_paper,
+                    propose_queries=propose_queries,
+                    max_extra_queries=max_extra_queries,
                 )
                 result.cost.add(bucket)
             except Exception as e:
@@ -1496,6 +1699,43 @@ def main():
         help=f"Papers to include in the criterion-check context (default: {VERIFY_N_PAPERS}).",
     )
     parser.add_argument(
+        "--skip-seed-round", action="store_true",
+        help="Start at attempt 1 instead of testing the unmodified seed first. No seed can "
+             "come back ALREADY_HARD, every seed produces a generated rewrite (round-0 "
+             "attempts carry no strategy, so only rewrites feed strategy clustering), and "
+             "one research call plus one seed-criterion call per seed are saved. In "
+             "exchange a seed the system already fails is hardened anyway and may overshoot "
+             "into unanswerable. Mutually exclusive with --include-seed-round.",
+    )
+    parser.add_argument(
+        "--include-seed-round", action="store_true",
+        help="Also verify the ROUND-0 criterion (the unmodified seed), which is skipped by "
+             "default. Criteria that are just 'Any non-empty answer is acceptable' are "
+             "still skipped — there is nothing to check. Note this can turn a seed that "
+             "would have been ALREADY_HARD into CRITERION_INVALID: the check runs before "
+             "the research call, so a rejected criterion stops the seed before the "
+             "unmodified question is ever tested. Only meaningful with --verify-criterion.",
+    )
+    parser.add_argument(
+        "--verify-propose-queries", action="store_true",
+        help="Before retrieving for the criterion check, ask the model for up to "
+             "--verify-max-extra-queries searches targeting what the CRITERION requires "
+             "but the question does not say (a named entity, a required distinction, a "
+             "demanded study design). Retrieval is otherwise driven by the question alone, "
+             "so those claims never reach the search engine. The extra hits widen the "
+             "candidate pool only -- everything is reranked together and cut to "
+             "--verify-n-papers -- so the check's prompt does not grow. Off by default: it "
+             "changes which papers the meta-judge sees, so runs with and without it are "
+             "not comparable. Wants a reranker (see --reranker-url); unreranked, the extra "
+             "candidates are merged in arbitrary order.",
+    )
+    parser.add_argument(
+        "--verify-max-extra-queries", type=int, default=VERIFY_MAX_EXTRA_QUERIES,
+        help=f"Cap on criterion-aware queries per check (default: "
+             f"{VERIFY_MAX_EXTRA_QUERIES}); 0 disables them even with "
+             f"--verify-propose-queries.",
+    )
+    parser.add_argument(
         "--verify-max-chars-per-paper", type=int, default=VERIFY_MAX_CHARS_PER_PAPER,
         help=f"Truncate each paper's text to this many chars in the criterion-check "
              f"context (default: {VERIFY_MAX_CHARS_PER_PAPER}).",
@@ -1557,6 +1797,12 @@ def main():
     if not seeds:
         parser.error("No seed questions provided.")
 
+    if args.skip_seed_round and args.include_seed_round:
+        parser.error("--skip-seed-round and --include-seed-round contradict: one removes round 0, "
+             "the other verifies its criterion. Pick one.")
+    if args.skip_seed_round and args.max_attempts < 1:
+        parser.error("--skip-seed-round needs --max-attempts >= 1, or no attempt runs at all.")
+
     missing_key = llm_client.require_api_key(args.model)
     if missing_key:
         parser.error(missing_key)
@@ -1600,6 +1846,10 @@ def main():
             retrieval_kwargs=retrieval_kwargs,
             n_context_papers=args.verify_n_papers,
             max_chars_per_paper=args.verify_max_chars_per_paper,
+            propose_queries=args.verify_propose_queries,
+            max_extra_queries=args.verify_max_extra_queries,
+            include_seed_round=args.include_seed_round,
+            skip_seed_round=args.skip_seed_round,
         )
         all_results.append(result)
         grand_total.add(result.cost)

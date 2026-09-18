@@ -21,7 +21,7 @@ from pathlib import Path
 import re
 
 from cite_utils import (
-    CITE_CSS, abridge, build_doc_index, esc, render_answer, render_refs, render_searches,
+    CITE_CSS, abridge, esc, render_refs, render_searches, resolve_answer,
 )
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title>
@@ -59,9 +59,8 @@ def render_attempt(att: dict, is_last: bool = False) -> str:
     # i.e. the criterion check rejected the criterion.
     j = att.get("judgment") or {}
     cc = att.get("criterion_check") or {}
-    trace = att.get("trace") or {}
-    doc_index = build_doc_index(trace)
-    body, refs, missing = render_answer(att.get("answer") or "", doc_index)
+    trace = att.get("trace")
+    body, refs, missing = resolve_answer(att.get("answer") or "", trace)
     if att.get("judgment") is None and cc:
         verdict = cc.get("correctness_label", "") or "NO VERDICT"
         vcolor = "#9a6700"
