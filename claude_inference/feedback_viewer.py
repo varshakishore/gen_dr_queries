@@ -143,7 +143,10 @@ def _detail_page(meta: dict, cluster: dict, scope_key: str, scope_label: str,
             f'<div class="q"><span class="lbl">seed</span>{html.escape(x.get("seed_question", ""))}</div>'
             f'<div class="q hard"><span class="lbl">→ harder</span>{html.escape(x.get("updated_question", ""))}</div>'
             f'<div class="m"><span class="lbl">strategy</span>{html.escape(x.get("strategy", ""))}</div>'
-            f'<div class="m"><span class="lbl">criterion</span>{html.escape(x.get("verification_criterion", ""))}</div>'
+            + (f'<div class="m"><span class="lbl">reasoning</span>'
+               f'<ol>{"".join(f"<li>{html.escape(s)}</li>" for s in x["required_reasoning_process"])}</ol></div>'
+               if x.get("required_reasoning_process") else "")
+            + f'<div class="m"><span class="lbl">criterion</span>{html.escape(x.get("verification_criterion", ""))}</div>'
             "</div>"
         )
     body = "".join(rows) or '<p class="muted">No instances.</p>'
@@ -226,7 +229,10 @@ def _examples(examples: list[dict]) -> str:
             f'<div class="q"><span class="lbl">seed</span>{html.escape(ex.get("seed_question", ""))}</div>'
             f'<div class="q hard"><span class="lbl">→ harder</span>{html.escape(ex.get("updated_question", ""))}</div>'
             f'<div class="m"><span class="lbl">strategy</span>{html.escape(ex.get("strategy", ""))}</div>'
-            f'<div class="m"><span class="lbl">criterion</span>{html.escape(ex.get("verification_criterion", ""))}</div>'
+            + (f'<div class="m"><span class="lbl">reasoning</span>'
+               f'<ol>{"".join(f"<li>{html.escape(s)}</li>" for s in ex["required_reasoning_process"])}</ol></div>'
+               if ex.get("required_reasoning_process") else "")
+            + f'<div class="m"><span class="lbl">criterion</span>{html.escape(ex.get("verification_criterion", ""))}</div>'
             "</div>"
         )
     return (
