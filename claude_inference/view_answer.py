@@ -67,15 +67,20 @@ def render_attempt(att: dict, is_last: bool = False) -> str:
     else:
         verdict = j.get("verdict", "")
         vcolor = "#cf222e" if verdict == "FAILED" else "#1a7f37"
-    # Show what the criterion check said whenever it rewrote or rejected the criterion.
+    # Show what the criterion check said whenever it rewrote or rejected the criterion,
+    # or flagged a requirement as unfair (which can happen on a criterion that was kept).
     cc_rows = ""
-    if cc and (att.get("judgment") is None or h.get("verification_criterion_original")):
+    if cc and (att.get("judgment") is None or h.get("verification_criterion_original")
+               or cc.get("unfair_requirements")):
         if h.get("verification_criterion_original"):
             cc_rows += (f'<div><b>Criterion (original)</b> '
                         f'{esc(h["verification_criterion_original"])}</div>')
         cc_rows += f'<div><b>Criterion check</b> {esc(cc.get("correctness_label"))}</div>'
         if cc.get("main_correctness_problem"):
             cc_rows += f'<div><b>Problem</b> {esc(cc["main_correctness_problem"])}</div>'
+        if cc.get("unfair_requirements"):
+            cc_rows += (f'<div><b>Unfair requirement</b> '
+                        f'{esc(cc["unfair_requirements"])}</div>')
     miss = (f'<div class="warn">{len(missing)} citation id(s) could not be resolved '
             f'from the trace.</div>' if missing else "")
     open_attr = " open" if is_last else ""

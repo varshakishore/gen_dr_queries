@@ -78,7 +78,7 @@ ul.strat li.novel { border-left-color:var(--accent); background:#58a6ff12; }
 .tag.novel { background:#58a6ff22; color:var(--accent); }
 .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; }
 .badge.correct { background:#3fb95022; color:var(--good); }
-.badge.partly_correct { background:#d2992222; color:var(--warn); }
+.badge.almost_correct, .badge.partly_correct { background:#d2992222; color:var(--warn); }
 .badge.incorrect { background:#f8514922; color:var(--bad); }
 .badge.insufficient_evidence { background:#8b949e22; color:var(--muted); }
 .badge.error { background:#f8514922; color:var(--bad); }
@@ -369,6 +369,7 @@ def verification_html(loop_dir: Path, samples: dict) -> str:
         if q.get("criterion_rewritten"):
             extra = (f'<div class="crit"><span class="lbl">rewritten</span>{esc(q.get("criterion"))}</div>')
         why = q.get("main_correctness_problem") or ""
+        unfair = q.get("unfair_requirements") or ""
         reasoning = q.get("reasoning") or q.get("error") or ""
         hit = samples.get(q.get("question")) or samples.get(q.get("seed_question")) or {}
         qtext = esc(q.get("question"))
@@ -402,6 +403,8 @@ def verification_html(loop_dir: Path, samples: dict) -> str:
             f'r{esc(q.get("round"))}</td>'
             f'<td><div class="q">{qcell}</div>'
             + (f'<div class="crit" style="color:var(--bad)"><span class="lbl">problem</span>{esc(why)}</div>' if why else "")
+            + (f'<div class="crit" style="color:var(--warn)"><span class="lbl">unfair</span>'
+               f'{esc(unfair)}</div>' if unfair else "")
             + extra
             + where
             + f'<details><summary>criterion + judge reasoning</summary>'

@@ -154,6 +154,11 @@ def card_html(s) -> str:
         if h.get("verification_criterion_original"):
             parts.append(f'<div class="field"><b>Criterion before rewrite</b>'
                          f'<div>{esc(h["verification_criterion_original"])}</div></div>')
+        # Shown whether the criterion was kept or rejected: an almost_correct criterion
+        # can carry an unfair requirement and still have been used (after rewrite).
+        if cc.get("unfair_requirements"):
+            parts.append(f'<div class="field"><b>Unfair requirement</b>'
+                         f'<div>{esc(cc["unfair_requirements"])}</div></div>')
         if last.get("judgment") is None:
             parts.append(f'<div class="field"><b>Criterion check</b>'
                          f'<div>{esc(cc.get("correctness_label"))} — '

@@ -1,12 +1,24 @@
 #!/usr/bin/env python3
 """
-Shared helpers for resolving DR-Tulu inline citations against an attempt's trace.
+Shared helpers for turning an answering system's trace into a reference list.
 
-DR-Tulu answers contain inline citations like:  <cite id="5209281c-1">claim</cite>
-where the id is "<tool_call_id>-<doc_index>". The id indexes into
-trace.tool_calls[*].documents (enriched with raw_output.data[*].paper for authors
-and corpusId). Both view_answer.py and summarize_run.py import from here so the
-overview report and the per-answer viewer resolve citations identically.
+Three trace shapes are supported, dispatched on by `build_doc_index`:
+
+  DR-Tulu    a dict, {"tool_calls": [...]}. The answer carries inline citations
+             (<cite id="5209281c-1">claim</cite>, the id being
+             "<tool_call_id>-<doc_index>") which index into
+             trace.tool_calls[*].documents, enriched with raw_output.data[*].paper
+             for authors and corpusId.
+  WebThinker a list of explorer calls; sources are embedded in each call's prompt
+             string and selected via back-references in Extracted_info.
+  Tongyi     a ReAct message list; sources come from search/scholar responses and
+             the selection signal is which pages the model chose to `visit`.
+
+The latter two emit NO inline citations, so their reference list is provenance --
+what informed the answer -- rather than claim-level attribution, and the judge is
+told so (JUDGE_PROMPT_NO_INLINE_CITES). Every shape produces the same doc dict, so
+view_answer.py, summarize_run.py, annotate_answer.py, the annotation app and the
+judge all number references identically.
 """
 
 import html
@@ -34,6 +46,74 @@ WEBTHINKER_REF_RE = re.compile(r'Web Pages?\s+([0-9]+(?:\s*(?:,|and|&)\s*[0-9]+)
 # median..p95 band. Truncation, not ranking: every selected page is kept.
 WEBTHINKER_PAGE_CHARS = 2000
 
+# --- Tongyi DeepResearch -----------------------------------------------------
+# Tongyi's trace is a ReAct message list -- {role, content} where assistant turns
+# carry <tool_call> and user turns carry <tool_response>. Three response shapes
+# produce sources:
+#   search   "A Google search for '...' found N results:"  -> 1. [Title](url) + snippet
+#   scholar  "A Google scholar for '...' found N results:" -> 1. [Title](pdfUrl: url)
+#                                                             + publicationInfo/citedBy
+#   visit    "The useful information in <url> for user goal <goal> as follows:"
+#            followed by "Evidence in page:" and the extracted text
+# `visit` is the selection signal and it is unambiguous: the model chose to read
+# that page. Measured over 11 traces, visits pick 6-8% of the search pool (105 of
+# 1278; 18 of 278 live), so unlike WebThinker there is no back-reference parsing
+# and no superset fallback -- the used set is simply what was visited.
+TOOL_RESPONSE_RE = re.compile(r"<tool_response>\s*(.*?)\s*</tool_response>", re.S)
+TONGYI_SEARCH_HEAD = re.compile(r"^A Google (search|scholar) for ", re.I)
+# Sources to show when a trace searched but never visited anything (not seen in 11
+# traces; the minimum was 1 visit). Keeps the judge from getting an empty list.
+TONGYI_POOL_FALLBACK = 10
+TONGYI_HIT_RE = re.compile(
+    r"^\s*\d+\.\s*\[([^\]]+)\]\(\s*(?:pdfUrl:\s*)?(https?://[^\)\s]+)\s*\)\s*\n(.*?)"
+    r"(?=\n\s*\d+\.\s*\[|\Z)",
+    re.S | re.M,
+)
+TONGYI_VISIT_RE = re.compile(
+    r"^The useful information in (\S+) for user goal (.*?) as follows:\s*(.*)", re.S)
+TONGYI_PUBINFO_RE = re.compile(r"^publicationInfo:\s*(.+)$", re.M)
+TONGYI_HEADING_RE = re.compile(r"^#{1,4}\s*(.+)$|^Title:\s*(.+)$", re.M)
+# Every visit body opens with this line (127 of 127 measured); it carries nothing
+# and would otherwise be the first thing the judge reads in every reference.
+TONGYI_EVIDENCE_LEAD_RE = re.compile(r"^\s*Evidence in page:\s*", re.I)
+# A visit that did not actually reach the page still comes back as a normal
+# response -- an apology, or the text of a bot wall -- and supports nothing, so it
+# must not become a reference. 26 of 127 measured visits (20%) are one of these,
+# mostly CAPTCHA interstitials on researchgate / openreview / pmc. Length is not a
+# usable signal: the longest such body is 20,550 chars of reCAPTCHA page furniture,
+# well above the 2,182-char median of a real visit. Matched against the opening of
+# the body only, since a wall announces itself immediately while a page that merely
+# discusses CAPTCHAs would not.
+TONGYI_FETCH_FAIL_RE = re.compile(
+    r"captcha|complete the check|security check required|just a moment|"
+    r"checking your browser|cloudflare|verify you are human|"
+    r"access denied|403 forbidden|not authorized|permission denied|"
+    r"could not be accessed|not directly accessible|unable to (?:access|retrieve)|"
+    r"requires user interaction|failed to (?:fetch|load)|error (?:fetching|loading)|"
+    r"no HTML elements|content is empty|no (?:useful|relevant) information",
+    re.I)
+TONGYI_FAIL_WINDOW = 400
+TONGYI_MIN_EVIDENCE = 200
+# Tongyi visits a lot of PDFs, and roughly half its visited URLs never appeared in
+# a search result, so there is no title to inherit and the body has no heading.
+# These URLs are still identifiable, so build a label from the id rather than
+# showing a raw PDF link.
+TONGYI_URL_LABELS = (
+    (re.compile(r"arxiv\.org/(?:abs|pdf|html|e-print)/([0-9]{4}\.[0-9]{4,5})"), "arXiv:{}"),
+    (re.compile(r"aclanthology\.org/([0-9A-Za-z.\-]+?)(?:\.pdf|/|$)"), "ACL Anthology {}"),
+    (re.compile(r"doi\.org/(10\.[^\s/]+/[^\s?#]+)"), "doi:{}"),
+    (re.compile(r"(?:www\.)?ncbi\.nlm\.nih\.gov/pmc/articles/(PMC[0-9]+)"), "PMC {}"),
+)
+# Visit text is already condensed -- Tongyi fetches a page and keeps ~6% of it,
+# selected against its own stated goal -- so every character survived a relevance
+# pass and truncation cuts chosen content, not boilerplate. Measured over 127
+# visits: median 2201 chars, p90 6682, max 20569. A 2000-char cap would truncate
+# 53% of references and drop 47% of the text; 4000 truncates 18% and keeps 75%,
+# clipping only the long tail. Uncapped the block runs median 35k / max 58k,
+# already inside DR-Tulu's range (median 16k, p95 37k, max 77k), so the cap is
+# tail insurance rather than a budget necessity. 0 disables truncation.
+TONGYI_PAGE_CHARS = 4000
+
 
 def esc(x) -> str:
     return html.escape(str(x if x is not None else ""))
@@ -53,15 +133,18 @@ def build_doc_index(trace) -> dict:
     """Map cite-id -> document dict, dispatching on the trace's shape.
 
     DR-Tulu traces are dicts ({"tool_calls": [...]}); WebThinker's is a list of
-    explorer calls. Anything else (Tongyi's chat-message list carries no
-    retrievable documents, None, a bare string) yields {} rather than raising --
-    the viewers pass whatever the server returned straight through.
+    explorer calls ("Input" per entry); Tongyi's is a ReAct message list
+    ("role"/"content" per entry). Anything else (None, a bare string, a list of
+    something else) yields {} rather than raising -- the viewers pass whatever the
+    server returned straight through.
     """
     if isinstance(trace, dict):
         return _build_doc_index_drtulu(trace)
-    if isinstance(trace, list) and trace and isinstance(trace[0], dict) \
-            and "Input" in trace[0]:
-        return build_doc_index_webthinker(trace)
+    if isinstance(trace, list) and trace and isinstance(trace[0], dict):
+        if "Input" in trace[0]:
+            return build_doc_index_webthinker(trace)
+        if "role" in trace[0] and "content" in trace[0]:
+            return build_doc_index_tongyi(trace)
     return {}
 
 
@@ -133,6 +216,109 @@ def build_doc_index_webthinker(trace: list, page_chars: int = WEBTHINKER_PAGE_CH
                 "selected": backref or not cited,
                 "search_snippet": blurb,
             }
+    return out
+
+
+def _tongyi_tool_responses(trace: list):
+    """Yield (message_index, response_text) for every <tool_response> in the trace."""
+    for i, msg in enumerate(trace or []):
+        if not isinstance(msg, dict):
+            continue
+        for body in TOOL_RESPONSE_RE.findall(msg.get("content") or ""):
+            yield i, body.strip()
+
+
+def _tongyi_title_from_evidence(text: str) -> str:
+    """First markdown heading / 'Title:' line in a visit's extracted text, if any."""
+    m = TONGYI_HEADING_RE.search(text or "")
+    if not m:
+        return ""
+    return (m.group(1) or m.group(2) or "").strip()[:200]
+
+
+def _tongyi_label_from_url(url: str) -> str:
+    """'arXiv:2604.01657' etc. for a URL whose id is recognisable, else ''."""
+    for pattern, fmt in TONGYI_URL_LABELS:
+        m = pattern.search(url or "")
+        if m:
+            return fmt.format(m.group(1))
+    return ""
+
+
+def build_doc_index_tongyi(trace: list, page_chars: int = TONGYI_PAGE_CHARS) -> dict:
+    """Map '<msg_idx>-<n>' -> document dict, in build_doc_index's shape.
+
+    Search and scholar hits build a candidate pool keyed by URL; `visit` responses
+    are the sources the model actually read, and only those are marked `selected`.
+    A visited URL takes its title, blurb and authors from the pool entry when the
+    search results carried one -- only about half do, since Tongyi visits URLs it
+    reached by other means -- and otherwise falls back to a heading inside the
+    extracted text, then to the URL itself.
+
+    Each doc's `snippet` is the evidence the references block shows: the visit's
+    extracted text (truncated to `page_chars`; 0 disables) for visited pages, and
+    the search blurb for the rest.
+    """
+    pool = {}                       # url -> {title, snippet, authors, query}
+    visits = {}                     # url -> (msg_idx, goal, evidence)
+    for idx, body in _tongyi_tool_responses(trace):
+        if TONGYI_SEARCH_HEAD.match(body):
+            query = ""
+            qm = re.match(r"^A Google (?:search|scholar) for '([^']*)'", body)
+            if qm:
+                query = qm.group(1)
+            for title, url, tail in TONGYI_HIT_RE.findall(body):
+                if url in pool:
+                    continue
+                authors = []
+                pm = TONGYI_PUBINFO_RE.search(tail)
+                if pm:                       # "AR Cornelius - 2012 - digitalcommons…"
+                    authors = [pm.group(1).split(" - ")[0].strip()]
+                blurb = "\n".join(
+                    ln for ln in tail.strip().splitlines()
+                    if not re.match(r"^(publicationInfo|Date published|citedBy):", ln)
+                ).strip()
+                pool[url] = {"title": title.strip(), "snippet": blurb,
+                             "authors": authors, "query": query}
+            continue
+        vm = TONGYI_VISIT_RE.match(body)
+        if vm:
+            url, goal, evidence = vm.groups()
+            evidence = TONGYI_EVIDENCE_LEAD_RE.sub("", evidence.strip()).strip()
+            # A failed fetch supports nothing -- do not make it a reference.
+            if len(evidence) < TONGYI_MIN_EVIDENCE \
+                    or TONGYI_FETCH_FAIL_RE.search(evidence[:TONGYI_FAIL_WINDOW]):
+                continue
+            visits.setdefault(url, (idx, goal.strip(), evidence))
+
+    out = {}
+    for n, (url, (idx, goal, evidence)) in enumerate(visits.items()):
+        hit = pool.get(url) or {}
+        title = (hit.get("title")
+                 or _tongyi_title_from_evidence(evidence)
+                 or _tongyi_label_from_url(url)
+                 or url)
+        out[f"{idx}-{n}"] = {
+            "title": title,
+            "authors": hit.get("authors") or [],
+            "corpus_id": None,
+            "url": url,
+            "snippet": (evidence[:page_chars] if page_chars else evidence),
+            "query": goal or hit.get("query") or "",
+            "backref": True,          # a visit is an explicit read, not an inference
+            "selected": True,
+            "search_snippet": hit.get("snippet", ""),
+        }
+    if out:
+        return out
+    # Degenerate case: the model searched but never visited anything. Fall back to
+    # the search pool so the judge still sees what was consulted.
+    for n, (url, hit) in enumerate(list(pool.items())[:TONGYI_POOL_FALLBACK]):
+        out[f"pool-{n}"] = {
+            "title": hit["title"], "authors": hit["authors"], "corpus_id": None,
+            "url": url, "snippet": hit["snippet"], "query": hit["query"],
+            "backref": False, "selected": True, "search_snippet": hit["snippet"],
+        }
     return out
 
 
@@ -304,6 +490,19 @@ def render_searches(trace) -> str:
     if isinstance(trace, dict):
         rows = [(tc.get("tool_name"), tc.get("query"), len(tc.get("documents") or []))
                 for tc in (trace.get("tool_calls") or [])]
+    elif isinstance(trace, list) and trace and isinstance(trace[0], dict) \
+            and "role" in trace[0]:
+        rows = []
+        for _, body in _tongyi_tool_responses(trace):
+            if TONGYI_SEARCH_HEAD.match(body):
+                qm = re.match(r"^A Google (search|scholar) for '([^']*)'", body)
+                rows.append((f"google_{qm.group(1)}" if qm else "google_search",
+                             qm.group(2) if qm else "",
+                             len(TONGYI_HIT_RE.findall(body))))
+            else:
+                vm = TONGYI_VISIT_RE.match(body)
+                if vm:
+                    rows.append(("visit", vm.group(1), 1))
     elif isinstance(trace, list):
         rows = [("web_search", c.get("search_query"),
                  len(WEBTHINKER_PAGE_RE.findall(c.get("Input") or "")))

@@ -8,7 +8,7 @@ Flow per seed question:
   1. Use Claude to create a harder version of the seed question (with prior attempts as context after round 1).
   1b. (--verify-criterion) Retrieve S2 papers for the harder question and ask Claude
      whether the verification criterion is itself factually correct. Continue on
-     "correct"/"partly_correct", swapping in the meta-judge's rewrite when it supplies
+     "correct"/"almost_correct", swapping in the meta-judge's rewrite when it supplies
      one; stop the seed on "incorrect"/"insufficient_evidence" before paying for a
      research call.
   2. Send the harder question to a local research server at localhost:8007/ask.
@@ -224,7 +224,7 @@ DEFAULT_FEW_SHOTS = [
         "chosen_strategy": "Require reconciliation of conflicting evidence: force the system to explain WHY retrieved papers disagree rather than just report their results.",
         "updated_question": "When do sparse-attention transformers underperform dense baselines, and why do reported results conflict?",
         "why_harder": "A survey can enumerate sparse-attention methods and their headline numbers, but reconciling contradictory sparse-vs-dense comparisons requires identifying confounds (sequence length, task type, matched compute) that the papers themselves rarely make explicit, which is a reasoning task rather than a retrieval task.",
-        "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and attribute the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
+        "verification_criterion": "The answer must show that its retrieved sources disagree (some reporting sparse >= dense, others sparse < dense) and link the conflict to at least one concrete confound such as sequence length, task type (long-range vs short-context), or matched compute budget. Fails if it issues a single uniform verdict, or if the papers it retrieves do not actually report conflicting sparse-vs-dense comparisons."
     },
     {
         "seed_question": "How does brown adipose tissue produce heat?",
@@ -519,33 +519,62 @@ OUTPUT FORMAT (valid JSON, no extra text):
 """
 
 
-PROMPT_TO_VERIFY_VERIFICATION_CRITERIA = """You are an expert meta-evaluator for a deep-research benchmark with difficult questions. Your only task is to judge whether the VERIFICATION CRITERION itself is correct as an evaluation standard for the given question.
+PROMPT_TO_VERIFY_VERIFICATION_CRITERIA = """You are an expert meta-evaluator for a deep-research benchmark with difficult questions. Your only task is to judge whether the VERIFICATION CRITERION itself is correct and valid as an evaluation standard for the given question.
 
-Do NOT reward or penalize style, atomicity, verbosity, or formatting except where those affect whether the criterion states a correct requirement. Determine whether the criterion's factual expectations, premises, causal claims, comparisons, mechanisms, entities, time frames, required distinctions, and absence/uncertainty claims are true, evidence-supported, and fairly required by the harder question.
+A verification criterion is a gatekeeper requirement: EVERY fully correct answer to the question must satisfy it. If there exists a plausible fully correct answer that would fail the criterion, then the criterion is too restrictive and is not correct as written.
+
+Your task has two components:
+
+1. FACTUAL VALIDITY:
+   Determine whether the criterion's factual expectations, premises, causal claims, comparisons, mechanisms, entities, time frames, required distinctions, and absence/uncertainty claims are true and evidence-supported.
+
+2. GATEKEEPER NECESSITY:
+   Determine whether every requirement imposed by the criterion is strictly necessary for a fully correct answer to the question. Judge necessity from the question itself. A criterion must capture something that a fully correct answer cannot omit, contradict, or frame differently while still correctly answering the question.
+
+A true or useful statement is not automatically a valid verification criterion; it must be required for correctness.
 
 BENCHMARK CONTEXT:
-- The answering system being tested uses Semantic Scholar / academic-paper search.
-- A verification criterion is supposed to define one property that a correct answer to the question should satisfy.
-- A criterion is correct only if its required content is true.
+
+* The answering system being tested uses Semantic Scholar / academic-paper search.
+* A verification criterion is supposed to define one property that every fully correct answer to the question should satisfy.
+* The criterion is used as a gatekeeper: an answer that fails it may be judged incorrect.
 
 EVIDENCE RULES:
-- Use the provided local Semantic Scholar search results.
-- If the criterion embeds a specific expected fact, verify that fact directly.
-- If the criterion requires an answer to reject a false premise, verify that the premise is actually false or misleading.
-- If the criterion requires uncertainty, no causal isolation, no consensus, or absence of evidence, verify that this is a fair characterization of the available evidence rather than an unsupported negative claim.
-- If the combined evidence is not adequate to verify the criterion's factual expectation, use insufficient_evidence.
-- In checked_claims, include ONLY factual claims made by or required by the verification criterion itself. Alternative hypotheses, possible counterexamples, and anything else surfaced by the search belong in reasoning, not in checked_claims.
+
+* Use the provided local Semantic Scholar search results.
+* If the criterion embeds a specific expected fact, verify that fact directly.
+* If the criterion requires an answer to reject a false premise, verify that the premise is actually false.
+* If the criterion requires uncertainty, no causal isolation, no consensus, lack of evidence, or absence of studies, verify that this is a fair characterization of the available evidence rather than an unsupported negative claim.
+* If the criterion requires a particular interpretation of an ambiguous question, check whether other reasonable interpretations could also yield fully correct answers.
+* If a factual claim central to evaluating the criterion cannot be verified from the provided evidence, use insufficient_evidence when appropriate.
+* In checked_claims, include ONLY factual claims made by or required by the verification criterion itself. Alternative hypotheses, possible counterexamples, and anything else surfaced by the search belong in reasoning, not in checked_claims.
+
+UNFAIR REQUIREMENTS:
+
+Identify any part of the criterion that could cause an accurate, relevant, and fully correct answer to be rejected.
+
+Examples include requiring:
+
+* one specific framing when multiple valid framings exist,
+* an explicit caveat that is useful but not necessary,
+* a particular mechanism when the question can be correctly answered at a higher level,
+* rejection of a premise that is not actually required to answer the question,
+* one interpretation of an ambiguous term when another reasonable interpretation is valid,
+* an unsupported level of certainty,
+* an unnecessarily narrow population, time frame, mechanism, comparison, or evidence/study type.
 
 REQUESTING ADDITIONAL SEARCHES:
-The provided search results are normally what you must work with. Use additional_queries SPARINGLY — only when a claim genuinely cannot be settled from the context given. Leave the list empty in every other case.
-- Always return your best provisional correctness_label from the evidence you already have.
-- If a search would merely add corroborating detail, do not request it.
 
-LABEL DEFINITIONS (for judging the verification criterion itself):
-- correct: The criterion's factual expectations are supported, accurately framed, and fairly required by the question. It can be used as-is to judge an answer.
-- partly_correct: The core expectation is directionally right, but some wording, scope, certainty, causal framing, entity mapping, or required distinction is materially imprecise. It should be revised before use.
-- incorrect: A factual expectation, premise, mechanism, comparison, required conclusion, or absence/uncertainty claim in the criterion is contradicted, unsupported, or unfairly required by the harder question. If the verification criterion requires something that is not necessary for a good answer to the question, label the criterion as incorrect
-- insufficient_evidence: The given evidence is not adequate to verify whether the criterion itself is correct.
+The provided search results are normally what you must work with. Use additional_queries SPARINGLY — only when a claim genuinely cannot be settled from the context given. Leave the list empty in every other case.
+
+* Always return your best provisional correctness_label from the evidence you already have.
+* If a search would merely add corroborating detail, do not request it.
+
+LABEL DEFINITIONS:
+* correct: The criterion is factually supported, accurately framed, and valid as a gatekeeper. Every fully correct answer to the question should satisfy it. The criterion can be used as-is.
+* almost_correct: The criterion's core requirement is valid and necessary, but some wording, scope, certainty, causal framing, entity mapping, or required distinction is materially imprecise or over-restrictive. It can be fixed with a local revision while preserving what the criterion is fundamentally testing.
+* incorrect: The criterion's core requirement is false, unsupported, or not necessary for correctness. Also choose this if a plausible fully correct answer could fail the criterion because the central requirement is optional, overly specific, or tied to only one valid interpretation or framing. Fixing it would require removing or substantially replacing what the criterion is fundamentally testing.
+* insufficient_evidence: The provided evidence is not adequate to verify a factual claim central to determining whether the criterion is valid.
 
 Question:
 {question}
@@ -558,24 +587,25 @@ Local Semantic Scholar search results:
 
 OUTPUT FORMAT — return valid JSON only, with this exact shape:
 {{
-  "checked_claims": [
-    {{
-      "claim": "<factual claim made by or required by the verification criterion itself>",
-      "verdict": "supported | contradicted | not_found | not_checkable",
-      "evidence": "<evidence for whether this criterion claim is true>",
-      "sources": ["local S2 title or URL...", "https://..."]
-    }}
-  ],
-  "correctness_label": "correct | partly_correct | incorrect | insufficient_evidence",
-  "main_correctness_problem": "<one sentence naming the single most serious defect in the criterion, e.g. the specific false expectation, mis-scoped requirement, or overstated absence claim. Empty string if and only if correctness_label is 'correct'. For insufficient_evidence, name the specific criterion claim that could not be verified.>",
-  "reasoning": "<the decision process behind correctness_label: connect the criterion's own factual requirements to the combined evidence, weigh any counterexamples or alternative hypotheses your search surfaced, and explain why the selected label is justified.>",
-  "rewrite": "<one corrected verification criterion for the given question, if the criterion is not correct but can be fixed. Empty string if correctness_label is 'correct' or if the evidence is insufficient to write a corrected version.>",
-  "additional_queries": [
-    {{
-      "query": "<a specific search whose results would settle a claim you could not settle from the provided context>",
-      "targets_claim": "<which checked_claims entry this would resolve>",
-    }}
-  ]
+"checked_claims": [
+{{
+"claim": "<factual claim made by or required by the verification criterion itself>",
+"verdict": "supported | contradicted | not_found | not_checkable",
+"evidence": "<concise evidence for whether this criterion claim is true>",
+"sources": ["<local S2 title or URL>", "https://..."]
+}}
+],
+"unfair_requirements": "<any requirement that could cause a correct answer to be rejected. Empty string if there are none.>",
+"reasoning": "<reason about both factual validity and gatekeeper necessity>",
+"correctness_label": "correct | almost_correct | incorrect | insufficient_evidence",
+"main_correctness_problem": "<one sentence naming the single most serious defect in the criterion. For over-restrictive criteria, state the requirement that a fully correct answer need not satisfy. Empty string if and only if correctness_label is 'correct'. For insufficient_evidence, name the specific criterion claim that could not be verified.>",
+"rewrite": "<one corrected verification criterion for the given question if the criterion is not correct but can be fixed. The rewrite must itself be something every fully correct answer should satisfy. Empty string if correctness_label is 'correct' or if the criterion cannot be easily corrected without changing what it fundamentally tests.>",
+"additional_queries": [
+{{
+"query": "<a specific search whose results would settle a claim you could not settle from the provided context>",
+"targets_claim": "<which checked_claims entry this would resolve>"
+}}
+]
 }}
 """
 
@@ -748,6 +778,26 @@ class HarderQuestion:
     verification_criterion_original: str = ""
 
 
+# Labels that mean almost_correct. "partly_correct" is the pre-rename name and
+# appears in ~60 stored criterion checks on disk; "partially_correct" is what a
+# model writes when it paraphrases the enum. Both normalise to the canonical
+# value so old runs stay readable and a paraphrase does not silently become an
+# unrecognised label (which would stop the seed instead of applying the rewrite).
+ALMOST_CORRECT = "almost_correct"
+CRITERION_LABEL_ALIASES = {
+    "partly_correct": ALMOST_CORRECT,
+    "partially_correct": ALMOST_CORRECT,
+}
+# Labels whose seeds continue (applying any rewrite) rather than stopping.
+KEEP_LABELS = ("correct", ALMOST_CORRECT)
+
+
+def normalize_criterion_label(label: str) -> str:
+    """Canonical criterion-check label, mapping legacy/paraphrased spellings."""
+    clean = str(label or "").strip().lower()
+    return CRITERION_LABEL_ALIASES.get(clean, clean)
+
+
 @dataclass
 class CriterionCheck:
     """Meta-judge verdict on the verification criterion itself (round 1+ only)."""
@@ -755,6 +805,9 @@ class CriterionCheck:
     main_correctness_problem: str
     reasoning: str
     rewrite: str
+    # Requirements the criterion imposes that could cause a fully correct answer to
+    # be rejected. Empty string when there are none.
+    unfair_requirements: str = ""
     checked_claims: list = field(default_factory=list)
     additional_queries: list = field(default_factory=list)
     retrieval: dict = field(default_factory=dict)
@@ -1272,8 +1325,9 @@ def verify_criterion(
 
     return (
         CriterionCheck(
-            correctness_label=str(data.get("correctness_label") or "").strip().lower(),
+            correctness_label=normalize_criterion_label(data.get("correctness_label")),
             main_correctness_problem=data.get("main_correctness_problem", ""),
+            unfair_requirements=str(data.get("unfair_requirements") or "").strip(),
             reasoning=data.get("reasoning", ""),
             rewrite=(data.get("rewrite") or "").strip(),
             checked_claims=data.get("checked_claims", []),
@@ -1481,10 +1535,12 @@ def process_seed(
                 )
                 if criterion_check.main_correctness_problem:
                     print(f"     Problem: {criterion_check.main_correctness_problem}")
+                if criterion_check.unfair_requirements:
+                    print(f"     Unfair requirement: {criterion_check.unfair_requirements}")
                 if criterion_check.additional_queries:
                     print(f"     Requested searches: {criterion_check.additional_queries}")
 
-            if criterion_check.correctness_label not in ("correct", "partly_correct"):
+            if criterion_check.correctness_label not in KEEP_LABELS:
                 result.final_status = "CRITERION_INVALID"
                 result.attempts.append(
                     AttemptRecord(
@@ -1690,7 +1746,7 @@ def main():
         "--verify-criterion", action="store_true",
         help="Before each research-server call (rounds 1+), retrieve papers for the harder "
              "question and ask Claude whether the verification criterion is itself correct. "
-             "Continues on 'correct'/'partly_correct' (applying any rewrite) and stops the "
+             "Continues on 'correct'/'almost_correct' (applying any rewrite) and stops the "
              "seed on 'incorrect'/'insufficient_evidence'. Requires retrieve_papers.py and "
              "S2_API_KEY.",
     )

@@ -7,7 +7,7 @@ of during it. For each harvested question it retrieves S2 papers and asks Claude
 the verification criterion is itself factually correct, then labels the question:
 
     correct              -> KEEP, criterion unchanged
-    partly_correct       -> KEEP, criterion replaced by the meta-judge's rewrite
+    almost_correct       -> KEEP, criterion replaced by the meta-judge's rewrite
                             (the original is preserved as `criterion_original`)
     incorrect            -> DROP
     insufficient_evidence-> DROP
@@ -61,7 +61,8 @@ import llm_client
 import research_pipeline as RP
 from strategy_feedback_module import load_examples_from_runs
 
-KEEP_LABELS = ("correct", "partly_correct")
+# "partly_correct" is the pre-rename label, still present in stored runs.
+KEEP_LABELS = ("correct", "almost_correct", "partly_correct")
 
 
 class LockedRunLogger(RP.RunLogger):
@@ -127,8 +128,8 @@ def check_one(ex, client, logger, args) -> dict:
 
     label = check.correctness_label
     kept = label in KEEP_LABELS
-    # partly_correct is kept only with the rewrite applied; that is what "partly" buys.
-    criterion = (check.rewrite if label == "partly_correct" and check.rewrite
+    # almost_correct is kept only with the rewrite applied; that is what "almost" buys.
+    criterion = (check.rewrite if label in ("almost_correct", "partly_correct") and check.rewrite
                  else ex.verification_criterion)
     return {
         **row,
@@ -137,6 +138,7 @@ def check_one(ex, client, logger, args) -> dict:
         "criterion": criterion if kept else "",
         "criterion_rewritten": bool(kept and criterion != ex.verification_criterion),
         "main_correctness_problem": check.main_correctness_problem,
+        "unfair_requirements": check.unfair_requirements,
         "reasoning": check.reasoning,
         "rewrite": check.rewrite,
         "checked_claims": check.checked_claims,
