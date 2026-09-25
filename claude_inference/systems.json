@@ -1,0 +1,5 @@
+[
+  {"name": "drtulu",     "profile": "drtulu",     "server_url": "http://saturn-cs-aus-247.reviz.ai2.in:8007/ask",  "timeout": 900,  "concurrency": 10},
+  {"name": "webthinker", "profile": "webthinker", "server_url": "http://jupiter-cs-aus-218.reviz.ai2.in:8007/ask", "timeout": 5400, "concurrency": 10},
+  {"name": "tongyi",     "profile": "tongyi",     "server_url": "http://jupiter-cs-aus-140.reviz.ai2.in:8007/ask", "timeout": 7200, "concurrency": 10}
+]

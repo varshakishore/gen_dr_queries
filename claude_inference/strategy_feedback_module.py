@@ -113,7 +113,8 @@ A plain JSON-serializable dict (write it with `write_feedback`):
       "cluster_id": "seed.3" | "new.1",
       "description": strategy text (seeds) or "[novel strategy not in seed menu] <name>",
       "is_seed": bool,               # True = from the seed menu, False = novel cluster
-      "num_questions",               # cluster size (0 = the generator never tried it)
+      "num_questions",               # cluster size (0 = the generator never tried it);
+                                     # includes attempts whose criterion was rejected
       "num_failed", "num_not_failed", "failure_rate", "share", "score",
       "by_source_run": {prompt: {num_questions, num_failed, failure_rate}},
       "few_shot_failures": [         # sampled from the inputs, FAILED questions only
@@ -304,6 +305,23 @@ def _verdict_of(attempt: dict) -> str | None:
     return None
 
 
+# Criterion-check labels whose attempt went on to be answered and judged. Anything else
+# ('incorrect', 'insufficient_evidence') means the meta-judge rejected the criterion and no
+# research call was made. Spelled out here rather than imported from research_pipeline so
+# this module stays standalone; 'partly_correct' is the old name for 'almost_correct'.
+_CRITERION_KEEP_LABELS = frozenset(
+    {"correct", "almost_correct", "partly_correct", "partially_correct"})
+
+
+def _criterion_rejected(attempt: dict) -> bool:
+    """True if this attempt died because the meta-judge rejected its criterion."""
+    check = attempt.get("criterion_check")
+    if not isinstance(check, dict):
+        return False
+    label = (check.get("correctness_label") or "").strip().lower()
+    return bool(label) and label not in _CRITERION_KEEP_LABELS
+
+
 def _iter_sample_files(path: Path) -> Iterable[Path]:
     """Yield sample_*.json files under `path` (a file, a run dir, or a parent of run dirs)."""
     if path.is_file():
@@ -349,6 +367,14 @@ def load_examples_from_runs(
                               question can appear once per run it came from.
     include_seed_round=True   also keep round-0 attempts (the seed tested as-is); by default
                               they are omitted since they are not generated questions.
+
+    An attempt whose criterion the meta-judge REJECTED is kept with failed=False, exactly
+    like an attempt the judge PASSED: both spent an attempt and yielded no benchmark
+    question. `failure_rate` therefore means "harvested questions per attempt spent on this
+    strategy", not "questions the answering system failed given that it was asked" --
+    rejections are counted in the denominator even though the system never saw them. That
+    is the quantity the menu weights and the ban quota want, since drawing a strategy costs
+    an attempt either way. Feedback computed before this change is not comparable.
     """
     deciding: list[tuple[str, QuestionExample]] = []
     other: list[tuple[str, QuestionExample]] = []
@@ -390,9 +416,20 @@ def load_examples_from_runs(
                     if deciding_only and not is_deciding:
                         continue
                     verdict = _verdict_of(attempt)
+                    # A rejected criterion counts exactly like a PASSED judgment: the
+                    # attempt was spent and produced no harvestable question. It is NOT a
+                    # failure (the answering system never saw it), so it lands in
+                    # num_questions with failed=False. Dropping it instead -- which this
+                    # did before the pipeline started retrying rejections -- made a
+                    # strategy that reliably generates unverifiable criteria score like one
+                    # that had never been tried, so it kept its full sampling weight while
+                    # burning an attempt AND a verify call per seed. An attempt with no
+                    # judgment and no rejection is something else (a half-written result)
+                    # and is still skipped.
+                    rejected = verdict is None and _criterion_rejected(attempt)
                     harder = attempt.get("harder", {}) or {}
                     updated = harder.get("updated_question", "")
-                    if verdict is None or not updated:
+                    if (verdict is None and not rejected) or not updated:
                         continue
                     strategy = (
                         _strategy_label(result.get("final_status", ""), harder.get("chosen_strategy", ""))

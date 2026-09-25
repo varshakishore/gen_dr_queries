@@ -26,6 +26,13 @@ import json
 import re
 
 CITE_RE = re.compile(r'<cite\s+id="([^"]+)">(.*?)</cite>', re.DOTALL)
+# DR-Tulu joins several ids in one tag with EITHER spaces or commas -- id="a-2 a-3" and
+# id="a-2,a-3" both occur, sometimes mixed. Splitting on whitespace alone left the comma
+# form as one unresolvable token: measured over 1,478 stored DR-Tulu answers, 917 of the
+# 1,686 unresolved ids (54%) were comma-joined, and 84% of their parts resolve once split.
+# Safe because no id ever legitimately contains a comma -- 0 of 26,072 doc-index keys have
+# one, and no comma-joined token resolved as a whole.
+CITE_ID_SEP = re.compile(r"[,\s]+")
 
 # --- WebThinker -------------------------------------------------------------
 # WebThinker's trace is a LIST of explorer calls, each
@@ -39,7 +46,25 @@ CITE_RE = re.compile(r'<cite\s+id="([^"]+)">(.*?)</cite>', re.DOTALL)
 # "(Web Pages 3 and 5)". Calls that reference none get all their pages (a
 # superset: the real source is in there, we just cannot tell which).
 WEBTHINKER_PAGE_RE = re.compile(r'\*\*\*Web Page (\d+):\*\*\*\s*(\{.*?\n\})', re.DOTALL)
-WEBTHINKER_REF_RE = re.compile(r'Web Pages?\s+([0-9]+(?:\s*(?:,|and|&)\s*[0-9]+)*)')
+# The back-reference list. The separator repeats (`(?:\s*(?:,|and|&|or))+`) so an Oxford
+# comma -- ", and 8" -- reads as one separator rather than ending the list: with a single
+# separator token "Web Pages 2, 7, and 8" stopped at 7, and the dropped page vanished from
+# the references entirely, because a call that back-references anything selects ONLY the
+# pages it named. Measured over 15 stored traces: 12 ids were being lost this way, 10 to the
+# Oxford comma and 2 to "or"; 4 distinct pages present in their call were recovered, all 4
+# of them previously excluded. Ranges ("Web Pages 1-4") are expanded by
+# _webthinker_ref_ids. Every number has to sit in the run that starts immediately after
+# "Web Page(s)", which is what keeps prose out: in "Web Page 4 notes ... 3-5 years" the run
+# ends at 4, since " notes" is not a separator.
+WEBTHINKER_REF_SEP = r'(?:\s*(?:,|and|&|or))+\s*'
+WEBTHINKER_REF_NUM = r'\d+(?:\s*[-\u2013\u2014]\s*\d+)?'
+WEBTHINKER_REF_RE = re.compile(
+    rf'Web Pages?\s+({WEBTHINKER_REF_NUM}(?:{WEBTHINKER_REF_SEP}{WEBTHINKER_REF_NUM})*)',
+    re.I)
+_WEBTHINKER_RANGE_RE = re.compile(r'(\d+)\s*[-\u2013\u2014]\s*(\d+)|(\d+)')
+# A page list is a handful of ids; anything wider is prose that happens to look like a
+# range, so only the endpoints are taken.
+WEBTHINKER_MAX_REF_RANGE = 20
 # Per-source cap on page_info. Uncapped, back-referenced pages run ~129k chars
 # (~32k tokens) -- 1.7x the largest DR-Tulu judge prompt observed. Capped, the
 # reference block lands at ~61k chars (~15k tokens), inside DR-Tulu's
@@ -168,6 +193,22 @@ def _build_doc_index_drtulu(trace: dict) -> dict:
     return out
 
 
+def _webthinker_ref_ids(extracted_info: str) -> set:
+    """Page ids back-referenced in one explorer call's Extracted_info, ranges expanded."""
+    ids = set()
+    for group in WEBTHINKER_REF_RE.findall(extracted_info or ""):
+        for lo, hi, single in _WEBTHINKER_RANGE_RE.findall(group):
+            if single:
+                ids.add(int(single))
+                continue
+            lo, hi = int(lo), int(hi)
+            if 0 < hi - lo <= WEBTHINKER_MAX_REF_RANGE:
+                ids.update(range(lo, hi + 1))
+            else:
+                ids.update((lo, hi))
+    return {str(n) for n in ids}
+
+
 def build_doc_index_webthinker(trace: list, page_chars: int = WEBTHINKER_PAGE_CHARS) -> dict:
     """Map '<call_idx>-<page_id>' -> document dict, in build_doc_index's shape.
 
@@ -192,10 +233,8 @@ def build_doc_index_webthinker(trace: list, page_chars: int = WEBTHINKER_PAGE_CH
                 continue                      # a malformed block loses one page, not the call
         if not docs:
             continue
-        cited = set()
-        for group in WEBTHINKER_REF_RE.findall(call.get("Extracted_info") or ""):
-            cited |= set(re.findall(r"\d+", group))
-        cited &= set(docs)
+        cited = _webthinker_ref_ids(call.get("Extracted_info") or "")
+        cited &= set(docs)       # an id the model invented, or a range overshooting, drops out
         for pid, doc in docs.items():
             backref = pid in cited
             blurb = doc.get("snippet") or ""
@@ -361,6 +400,11 @@ def resolve_answer(answer: str, trace):
     return body, refs, missing
 
 
+def split_cite_ids(raw: str) -> list:
+    """The ids inside one `<cite id="...">`, split on commas as well as whitespace."""
+    return [c for c in CITE_ID_SEP.split(raw.strip()) if c]
+
+
 def render_answer(answer: str, doc_index: dict):
     """Return (html_body, ordered_refs, missing_ids).
 
@@ -388,7 +432,7 @@ def render_answer(answer: str, doc_index: dict):
         pieces.append(esc(answer[last:m.start()]))
         claim = esc(m.group(2))
         badges = []
-        for cid in m.group(1).split():
+        for cid in split_cite_ids(m.group(1)):
             num, doc = ref_num_for(cid)
             if num is None:
                 badges.append('<sup class="cite missing">[?]</sup>')
@@ -460,7 +504,7 @@ def numbered_plaintext(answer: str, doc_index: dict):
         return key_to_num[key]
 
     def repl(m):
-        nums = [n for n in (num_for(c) for c in m.group(1).split()) if n]
+        nums = [n for n in (num_for(c) for c in split_cite_ids(m.group(1))) if n]
         marks = "".join(f"[{n}]" for n in nums)
         return f"{m.group(2)} {marks}".rstrip() if marks else m.group(2)
 

@@ -39,6 +39,7 @@ from pathlib import Path
 from typing import Optional
 
 import requests
+import urllib.parse
 
 import llm_client
 from cite_utils import (
@@ -356,7 +357,7 @@ RULES:
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
-- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions). It is better to keep it simple.
+- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions).
 - The question should be in English.
 
 EXAMPLE STRATEGIES TO CONSIDER:
@@ -390,6 +391,8 @@ RULES:
 - Think creatively and come up with a strategy that will result in a hard question for THIS seed.
 - DO NOT USE THE STRATEGIES in the list below.
 - DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW. Be creative and come up with your own strategy. 
+- The question must be NATURAL and something a researcher might actually ask.
+- The question should be in English.
 
 STRATEGIES TO NOT USE:
 {BANNED_STRATEGIES}
@@ -1014,20 +1017,44 @@ def harder_question_gen(
     if prior_attempts:
         feedback_blocks = []
         for rec in prior_attempts:
-            feedback_blocks.append(
+            head = (
                 f"--- Previous attempt {rec.attempt} ---\n"
                 f"Question tried: {rec.harder.updated_question}\n"
                 f"Strategy: {rec.harder.chosen_strategy}\n"
                 f"Verification criterion: {rec.harder.verification_criterion}\n"
-                f"Judge verdict: {rec.judgment.verdict}\n"
-                f"Judge summary: {rec.judgment.summary}\n"
-                f"Other issues flagged: {rec.judgment.other_issues}\n"
             )
+            # Two ways an attempt fails, and they need opposite fixes. `judgment is None`
+            # means the criterion check rejected the criterion before any research call,
+            # so the question was never graded -- telling the model to make it harder
+            # would push it away from the actual problem. Each block names its own failure
+            # so a mixed history does not leave the model guessing which is which.
+            if rec.judgment is None:
+                cc = rec.criterion_check
+                problem = ((cc.main_correctness_problem or cc.reasoning or "").strip()
+                           if cc else "")
+                head += (
+                    "Why this attempt failed: the verification criterion was rejected "
+                    f"({cc.correctness_label if cc else 'invalid'})\n"
+                    f"Main Problem: {problem}\n"
+                )
+            else:
+                head += (
+                    "Why this attempt failed: the question was too easy — the research "
+                    "system PASSED it.\n"
+                    f"Judge verdict: {rec.judgment.verdict}\n"
+                    f"Judge summary: {rec.judgment.summary}\n"
+                    f"Other issues flagged: {rec.judgment.other_issues}\n"
+                )
+            feedback_blocks.append(head)
         user_content += (
-            "\n\nThe research system PASSED the previous harder versions of this seed, "
-            "which means those questions were not hard enough. MAKE THE QUESTION HARDER "
-            "this time. Do not just rephrase a prior attempt."
-            "You can use a different strategy than before, and you can also use the feedback on prior attempts."
+            "\n\nThe previous attempt was unsuccessful for one of two reasons: "
+            "(1) the research system passed the previous harder versions of this seed, "
+            "meaning they were not sufficiently difficult; in that case, make the new question "
+            "meaningfully harder. Or (2) the previous verification criterion was incorrect, "
+            "unsupported, or could not be reliably verified; in that case, develop a different "
+            "question and verification criterion. "
+            "Do not just rephrase a prior attempt. You can use a different approach than "
+            "before, and you can also use the feedback on prior attempts. "
             "Below is what was tried:\n\n"
             + "\n".join(feedback_blocks)
         )
@@ -1378,6 +1405,34 @@ def _redact_research_body(body):
     return redacted
 
 
+
+def check_server_reachable(url: str, timeout: float = 5.0) -> Optional[str]:
+    """None if something is listening at `url`'s origin, else why not.
+
+    Cheap preflight for --server-url / --reranker-url. Worth doing because nothing
+    else validates them and the failure is expensive: process_seed generates the
+    question and pays the criterion check BEFORE the research call, so an unreachable
+    server is discovered only after the two priciest calls of every attempt -- a whole
+    run of ERROR seeds for a typo. A missing scheme is the likeliest typo and does not
+    even reach the network: requests raises InvalidSchema on 'host:8007/ask'.
+
+    ANY HTTP response counts as up, including 404: not every server exposes /health
+    (DR-Tulu's FastAPI serves only /ask), and a status code proves something answered.
+    Only a transport failure -- DNS, refused, timeout -- means down.
+    """
+    parsed = urllib.parse.urlparse(url or "")
+    if parsed.scheme not in ("http", "https"):
+        return (f"{url!r} is missing an http:// or https:// scheme "
+                f"(requests raises InvalidSchema before it ever connects)")
+    if not parsed.netloc:
+        return f"{url!r} has no host"
+    origin = f"{parsed.scheme}://{parsed.netloc}/"
+    try:
+        requests.get(origin, timeout=timeout)
+    except requests.exceptions.RequestException as e:
+        return f"{origin} did not respond ({type(e).__name__})"
+    return None
+
 def query_research_system(
     question: str,
     logger: RunLogger,
@@ -1493,8 +1548,16 @@ def process_seed(
                     verification_criterion=criterion,
                 )
             else:
+                # Both failure kinds, or the retry is blind. A rejected criterion is
+                # appended with judgment=None (no research call was made), so filtering on
+                # `judgment is not None` dropped exactly the attempts the new feedback
+                # block exists to describe -- the generator got the bare seed back and
+                # re-rolled at the same temperature. ERROR paths return without appending,
+                # so nothing else can arrive here.
                 prior_harder = [
-                    a for a in result.attempts if a.attempt > 0 and a.judgment is not None
+                    a for a in result.attempts
+                    if a.attempt > 0 and (a.judgment is not None
+                                          or a.criterion_check is not None)
                 ]
                 harder, bucket = harder_question_gen(
                     client, model, seed, prior_harder, logger, attempt,
@@ -1560,7 +1623,13 @@ def process_seed(
                     print(f"     Requested searches: {criterion_check.additional_queries}")
 
             if criterion_check.correctness_label not in KEEP_LABELS:
-                result.final_status = "CRITERION_INVALID"
+                # A rejected criterion is treated like a PASSED judgment: the attempt
+                # failed, so record it and try again with a new question AND criterion,
+                # feeding the meta-judge's objection back to the generator. Previously
+                # this ended the seed as CRITERION_INVALID, which yielded nothing and
+                # threw away the remaining attempts -- 14 of 36 seeds in one measured
+                # run. `incorrect` and `insufficient_evidence` are one failure case here:
+                # either way the criterion cannot be used, and the generator is told so.
                 result.attempts.append(
                     AttemptRecord(
                         attempt=attempt, harder=harder, answer="",
@@ -1570,9 +1639,9 @@ def process_seed(
                 if verbose:
                     print(
                         f"\n>>> Criterion judged {criterion_check.correctness_label} on "
-                        f"attempt {attempt}; not worth a research call. Stopping."
+                        f"attempt {attempt}; no research call. Regenerating."
                     )
-                return result
+                continue
 
             if criterion_check.rewrite:
                 harder.verification_criterion_original = harder.verification_criterion
@@ -1944,12 +2013,15 @@ def main():
             last = r.attempts[-1]
             print(f"    failing question: {last.harder.updated_question}")
             print(f"    judge summary: {last.judgment.summary}")
-        elif r.final_status == "CRITERION_INVALID":
+        elif r.final_status == "EXHAUSTED" and r.attempts:
             last = r.attempts[-1]
-            print(f"    rejected question: {last.harder.updated_question}")
-            print(f"    criterion: {last.harder.verification_criterion}")
-            print(f"    label: {last.criterion_check.correctness_label}")
-            print(f"    problem: {last.criterion_check.main_correctness_problem}")
+            print(f"    last question: {last.harder.updated_question}")
+            rejected = [a for a in r.attempts if a.judgment is None and a.criterion_check]
+            if rejected:
+                print(f"    {len(rejected)}/{len(r.attempts)} attempt(s) lost to a rejected "
+                      f"criterion; last: "
+                      f"{rejected[-1].criterion_check.correctness_label} — "
+                      f"{rejected[-1].criterion_check.main_correctness_problem}")
 
     print(
         f"\nTotal cost: ${grand_total.cost_usd:.4f} "

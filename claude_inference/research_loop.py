@@ -327,8 +327,8 @@ def sample_menu(pool: list, cap: int, rng: random.Random,
     return menu
 
 
-def derive_menus(feedback: dict, *, base_banned: list, ban_after_failures: int,
-                 keep_open_ended: bool = True) -> tuple[list, list, list, dict]:
+def derive_menus(feedback: dict, *, base_banned: list,
+                 ban_after_failures: int) -> tuple[list, list, list, dict]:
     """Turn one feedback dict into the next round's ban list and strategy pool. Returns
     `(pool, banned_menu, cluster_seeds, provenance)`.
 
@@ -356,10 +356,21 @@ def derive_menus(feedback: dict, *, base_banned: list, ban_after_failures: int,
     `new.N` under a new name -- and novel clusters are where the churn lives.
     """
     total = (feedback.get("meta") or {}).get("num_instances", 0)
+    # The open-ended tail is NOT a strategy, it is the menu's "or something else" line, so
+    # it is dropped here and never becomes a cluster. As a cluster it was a catch-all: it
+    # would absorb genuinely novel strategies under a description that names none of them,
+    # costing the run the one thing novel clusters are for -- a name for what actually
+    # worked. Worse, it could then cross the ban quota like any other cluster and land on
+    # explore's STRATEGIES TO NOT USE, telling the prompt whose whole job is novelty not to
+    # think of something else -- while sample_menu went on appending the same line to
+    # exploit's menu. Dropping the row here covers all three uses below (pool, quota, and
+    # cluster seeds) at once. Round 0 already clustered without it; this makes rounds 1+
+    # match rather than quietly adding it back.
+    tail_key = _norm(OPEN_ENDED_TAIL)
     rows = []
     for c in feedback.get("strategy_clusters") or []:
         d = _clean(c.get("description", ""))
-        if not d:
+        if not d or _norm(d) == tail_key:
             continue
         rows.append({**c, "_strategy": d, "_weight": _smoothed_weight(c, total)})
 
@@ -368,17 +379,15 @@ def derive_menus(feedback: dict, *, base_banned: list, ban_after_failures: int,
     banned = _dedup(list(base_banned) + [r["_strategy"] for r in over_quota])
 
     # exploit draws from everything not retired -- base bans included, since those are
-    # banned only for explore. The open-ended tail is a fixed menu line, not a draw.
-    tail_key = _norm(OPEN_ENDED_TAIL)
+    # banned only for explore. The tail is already out of `rows`; sample_menu appends it to
+    # every menu as a fixed line, so it never consumes a --max-example-strategies slot.
     pool = [{"strategy": r["_strategy"], "weight": r["_weight"], "rank": r.get("rank"),
              "num_failed": r.get("num_failed"), "num_questions": r.get("num_questions"),
              "failure_rate": r.get("failure_rate")}
             for r in rows
-            if _norm(r["_strategy"]) not in quota_keys
-            and _norm(r["_strategy"]) != tail_key]
+            if _norm(r["_strategy"]) not in quota_keys]
 
-    cluster_seeds = _dedup([r["_strategy"] for r in rows] + list(base_banned)
-                           + ([OPEN_ENDED_TAIL] if keep_open_ended else []))
+    cluster_seeds = _dedup([r["_strategy"] for r in rows] + list(base_banned))
 
     base_keys = {_norm(b) for b in base_banned}
     return pool, banned, cluster_seeds, {
@@ -578,6 +587,10 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
             cmd += ["--reranker-url", args.reranker_url]
     if args.skip_seed_round:                    # independent of --verify-criterion
         cmd += ["--skip-seed-round"]
+    # The loop already probed every endpoint once; without forwarding this the driver
+    # would probe again per cell, and --skip-server-check on the loop would be ignored
+    # by the very subprocess it was meant to unblock.
+    cmd += ["--skip-server-check"]
 
     label = f"{round_dir.name}/{system.name}/{prompt}" if system.name \
         else f"{round_dir.name}/{prompt}"
@@ -757,6 +770,11 @@ def main():
                         "and the pre-existing round_KK/<prompt>/ layout). NOTE: questions are "
                         "generated FOR a system via its profile, so several systems means "
                         "several disjoint question sets; feedback pools their failures.")
+    p.add_argument("--skip-server-check", action="store_true",
+                   help="Skip the startup probe of every --server-url (and --reranker-url). "
+                        "The probe accepts any HTTP response, so it only fails on a typo or "
+                        "a server that is genuinely not listening -- use this only when a "
+                        "server is still starting up.")
     p.add_argument("--parallel-prompts", action="store_true",
                    help="Run a system's explore and exploit cells at the SAME time instead "
                         "of one after the other, splitting that system's --concurrency "
@@ -768,6 +786,13 @@ def main():
     p.add_argument("--prompt-mix", type=float, default=0.5,
                    help="Share of each round's seeds given to the explore prompt; "
                         "0.5 = an even split (default: 0.5).")
+    p.add_argument("--stop-after-rounds", type=int, default=0, metavar="N",
+                   help="Pause after N rounds that actually ran work in THIS invocation "
+                        "(default: 0 = run them all). Re-running the same command "
+                        "continues: already-finished rounds are skipped and do not count "
+                        "toward N, so the same flag walks the loop forward N rounds at a "
+                        "time. Feedback for the next round is computed before the pause, "
+                        "so the menus are inspectable; --verify-after is deferred.")
     p.add_argument("--random-seed", type=int, default=0,
                    help="RNG seed for the explore/exploit assignment (default: 0).")
     p.add_argument("--budget-usd", type=float, default=0.0,
@@ -969,6 +994,24 @@ def main():
     sys_rng = random.Random(args.random_seed + 104_729)
     systems = load_systems(args)
 
+    # Probe every endpoint before generating anything. Without this an unreachable
+    # server is found only after each seed has already paid a make-harder call and a
+    # criterion check -- and with several systems a single dead one fails its third of
+    # the run while the others finish, leaving a report that looks complete.
+    if not args.skip_server_check:
+        problems = []
+        for sysm in systems:
+            why = RP.check_server_reachable(sysm.server_url or args.server_url)
+            if why:
+                problems.append(f"  answering server [{sysm.name or 'default'}]: {why}")
+        if args.reranker_url and args.reranker != "none":
+            why = RP.check_server_reachable(args.reranker_url)
+            if why:
+                problems.append(f"  reranker: {why}")
+        if problems:
+            p.error("cannot reach every server this run needs:\n" + "\n".join(problems)
+                    + "\n\nStart them, fix the URL, or pass --skip-server-check.")
+
     print(f"{len(seeds)} seed(s) in {len(rounds)} round(s) of <= {every}, "
           + ("both prompts on every seed" if args.both_prompts
              else f"explore share {args.prompt_mix}")
@@ -986,6 +1029,8 @@ def main():
                 "base_banned_strategies": base_banned, "rounds": []}
     round_dirs: list[Path] = []
     stopped_early = ""
+    paused_after = None
+    rounds_run = 0       # rounds that did FRESH work here, not ones replayed off disk
     spent = 0.0          # running total, updated as each prompt side finishes
 
     for k, round_seeds in enumerate(rounds):
@@ -1119,6 +1164,14 @@ def main():
             # in-flight cell per system -- unavoidable once they run concurrently.
             stopped_early = stop_box[0]
         stats = round_stats(indexes)
+        # A round replayed entirely off disk (every seed recovered by the driver's resume
+        # pre-pass) did no work, so it must not consume the --stop-after-rounds budget --
+        # otherwise the second invocation would pause on the round the first one finished
+        # and the loop could never advance.
+        fresh = any(not r.get("resumed")
+                    for ix in indexes for r in (ix.get("samples") or []))
+        if fresh:
+            rounds_run += 1
         gen_elapsed = time.perf_counter() - t_round
         print(f"\n[round {k}] {stats['num_failed_found']}/{stats['num_seeds']} FAILED_FOUND, "
               f"${stats['cost_usd']:.4f}, {_hms(gen_elapsed)}, statuses {stats['statuses']}")
@@ -1156,7 +1209,6 @@ def main():
                     feedback,
                     base_banned=base_banned,
                     ban_after_failures=args.ban_after_failures,
-                    keep_open_ended=args.open_ended_tail,
                 )
                 if not args.static_few_shots:
                     # exploit's examples demonstrate the POOL, not one seed's draw: any
@@ -1198,7 +1250,23 @@ def main():
                   f"${spent:.4f} spent", file=sys.stderr)
             break
 
-    if args.verify_after and not stopped_early:
+        if (args.stop_after_rounds and rounds_run >= args.stop_after_rounds
+                and k < len(rounds) - 1):
+            paused_after = k
+            manifest["paused_after_round"] = k
+            (out_dir / "loop.json").write_text(json.dumps(manifest, indent=2,
+                                                          ensure_ascii=False))
+            print(f"\n{'=' * 70}\n[pause] --stop-after-rounds {args.stop_after_rounds} "
+                  f"reached after round {k}; {len(rounds) - k - 1} round(s) left.\n"
+                  f"  inspect:  python loop_report.py {out_dir}\n"
+                  f"  continue: re-run the same command — finished seeds are skipped and "
+                  f"round {k}'s feedback is reused\n{'=' * 70}")
+            break
+
+    if args.verify_after and paused_after is not None:
+        print("[verify] deferred: the loop is paused mid-run, and verification is meant "
+              "to run once over the finished harvest.", file=sys.stderr)
+    if args.verify_after and not stopped_early and paused_after is None:
         remaining = (args.budget_usd - spent) if args.budget_usd else None
         if remaining is not None and remaining <= 0:
             print(f"[budget] ${spent:.4f} of ${args.budget_usd:.2f} spent on generation — "
@@ -1249,6 +1317,9 @@ def main():
           + (f"  [cap ${manifest['budget_usd']:.2f}]" if manifest.get("budget_usd") else ""))
     print(f"Wall clock: {_hms(manifest['elapsed_s'])}"
           + (f"  ({_hms(manifest['elapsed_s'] / total_q)} per seed)" if total_q else ""))
+    if paused_after is not None:
+        print(f"PAUSED after round {paused_after} of {len(rounds) - 1} — "
+              f"re-run the same command to continue.")
     print(f"Manifest: {out_dir / 'loop.json'}")
 
 

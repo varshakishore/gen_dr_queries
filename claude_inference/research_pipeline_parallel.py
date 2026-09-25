@@ -36,6 +36,7 @@ import json
 import os
 import subprocess
 import sys
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -97,16 +98,68 @@ def load_hf_seeds(args) -> list[str]:
     return sliced
 
 
+def scan_existing(seeds: list[str], out_dir: Path) -> tuple[dict, list]:
+    """Recover manifest rows for seeds already on disk; flag any seed/file mispairing.
+
+    Two jobs, both of which used to be skipped along with the seed:
+
+    * **Recover the row.** Skipping once returned `status: "SKIPPED"` with no cost and no
+      attempts, and `index.json` is rewritten wholesale on every invocation -- so resuming
+      a run REPLACED its real statuses with SKIPPED and its cost with 0. Every reporter
+      reads status off the index row (`summarize_run.load_run`, `loop_report.side_counts`),
+      so a resumed run under-reported its own harvest while the results sat intact on disk.
+      Re-reading the file costs one parse per finished seed and keeps the index truthful.
+    * **Check the pairing.** The skip is by FILENAME -- `sample_007.json` exists, so seed 7
+      is done -- and the numbering is positional. Change anything that shifts the split
+      (`--limit`, `--start`, `--feedback-every`, `--prompt-mix`, dropping a system from
+      `--systems-file`) and seed 7 is a different question than the one whose result is in
+      that file. Nothing noticed: the index would record the NEW seed text beside the OLD
+      result, and the new seed would never run at all. Results carry their own seed, so the
+      mispairing is detectable -- cheaply, and before anything is spent.
+
+    Returns `({index: row}, [(index, wanted_seed, stored_seed), ...])`.
+    """
+    rows: dict = {}
+    mismatches: list = []
+    for idx, seed in enumerate(seeds, start=1):
+        path = out_dir / f"sample_{idx:03d}.json"
+        if not path.exists():
+            continue
+        row = {"index": idx, "seed": seed, "file": path.name,
+               "returncode": None, "resumed": True}
+        try:
+            data = json.loads(path.read_text())
+            res = (data.get("results") or [{}])[0]
+        except (ValueError, OSError):
+            # Truncated by a kill mid-write: the pipeline's json.dump is not atomic, so a
+            # half-file looks "done" to the skip. Surface it instead of counting it.
+            row["status"] = "BAD_OUTPUT"
+            rows[idx] = row
+            continue
+        stored = (res.get("seed") or "").strip()
+        if stored and stored != seed.strip():
+            mismatches.append((idx, seed, stored))
+            continue
+        cost = data.get("grand_total_cost") or {}
+        row["status"] = res.get("final_status", "UNKNOWN")
+        row["attempts"] = len(res.get("attempts") or [])
+        row["cost_usd"] = float(cost.get("cost_usd") or 0.0)
+        row["claude_calls"] = int(cost.get("calls") or 0)
+        rows[idx] = row
+    return rows, mismatches
+
+
 def run_one(idx: int, seed: str, args, out_dir: Path) -> dict:
     """Run the pipeline for one seed in its own subprocess. Returns a manifest row."""
     tag = f"sample_{idx:03d}"
     result_path = out_dir / f"{tag}.json"
     console_path = out_dir / f"{tag}.console.txt"
 
-    if args.skip_existing and result_path.exists():
-        print(f"[skip {idx:>3}/{args._n}] {result_path.name} exists — {seed}", flush=True)
-        return {"index": idx, "seed": seed, "file": result_path.name,
-                "status": "SKIPPED", "returncode": None}
+    done = args._resumed.get(idx)
+    if done is not None:
+        print(f"[skip {idx:>3}/{args._n}] {result_path.name} exists "
+              f"({done['status']}) — {seed}", flush=True)
+        return done
 
     cmd = [
         args.python, str(PIPELINE),
@@ -284,6 +337,8 @@ def main():
                         "--verify-criterion; independent of --model.")
     p.add_argument("--reranker-url", default=None,
                    help="vLLM reranker base URL (env: VLLM_RERANK_URL).")
+    p.add_argument("--skip-server-check", action="store_true",
+                   help="Skip the startup probe of --server-url / --reranker-url.")
     p.add_argument("--python", default=sys.executable, help="Python interpreter for subprocesses.")
     p.add_argument("--no-skip-existing", dest="skip_existing", action="store_false",
                    help="Re-run seeds even if their sample_NNN.json already exists.")
@@ -311,6 +366,17 @@ def main():
             print("[verify] WARNING: no --reranker-url / VLLM_RERANK_URL; criterion-check "
                   "retrieval will run WITHOUT reranking, which biases the meta-judge toward "
                   "accepting 'the literature does not cover X' claims.", file=sys.stderr)
+    if not args.skip_server_check:
+        problems = [f"  answering server: {why}"
+                    for why in [RP.check_server_reachable(args.server_url)] if why]
+        if args.reranker_url and args.reranker != "none":
+            why = RP.check_server_reachable(args.reranker_url)
+            if why:
+                problems.append(f"  reranker: {why}")
+        if problems:
+            p.error("cannot reach every server this run needs:\n" + "\n".join(problems)
+                    + "\n\nStart them, fix the URL, or pass --skip-server-check.")
+
     seeds = load_seeds(args)
     if not seeds:
         p.error("No seed questions provided.")
@@ -318,6 +384,35 @@ def main():
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     args._n = len(seeds)
+
+    # Resume pre-pass: read what is already on disk ONCE, before anything is spent, so
+    # a shifted seed->file numbering is caught here rather than silently pairing stale
+    # results with new seeds (see scan_existing). run_one then just returns these rows.
+    args._resumed = {}
+    if args.skip_existing:
+        args._resumed, mismatches = scan_existing(seeds, out_dir)
+        if mismatches:
+            shown = "\n".join(
+                f"  sample_{i:03d}.json holds {stored[:70]!r}\n"
+                f"      but seed {i} of this run is {want[:70]!r}"
+                for i, want, stored in mismatches[:5])
+            more = (f"\n  ... and {len(mismatches) - 5} more"
+                    if len(mismatches) > 5 else "")
+            p.error(
+                f"{len(mismatches)} seed(s) do not match the results already in "
+                f"{out_dir}/:\n{shown}{more}\n\n"
+                "Seeds are matched to files by POSITION, so this means the seed list "
+                "shifted since that run -- a different --start/--limit, --feedback-every, "
+                "--prompt-mix, or a system dropped from --systems-file. Resuming would "
+                "pair stale results with the wrong questions. Use the original seed "
+                "arguments, pick a fresh --out-dir, or pass --no-skip-existing to "
+                "overwrite.")
+        if args._resumed:
+            done = Counter(r["status"] for r in args._resumed.values())
+            print(f"Resuming: {len(args._resumed)}/{len(seeds)} seed(s) already done "
+                  f"({', '.join(f'{k} {v}' for k, v in sorted(done.items()))}) — "
+                  f"re-reading their results, not re-running them.")
+
     workers = max(1, min(args.concurrency, len(seeds)))
     print(f"Running {len(seeds)} seed(s), {workers} at a time -> {out_dir}/  "
           f"[{args.model} via {provider}]")
@@ -346,7 +441,6 @@ def main():
     ))
 
     print(f"\n{'#' * 70}\nSUMMARY\n{'#' * 70}")
-    from collections import Counter
     counts = Counter(r["status"] for r in rows)
     for status, n in sorted(counts.items()):
         print(f"  {status:18} {n}")
