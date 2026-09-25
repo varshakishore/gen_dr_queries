@@ -16,9 +16,11 @@ Reads (all optional except loop.json):
     round_KK/example_strategies.txt    the menu that round ran with
     round_KK/banned_strategies.txt     the ban list that round ran with
     round_KK/few_shots.{side}.json     the worked examples each prompt was shown
-    round_KK/{side}/index.json         per-side status counts
+    round_KK/{side}/index.json         per-side status counts (or
+    round_KK/{system}/{side}/index.json  when --systems-file targets several systems)
     round_KK/feedback.html             linked if feedback_viewer.py has been run
     round_KK/{side}/report.html        linked if summarize_run.py has been run
+                                       (likewise nested under {system}/)
     verified.json                      the post-hoc criterion check
 
 The per-round pages are generated automatically when missing (summarize_run.py per prompt
@@ -95,6 +97,13 @@ summary:hover { color:var(--accent); }
 .mono { font-family:ui-monospace,Menlo,monospace; }
 .side-by-side { display:flex; gap:14px; flex-wrap:wrap; }
 .side-by-side > div { flex:1 1 320px; }
+.qlist { max-height:460px; overflow:auto; border:1px solid var(--line); border-radius:8px; }
+.qrow { display:flex; gap:10px; align-items:baseline; padding:7px 10px;
+        border-bottom:1px solid #1c222b; text-decoration:none; color:var(--text); }
+.qrow:last-child { border-bottom:none; }
+a.qrow:hover { background:#12171e; }
+.qrow .badge { flex:none; }
+.qtext { flex:1; min-width:0; font-size:13px; }
 """
 
 
@@ -117,14 +126,44 @@ def hms(seconds) -> str:
     return f"{h}h {m}m" if h else f"{m}m {sec}s"
 
 
+def cell_dirs(round_dir: Path, side: str) -> list:
+    """Run dirs for one prompt side of a round, newest layout first.
+
+    research_loop.py writes round_KK/<prompt>/ with one answering system and
+    round_KK/<system>/<prompt>/ with several (--systems-file). Returning a LIST means
+    the rest of this module does not care which layout it is looking at: one entry for
+    a single-system round, one per system otherwise.
+    """
+    direct = round_dir / side
+    if (direct / "index.json").exists():
+        return [direct]
+    return sorted(d for d in round_dir.glob(f"*/{side}")
+                  if (d / "index.json").exists())
+
+
 def side_stats(round_dir: Path) -> dict:
-    """Per-prompt status counts for one round, from each side's index.json."""
+    """Per-prompt status counts for one round, summed over every answering system.
+
+    With several systems the per-side totals aggregate their cells, and `cells` carries
+    the per-system split so the table can show both.
+    """
     out = {}
     for side in SIDES:
-        idx = round_dir / side / "index.json"
-        if not idx.exists():
+        dirs = cell_dirs(round_dir, side)
+        if not dirs:
             continue
-        rows = json.loads(idx.read_text()).get("samples") or []
+        rows, cells = [], []
+        for d in dirs:
+            got = json.loads((d / "index.json").read_text()).get("samples") or []
+            rows += got
+            c = Counter(r.get("status") for r in got)
+            rep = d / "report.html"
+            cells.append({
+                "system": d.parent.name if d.parent != round_dir else "",
+                "n": len(got), "ff": c.get("FAILED_FOUND", 0),
+                "cost": sum(r.get("cost_usd", 0.0) for r in got),
+                "report": rep if rep.exists() else None,
+            })
         counts = Counter(r.get("status") for r in rows)
         ff = counts.get("FAILED_FOUND", 0)
         att = [r["attempts"] for r in rows if r.get("status") == "FAILED_FOUND"]
@@ -134,7 +173,9 @@ def side_stats(round_dir: Path) -> dict:
             "attempts": (sum(att) / len(att)) if att else None,
             "cost": sum(r.get("cost_usd", 0.0) for r in rows),
             "counts": dict(sorted(counts.items())),
-            "report": (round_dir / side / "report.html") if (round_dir / side / "report.html").exists() else None,
+            "cells": cells,
+            # one system -> the single report; several -> linked per system in the cell
+            "report": cells[0]["report"] if len(cells) == 1 else None,
         }
     return out
 
@@ -147,7 +188,10 @@ def ensure_round_pages(loop_dir: Path, python: str, force: bool = False) -> None
     running them here removes the ordering trap: without answers/ pages the verification
     rows silently degrade to unclickable text.
     """
-    for side_dir in sorted(loop_dir.glob("round_*/*/")):
+    # Both layouts: round_KK/<prompt>/ and round_KK/<system>/<prompt>/. The index.json
+    # test is what separates a real run dir from menus/ or a system dir.
+    side_dirs = sorted(set(loop_dir.glob("round_*/*/")) | set(loop_dir.glob("round_*/*/*/")))
+    for side_dir in side_dirs:
         if not (side_dir / "index.json").exists():
             continue                      # not a prompt-side run dir
         if not force and (side_dir / "answers").is_dir() and (side_dir / "report.html").exists():
@@ -180,7 +224,9 @@ def index_samples(loop_dir: Path) -> dict:
     trail, so a verified question can be traced back to what the system actually replied.
     """
     idx = {}
-    for sample in sorted(loop_dir.glob("round_*/*/sample_*.json")):
+    samples = sorted(set(loop_dir.glob("round_*/*/sample_*.json"))
+                     | set(loop_dir.glob("round_*/*/*/sample_*.json")))
+    for sample in samples:
         try:
             data = json.loads(sample.read_text())
         except (OSError, ValueError):
@@ -194,8 +240,13 @@ def index_samples(loop_dir: Path) -> dict:
                       "question": (a.get("harder") or {}).get("updated_question") or res.get("seed"),
                       "strategy": (a.get("harder") or {}).get("chosen_strategy") or ""}
                      for a in res.get("attempts") or []]
+            # round_KK/<prompt>/ or round_KK/<system>/<prompt>/ -- with a system in the
+            # path the grandparent is the round and the parent is the system, so reading
+            # parent.name as "round" silently reported the system instead.
+            nested = side_dir.parent.parent.name.startswith("round_")
             entry = {
-                "round": side_dir.parent.name,
+                "round": (side_dir.parent.parent.name if nested else side_dir.parent.name),
+                "system": (side_dir.parent.name if nested else ""),
                 "side": side_dir.name,
                 "sample": sample.stem,
                 "status": res.get("final_status"),
@@ -211,6 +262,54 @@ def index_samples(loop_dir: Path) -> dict:
 # ---------------------------------------------------------------------------
 # Sections
 # ---------------------------------------------------------------------------
+
+
+
+def questions_html(loop_dir: Path) -> str:
+    """Every question the run produced, as one clickable list.
+
+    The landing page opened onto per-round aggregates, so reaching a single question
+    meant: rounds table -> a cell's report.html -> expand a card -> answer page. This
+    lists all of them up front, each linking straight to its answer page (which carries
+    the full criterion check and the resolved citations).
+    """
+    rows = []
+    samples = sorted(set(loop_dir.glob("round_*/*/sample_*.json"))
+                     | set(loop_dir.glob("round_*/*/*/sample_*.json")))
+    for sample in samples:
+        try:
+            data = json.loads(sample.read_text())
+        except (OSError, ValueError):
+            continue
+        side_dir = sample.parent
+        nested = side_dir.parent.parent.name.startswith("round_")
+        rnd = side_dir.parent.parent.name if nested else side_dir.parent.name
+        system = side_dir.parent.name if nested else ""
+        page = side_dir / "answers" / f"{sample.stem}.html"
+        for res in data.get("results") or []:
+            atts = res.get("attempts") or []
+            last = atts[-1] if atts else {}
+            q = ((last.get("harder") or {}).get("updated_question")
+                 or res.get("seed") or "(no question)")
+            status = res.get("final_status") or "?"
+            cls = {"FAILED_FOUND": "correct", "CRITERION_INVALID": "incorrect",
+                   "EXHAUSTED": "insufficient_evidence"}.get(status, "error")
+            where = " / ".join(x for x in (rnd, system, side_dir.name) if x)
+            label = (f'<span class="badge {cls}">{esc(status)}</span>'
+                     f'<span class="mono" style="color:var(--muted);font-size:11px">'
+                     f'{esc(where)}</span>'
+                     f'<span class="qtext">{esc(q)}</span>'
+                     f'<span style="color:var(--muted);font-size:11px">'
+                     f'{len(atts)} att</span>')
+            rows.append(f'<a class="qrow" href="{esc(page.relative_to(loop_dir).as_posix())}">'
+                        f'{label}</a>' if page.exists()
+                        else f'<div class="qrow">{label}</div>')
+    return ('<h2>Questions</h2>'
+            f'<p class="note">Every question this run produced ({len(rows)}). Each opens its '
+            'answer page: all attempts, resolved citations, and the full criterion check. '
+            'Run summarize_run.py (or loop_report.py without --no-subpages) if a row is not '
+            'a link.</p>'
+            f'<div class="qlist">{"".join(rows)}</div>')
 
 
 def header_html(lm: dict, loop_dir: Path) -> str:
@@ -257,11 +356,22 @@ def rounds_table(lm: dict, loop_dir: Path) -> str:
             link = (f'<a href="{esc(s["report"].relative_to(loop_dir))}">{s["ff"]}/{s["n"]}</a>'
                     if s["report"] else f'{s["ff"]}/{s["n"]}')
             w = max(2, round(s["rate"] * 90))
+            # Several answering systems -> the side total is an aggregate, so break it
+            # down per system underneath; each system has its own report.html to link.
+            per_system = ""
+            if len(s["cells"]) > 1:
+                per_system = "<br>" + "<br>".join(
+                    f'<span style="color:var(--muted);font-size:11px">{esc(c["system"])} '
+                    + (f'<a href="{esc(c["report"].relative_to(loop_dir))}">{c["ff"]}/{c["n"]}</a>'
+                       if c["report"] else f'{c["ff"]}/{c["n"]}')
+                    + '</span>'
+                    for c in s["cells"])
             cells.append(
                 f'<td class="num">{link} <span style="color:var(--muted)">({s["rate"]:.0%})</span>'
                 f'<br><span class="bar" style="width:{w}px;background:var(--good)"></span>'
                 f'<br><span style="color:var(--muted);font-size:11px">'
-                f'{"att %.1f" % s["attempts"] if s["attempts"] else ""} &middot; ${s["cost"]:.2f}</span></td>')
+                f'{"att %.1f" % s["attempts"] if s["attempts"] else ""} &middot; ${s["cost"]:.2f}</span>'
+                f'{per_system}</td>')
         fb = rd / "feedback.html"
         fb_cell = (f'<a href="{esc(fb.relative_to(loop_dir))}">clusters</a>'
                    if fb.exists() else '<span style="color:var(--muted)">not generated</span>')
@@ -428,6 +538,7 @@ def build(loop_dir: Path, out: Path) -> Path:
     samples = index_samples(loop_dir)
     body = (header_html(lm, loop_dir)
             + '<main>'
+            + questions_html(loop_dir)
             + rounds_table(lm, loop_dir)
             + strategies_html(lm, loop_dir)
             + verification_html(loop_dir, samples)

@@ -45,12 +45,99 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>{title}</title
  .answer {{ margin:18px 0; }}
  .badge {{ color:#fff; border-radius:10px; padding:2px 9px; font-size:12px;
            font-family:-apple-system,system-ui,sans-serif; }}
+ .cclabel, .ccv {{ color:#fff; border-radius:10px; padding:1px 8px; font-size:11.5px;
+                   font-weight:700; font-family:-apple-system,system-ui,sans-serif; }}
+ details.ccblock {{ margin:6px 0 6px 0; }}
+ details.ccblock > summary {{ cursor:pointer; color:#0969da; font-size:12.5px;
+                              font-family:-apple-system,system-ui,sans-serif; }}
+ ol.ccclaims, ul.ccclaims {{ font-family:-apple-system,system-ui,sans-serif; font-size:13px;
+                             padding-left:20px; margin:6px 0; }}
+ ol.ccclaims li, ul.ccclaims li {{ margin:8px 0; }}
+ .ccev {{ color:#3a3f45; font-size:12.5px; background:#f6f8fa; border-left:3px solid #d0d7de;
+          padding:5px 8px; margin:4px 0; border-radius:0 5px 5px 0; }}
+ .ccsrc {{ font-size:11.5px; color:#57606a; margin-left:8px; }}
+ pre.ccraw {{ white-space:pre-wrap; background:#f6f8fa; border:1px solid #d0d7de;
+              border-radius:6px; padding:10px; max-height:420px; overflow:auto;
+              font-size:12px; }}
 {cite_css}
 </style></head><body>
 <h1>{heading}</h1>
 <div class="seed">Seed: {seed}</div>
 {attempts}
 </body></html>"""
+
+
+CC_LABEL_COLOR = {"correct": "#1a7f37", "almost_correct": "#9a6700",
+                  "incorrect": "#cf222e", "insufficient_evidence": "#57606a"}
+CLAIM_COLOR = {"supported": "#1a7f37", "contradicted": "#cf222e",
+               "not_found": "#9a6700", "not_checkable": "#57606a"}
+
+
+def render_criterion_check(cc: dict, h: dict) -> str:
+    """The meta-judge's whole verdict on the verification criterion, or '' if it never ran."""
+    if not cc:
+        return ""
+    label = cc.get("correctness_label") or "?"
+    rows = [f'<div><b>Criterion check</b> '
+            f'<span class="cclabel" style="background:{CC_LABEL_COLOR.get(label, "#57606a")}">'
+            f'{esc(label)}</span></div>']
+    if h.get("verification_criterion_original"):
+        rows.append(f'<div><b>Criterion (original, before rewrite)</b> '
+                    f'{esc(h["verification_criterion_original"])}</div>')
+    for field, title in (("main_correctness_problem", "Problem"),
+                         ("unfair_requirements", "Unfair requirement"),
+                         ("rewrite", "Suggested rewrite"),
+                         ("reasoning", "Reasoning")):
+        if cc.get(field):
+            rows.append(f'<div><b>{title}</b> {esc(cc[field])}</div>')
+
+    claims = cc.get("checked_claims") or []
+    if claims:
+        items = []
+        for c in claims:
+            v = (c.get("verdict") or "").strip()
+            srcs = c.get("sources") or []
+            src_html = "".join(
+                f'<div class="ccsrc">{f"<a href=&quot;{esc(x)}&quot; target=&quot;_blank&quot;>{esc(x)}</a>" if str(x).startswith("http") else esc(x)}</div>'
+                for x in srcs)
+            items.append(
+                f'<li><span class="ccv" style="background:{CLAIM_COLOR.get(v, "#57606a")}">'
+                f'{esc(v or "?")}</span> {esc(c.get("claim"))}'
+                f'<div class="ccev">{esc(c.get("evidence"))}</div>{src_html}</li>')
+        rows.append(f'<details class="ccblock"><summary>Checked claims ({len(claims)})</summary>'
+                    f'<ol class="ccclaims">{"".join(items)}</ol></details>')
+
+    aq = cc.get("additional_queries") or []
+    if aq:
+        rows.append('<details class="ccblock"><summary>Searches the meta-judge still wanted '
+                    f'({len(aq)})</summary><ul class="ccclaims">'
+                    + "".join(f'<li>{esc(q.get("query"))}'
+                              + (f'<div class="ccev">targets: {esc(q.get("targets_claim"))}</div>'
+                                 if q.get("targets_claim") else "") + '</li>' for q in aq)
+                    + '</ul></details>')
+
+    r = cc.get("retrieval") or {}
+    if r:
+        rr = r.get("reranker")
+        bits = [f'{r.get("n_context_papers", "?")} of {r.get("n_papers", "?")} papers shown',
+                f'{r.get("context_chars", 0):,} chars',
+                f'decomposer {r.get("decomposer_model") or "?"}',
+                (f'reranked by {rr.get("model")}' if isinstance(rr, dict) and rr.get("model")
+                 else 'NO RERANKER (scores 0.0, keyword hits sort last)')]
+        if r.get("n_snippets") is not None:
+            bits.insert(1, f'{r["n_snippets"]} snippets')
+        rows.append('<details class="ccblock"><summary>Retrieval</summary>'
+                    f'<div class="ccev">{esc(" · ".join(str(b) for b in bits))}</div>'
+                    + "".join(f'<div class="ccev">{esc(k)}: {esc(r[k])}</div>'
+                              for k in ("rewritten_query", "keyword_query", "search_filters",
+                                        "proposed_queries")
+                              if r.get(k))
+                    + '</details>')
+
+    if cc.get("raw"):
+        rows.append('<details class="ccblock"><summary>Raw meta-judge response</summary>'
+                    f'<pre class="ccraw">{esc(cc["raw"])}</pre></details>')
+    return "".join(rows)
 
 
 def render_attempt(att: dict, is_last: bool = False) -> str:
@@ -67,20 +154,13 @@ def render_attempt(att: dict, is_last: bool = False) -> str:
     else:
         verdict = j.get("verdict", "")
         vcolor = "#cf222e" if verdict == "FAILED" else "#1a7f37"
-    # Show what the criterion check said whenever it rewrote or rejected the criterion,
-    # or flagged a requirement as unfair (which can happen on a criterion that was kept).
-    cc_rows = ""
-    if cc and (att.get("judgment") is None or h.get("verification_criterion_original")
-               or cc.get("unfair_requirements")):
-        if h.get("verification_criterion_original"):
-            cc_rows += (f'<div><b>Criterion (original)</b> '
-                        f'{esc(h["verification_criterion_original"])}</div>')
-        cc_rows += f'<div><b>Criterion check</b> {esc(cc.get("correctness_label"))}</div>'
-        if cc.get("main_correctness_problem"):
-            cc_rows += f'<div><b>Problem</b> {esc(cc["main_correctness_problem"])}</div>'
-        if cc.get("unfair_requirements"):
-            cc_rows += (f'<div><b>Unfair requirement</b> '
-                        f'{esc(cc["unfair_requirements"])}</div>')
+    # The criterion check in full. It is shown for EVERY attempt that ran one, not only
+    # rejections: an `almost_correct` criterion is used (after rewrite) and an unfair
+    # requirement can ride along on one that was kept, so hiding the check whenever it
+    # passed hid exactly the cases worth auditing. The expensive parts -- checked_claims,
+    # additional_queries, retrieval meta, the raw response -- sit in <details> so the page
+    # stays readable.
+    cc_rows = render_criterion_check(cc, h)
     miss = (f'<div class="warn">{len(missing)} citation id(s) could not be resolved '
             f'from the trace.</div>' if missing else "")
     open_attr = " open" if is_last else ""

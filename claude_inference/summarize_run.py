@@ -118,6 +118,32 @@ def _verdict_chip(v) -> str:
             f'{esc(VERDICT_LABEL.get(v, v))}</span>')
 
 
+def index_html(ordered: list) -> str:
+    """A clickable list of every question, above the cards.
+
+    The cards are collapsed and sorted by status, so finding one question meant
+    scrolling and expanding. Each row jumps to its card and opens it -- CSS :target can
+    only highlight a <details>, not expand it, so a few lines of script do that. Rows
+    show the final question rather than the seed: the generated question is what the
+    run is actually about.
+    """
+    rows = []
+    for s in ordered:
+        res = s["result"] or {}
+        attempts = res.get("attempts") or []
+        h = (attempts[-1].get("harder") or {}) if attempts else {}
+        q = h.get("updated_question") or res.get("seed") or s.get("seed") or "(no question)"
+        status = s["status"]
+        rows.append(
+            f'<a class="irow" href="#s{s["index"]:03d}">'
+            f'<span class="badge" style="background:{STATUS_COLOR.get(status, "#57606a")}">'
+            f'{esc(status)}</span>'
+            f'<span class="idx">#{s["index"]:03d}</span>'
+            f'<span class="iq">{esc(q)}</span></a>')
+    return ('<details class="index" open><summary>All questions '
+            f'({len(ordered)})</summary><div class="ilist">{"".join(rows)}</div></details>')
+
+
 def card_html(s) -> str:
     status = s["status"]
     color = STATUS_COLOR.get(status, "#57606a")
@@ -137,7 +163,8 @@ def card_html(s) -> str:
 
     if status == "ERROR":
         body = f'<div class="err">{esc(res.get("error", "(no result file)"))}</div>'
-        return f'<details class="card"><summary>{head}</summary>{body}</details>'
+        return (f'<details class="card" id="s{s["index"]:03d}">'
+                f'<summary>{head}</summary>{body}</details>')
 
     # The decisive attempt is the last one (the FAILED one for FAILED_FOUND).
     parts = []
@@ -210,7 +237,8 @@ def card_html(s) -> str:
             f'<table><tr><th>#</th><th>verdict</th><th>question</th></tr>{rows}</table></details>'
         )
 
-    return f'<details class="card"><summary>{head}</summary>{"".join(parts)}</details>'
+    return (f'<details class="card" id="s{s["index"]:03d}">'
+            f'<summary>{head}</summary>{"".join(parts)}</details>')
 
 
 def build_html(index, samples) -> str:
@@ -226,6 +254,7 @@ def build_html(index, samples) -> str:
     order = {"FAILED_FOUND": 0, "EXHAUSTED": 1, "ERROR": 2}
     ordered = sorted(samples, key=lambda s: (order.get(s["status"], 9), s["index"]))
     cards = "\n".join(card_html(s) for s in ordered)
+    question_index = index_html(ordered)
 
     return f"""<!doctype html><html><head><meta charset="utf-8">
 <title>Run report</title>
@@ -248,6 +277,18 @@ def build_html(index, samples) -> str:
  .answer pre {{ white-space:pre-wrap; background:#f6f8fa; border:1px solid #d0d7de; border-radius:6px; padding:10px; max-height:480px; overflow:auto; }}
  .viewlink {{ display:inline-block; color:#0969da; text-decoration:none; font-weight:600; background:#ddf4ff; border:1px solid #54aeff; border-radius:6px; padding:6px 10px; }}
  .viewlink:hover {{ background:#b6e3ff; }}
+ .index {{ background:#fff; border:1px solid #d0d7de; border-radius:8px; margin:8px 0 14px;
+           padding:8px 12px; }}
+ .index > summary {{ cursor:pointer; font-weight:600; }}
+ .ilist {{ margin-top:8px; max-height:380px; overflow:auto; }}
+ a.irow {{ display:flex; gap:10px; align-items:baseline; padding:5px 6px; border-radius:6px;
+           text-decoration:none; color:#1f2328; border-bottom:1px solid #f0f2f5; }}
+ a.irow:hover {{ background:#ddf4ff; }}
+ a.irow .badge {{ font-size:10.5px; flex:none; }}
+ .iq {{ flex:1; min-width:0; }}
+ /* clicking a row jumps here; :target opens the card and marks it */
+ .card:target {{ border-color:#0969da; box-shadow:0 0 0 3px #ddf4ff; }}
+ .card:target > summary {{ font-weight:600; }}
  table {{ border-collapse:collapse; width:100%; font-size:13px; }}
  th, td {{ border:1px solid #d0d7de; padding:4px 8px; text-align:left; vertical-align:top; }}
  details details {{ margin-top:8px; }} summary {{ outline:none; }}
@@ -258,7 +299,18 @@ def build_html(index, samples) -> str:
  <div class="stats">total ${index.get('total_cost_usd',0):.4f} · {index.get('total_claude_calls',0)} LLM calls ·
    avg make-harder calls / FAILED_FOUND = {avg_txt}</div>
 </header>
-<div class="wrap">{cards}</div>
+<div class="wrap">{question_index}
+{cards}</div>
+<script>
+ // Open (and keep open) whichever card the URL fragment points at: CSS :target styles
+ // a <details> but cannot expand it.
+ function openTarget() {{
+   var el = document.getElementById(location.hash.slice(1));
+   if (el && el.tagName === 'DETAILS') {{ el.open = true; el.scrollIntoView({{block:'start'}}); }}
+ }}
+ addEventListener('hashchange', openTarget);
+ addEventListener('DOMContentLoaded', openTarget);
+</script>
 </body></html>"""
 
 

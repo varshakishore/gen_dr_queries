@@ -120,7 +120,10 @@ import random
 import re
 import subprocess
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -401,6 +404,96 @@ def derive_menus(feedback: dict, *, base_banned: list, ban_after_failures: int,
 # ---------------------------------------------------------------------------
 
 
+@dataclass
+class AnsweringSystem:
+    """One answering system a round's seeds can be sent to.
+
+    `profile` reaches the make-harder prompt, so questions are generated FOR this
+    system -- three systems in one loop means three disjoint question sets, not one
+    set tried three ways (that is eval_other_model.py). Timeout and concurrency are
+    per-system on purpose: measured, one question takes ~32 min on Tongyi, ~19 min on
+    WebThinker and far less on DR-Tulu, and only WebThinker is unbounded server-side.
+    """
+    name: str
+    profile: str | None = None
+    server_url: str | None = None
+    timeout: float | None = None
+    concurrency: int | None = None
+    share: float | None = None          # None -> an equal slice of the round
+
+
+def load_systems(args) -> list:
+    """The systems this loop targets: --systems-file, else one built from the flags.
+
+    With no file the loop behaves exactly as before -- a single unnamed system using
+    --profile / --server-url / --timeout / --concurrency -- so existing commands and
+    existing run layouts are unchanged.
+    """
+    if not args.systems_file:
+        return [AnsweringSystem(name="", profile=args.profile,
+                                server_url=args.server_url, timeout=args.timeout,
+                                concurrency=args.concurrency)]
+    spec = json.loads(Path(args.systems_file).read_text())
+    if not isinstance(spec, list) or not spec:
+        raise SystemExit(f"{args.systems_file}: expected a non-empty JSON list of systems")
+    systems = []
+    for i, entry in enumerate(spec):
+        name = str(entry.get("name") or entry.get("profile") or f"system{i}")
+        if any(s.name == name for s in systems):
+            raise SystemExit(f"{args.systems_file}: duplicate system name {name!r}")
+        if "/" in name or name in ("explore", "exploit", "menus"):
+            raise SystemExit(f"{args.systems_file}: {name!r} is not usable as a directory name")
+        systems.append(AnsweringSystem(
+            name=name,
+            profile=entry.get("profile", args.profile),
+            server_url=entry.get("server_url", args.server_url),
+            timeout=entry.get("timeout", args.timeout),
+            concurrency=entry.get("concurrency", args.concurrency),
+            share=entry.get("share"),
+        ))
+    return systems
+
+
+def split_by_system(seeds: list, rng: random.Random, systems: list) -> dict:
+    """Split a round's seeds -> {system_name: [...]}, balanced like split_by_prompt.
+
+    Equal slices unless a system sets `share`; shares are normalised over the systems
+    that declare one, with the rest splitting what is left. Largest-remainder so the
+    counts sum exactly, and every system with a positive share gets at least one seed
+    whenever there are enough to go round -- a starved system contributes no evidence
+    to the round at all.
+    """
+    if len(systems) == 1:
+        return {systems[0].name: list(seeds)}
+    shuffled = list(seeds)
+    rng.shuffle(shuffled)
+    declared = sum(s.share for s in systems if s.share is not None)
+    n_undeclared = sum(1 for s in systems if s.share is None)
+    rest = max(0.0, 1.0 - declared) / n_undeclared if n_undeclared else 0.0
+    shares = [s.share if s.share is not None else rest for s in systems]
+    total = sum(shares) or 1.0
+    shares = [x / total for x in shares]
+
+    exact = [len(shuffled) * x for x in shares]
+    counts = [int(x) for x in exact]
+    for i in sorted(range(len(counts)), key=lambda i: exact[i] - counts[i], reverse=True):
+        if sum(counts) >= len(shuffled):
+            break
+        counts[i] += 1
+    if len(shuffled) >= sum(1 for x in shares if x > 0):
+        for i, x in enumerate(shares):          # never starve a system by rounding
+            if x > 0 and counts[i] == 0:
+                donor = max(range(len(counts)), key=lambda j: counts[j])
+                if counts[donor] > 1:
+                    counts[donor] -= 1
+                    counts[i] += 1
+    out, at = {}, 0
+    for s, n in zip(systems, counts):
+        out[s.name] = shuffled[at:at + n]
+        at += n
+    return out
+
+
 def split_by_prompt(seeds: list, rng: random.Random, p_explore: float) -> dict:
     """Split a round's seeds -> {'explore': [...], 'exploit': [...]}.
 
@@ -419,14 +512,32 @@ def split_by_prompt(seeds: list, rng: random.Random, p_explore: float) -> dict:
     return {"explore": shuffled[:n_explore], "exploit": shuffled[n_explore:]}
 
 
+# Serialises console writes when several systems stream output at once.
+_PRINT_LOCK = threading.Lock()
+
+
 def run_side(seeds: list, prompt: str, round_dir: Path, args,
              example_file: Path, banned_file: Path, few_shots_file: Path | None = None,
-             strategies_dir: Path | None = None) -> dict:
-    """Run the parallel driver for one prompt variant of one round. Returns its index.json."""
-    out_dir = round_dir / prompt
+             strategies_dir: Path | None = None,
+             system: "AnsweringSystem | None" = None,
+             line_prefix: str = "",
+             concurrency: int | None = None) -> dict:
+    """Run the parallel driver for one (system, prompt) cell of one round.
+
+    Returns its index.json. With one system the layout is round_KK/<prompt>/ exactly as
+    before; with several it is round_KK/<system>/<prompt>/ so each cell has its own
+    sample_NNN numbering -- the driver numbers from 1 per invocation, so cells must not
+    share a directory.
+    """
+    system = system or AnsweringSystem(name="", profile=args.profile,
+                                       server_url=args.server_url, timeout=args.timeout,
+                                       concurrency=args.concurrency)
+    cell = (round_dir / system.name) if system.name else round_dir
+    out_dir = cell / prompt
     # JSON, not one-per-line: a seed containing newlines would otherwise fragment into
     # several seeds when the driver reads the file back.
-    seeds_file = round_dir / f"{prompt}.seeds.json"
+    seeds_file = cell / f"{prompt}.seeds.json"
+    cell.mkdir(parents=True, exist_ok=True)
     round_dir.mkdir(parents=True, exist_ok=True)
     seeds_file.write_text(json.dumps(seeds, indent=2, ensure_ascii=False))
 
@@ -435,10 +546,10 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         "--seeds-file", str(seeds_file),
         "--out-dir", str(out_dir),
         "--prompt", prompt,
-        "--concurrency", str(args.concurrency),
+        "--concurrency", str(concurrency or system.concurrency or args.concurrency),
         "--max-attempts", str(args.max_attempts),
         "--model", args.model,
-        "--server-url", args.server_url,
+        "--server-url", system.server_url or args.server_url,
         "--strategies-file", str(example_file),
         "--banned-strategies-file", str(banned_file),
     ]
@@ -447,10 +558,10 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         cmd += ["--strategies-dir", str(strategies_dir)]
     if few_shots_file:
         cmd += ["--few-shots-file", str(few_shots_file)]
-    if args.profile:
-        cmd += ["--profile", args.profile]
-    if args.timeout:
-        cmd += ["--timeout", str(args.timeout)]
+    if system.profile or args.profile:
+        cmd += ["--profile", system.profile or args.profile]
+    if system.timeout or args.timeout:
+        cmd += ["--timeout", str(system.timeout or args.timeout)]
     if not args.skip_existing:
         cmd += ["--no-skip-existing"]
     if args.verify_criterion:
@@ -468,8 +579,23 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
     if args.skip_seed_round:                    # independent of --verify-criterion
         cmd += ["--skip-seed-round"]
 
-    print(f"\n--- {round_dir.name}/{prompt}: {len(seeds)} seed(s) ---", flush=True)
-    proc = subprocess.run(cmd)
+    label = f"{round_dir.name}/{system.name}/{prompt}" if system.name \
+        else f"{round_dir.name}/{prompt}"
+    with _PRINT_LOCK:
+        print(f"\n--- {label}: {len(seeds)} seed(s)"
+              + (f" -> {system.server_url}" if system.name else "") + " ---", flush=True)
+    if line_prefix:
+        # Several systems stream at once, so tag every driver line with its cell and
+        # hold the lock per line -- interleaved but attributable, and still live, which
+        # matters when a round runs for an hour or more.
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True, bufsize=1)
+        for line in proc.stdout:
+            with _PRINT_LOCK:
+                print(f"{line_prefix}{line}", end="", flush=True)
+        proc.wait()
+    else:
+        proc = subprocess.run(cmd)
     index_path = out_dir / "index.json"
     if index_path.exists():
         return json.loads(index_path.read_text())
@@ -477,7 +603,7 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
 
 
 def write_seed_menus(round_dir: Path, n_seeds: int, pool: list, args,
-                     rng: random.Random) -> tuple[Path, dict]:
+                     rng: random.Random, system_name: str = "") -> tuple[Path, dict]:
     """One sampled menu per exploit seed, named to match the driver's sample_NNN numbering.
 
     The driver indexes its seeds from 1, so seed i gets menus/sample_{i:03d}.txt. Returns
@@ -485,7 +611,7 @@ def write_seed_menus(round_dir: Path, n_seeds: int, pool: list, args,
     audit trail, since recording every menu in loop.json would swamp it (the files stay on
     disk for the full detail).
     """
-    menu_dir = round_dir / "menus"
+    menu_dir = round_dir / "menus" / system_name if system_name else round_dir / "menus"
     menu_dir.mkdir(parents=True, exist_ok=True)
     counts: dict = {}
     for i in range(1, n_seeds + 1):
@@ -621,6 +747,24 @@ def main():
                    help="One round, no clustering and no menu updates -- just generate with "
                         "the starting menus (plus --verify-after if given). Same as setting "
                         "--feedback-every to the seed count.")
+    p.add_argument("--systems-file", default=None,
+                   help="JSON list of answering systems to split each round between, e.g. "
+                        '[{"name":"drtulu","profile":"drtulu","server_url":"http://h:8007/ask",'
+                        '"timeout":900,"concurrency":10}, ...]. Per-system keys default to '
+                        "--profile / --server-url / --timeout / --concurrency; an optional "
+                        "\"share\" weights the split (equal slices otherwise). Runs land in "
+                        "round_KK/<system>/<prompt>/. Omit for a single system (the default, "
+                        "and the pre-existing round_KK/<prompt>/ layout). NOTE: questions are "
+                        "generated FOR a system via its profile, so several systems means "
+                        "several disjoint question sets; feedback pools their failures.")
+    p.add_argument("--parallel-prompts", action="store_true",
+                   help="Run a system's explore and exploit cells at the SAME time instead "
+                        "of one after the other, splitting that system's --concurrency "
+                        "between them in proportion to their seed counts. Worth it when a "
+                        "cell has fewer seeds than the concurrency allows (the usual case "
+                        "once a round is divided by systems and prompts) -- it roughly "
+                        "halves a round's wall clock without raising the load on any "
+                        "server. Budget checks happen per system rather than per cell.")
     p.add_argument("--prompt-mix", type=float, default=0.5,
                    help="Share of each round's seeds given to the explore prompt; "
                         "0.5 = an even split (default: 0.5).")
@@ -694,8 +838,9 @@ def main():
     gen = p.add_argument_group("generation (forwarded to the pipeline)")
     gen.add_argument("--concurrency", type=int, default=5)
     gen.add_argument("--max-attempts", type=int, default=5)
-    gen.add_argument("--model", default="claude-sonnet-4-5",
-                     help="Generator/judge model for every round. Accepts a Claude id or an "
+    gen.add_argument("--model", default=RP.DEFAULT_MODEL,
+                     help=f"Generator/judge model for every round (default: {RP.DEFAULT_MODEL}). "
+                     "Accepts a Claude id or an "
                           "OpenAI one (e.g. gpt-5.6-terra); provider inferred from the id.")
     gen.add_argument("--provider", choices=["auto", "anthropic", "openai"], default="auto",
                      help="Provider for --model (default: auto, inferred from the model id).")
@@ -758,13 +903,21 @@ def main():
         if args.decomposer_model and (
                 missing := llm_client.require_api_key(args.decomposer_model)):
             p.error(missing + llm_client.decomposer_hint(args.model, args.decomposer_model))
-    if args.verify_after and not os.environ.get("S2_API_KEY"):
-        print("[verify] WARNING: S2_API_KEY is not set; the post-hoc criterion check will "
-              "be rate limited hard by Semantic Scholar.", file=sys.stderr)
-    if args.verify_after and not (args.reranker_url or os.environ.get("VLLM_RERANK_URL")) \
+    # Both checks cover --verify-criterion as well as --verify-after: the inline check
+    # retrieves exactly the same way. They have to fire HERE because the per-seed
+    # warnings (research_pipeline.py's S2 warning, retrieve_papers' reranker warning)
+    # are raised inside driver subprocesses whose output is captured and written to
+    # sample_NNN.console.txt only when the run fails -- so on a healthy run they are
+    # discarded and the loop would otherwise give no signal at all.
+    if (args.verify_criterion or args.verify_after) and not os.environ.get("S2_API_KEY"):
+        print("[verify] WARNING: S2_API_KEY is not set; criterion-check retrieval will be "
+              "rate limited hard by Semantic Scholar.", file=sys.stderr)
+    if (args.verify_criterion or args.verify_after) \
+            and not (args.reranker_url or os.environ.get("VLLM_RERANK_URL")) \
             and args.reranker != "none":
-        print("[verify] WARNING: no --reranker-url / VLLM_RERANK_URL; retrieval will run "
-              "WITHOUT reranking.", file=sys.stderr)
+        print("[verify] WARNING: no --reranker-url / VLLM_RERANK_URL; criterion-check "
+              "retrieval will run WITHOUT reranking, which biases the meta-judge toward "
+              "accepting 'the literature does not cover X' claims.", file=sys.stderr)
 
     if args.feedback_every < 1:
         p.error("--feedback-every must be >= 1")
@@ -811,10 +964,16 @@ def main():
     # explore/exploit split's sequence, so the split would stop being reproducible
     # against runs made before sampling existed.
     menu_rng = random.Random(args.random_seed + 1_000_003)
+    # Same reasoning for the system split: its own stream, so adding systems does not
+    # shift the explore/exploit sequence of a run made before systems existed.
+    sys_rng = random.Random(args.random_seed + 104_729)
+    systems = load_systems(args)
 
     print(f"{len(seeds)} seed(s) in {len(rounds)} round(s) of <= {every}, "
           + ("both prompts on every seed" if args.both_prompts
              else f"explore share {args.prompt_mix}")
+          + (f", {len(systems)} answering systems ("
+             + ", ".join(x.name for x in systems) + ")" if len(systems) > 1 else "")
           + (", no feedback" if len(rounds) == 1 else "")
           + f" -> {out_dir}/")
 
@@ -850,8 +1009,17 @@ def main():
                                        f"clustered against (menu + bans)")
 
         t_round = time.perf_counter()
-        split = ({"explore": list(round_seeds), "exploit": list(round_seeds)}
-                 if args.both_prompts else split_by_prompt(round_seeds, rng, args.prompt_mix))
+        # Two nested splits: the round's seeds go to an answering system first, then
+        # each system's share is split between the prompts. System first so every
+        # system still gets a balanced explore/exploit mix of its own.
+        by_system = split_by_system(round_seeds, sys_rng, systems)
+        split_of = {
+            name: ({"explore": list(sd), "exploit": list(sd)} if args.both_prompts
+                   else split_by_prompt(sd, rng, args.prompt_mix))
+            for name, sd in by_system.items()
+        }
+        split = {p: [q for sp in split_of.values() for q in sp[p]]
+                 for p in ("explore", "exploit")}
         print(f"\n{'=' * 70}\nROUND {k}: {len(round_seeds)} seed(s) — "
               f"{len(split['explore'])} explore / {len(split['exploit'])} exploit\n"
               f"  menus: {len(pool)} in the example pool"
@@ -859,11 +1027,22 @@ def main():
               f"{' — pool <= cap, so every seed sees all of it' if len(pool) <= args.max_example_strategies else ''}"
               f"), {len(banned_menu)} banned\n{'=' * 70}")
 
-        menu_dir, menu_counts = None, {}
-        if args.menu_sample == "seed" and split["exploit"]:
-            menu_dir, menu_counts = write_seed_menus(
-                round_dir, len(split["exploit"]), pool, args, menu_rng)
-            print(f"  sampled {len(split['exploit'])} per-seed menus -> {menu_dir}/")
+        # One menu dir per system: the driver numbers its seeds from 1 on every
+        # invocation, so a shared dir would hand cell B the menu drawn for cell A.
+        menu_dirs, menu_counts = {}, {}
+        if args.menu_sample == "seed":
+            for sysm in systems:
+                n_exploit = len(split_of[sysm.name]["exploit"])
+                if not n_exploit:
+                    continue
+                md, counts = write_seed_menus(round_dir, n_exploit, pool, args, menu_rng,
+                                              system_name=sysm.name)
+                menu_dirs[sysm.name] = md
+                for m, c in counts.items():
+                    menu_counts[m] = menu_counts.get(m, 0) + c
+            if menu_dirs:
+                print(f"  sampled {len(split['exploit'])} per-seed menus -> "
+                      + ", ".join(f"{d}/" for d in menu_dirs.values()))
 
         shot_files = {}
         for prompt, shots in few_shots.items():
@@ -872,19 +1051,73 @@ def main():
                 path.write_text(json.dumps(shots, indent=2, ensure_ascii=False))
                 shot_files[prompt] = path
 
-        indexes = []
-        for prompt, side_seeds in split.items():
-            if not side_seeds:
-                continue
-            if args.budget_usd and spent >= args.budget_usd:
-                stopped_early = (f"budget ${args.budget_usd:.2f} reached (${spent:.4f} spent) "
-                                 f"before round {k}/{prompt}")
-                break
+        # Systems run CONCURRENTLY -- each has its own /ask server, so serialising them
+        # would leave the others idle and make a round cost the SUM of their latencies
+        # instead of the max (measured: ~32 min/question on Tongyi, ~19 on WebThinker,
+        # far less on DR-Tulu). Within a system the two prompts stay SERIAL: they share
+        # one server, and running them together would double the load that system's
+        # `concurrency` was set to allow. Each cell writes to its own directory with its
+        # own menus, so there is no shared state beyond the counters below.
+        indexes: list = []
+        budget_lock = threading.Lock()
+        spent_box = [spent]
+        stop_box: list = []
+
+        def one_cell(sysm, prompt, side_seeds, conc) -> dict:
             ix = run_side(side_seeds, prompt, round_dir, args,
                           example_file, banned_file, shot_files.get(prompt),
-                          strategies_dir=menu_dir if prompt == "exploit" else None)
-            indexes.append(ix)
-            spent += round_stats([ix])["cost_usd"]
+                          strategies_dir=(menu_dirs.get(sysm.name)
+                                          if prompt == "exploit" else None),
+                          system=sysm,
+                          line_prefix=(f"[{sysm.name}/{prompt}] "
+                                       if len(systems) > 1 else ""),
+                          concurrency=conc)
+            with budget_lock:
+                spent_box[0] += round_stats([ix])["cost_usd"]
+            return ix
+
+        def run_one_system(sysm) -> list:
+            cells = [(p, sd) for p, sd in split_of[sysm.name].items() if sd]
+            budget = sysm.concurrency or args.concurrency
+            if args.parallel_prompts and len(cells) > 1:
+                # Both prompts at once against this system's one server. The server's
+                # concurrency is a BUDGET, so split it between them in proportion to
+                # their seed counts rather than giving each the full figure (which would
+                # double the load) or half each (which is worse than serial when the
+                # sides are lopsided: 20/2 seeds at 5/5 takes 4 waves, serial takes 3).
+                total = sum(len(sd) for _, sd in cells)
+                with ThreadPoolExecutor(max_workers=len(cells)) as cp:
+                    futs = [cp.submit(one_cell, sysm, p, sd,
+                                      max(1, round(budget * len(sd) / total)))
+                            for p, sd in cells]
+                    return [f.result() for f in futs]
+            out = []
+            for prompt, side_seeds in cells:
+                with budget_lock:
+                    if args.budget_usd and spent_box[0] >= args.budget_usd:
+                        stop_box.append(
+                            f"budget ${args.budget_usd:.2f} reached "
+                            f"(${spent_box[0]:.4f} spent) before round {k}/"
+                            f"{sysm.name or 'default'}/{prompt}")
+                        break
+                out.append(one_cell(sysm, prompt, side_seeds, budget))
+            return out
+
+        if len(systems) > 1:
+            # NOT `as pool` -- `pool` is the loop-carried strategy pool, and `with` does
+            # not scope its target, so binding it here would leave a dead executor in
+            # place for the next round whenever derive_menus does not reassign it (which
+            # happens when a round yields nothing gradable and feedback comes back {}).
+            with ThreadPoolExecutor(max_workers=len(systems)) as tp:
+                for cells in tp.map(run_one_system, systems):
+                    indexes.extend(cells)
+        else:
+            indexes = run_one_system(systems[0])
+        spent = spent_box[0]
+        if stop_box:
+            # Budget is checked before each cell, so a round can overshoot by at most one
+            # in-flight cell per system -- unavoidable once they run concurrently.
+            stopped_early = stop_box[0]
         stats = round_stats(indexes)
         gen_elapsed = time.perf_counter() - t_round
         print(f"\n[round {k}] {stats['num_failed_found']}/{stats['num_seeds']} FAILED_FOUND, "
@@ -893,6 +1126,10 @@ def main():
         record = {"round": k, "dir": str(round_dir),
                   "num_explore": len(split["explore"]),
                   "num_exploit": len(split["exploit"]),
+                  "by_system": {name: {"num_seeds": len(sd),
+                                       "num_explore": len(split_of[name]["explore"]),
+                                       "num_exploit": len(split_of[name]["exploit"])}
+                                for name, sd in by_system.items()} if len(systems) > 1 else None,
                   "example_strategy_pool": pool_strategies,
                   "banned_strategies": banned_menu,
                   "cluster_seeds": cluster_seeds,

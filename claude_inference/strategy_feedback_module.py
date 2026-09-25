@@ -19,9 +19,12 @@ This module, when called (`build_feedback`), does the following:
                                  as the original EvalTree pipeline does. Needs OPENAI_API_KEY.
   2. SCORE     every cluster: how many of its questions the answering agent FAILED.
                FAILURE IS GOOD HERE: a failed question is one the generator successfully
-               made hard. Each cluster is also broken down per `source_run`, i.e. per
-               generation prompt (exploit vs explore), so prompts can be compared strategy 
-               by strategy.
+               made hard. Each cluster is also broken down per `source_run` -- the
+               generation prompt (exploit vs explore), and the answering system too when
+               research_loop.py targets several -- so prompts, and systems, can be compared
+               strategy by strategy. The breakdown is REPORTING only: cluster statistics and
+               the ban quota count every leaf whatever its source_run, so selection stays
+               pooled.
   3. RANK      EVERY cluster is reported — nothing is filtered out — each carrying its
                statistics (failure_rate, cluster size, num_failed, num_not_failed, share,
                and whether it is a SEED or a NEW cluster), ordered by `rank_by` (default:
@@ -43,9 +46,12 @@ examples : list[QuestionExample] | list[dict]
                                               this is what gets clustered
       failed                 (bool, required) True if the answering agent FAILED it
                                               (dataset instances: drtulu_verdict=="FAILED")
-      source_run             (str, "")        label of the generation prompt / run variant
-                                              that produced it (e.g. "explore",
-                                              "exploit"). Drives the per-prompt comparison.
+      source_run             (str, "")        label of the cell that produced it: the
+                                              generation prompt ("explore", "exploit"), or
+                                              "<system>/<prompt>" ("tongyi/exploit") when a
+                                              run targets several answering systems. Drives
+                                              the per-cell comparison; never affects
+                                              clustering or scoring.
       seed_question          (str, "")        the original question it was derived from
       verification_criterion (str, "")        what the grader checked
       round                  (int|None)       0 = seed as-is, 1..N = harder rewrites
@@ -309,8 +315,15 @@ def _iter_sample_files(path: Path) -> Iterable[Path]:
     direct = sorted(path.glob("sample_*.json"))
     if direct:
         yield from direct
-    else:
-        yield from sorted(path.glob("*/sample_*.json"))
+        return
+    # A round dir is <round>/<prompt>/sample_*.json with one answering system, and
+    # <round>/<system>/<prompt>/sample_*.json when research_loop.py runs several.
+    # Take the shallowest depth that matches so a round dir works either way.
+    for pattern in ("*/sample_*.json", "*/*/sample_*.json"):
+        found = sorted(path.glob(pattern))
+        if found:
+            yield from found
+            return
 
 
 def load_examples_from_runs(
@@ -324,8 +337,10 @@ def load_examples_from_runs(
 
     Each run dir holds `sample_NNN.json` files with a list of `results`; each result has a
     `seed` and a list of `attempts` carrying `harder.updated_question`, `harder.chosen_strategy`
-    and `judgment.verdict`. `source_run` is set to the name of the dir holding the samples,
-    so passing several run dirs (one per generation prompt) yields a comparable mix.
+    and `judgment.verdict`. `source_run` is the name of the dir holding the samples --
+    or "<system>/<prompt>" when that dir's grandparent is a round_KK dir, which is how
+    research_loop.py lays out several answering systems -- so passing several run dirs, or
+    one round dir, yields a comparable mix.
 
     A path may be a run dir, a parent of run dirs, or a single sample_*.json.
 
@@ -337,6 +352,23 @@ def load_examples_from_runs(
     """
     deciding: list[tuple[str, QuestionExample]] = []
     other: list[tuple[str, QuestionExample]] = []
+
+    def _source_run_label(parent: Path) -> str:
+        """Label for the dir holding a sample file.
+
+        research_loop.py writes round_KK/<prompt>/ with one answering system and
+        round_KK/<system>/<prompt>/ with several. The leaf alone is the prompt in
+        both, so with several systems every system's explore cells would collapse
+        into one "explore" bucket and the per-system breakdown would be invisible.
+        When the grandparent is the round dir, keep the system: "tongyi/exploit".
+
+        This is a REPORTING label only -- by_source_run, source_runs and the cluster
+        comparison. Clustering, num_failed and the ban quota count a cluster's leaves
+        regardless of it, so everything stays pooled across systems.
+        """
+        if re.fullmatch(r"round_\d+", parent.parent.parent.name or ""):
+            return f"{parent.parent.name}/{parent.name}"
+        return parent.name
 
     for run_path in run_paths:
         for sample_path in _iter_sample_files(Path(run_path)):
@@ -370,7 +402,7 @@ def load_examples_from_runs(
                         updated_question=updated,
                         strategy=strategy or "",
                         failed=verdict == "FAILED",
-                        source_run=Path(run_key).name,
+                        source_run=_source_run_label(sample_path.parent),
                         seed_question=result.get("seed", ""),
                         verification_criterion=harder.get("verification_criterion", ""),
                         round=round_idx,

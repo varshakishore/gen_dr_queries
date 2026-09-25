@@ -187,8 +187,9 @@ def main():
                         "spend can exceed it by up to --concurrency checks.")
     p.add_argument("--refresh", action="store_true",
                    help="Re-check questions already labelled in --out.")
-    p.add_argument("--model", default="claude-sonnet-4-5",
-                   help="Meta-judge model. Accepts a Claude id or an OpenAI one "
+    p.add_argument("--model", default=RP.DEFAULT_MODEL,
+                   help=f"Meta-judge model (default: {RP.DEFAULT_MODEL}). Accepts a "
+                        "Claude id or an OpenAI one "
                         "(e.g. gpt-5.6-terra); the provider is inferred from the id.")
     p.add_argument("--decomposer-model", default=None,
                    help="Model for retrieve_papers' query decomposition (default: "

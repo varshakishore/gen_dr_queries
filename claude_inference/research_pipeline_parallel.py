@@ -33,6 +33,7 @@ python research_pipeline_parallel.py --out-dir runs/sqa_50_100_explore --start 5
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -218,8 +219,9 @@ def main():
                    help="Skip the first N HF seeds before taking --limit "
                         "(e.g. --start 50 --limit 50 = seeds 50-99).")
     p.add_argument("--max-attempts", type=int, default=5)
-    p.add_argument("--model", default="claude-sonnet-4-5",
-                   help="Generator/judge model forwarded to the pipeline. Accepts a Claude "
+    p.add_argument("--model", default=RP.DEFAULT_MODEL,
+                   help=f"Generator/judge model forwarded to the pipeline (default: "
+                        f"{RP.DEFAULT_MODEL}). Accepts a Claude "
                         "id or an OpenAI one (e.g. gpt-5.6-terra); the provider is inferred "
                         "from the id unless --provider says otherwise.")
     p.add_argument("--prompt", choices=["explore", "exploit"], default="explore",
@@ -298,6 +300,17 @@ def main():
         if args.decomposer_model and (
                 missing := llm_client.require_api_key(args.decomposer_model)):
             p.error(missing + llm_client.decomposer_hint(args.model, args.decomposer_model))
+        # The pipeline raises both of these per seed, but this driver runs each seed with
+        # capture_output=True and keeps the output only when the run FAILS -- so on a
+        # healthy run they are discarded. Repeat them here, once, where they are visible.
+        if not os.environ.get("S2_API_KEY"):
+            print("[verify] WARNING: S2_API_KEY is not set; criterion-check retrieval will "
+                  "be rate limited hard by Semantic Scholar.", file=sys.stderr)
+        if not (args.reranker_url or os.environ.get("VLLM_RERANK_URL")) \
+                and args.reranker != "none":
+            print("[verify] WARNING: no --reranker-url / VLLM_RERANK_URL; criterion-check "
+                  "retrieval will run WITHOUT reranking, which biases the meta-judge toward "
+                  "accepting 'the literature does not cover X' claims.", file=sys.stderr)
     seeds = load_seeds(args)
     if not seeds:
         p.error("No seed questions provided.")

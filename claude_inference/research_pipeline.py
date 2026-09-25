@@ -56,7 +56,15 @@ RESEARCH_TIMEOUT_S = 600  # generous: deep-research calls can be slow
 
 # Default generator/judge model. Any id llm_client routes to OpenAI (gpt-*, o3-*)
 # works here too -- see llm_client for how the provider is picked from the id.
-CLAUDE_MODEL = "claude-sonnet-4-5"
+# The default generator/judge model for every entry point. Its PROVIDER cascades: the
+# query decomposer (retrieve_papers.DEFAULT_DECOMPOSER_MODELS) and the strategy clusterer
+# (--cluster-provider auto) both follow whichever side --model lands on, so one default
+# moves the whole run and only OPENAI_API_KEY is needed. The decomposer defaults are
+# tier-matched (gpt-5.6-terra $2/$12 vs claude-sonnet-4-5 $3/$15), so this does not
+# quietly drop a capability tier on the step that picks the papers.
+DEFAULT_MODEL = "gpt-5.6-terra"
+# Pre-rename alias: eval_other_model.py and test_providers.py import this name.
+CLAUDE_MODEL = DEFAULT_MODEL
 MAX_ATTEMPTS = 5
 
 # MODEL_PRICING and the cache multipliers now live in llm_client, so both providers
@@ -80,19 +88,25 @@ ANSWERING_SYSTEM_PROFILES = {
         "producing a long well-structured report. It is bad at complex reasoning."
     ),
     "tongyi": (
-        'The answering system is an open "deep research" model that is trained to produce '
-        'attributed long-form answers and whose ONLY tool is search '
-        "over academic papers. The system retrieves from a corpus of papers and "
-        "synthesizes a report. Difficulty must not come from requiring sources outside "
-        "this corpus. The system is good at surveying a single well-studied topic and "
-        "producing a long well-structured report. It is bad at complex reasoning. The system cannot produce in-line citations."
+            'The answering system is an open "deep research" model that is trained to produce '
+            'long-form answers and whose ONLY tool is search. '
+            'The target questions are academic research questions, so the '
+            'system should rely primarily on academic sources such as research papers, '
+            'scholarly articles, and other research-oriented search results. '
+            "Difficulty must not come from requiring sources outside "
+            "this set. The system retrieves information and then synthesizes a report. "
+            "The system is good at surveying a single well-studied topic and "
+            "producing a long well-structured report. It is bad at complex reasoning. The system cannot produce in-line citations."
     ),
     "webthinker": (
             'The answering system is an open "deep research" model that is trained to produce '
-            'attributed long-form answers and whose ONLY tool is search '
-            "over academic papers. The system retrieves from a corpus of papers and "
-            "synthesizes a report. Difficulty must not come from requiring sources outside "
-            "this corpus. The system is good at surveying a single well-studied topic and "
+            'long-form answers and whose ONLY tool is search. '
+            'The target questions are academic research questions, so the '
+            'system should rely primarily on academic sources such as research papers, '
+            'scholarly articles, and other research-oriented search results. '
+            "Difficulty must not come from requiring sources outside "
+            "this set. The system retrieves information and then synthesizes a report. "
+            "The system is good at surveying a single well-studied topic and "
             "producing a long well-structured report. It is bad at complex reasoning. The system cannot produce in-line citations."
         ),
 }
@@ -171,7 +185,11 @@ STRATEGY_LISTS = {
         "Presume that obtaining more information, increasing precision, taking action, or eliminating residual uncertainty is inherently valuable. A correct answer must assess whether it could materially change the relevant decision or outcome.", 
     ]
 }
-DEFAULT_STRATEGIES = "default"
+# merged_v1 (18) rather than default (9): the per-seed menu draws
+# --max-example-strategies (6) without replacement, and that draw only does real work
+# when the cap is comfortably below the pool -- at 6 of 9 the same strategies appear in
+# most menus, at 6 of 18 they genuinely vary. See research_loop.py's menu sampling.
+DEFAULT_STRATEGIES = "merged_v1"
 
 
 # ---------------------------------------------------------------------------
@@ -336,7 +354,7 @@ RULES:
 - Avoid questions that can easily be answered by retrieving information.
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
-- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, and the answer — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
 - Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
 - The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions). It is better to keep it simple.
 - The question should be in English.
@@ -529,7 +547,7 @@ Your task has two components:
    Determine whether the criterion's factual expectations, premises, causal claims, comparisons, mechanisms, entities, time frames, required distinctions, and absence/uncertainty claims are true and evidence-supported.
 
 2. GATEKEEPER NECESSITY:
-   Determine whether every requirement imposed by the criterion is strictly necessary for a fully correct answer to the question. Judge necessity from the question itself. A criterion must capture something that a fully correct answer cannot omit, contradict, or frame differently while still correctly answering the question.
+   Determine whether every requirement imposed by the criterion is strictly necessary for a fully correct answer to the question. Judge necessity from the question itself. A criterion must capture something that a fully correct answer cannot omit, contradict, or frame differently while still correctly answering the question. When a criterion names specific examples, mechanisms, subcases, or pieces of evidence, determine whether they are merely illustrative of the core requirement or are being imposed as mandatory answer content. If the criterion makes them mandatory but a fully correct answer could satisfy the core requirement without mentioning those specific items, treat that part of the criterion as over-restrictive and unfair.
 
 A true or useful statement is not automatically a valid verification criterion; it must be required for correctness.
 
@@ -556,6 +574,7 @@ Identify any part of the criterion that could cause an accurate, relevant, and f
 Examples include requiring:
 
 * one specific framing when multiple valid framings exist,
+* requiring a categorical conclusion when the justified conclusion should depend on the strength, type, or scope of the evidence or method available,
 * an explicit caveat that is useful but not necessary,
 * a particular mechanism when the question can be correctly answered at a higher level,
 * rejection of a premise that is not actually required to answer the question,
