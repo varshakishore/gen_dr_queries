@@ -51,7 +51,8 @@ original question against the original VC. A rewritten question was never answer
 rewritten VC was never graded against, so a `revise` row needs a re-answer / re-judge
 before it can join the benchmark as a failing question.
 
-Outputs, in <run_dir>/final_verification/ (or --out-dir):
+Outputs, in <run_dir>_final_verification/ next to the run (or --out-dir). Nothing is ever
+written inside the run dir: it is read-only input, and an --out-dir inside it is refused.
     results.jsonl   one row per question: both reviews, final decision, cost
     summary.json    counts by verdict and by system / prompt / round, total cost
     pass.jsonl      the benchmark-ready set (question + VC as written)
@@ -647,7 +648,8 @@ def main():
     )
     p.add_argument("run_dir", type=Path, help="A research_loop.py --out-dir (or any run dir).")
     p.add_argument("--out-dir", type=Path, default=None,
-                   help="Where to write results (default: <run_dir>/final_verification).")
+                   help="Where to write results (default: <run_dir>_final_verification, next "
+                        "to the run; must not be inside the run dir).")
     p.add_argument("--model", default=DEFAULT_MODEL,
                    help=f"Reviewer model (default: {DEFAULT_MODEL}).")
     p.add_argument("--concurrency", type=int, default=8)
@@ -683,7 +685,10 @@ def main():
     llm_client.configure_from_args(args)
 
     run_dir = args.run_dir
-    out_dir = args.out_dir or run_dir / "final_verification"
+    out_dir = args.out_dir or run_dir.parent / f"{run_dir.resolve().name}_final_verification"
+    # the run dir is read-only input: never write into it
+    if out_dir.resolve().is_relative_to(run_dir.resolve()):
+        p.error(f"--out-dir {out_dir} is inside the run dir {run_dir}; write it elsewhere")
     items = collect_harvest(run_dir)
     if not items:
         p.error(f"no FAILED_FOUND questions under {run_dir}")

@@ -17,6 +17,11 @@ For every sample and every system in --systems whose slot is still null:
        model the target system was judged with;
     3. write {answer, judgment} into systems.<name> of the sample file (atomic rewrite).
 
+--add-systems NAME ... answers with systems that are not in the samples yet -- e.g. a
+variant of an existing system (`tongyi_s2`: Tongyi with its Serper web search restricted
+to arxiv.org and semanticscholar.org) -- on EVERY question, the target's included; its slot is created on write. Each
+answer records the server it came from and the systems-file entry's `search_scope`.
+
 The target system's entry is never touched, and nothing outside <bench_dir> is written.
 Filled slots are skipped, so the script is resumable; a failed research or judge call leaves
 the slot null (and is logged), so re-running retries it. index.jsonl's verdicts are rebuilt
@@ -31,6 +36,8 @@ Examples:
   python answer_cross_systems.py runs/final_loop_600_full_benchmark --dry-run
   python answer_cross_systems.py runs/final_loop_600_full_benchmark --limit 3      # smoke test
   python answer_cross_systems.py runs/final_loop_600_full_benchmark --budget-usd 30
+  python answer_cross_systems.py runs/final_loop_600_full_benchmark \\
+      --add-systems tongyi_s2 webthinker_s2 --systems-file systems_s2.json --budget-usd 40
 
 Requires the judge model's API key and the research servers in --systems-file.
 """
@@ -80,7 +87,8 @@ def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, lo
         out["answer_seconds"] = round(time.time() - t0, 1)
         answer = {"text": res["answer"] or "", "trace": res["trace"], "model": res.get("model"),
                   "usage": res.get("usage"), "answer_source": "cross_system",
-                  "answered_at": now()}
+                  "answered_at": now(), "server_url": sysconf["server_url"],
+                  "search_scope": sysconf.get("search_scope")}
         judgment, bucket = rp.judge_answer(
             client, model, sample["question"], sample["verification_criterion"],
             answer["text"], logger, seed=sample["id"], attempt=0, trace=answer["trace"])
@@ -119,16 +127,17 @@ def rebuild_index(bench_dir: Path) -> list:
 
 
 def summarize(rows: list, systems: list) -> dict:
-    by_sys = {s: dict(Counter(r["verdicts"][s] for r in rows if r["target_system"] != s))
+    # .get: a system added with --add-systems has no key in samples it has not reached yet
+    v = lambda r, s: r["verdicts"].get(s)
+    by_sys = {s: dict(Counter(v(r, s) for r in rows if r["target_system"] != s))
               for s in systems}
     cross = defaultdict(dict)                     # target -> other system -> verdict counts
     for t in sorted({r["target_system"] for r in rows}):
         for s in systems:
             if s != t:
-                cross[t][s] = dict(Counter(r["verdicts"][s] for r in rows
-                                           if r["target_system"] == t))
-    all_fail = sum(1 for r in rows if all(v == "FAILED" for v in r["verdicts"].values()))
-    complete = sum(1 for r in rows if all(v is not None for v in r["verdicts"].values()))
+                cross[t][s] = dict(Counter(v(r, s) for r in rows if r["target_system"] == t))
+    all_fail = sum(1 for r in rows if all(v(r, s) == "FAILED" for s in systems))
+    complete = sum(1 for r in rows if all(v(r, s) is not None for s in systems))
     return {"questions": len(rows), "complete": complete, "failed_by_all_systems": all_fail,
             "verdicts_by_system": by_sys, "verdicts_by_target_system": dict(cross)}
 
@@ -139,6 +148,9 @@ def main():
     ap.add_argument("bench_dir", type=Path, help="Directory built by export_benchmark.py.")
     ap.add_argument("--systems", nargs="+", default=None,
                     help="Systems to fill (default: every system in the sample files).")
+    ap.add_argument("--add-systems", nargs="+", default=[],
+                    help="New systems (not yet in the samples) to answer EVERY question with; "
+                         "each needs an entry in --systems-file.")
     ap.add_argument("--systems-file", type=Path, default=DEFAULT_SYSTEMS_FILE,
                     help="JSON list of {name, server_url, timeout, concurrency} "
                          f"(default: {DEFAULT_SYSTEMS_FILE.name}).")
@@ -159,10 +171,15 @@ def main():
     if not (bench / "index.jsonl").exists() or not (bench / "samples").is_dir():
         ap.error(f"{bench} is not an export_benchmark.py directory (no index.jsonl / samples/)")
     index = [json.loads(l) for l in (bench / "index.jsonl").read_text().splitlines() if l.strip()]
-    all_systems = sorted({s for r in index for s in r["verdicts"]})
-    wanted = args.systems or all_systems
+    existing = sorted({s for r in index for s in r["verdicts"]})
+    all_systems = existing + [s for s in args.add_systems if s not in existing]
+    if args.add_systems:
+        wanted = list(dict.fromkeys((args.systems or []) + args.add_systems))
+    else:
+        wanted = args.systems or existing
     if (unknown := set(wanted) - set(all_systems)):
-        ap.error(f"unknown system(s) {sorted(unknown)}; the samples have {all_systems}")
+        ap.error(f"unknown system(s) {sorted(unknown)}; the samples have {existing} "
+                 f"(use --add-systems for a new one)")
 
     # the work list comes from the sample files themselves, not the (possibly stale) index
     todo, judge_models = [], Counter()

@@ -16,6 +16,14 @@ each push writes rows already in the dataset plus this run's new ones, keyed by
 query. Widening --limit or moving --start therefore grows the dataset instead of
 replacing it with the latest window.
 
+Row ORDER is preserved across those extends: rows already in the dataset keep
+their positions and new ones are appended, in source-stream order. Consumers slice
+this dataset positionally -- research_pipeline_parallel.load_hf_seeds takes
+usable=true rows in dataset order and cuts them with --start/--limit -- so an
+extend must not renumber the seeds that earlier runs were built on. (It used to:
+push sorted every row by query text, so new rows interleaved and the first N
+usable seeds changed identity on every push.)
+
 Examples:
   # label 200 queries and push them to varshak1/asta-user-interactions-filtered
   python filter_queries.py --limit 200
@@ -284,7 +292,15 @@ def push(args, rows: list[dict]) -> None:
     if not rows:
         print("[push] nothing to push")
         return
-    rows = sorted(rows, key=lambda r: r["query"])
+    # Rows are pushed in the order main() assembled them -- the destination's existing
+    # order first, this run's new rows after -- and NOT re-sorted. The order is
+    # load-bearing: research_pipeline_parallel.load_hf_seeds keeps the usable=true rows in
+    # dataset order and slices them positionally for --start/--limit, so sorting here (it
+    # used to sort by query) re-drew the seed window on every push. Extending the dataset
+    # then silently changed which questions seeds 0..N are -- enough to break a paused
+    # research_loop.py run's resume, since seeds are matched to sample_NNN.json by
+    # position. Do not add a sort back; if a canonical order is ever needed, build it
+    # deliberately somewhere that is not on the extend path.
     ds = Dataset.from_list([{k: r.get(k) for k in COLUMNS} for r in rows])
     print(f"[push] pushing {len(ds)} row(s) to {args.out_repo} (private={args.private})")
     ds.push_to_hub(args.out_repo, private=args.private)
@@ -340,6 +356,11 @@ def main() -> int:
     # Always load what's already labeled: push_to_hub *replaces* the split, so these
     # rows have to be carried into the push or they'd be dropped from the dataset.
     # --no-skip-existing only means "re-label them", not "forget them".
+    #
+    # ORDER MATTERS from here on. `known` is seeded from the destination in its stored row
+    # order, and every later write is a dict assignment: an existing query keeps its
+    # position (dicts are insertion-ordered and assignment never moves a key) while a new
+    # one appends. That is what keeps a seed window stable across an extend -- see push().
     known: dict[str, dict] = dict(load_existing_repo(args.out_repo, revision=None))
     cached = load_cache(cache_path)
     print(f"[cache] {cache_path}: {len(cached)} already-labeled query(ies)")
@@ -391,6 +412,14 @@ def main() -> int:
     # Accumulate: everything already labeled, plus this run's rows (which win on
     # re-label). The dataset therefore grows across runs with different --start/--limit
     # instead of each push replacing it with only the latest window.
+    #
+    # `labeled` is in completion order, which --concurrency makes nondeterministic, and
+    # that order becomes the dataset's tail. Re-key it to the source stream's order so an
+    # extend that is interrupted and resumed lands the same rows in the same places as one
+    # that ran straight through. Existing rows are unaffected either way; this only makes
+    # the appended block reproducible.
+    source_pos = {r["query"]: i for i, r in enumerate(source)}
+    labeled.sort(key=lambda r: source_pos.get(r["query"], len(source_pos)))
     merged = dict(known)
     for row in labeled:
         merged[row["query"]] = row

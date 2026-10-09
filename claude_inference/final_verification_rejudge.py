@@ -28,7 +28,8 @@ Outcome per row, mirroring final_verification's criterion_satisfied skip rule:
     failed_other_issues   FAILED although the VC is met   -> drop
     error                 a research or judge call failed -> retried on the next run
 
-Outputs, in <verification_dir>/rejudge/ (or --out-dir):
+Outputs, in <verification_dir>/rejudge/ (or --out-dir). The run dir is only read; an output
+dir inside it is refused.
     results.jsonl        one row per revise row: rewrites, new judgment, outcome
     still_failing.jsonl  the rewritten pairs that still break their system
     benchmark.jsonl      the verification's pass rows (as written) + still_failing rows
@@ -41,7 +42,7 @@ Resumable: rows already in results.jsonl are skipped, errored rows are retried.
 Examples:
   python final_verification_rejudge.py ../annotation_app/studies/<run>_final_verification_v14 \\
       --run-dir runs/final_loop_600 --dry-run
-  python final_verification_rejudge.py runs/final_loop_600/final_verification --budget-usd 20
+  python final_verification_rejudge.py runs/final_loop_600_final_verification --budget-usd 20
 
 Requires the judge model's API key, and the research servers in --systems-file for any
 question rewrite.
@@ -220,6 +221,10 @@ def main():
     if not run_dir or not run_dir.exists():
         ap.error(f"run dir not found ({run_dir}); pass --run-dir")
     out_dir = args.out_dir or vdir / "rejudge"
+    # the run dir (sample files) is read-only input: never write into it
+    if out_dir.resolve().is_relative_to(run_dir.resolve()):
+        ap.error(f"output dir {out_dir} is inside the run dir {run_dir}; pass --out-dir "
+                 f"somewhere else (the verification dir itself is inside the run dir)")
     systems = {s["name"]: s for s in json.loads(args.systems_file.read_text())}
 
     revise = [r for r in rows if r.get("decision") == "revise"]
