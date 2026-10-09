@@ -1,0 +1,4 @@
+[
+  {"name": "tongyi_s2",     "profile": "tongyi",     "server_url": "http://jupiter-cs-aus-436.reviz.ai2.in:8007/ask", "timeout": 7200, "concurrency": 10, "search_scope": "serper, site:arxiv.org + site:semanticscholar.org"},
+  {"name": "webthinker_s2", "profile": "webthinker", "server_url": "http://jupiter-cs-aus-125.reviz.ai2.in:8007/ask", "timeout": 5400, "concurrency": 10, "search_scope": "serper, site:arxiv.org + site:semanticscholar.org"}
+]
