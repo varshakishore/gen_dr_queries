@@ -197,6 +197,10 @@ def main():
                     help="Judge model (default: the model the run used, from its sample files).")
     ap.add_argument("--out-dir", type=Path, default=None,
                     help="Default: <verification_dir>/rejudge.")
+    ap.add_argument("--system", default=None,
+                    help="Answering system for rows with none recorded: a single-system run "
+                         "(round_KK/<prompt>/ layout, no <system> dir) gives every row "
+                         "system=None. Must name an entry in --systems-file.")
     ap.add_argument("--only", choices=["all", "criterion_only", "question_rewrite"],
                     default="all", help="Restrict to one kind of revise row.")
     ap.add_argument("--judge-concurrency", type=int, default=8,
@@ -227,6 +231,9 @@ def main():
                  f"somewhere else (the verification dir itself is inside the run dir)")
     systems = {s["name"]: s for s in json.loads(args.systems_file.read_text())}
 
+    if args.system:
+        for r in rows:
+            r["system"] = r.get("system") or args.system
     revise = [r for r in rows if r.get("decision") == "revise"]
     plans = {r["id"]: plan(r) for r in revise}
     prior = {r["id"]: r for r in load_jsonl(out_dir / "results.jsonl")}
@@ -250,6 +257,9 @@ def main():
     if (missing := llm_client.require_api_key(model)):
         ap.error(missing)
     for name in by_sys:
+        if name is None:
+            ap.error("question rewrites with no system recorded (a single-system run); "
+                     "pass --system, e.g. --system drtulu")
         if name not in systems:
             ap.error(f"system {name!r} has question rewrites but no entry in {args.systems_file}")
         if (err := rp.check_server_reachable(systems[name]["server_url"])):
