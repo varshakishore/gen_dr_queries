@@ -72,26 +72,41 @@ def write_json_atomic(path: Path, obj) -> None:
 
 
 def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, logger,
-               semaphore, file_lock) -> dict:
-    """Answer + judge one (sample, system) and store it in the sample file. Never raises."""
+               semaphore, file_lock, cache_dir: Path) -> dict:
+    """Answer + judge one (sample, system) and store it in the sample file. Never raises.
+
+    The answer is cached in cache_dir before it is judged and the cache is removed once the
+    sample is written, so a judge failure (or a crash) between the two does not throw away
+    a paid-for answer: the next run judges the cached answer instead of asking again."""
     sample = json.loads(path.read_text())
     out = {"id": sample["id"], "system": system, "target_system": sample["target_system"],
            "judge_model": model, "cost_usd": 0.0, "started_at": now()}
+    cache = cache_dir / system / f"{sample['id'].replace('/', '__')}.json"
     try:
         t0 = time.time()
-        with semaphore:
-            if sysconf.get("kind") == "anthropic":      # Claude + server-side web search
-                import frontier_search
-                res = frontier_search.query_claude(sample["question"], sysconf)
-            else:                                       # a research server's /ask
-                res = rp.query_research_system(
-                    sample["question"], logger, seed=sample["id"], attempt=0,
-                    url=sysconf["server_url"],
-                    timeout_s=sysconf.get("timeout", rp.RESEARCH_TIMEOUT_S))
+        if cache.exists():                              # answered before, judging failed
+            res = json.loads(cache.read_text())
+            out["answer_reused"] = True
+            out["answer_cost_usd"] = 0.0                # paid in the run that produced it
+        else:
+            with semaphore:
+                if sysconf.get("kind") == "anthropic":  # Claude + server-side web search
+                    import frontier_search
+                    res = frontier_search.query_claude(sample["question"], sysconf)
+                else:                                   # a research server's /ask
+                    res = rp.query_research_system(
+                        sample["question"], logger, seed=sample["id"], attempt=0,
+                        url=sysconf["server_url"],
+                        timeout_s=sysconf.get("timeout", rp.RESEARCH_TIMEOUT_S))
+            out["answer_cost_usd"] = res.get("cost_usd", 0.0)
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            write_json_atomic(cache, res)
         out["answer_seconds"] = round(time.time() - t0, 1)
-        out["answer_cost_usd"] = res.get("cost_usd", 0.0)
-        if isinstance(res.get("trace"), dict) and "complete" in res["trace"]:
-            out["answer_complete"] = res["trace"]["complete"]     # False = partial report
+        if isinstance(res.get("trace"), dict):
+            for key, field in (("complete", "answer_complete"),
+                               ("cited_text_missing", "cited_text_missing")):
+                if key in res["trace"]:
+                    out[field] = res["trace"][key]     # partial report / blank cited text
         answer = {"text": res["answer"] or "", "trace": res["trace"], "model": res.get("model"),
                   "usage": res.get("usage"), "answer_source": "cross_system",
                   "answered_at": now(), "server_url": sysconf.get("server_url"),
@@ -111,6 +126,7 @@ def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, lo
                 raise RuntimeError(f"slot {system} was filled while this call ran")
             sample["systems"][system] = {"answer": answer, "judgment": judgment}
             write_json_atomic(path, sample)
+        cache.unlink(missing_ok=True)                   # stored with its judgment now
         out["verdict"] = judgment["verdict"]
         out["criterion_satisfied"] = judgment["criterion_satisfied"]
     except Exception as e:
@@ -260,23 +276,32 @@ def main():
     file_locks = defaultdict(threading.Lock)
     workers = sum(int(systems[n].get("concurrency", 1)) for n in by_sys)
 
-    spent, spent_answer, stopped, counts = 0.0, 0.0, False, Counter()
+    spent, spent_answer, stopped, interrupted, counts = 0.0, 0.0, False, False, Counter()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool, \
             (out_dir / "results.jsonl").open("a") as log:
         futures = {pool.submit(answer_one, path, s, sysconf=systems[s], client=client,
                                model=model, logger=logger, semaphore=semaphores[s],
-                               file_lock=file_locks[path]): (path, s)
+                               file_lock=file_locks[path], cache_dir=out_dir / "answer_cache"):
+                       (path, s)
                    for path, s in todo}
-        for i, fut in enumerate(as_completed(futures), start=1):
+        logged = set()
+
+        def record(fut):
+            nonlocal spent, spent_answer, stopped
+            logged.add(fut)
             res = fut.result()
             log.write(json.dumps(res, ensure_ascii=False) + "\n")
             log.flush()
             spent += res.get("cost_usd", 0.0) + res.get("answer_cost_usd", 0.0)
             spent_answer += res.get("answer_cost_usd", 0.0)
             counts[(res["system"], res["verdict"])] += 1
-            print(f"[{i:>4}/{len(todo)}] {res['verdict']:<7} {res['system']:<10} "
+            flags = "".join(f" {tag}" for tag, on in (
+                ("INCOMPLETE", res.get("answer_complete") is False),
+                ("CITED-TEXT-MISSING", res.get("cited_text_missing")),
+                ("(cached answer)", res.get("answer_reused"))) if on)
+            print(f"[{len(logged):>4}/{len(todo)}] {res['verdict']:<7} {res['system']:<10} "
                   f"(target {res['target_system']:<10}) {res.get('answer_seconds', '-'):>7}s "
-                  f"${spent:.2f}  {res['id']}"
+                  f"${spent:.2f}  {res['id']}{flags}"
                   + (f"  {res['error'][:80]}" if res.get("error") else ""), flush=True)
             if args.budget_usd and spent >= args.budget_usd and not stopped:
                 stopped = True
@@ -284,9 +309,26 @@ def main():
                 print(f"\n[budget] ${spent:.2f} spent — {cancelled} pair(s) cancelled",
                       file=sys.stderr, flush=True)
 
+        try:
+            for fut in as_completed(futures):
+                record(fut)
+        except KeyboardInterrupt:
+            # Without this the pool would still run every queued pair on its way out --
+            # Ctrl-C would silently spend the rest of the budget. Cancel what has not
+            # started; let the few in progress finish (they are paid for) and log them.
+            stopped = interrupted = True
+            cancelled = sum(1 for f in futures if f.cancel())
+            running = [f for f in futures if not f.cancelled() and f not in logged]
+            print(f"\n[interrupt] {cancelled} queued pair(s) cancelled; waiting for the "
+                  f"{len(running)} in progress to finish and be saved (Ctrl-C again to abandon "
+                  f"them; their answers stay in the answer cache)", file=sys.stderr, flush=True)
+            for fut in as_completed(running):
+                record(fut)
+
     rows = rebuild_index(bench)
     summary = {"updated_at": now(), "judge_model": model, "systems": wanted,
                "this_run": {"attempted": sum(counts.values()), "stopped_early": stopped,
+                            "interrupted": interrupted,
                             "judge_cost_usd": round(spent - spent_answer, 4),
                             "answer_cost_usd": round(spent_answer, 4),
                             "by_system_verdict": {f"{s}:{v}": n for (s, v), n in counts.items()}},
