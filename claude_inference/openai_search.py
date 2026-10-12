@@ -78,6 +78,29 @@ def norm(url: str) -> str:
     return f"{p.netloc.lower()}{p.path.rstrip('/')}" + (f"?{q}" if q else "")
 
 
+UNUSABLE_TITLE = re.compile(r"^https?://|^microsoft word\b|^[\w.\-]+\.pdf$|^untitled", re.I)
+
+
+def fix_titles(docs: list) -> None:
+    """Replace unusable reference titles in place. The API gives a real paper title for most
+    cited sources, but some come back as a bare PDF URL or as PDF metadata ("Microsoft Word -
+    ETASR_..."), which the judge cannot identify. Those are looked up by paper id through the
+    same Semantic Scholar / arXiv path gemini_search uses; titles the API supplied are kept."""
+    need = [d for d in docs if UNUSABLE_TITLE.match((d.get("title") or "").strip())]
+    if not need:
+        return
+    try:
+        import gemini_search
+    except ImportError:
+        return
+    before = [(d, d.get("title")) for d in need]
+    gemini_search.lookup_titles(need)                 # sets title/title_source where found
+    for d, old in before:
+        d["title_source"] = "api" if d.get("title") == old else d.get("title_source", "looked_up")
+        if d.get("title") == old:
+            d["title"] = old                          # not found: keep the URL as the label
+
+
 def to_trace(raw: dict, domains=DEFAULT_DOMAINS) -> tuple[str, dict]:
     """(answer with <cite> markers, DR-Tulu-shaped trace) from a Responses API response."""
     out = raw.get("output") or []
@@ -128,6 +151,7 @@ def to_trace(raw: dict, domains=DEFAULT_DOMAINS) -> tuple[str, dict]:
         for s0, s1, rep in sorted(edits, key=lambda e: (e[0], e[1]), reverse=True):
             text = text[:s0] + rep + text[s1:]
         answer.append(text)
+    fix_titles(docs)
     calls.append({"call_id": "c", "tool_name": "citation", "query": "", "documents": docs, "error": None})
 
     sources = [d["url"] for c in calls if c["tool_name"] == "web_search" for d in c["documents"]]
@@ -143,6 +167,9 @@ def to_trace(raw: dict, domains=DEFAULT_DOMAINS) -> tuple[str, dict]:
         "cited_sources": len(docs),
         "off_domain_citations": sorted({d["url"] for d in docs if not on_domain(d["url"], domains)}),
         "cited_not_in_results": sorted({d["url"] for d in docs if norm(d["url"]) not in src_keys}),
+        "titles_looked_up": sum(d.get("title_source") == "s2_api" or d.get("title_source") == "arxiv_api"
+                                for d in docs),
+        "titles_unusable": sum(bool(UNUSABLE_TITLE.match((d.get("title") or "").strip())) for d in docs),
     }
     return "".join(answer).strip(), {"tool_calls": calls,
                                      "interim_text": [c.get("text") for c in interim],
