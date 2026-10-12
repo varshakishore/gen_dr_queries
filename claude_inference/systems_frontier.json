@@ -1,0 +1,7 @@
+[
+  {"name": "claude_opus_s2", "kind": "anthropic", "model": "claude-opus-5-5",
+   "allowed_domains": ["arxiv.org", "semanticscholar.org"], "max_searches": 20,
+   "max_tokens": 32000, "effort": "high", "timeout": 1800, "concurrency": 4,
+   "price_per_1k_searches": 10,
+   "search_scope": "anthropic web_search, allowed_domains arxiv.org + semanticscholar.org"}
+]

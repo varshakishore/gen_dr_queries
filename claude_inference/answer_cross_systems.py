@@ -80,14 +80,22 @@ def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, lo
     try:
         t0 = time.time()
         with semaphore:
-            res = rp.query_research_system(
-                sample["question"], logger, seed=sample["id"], attempt=0,
-                url=sysconf["server_url"],
-                timeout_s=sysconf.get("timeout", rp.RESEARCH_TIMEOUT_S))
+            if sysconf.get("kind") == "anthropic":      # Claude + server-side web search
+                import frontier_search
+                res = frontier_search.query_claude(sample["question"], sysconf)
+            else:                                       # a research server's /ask
+                res = rp.query_research_system(
+                    sample["question"], logger, seed=sample["id"], attempt=0,
+                    url=sysconf["server_url"],
+                    timeout_s=sysconf.get("timeout", rp.RESEARCH_TIMEOUT_S))
         out["answer_seconds"] = round(time.time() - t0, 1)
+        out["answer_cost_usd"] = res.get("cost_usd", 0.0)
+        if isinstance(res.get("trace"), dict) and "complete" in res["trace"]:
+            out["answer_complete"] = res["trace"]["complete"]     # False = partial report
         answer = {"text": res["answer"] or "", "trace": res["trace"], "model": res.get("model"),
                   "usage": res.get("usage"), "answer_source": "cross_system",
-                  "answered_at": now(), "server_url": sysconf["server_url"],
+                  "answered_at": now(), "server_url": sysconf.get("server_url"),
+                  "cost_usd": res.get("cost_usd"),
                   "search_scope": sysconf.get("search_scope")}
         judgment, bucket = rp.judge_answer(
             client, model, sample["question"], sample["verification_criterion"],
@@ -136,9 +144,16 @@ def summarize(rows: list, systems: list) -> dict:
         for s in systems:
             if s != t:
                 cross[t][s] = dict(Counter(v(r, s) for r in rows if r["target_system"] == t))
-    all_fail = sum(1 for r in rows if all(v(r, s) == "FAILED" for s in systems))
-    complete = sum(1 for r in rows if all(v(r, s) is not None for s in systems))
+    # A system run only on a subset (--ids-file) would make every question outside it
+    # "incomplete" and "not failed by all", so those two counts use the systems that answered
+    # at least half the questions; the others are listed under partial_systems.
+    coverage = {s: sum(v(r, s) is not None for r in rows) for s in systems}
+    full = [s for s in systems if coverage[s] >= len(rows) / 2]
+    all_fail = sum(1 for r in rows if full and all(v(r, s) == "FAILED" for s in full))
+    complete = sum(1 for r in rows if full and all(v(r, s) is not None for s in full))
     return {"questions": len(rows), "complete": complete, "failed_by_all_systems": all_fail,
+            "counted_systems": full,
+            "partial_systems": {s: coverage[s] for s in systems if s not in full},
             "verdicts_by_system": by_sys, "verdicts_by_target_system": dict(cross)}
 
 
@@ -156,6 +171,9 @@ def main():
                          f"(default: {DEFAULT_SYSTEMS_FILE.name}).")
     ap.add_argument("--model", default=None,
                     help="Judge model (default: the one the target systems were judged with).")
+    ap.add_argument("--ids-file", type=Path, default=None,
+                    help="Only these questions: a make_subset.py file ({..., \"ids\": [...]}) "
+                         "or a JSON list of ids. summary.json also gets results on the subset.")
     ap.add_argument("--limit", type=int, default=0,
                     help="At most N (sample, system) pairs (0 = all).")
     ap.add_argument("--budget-usd", type=float, default=0.0,
@@ -181,9 +199,20 @@ def main():
         ap.error(f"unknown system(s) {sorted(unknown)}; the samples have {existing} "
                  f"(use --add-systems for a new one)")
 
+    subset = None
+    if args.ids_file:
+        loaded = json.loads(args.ids_file.read_text())
+        subset = set(loaded["ids"] if isinstance(loaded, dict) else loaded)
+        if (missing := subset - {r["id"] for r in index}):
+            ap.error(f"{len(missing)} id(s) in {args.ids_file} are not in this benchmark, "
+                     f"e.g. {sorted(missing)[:3]}")
+        print(f"subset: {len(subset)} questions from {args.ids_file}")
+
     # the work list comes from the sample files themselves, not the (possibly stale) index
     todo, judge_models = [], Counter()
     for r in index:
+        if subset is not None and r["id"] not in subset:
+            continue
         path = bench / r["file"]
         sample = json.loads(path.read_text())
         tgt = sample["systems"][sample["target_system"]]
@@ -210,7 +239,16 @@ def main():
     for name in by_sys:
         if name not in systems:
             ap.error(f"system {name!r} has no entry in {args.systems_file}")
-        if (err := rp.check_server_reachable(systems[name]["server_url"])):
+        conf = systems[name]
+        if conf.get("kind") == "anthropic":
+            import frontier_search
+            if (missing := llm_client.require_api_key(conf["model"])):
+                ap.error(f"{name}: {missing}")
+            if args.budget_usd and not frontier_search.is_priced(conf):
+                ap.error(f"{name}: no price for {conf['model']} in llm_client.MODEL_PRICING; add "
+                         f"price_input / price_output to its systems-file entry, or --budget-usd "
+                         f"cannot count its spend")
+        elif (err := rp.check_server_reachable(conf["server_url"])):
             ap.error(f"{name} server unreachable: {err}")
 
     out_dir = bench / "cross_system"
@@ -222,7 +260,7 @@ def main():
     file_locks = defaultdict(threading.Lock)
     workers = sum(int(systems[n].get("concurrency", 1)) for n in by_sys)
 
-    spent, stopped, counts = 0.0, False, Counter()
+    spent, spent_answer, stopped, counts = 0.0, 0.0, False, Counter()
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool, \
             (out_dir / "results.jsonl").open("a") as log:
         futures = {pool.submit(answer_one, path, s, sysconf=systems[s], client=client,
@@ -233,7 +271,8 @@ def main():
             res = fut.result()
             log.write(json.dumps(res, ensure_ascii=False) + "\n")
             log.flush()
-            spent += res.get("cost_usd", 0.0)
+            spent += res.get("cost_usd", 0.0) + res.get("answer_cost_usd", 0.0)
+            spent_answer += res.get("answer_cost_usd", 0.0)
             counts[(res["system"], res["verdict"])] += 1
             print(f"[{i:>4}/{len(todo)}] {res['verdict']:<7} {res['system']:<10} "
                   f"(target {res['target_system']:<10}) {res.get('answer_seconds', '-'):>7}s "
@@ -248,25 +287,41 @@ def main():
     rows = rebuild_index(bench)
     summary = {"updated_at": now(), "judge_model": model, "systems": wanted,
                "this_run": {"attempted": sum(counts.values()), "stopped_early": stopped,
-                            "judge_cost_usd": round(spent, 4),
+                            "judge_cost_usd": round(spent - spent_answer, 4),
+                            "answer_cost_usd": round(spent_answer, 4),
                             "by_system_verdict": {f"{s}:{v}": n for (s, v), n in counts.items()}},
                **summarize(rows, all_systems)}
     prev = out_dir / "summary.json"
-    if prev.exists():
-        summary["judge_cost_usd_total"] = round(
-            json.loads(prev.read_text()).get("judge_cost_usd_total", 0.0) + spent, 4)
-    else:
-        summary["judge_cost_usd_total"] = round(spent, 4)
+    old = json.loads(prev.read_text()) if prev.exists() else {}
+    summary["judge_cost_usd_total"] = round(
+        old.get("judge_cost_usd_total", 0.0) + spent - spent_answer, 4)
+    summary["answer_cost_usd_total"] = round(old.get("answer_cost_usd_total", 0.0) + spent_answer, 4)
+    summary["subsets"] = dict(old.get("subsets", {}))     # results on each subset run so far
+    if subset is not None:
+        summary["subsets"][args.ids_file.stem] = {
+            "ids_file": str(args.ids_file), "updated_at": now(),
+            **summarize([r for r in rows if r["id"] in subset], all_systems)}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
 
     errors = sum(n for (s, v), n in counts.items() if v == "error")
     print(f"\n{'#' * 70}\nCROSS-SYSTEM SUMMARY\n{'#' * 70}")
-    print(f"  this run: {dict(counts)}  |  judge ${spent:.2f}  |  errors {errors}"
+    print(f"  this run: {dict(counts)}  |  judge ${spent - spent_answer:.2f}"
+          + (f" + answering ${spent_answer:.2f}" if spent_answer else "") + f"  |  errors {errors}"
           + ("  (re-run to retry)" if errors else ""))
     print(f"  complete questions {summary['complete']}/{summary['questions']}  |  "
           f"failed by all systems {summary['failed_by_all_systems']}")
+    if summary["partial_systems"]:
+        print(f"  (counted over {summary['counted_systems']}; partly answered, not counted: "
+              f"{summary['partial_systems']})")
     for s, v in summary["verdicts_by_system"].items():
         print(f"  {s:<10} on others' questions: {v}")
+    if subset is not None:
+        sub = summary["subsets"][args.ids_file.stem]
+        print(f"\n  on subset {args.ids_file.stem} ({sub['questions']} questions): complete "
+              f"{sub['complete']} | failed by all {sub['failed_by_all_systems']} "
+              f"(over {sub['counted_systems']})")
+        for s, v in sub["verdicts_by_system"].items():
+            print(f"  {s:<10} on others' questions: {v}")
     print(f"\nindex:   {bench / 'index.jsonl'}\nsummary: {out_dir / 'summary.json'}")
 
 

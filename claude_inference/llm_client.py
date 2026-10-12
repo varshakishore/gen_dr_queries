@@ -47,6 +47,7 @@ PROVIDERS = (ANTHROPIC, OPENAI)
 # providers discount cached input at 0.10x; only Anthropic charges to write it.
 # Extend this table when adding new models.
 MODEL_PRICING = {
+    "claude-opus-5-5":   {"input": 4.00,  "output": 20.00},
     "claude-opus-4-8":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-7":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-6":   {"input": 5.00,  "output": 25.00},
