@@ -93,6 +93,9 @@ def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, lo
                 if sysconf.get("kind") == "anthropic":  # Claude + server-side web search
                     import frontier_search
                     res = frontier_search.query_claude(sample["question"], sysconf)
+                elif sysconf.get("kind") == "gemini":   # Gemini + Google Search (prompted)
+                    import gemini_search
+                    res = gemini_search.query_gemini(sample["question"], sysconf)
                 else:                                   # a research server's /ask
                     res = rp.query_research_system(
                         sample["question"], logger, seed=sample["id"], attempt=0,
@@ -264,6 +267,14 @@ def main():
                 ap.error(f"{name}: no price for {conf['model']} in llm_client.MODEL_PRICING; add "
                          f"price_input / price_output to its systems-file entry, or --budget-usd "
                          f"cannot count its spend")
+        elif conf.get("kind") == "gemini":
+            import os
+            import gemini_search
+            if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")):
+                ap.error(f"{name}: set GEMINI_API_KEY (or GOOGLE_API_KEY)")
+            if args.budget_usd and not gemini_search.is_priced(conf):
+                ap.error(f"{name}: no price for {conf['model']} in llm_client.MODEL_PRICING; add "
+                         f"price_input / price_output to its systems-file entry")
         elif (err := rp.check_server_reachable(conf["server_url"])):
             ap.error(f"{name} server unreachable: {err}")
 

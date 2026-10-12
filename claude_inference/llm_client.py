@@ -48,6 +48,9 @@ PROVIDERS = (ANTHROPIC, OPENAI)
 # Extend this table when adding new models.
 MODEL_PRICING = {
     "claude-opus-5-5":   {"input": 4.00,  "output": 20.00},
+    # Gemini: used only by gemini_search.py (its own client). Rates valid through
+    # 2026-12-31; they double on 2027-01-01 ($1.50 / $7.50).
+    "gemini-3.8-flash":  {"input": 0.75,  "output": 3.75},
     "claude-opus-4-8":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-7":   {"input": 5.00,  "output": 25.00},
     "claude-opus-4-6":   {"input": 5.00,  "output": 25.00},
