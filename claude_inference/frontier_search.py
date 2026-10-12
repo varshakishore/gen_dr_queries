@@ -142,7 +142,14 @@ def to_trace(blocks: list, domains=DEFAULT_DOMAINS) -> tuple[str, dict]:
             quote = (c.get("cited_text") or "").strip()
             if quote and quote not in cited[cid]:
                 cited[cid].append(quote)
-        parts.append(f'<cite id="{" ".join(ids)}">{text}</cite>' if ids and text.strip() else text)
+        if ids and text.strip():
+            parts.append(f'<cite id="{" ".join(ids)}">{text}</cite>')
+        elif ids:
+            # a citation attached at a sentence boundary, with no text of its own: keep it as
+            # a marker (cite_utils renders the empty span as " [n]") rather than dropping it
+            parts.append(f'<cite id="{" ".join(ids)}"></cite>{text}')
+        else:
+            parts.append(text)
     if extra is not None:
         calls.append(extra)
     for call in calls:
@@ -283,12 +290,18 @@ def query_claude(question: str, conf: dict, client=None) -> dict:
     if repaired:
         print(f"[warn] {len(repaired)} text block(s) differed from the streamed text; repaired "
               f"({sum(r['cited'] for r in repaired)} cited)", file=sys.stderr)
-    empty_cited = sum(1 for b in blocks if b.get("type") == "text" and b.get("citations")
-                      and not (b.get("text") or "").strip())
+    # Some cited blocks are legitimately empty: a citation attached at a sentence boundary,
+    # the sentence itself in the neighbouring blocks (kept above as a bare marker). Text is
+    # only judged MISSING when most cited blocks are empty -- the pattern of a failed run,
+    # where every cited sentence came back blank and the answer read with gaps.
+    cited_blocks = [b for b in blocks if b.get("type") == "text" and b.get("citations")]
+    empty_cited = sum(1 for b in cited_blocks if not (b.get("text") or "").strip())
+    trace["cited_blocks"] = len(cited_blocks)
     trace["empty_cited_blocks"] = empty_cited
-    if empty_cited:
-        print(f"[warn] {empty_cited} cited text block(s) have no text even in the stream -- the "
-              f"cited sentences are missing from this answer", file=sys.stderr)
+    trace["cited_text_missing"] = bool(cited_blocks) and empty_cited >= len(cited_blocks) / 2
+    if trace["cited_text_missing"]:
+        print(f"[warn] {empty_cited} of {len(cited_blocks)} cited text blocks are empty -- the "
+              f"cited sentences are probably missing from this answer; re-run it", file=sys.stderr)
     if trace["searches_over_cap"]:
         print(f"[warn] {usage['web_search_requests']} searches > max_searches {cap}", file=sys.stderr)
     return {"answer": answer, "trace": trace, "model": model, "usage": usage,
@@ -339,7 +352,8 @@ def main():
           f"{len(a['off_domain_citations'])} cited | cited URLs not in any result: "
           f"{len(a['cited_not_in_results'])}\ncomplete {t['complete']} (stop reasons {t['stop_reasons']}) | "
           f"interim text blocks {len(t['interim_text'])} | stream repairs {len(t['stream_text_repaired'])} | "
-          f"empty cited blocks {t['empty_cited_blocks']} | {t['elapsed_s']}s | ${res['cost_usd']:.3f} | "
+          f"empty cited blocks {t['empty_cited_blocks']}/{t['cited_blocks']}"
+          f"{' (TEXT MISSING)' if t['cited_text_missing'] else ''} | {t['elapsed_s']}s | ${res['cost_usd']:.3f} | "
           f"usage {res['usage']}\nsearch tool {t['search_tool']} | block types "
           f"{dict(Counter(b.get('type') for b in t['raw_blocks']))}\ninline cites {inline} | judge rendering {len(text)} chars -> {args.out}\n")
     print(text[:3000])
