@@ -7,5 +7,9 @@
   {"name": "gemini_flash_prompted_s2", "kind": "gemini", "model": "gemini-3.8-flash",
    "allowed_domains": ["arxiv.org", "semanticscholar.org"], "timeout": 900, "concurrency": 4,
    "price_per_1k_searches": 14,
-   "search_scope": "google_search (unrestricted); instructed to search and cite only arxiv.org + semanticscholar.org"}
+   "search_scope": "google_search (unrestricted); instructed to search and cite only arxiv.org + semanticscholar.org"},
+  {"name": "gpt56_sol_s2", "kind": "openai", "model": "gpt-5.6-sol",
+   "allowed_domains": ["arxiv.org", "semanticscholar.org"], "max_searches": 20, "effort": "high",
+   "timeout": 1800, "concurrency": 4, "price_per_1k_searches": 10,
+   "search_scope": "openai web_search, filters.allowed_domains arxiv.org + semanticscholar.org"}
 ]

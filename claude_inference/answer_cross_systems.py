@@ -96,6 +96,9 @@ def answer_one(path: Path, system: str, *, sysconf: dict, client, model: str, lo
                 elif sysconf.get("kind") == "gemini":   # Gemini + Google Search (prompted)
                     import gemini_search
                     res = gemini_search.query_gemini(sample["question"], sysconf)
+                elif sysconf.get("kind") == "openai":   # OpenAI web_search (allowed_domains)
+                    import openai_search
+                    res = openai_search.query_gpt(sample["question"], sysconf)
                 else:                                   # a research server's /ask
                     res = rp.query_research_system(
                         sample["question"], logger, seed=sample["id"], attempt=0,
@@ -275,6 +278,12 @@ def main():
             if args.budget_usd and not gemini_search.is_priced(conf):
                 ap.error(f"{name}: no price for {conf['model']} in llm_client.MODEL_PRICING; add "
                          f"price_input / price_output to its systems-file entry")
+        elif conf.get("kind") == "openai":
+            import openai_search
+            if (missing := llm_client.require_api_key(conf["model"])):
+                ap.error(f"{name}: {missing}")
+            if args.budget_usd and not openai_search.is_priced(conf):
+                ap.error(f"{name}: no price for {conf['model']} in llm_client.MODEL_PRICING")
         elif (err := rp.check_server_reachable(conf["server_url"])):
             ap.error(f"{name} server unreachable: {err}")
 
