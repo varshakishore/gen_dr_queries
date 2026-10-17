@@ -19,6 +19,10 @@ deep-research system, and reports on the results**:
 | `test_providers.py` | Provider-parity checks against fake SDK clients. No keys, no network, no spend: `python test_providers.py`. |
 | `annotate_answer.py` | Renders one generated question as a standalone human-annotation page (ratings, comments, rewrite; answers exported as JSON from the browser). |
 | `filter_queries.py` | Seed prep. Labels raw `asta-user-interactions` queries against a usability rubric (English / clarity / research-question / request-type) and publishes the labels as an HF dataset. Stands outside the loop — see §5. |
+| `final_verification.py` | The benchmark filter. A strong model reviews each harvested question and its criterion (pass / revise / reject), with an optional Semantic Scholar phrase check for made-up terms — §11. |
+| `final_verification_rejudge.py` | Re-earns the FAILED label for the filter's rewrites: re-judges the stored answer (criterion-only) or re-answers with the same system (question rewrite) — §11. |
+| `export_benchmark.py` | Assembles the filtered benchmark into one directory, one JSON file per question, answers and judgments keyed by answering system — §11. |
+| `answer_cross_systems.py` | Fills in that directory's other systems: answers every question with the systems it was not generated against and judges them — §11. |
 
 Goal: find questions a deep-research system (Dr. Tulu, Tongyi, WebThinker, …) **fails** — the
 `FAILED_FOUND` status is the success case.
@@ -770,6 +774,18 @@ Output dataset (default `varshak1/asta-user-interactions-filtered`, split `train
 `query`, `thread_id`, `english`, `clarity`, `research_question`, `request_type`, `usable`,
 `filter_model`. Per-row token counts stay in the JSONL cache and are dropped at push.
 
+**Extending is order-preserving.** Rows already in the dataset keep their positions and new
+ones append in source-stream order, because `main()` seeds its accumulator from the
+destination's stored order and every later write is a dict assignment (an existing key never
+moves). This matters downstream, not here: `load_hf_seeds` takes the `usable=true` rows in
+dataset order and slices them with `--start`/`--limit`, so a push that re-sorted — which is
+what it did, by query text — silently changed which questions seeds 0..N are. Extending a
+dataset mid-experiment then broke a paused `research_loop.py` run, whose seeds are matched to
+`sample_NNN.json` by position (§2). The rows a run adds are also re-keyed to source order
+before the push, so an interrupted extend lands the same rows in the same places as an
+uninterrupted one. To pin a window against any future change, snapshot it:
+`load_hf_seeds(...)` → a JSON list → `--seeds-file`.
+
 **Gotcha**: the run resumes from the destination dataset, and `load_dataset` falls back to
 `~/.cache/huggingface/datasets/` when the repo is gone from the Hub — so deleting the
 dataset to relabel from scratch silently resurrects the old rows and pushes them back with
@@ -817,6 +833,10 @@ cost is the same but it is paid only on the harvest, and thresholds can be re-ru
 finished run without regenerating anything. `research_loop.py --verify-after` runs it automatically once the last round
 finishes, recording the totals under `verification` in `loop.json`.
 
+This checks a criterion against retrieved papers; it does not judge whether the *question*
+is benchmark-worthy. The filter used to build the benchmark is `final_verification.py`
+(§11), which reviews both.
+
 ---
 
 ## 7. `../annotation_app/` — human annotation study
@@ -828,9 +848,10 @@ Prolific setup.
 
 Questions come from `sync_data.py <run_dir>`, which copies `sample_NNN.json` files into
 `api/data/` — they are baked into the image, so a new batch is a commit. Only the
-**deciding (last) attempt** of each seed is served. Each worker signs in with their
-Prolific ID, claims an unclaimed batch of 10 (create-if-absent write, so concurrent
-claims cannot collide), and answers three required questions per item: is the
+**deciding (last) attempt** of each seed is served. Each worker arrives from Prolific
+with their ID in the URL (there is no cookie; the ID is re-entered or prefilled on every
+visit), claims an unclaimed batch of `BATCH_SIZE` questions (default 15; create-if-absent
+write, so concurrent claims cannot collide), and answers three required questions per item: is the
 **question** benchmark-worthy, is the **criterion** correct and suitable, and does the
 answer **fail** the criterion (yes / no / not applicable) — each with optional comments
 and a rewrite box. The answer is shown with citations resolved; the app calls
@@ -843,8 +864,13 @@ Answers autosave and survive leaving and returning. Everything lands in
 (submitted), `drafts/<pid>/…` (in progress), plus `assignments/` and `batches/`. Each
 record carries the ratings plus `run_id`, `seed`, `question`, `criterion`,
 `chosen_strategy`, and `judge_verdict`, so joining back to the run — and scoring
-human-vs-judge agreement — is a groupby. **One batch per worker, no overlap**, so
-inter-annotator agreement is not computable as configured.
+human-vs-judge agreement — is a groupby. A worker can do **several sets**, each its own
+Prolific submission (a new set is the next unclaimed batch). Batches are disjoint by
+default; for inter-annotator agreement, `make_iaa_overlap.py` rewrites `api/data/batches.csv`
+so a chosen number of questions appear in two batches. Study 1 (2026-10-01) used 6 batches of
+15 from `runs/final_loop_600` (75 distinct questions, 15 of them double-annotated); its labels are what
+`final_verification.py`'s prompts were tuned against (§11). `annotation_app/README.md` has
+the full flow.
 
 ---
 
@@ -1047,6 +1073,138 @@ assumed the flat layout when multi-system support landed, and the failure was si
 worst way: the rounds table read 0 seeds and 0 `FAILED_FOUND` for every round, no per-cell
 `report.html` or `answers/` was generated at all, and the verification rows had nothing to
 link back to — an empty report at the end of a multi-hour run.
+
+---
+
+## 11. From harvest to benchmark — filter, rejudge, export, cross-system answers
+
+A loop's `FAILED_FOUND` harvest is not yet a benchmark: some questions are unanswerable,
+use made-up terms, or carry a criterion the answer actually met. Four scripts turn a
+finished run into the benchmark, each reading the previous stage and **never writing inside
+the run dir** (an output dir inside it is refused):
+
+```
+research_loop.py              ──► runs/<run>/                                   generate, answer, judge
+final_verification.py         ──► runs/<run>_final_verification[_vN]/           filter
+final_verification_rejudge.py ──► runs/<run>_final_verification[_vN]/rejudge/   re-earn labels for rewrites
+export_benchmark.py           ──► runs/<run>_full_benchmark/                    one file per question
+answer_cross_systems.py       ──► runs/<run>_full_benchmark/ (in place)         other systems' answers
+```
+
+For `final_loop_600` the files, counts and provenance of each stage are documented in
+`runs/final_loop_600_files_info.md`.
+
+### `final_verification.py` — the filter
+
+Two independent reviews per harvested question (deciding attempt of each `FAILED_FOUND`
+seed) by a strong model (default `gpt-5.6-sol`): the **question review** sees only the
+question; the **VC review** sees the question (the rewritten one, if review 1 proposed a
+rewrite) and the criterion. Each returns PASS / MINOR_REVISION (with a minimal rewrite) /
+REJECT. Decision: `pass` if both pass, `revise` if the worst is MINOR_REVISION, `reject`
+otherwise. Rejected with no model call: `criterion_satisfied` (the run's judge found the
+criterion met and failed the answer only on other issues) and questions over
+`--max-question-words` (100).
+
+`--phrase-check` adds a step first: an LLM extracts up to 5 key terms (proper nouns,
+uncommon words, compound phrases), each is counted on Semantic Scholar as an exact phrase
+(`/paper/search/bulk`, ~1 req/s; set `S2_API_KEY`). `--phrase-mode`: `reject` (a zero-hit
+term rejects), `evidence` (counts are appended to the question reviewer's input), `mixed`
+(a zero-hit single word rejects; multi-word phrases go to the reviewer as evidence). Terms
+over 4 words or containing an acronym/code never reject. **`--phrase-mode` without
+`--phrase-check` is silently ignored.**
+
+```bash
+python final_verification.py runs/final_loop_600 \
+    --out-dir runs/final_loop_600_final_verification_v14 \
+    --reasoning-effort medium --phrase-check --phrase-mode mixed \
+    --concurrency 20 --budget-usd 40
+```
+
+The prompts ("v14") were tuned against the human labels of annotation study 1 (§7): filter
+vs humans scored per question, a question counting as human-rejected only when every
+annotator rejected it, with the questions not used for tuning reported separately. Run-to-run
+variation between identical runs is large enough that a prompt change should be judged on
+several runs, not one. The tuning runs are in `../annotation_app/studies/study1_2026-10-01_final_verification_*`.
+
+Outputs: `results.jsonl` (every question: phrase check, both reviews, decision), `pass.jsonl`,
+`revise.jsonl` (proposed rewrites, `needs_rejudge`), `summary.json`.
+
+### `final_verification_rejudge.py` — re-earning the label
+
+Rewrites are never applied by the filter, because the FAILED label was earned by the
+original pair. For each `revise` row:
+
+| kind | what happens |
+| --- | --- |
+| criterion only | the stored answer (from the run's sample file) re-judged against the new criterion — no research call |
+| question rewrite | the rewritten question re-answered by the **same** system (`systems.json`), then judged |
+
+Outcome: `still_fails` (kept), `now_passes` / `failed_other_issues` (dropped), `error`
+(retried on re-run). Judge = the run's own judge model and research_pipeline's prompts.
+Writes `results.jsonl`, `still_failing.jsonl`, **`benchmark.jsonl`** (filter passes as
+written + rewritten rows still failing), `answers/<id>.json` (new answer + trace),
+`summary.json`, `rejudge.log.jsonl`.
+
+```bash
+python final_verification_rejudge.py runs/final_loop_600_final_verification_v14 \
+    --run-dir runs/final_loop_600 --budget-usd 20
+```
+
+`final_loop_600`: 586 `FAILED_FOUND` → filter pass 234 / revise 157 / reject 195 → rejudge
+keeps 131 of the 157 → **365 questions** (DR-Tulu 129, Tongyi 122, WebThinker 114). Cost
+$12.37 (filter) + $5.04 (judge).
+
+### `export_benchmark.py` — one file per question
+
+Joins the three sources (run sample files, filter results, rejudge results and answers)
+into a self-contained directory. It only reads the sources, builds into a `.partial` dir and
+renames at the end, and refuses an existing output dir.
+
+```
+runs/final_loop_600_full_benchmark/
+├── README.md        generated: counts, field definitions, notes
+├── index.jsonl      one row per question: metadata, final question + criterion, verdict per system
+├── samples/<round>__<system>__<prompt>__sample_NNN.json
+└── cross_system/    written by answer_cross_systems.py
+```
+
+Each sample holds the final `question` / `verification_criterion` and the `original_*`
+wording, `user_query`, `domain` (`seed_bins.json`), `generation`, `filter` (reviews, phrase
+check), `provenance`, and `systems.<drtulu|tongyi|webthinker>` = `{answer, judgment}` or
+null. The target system's slot is filled from wherever its label was earned: the original
+run (passed as written; criterion-only answer) or the rejudge (criterion-only judgment;
+question-rewrite answer + judgment), recorded in `answer_source` / `judgment_source`.
+
+**Answers are stored raw with their trace**, not rendered: DR-Tulu's `<cite id>` tags and
+the sources Tongyi / WebThinker consulted are resolved from the trace by `cite_utils`
+(`format_answer_for_judge`) whenever a rendering is needed. DR-Tulu's server reports no
+model name, so its `answer.model` is null.
+
+### `answer_cross_systems.py` — the other two systems
+
+For every sample and every system whose slot is null (the two non-target systems), sends the
+final question to that system's server, judges the answer against the final criterion with
+the same judge model the target was judged with, and writes `{answer, judgment}` into the
+sample (atomic rewrite, per-file lock; `answer_source` / `judgment_source` =
+`cross_system`). The target's slot is never touched. Resumable: filled slots are skipped, a
+failed call leaves the slot null and is retried on re-run. At the end `index.jsonl`'s
+verdicts are rebuilt from the samples and `cross_system/summary.json` records verdicts by
+system and by target system and how many questions every system fails.
+
+```bash
+python answer_cross_systems.py runs/final_loop_600_full_benchmark --dry-run
+python -u answer_cross_systems.py runs/final_loop_600_full_benchmark --budget-usd 40
+```
+
+`--systems` restricts it to some systems. Run all systems in **one** process: the per-file
+lock does not protect against two processes writing the same sample. `final_loop_600`: 730
+answers (Tongyi 243, WebThinker 251, DR-Tulu 236), about 10 h at concurrency 10 per system,
+dominated by Tongyi and WebThinker (~25 min per answer). Launched on weka 2026-10-07.
+
+Caveats when comparing systems: the target system's answers predate the cross-system ones,
+answers vary from run to run (9 of 31 Tongyi question rewrites passed on re-answering), and
+each question was generated with the target system's profile in the prompt, so a failure
+on another system is evidence of general difficulty, not something the question was tuned for.
 
 ---
 
