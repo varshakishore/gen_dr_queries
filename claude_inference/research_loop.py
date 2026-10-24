@@ -597,6 +597,11 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
     with _PRINT_LOCK:
         print(f"\n--- {label}: {len(seeds)} seed(s)"
               + (f" -> {system.server_url}" if system.name else "") + " ---", flush=True)
+    # The driver writes index.json only once every seed is done, so an aborted driver
+    # leaves the PREVIOUS invocation's index behind -- remove it so it can never be
+    # read back as this run's result.
+    index_path = out_dir / "index.json"
+    index_path.unlink(missing_ok=True)
     if line_prefix:
         # Several systems stream at once, so tag every driver line with its cell and
         # hold the lock per line -- interleaved but attributable, and still live, which
@@ -609,10 +614,18 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         proc.wait()
     else:
         proc = subprocess.run(cmd)
-    index_path = out_dir / "index.json"
-    if index_path.exists():
-        return json.loads(index_path.read_text())
-    return {"samples": [], "returncode": proc.returncode}
+    # The driver exits 0 even when seeds end in ERROR; non-zero means it aborted
+    # (p.error, a crash, a kill). Carrying on would compute feedback without this
+    # cell's seeds and build the next round's menus on it, so stop the loop instead.
+    # Other systems' cells still finish (the round's executor waits for them), and a
+    # re-run resumes from their results.
+    if proc.returncode != 0:
+        raise RuntimeError(f"{label}: driver exited with code {proc.returncode}; "
+                           f"stopping before feedback. Fix the cause and re-run the "
+                           f"same command to resume.")
+    if not index_path.exists():
+        raise RuntimeError(f"{label}: driver exited 0 but wrote no {index_path}")
+    return json.loads(index_path.read_text())
 
 
 def write_seed_menus(round_dir: Path, n_seeds: int, pool: list, args,
