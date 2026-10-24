@@ -255,7 +255,7 @@ def query_claude(question: str, conf: dict, client=None) -> dict:
             usage[k] += getattr(u, k, 0) or 0
         stu = getattr(u, "server_tool_use", None)
         usage["web_search_requests"] += (getattr(stu, "web_search_requests", 0) or 0) if stu else 0
-        blocks += [b.model_dump() for b in resp.content]
+        blocks += [b.model_dump(warnings=False) for b in resp.content]
         stops.append(resp.stop_reason)
         if resp.stop_reason != "pause_turn":
             break
