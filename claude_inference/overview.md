@@ -733,7 +733,17 @@ Resumable: the driver skips seeds with an existing `sample_NNN.json`, and a roun
 is reused if `feedback.json` exists (`--refresh-feedback` recomputes). `<out-dir>/loop.json`
 is the manifest — per round, the seed split, statuses, cost, the menus and cluster seeds used,
 the sampled menu with each entry's weight, and the full quota-ban set with the `num_failed`
-that triggered each. The ban set is recorded in full every round because it is recomputed: a
+that triggered each.
+
+**An aborted driver stops the loop.** The driver writes `index.json` only after every seed
+is done, and exits 0 even when seeds end in `ERROR`; a non-zero exit means it aborted
+(`p.error`, a crash, a kill). `run_side` used to read whatever `index.json` existed and
+ignore the exit code, so an abort handed the loop the *previous* invocation's index — old
+statuses and cost reported as this run's — and the loop went on to compute feedback without
+that cell's seeds and build the next round on it. It now deletes the index before launching
+the driver and raises on a non-zero exit (or a zero exit with no index). The other systems'
+cells in the round still finish, since the round's executor waits for them, and re-running
+the same command resumes. The ban set is recorded in full every round because it is recomputed: a
 ban that flickers (its cluster dissolved and re-formed below the quota) is otherwise
 invisible after the fact.
 
