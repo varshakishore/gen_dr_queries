@@ -356,7 +356,8 @@ RULES:
 - The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
 - The updated question length should change by fewer than 15 words from the seed.
 - The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
-- Select whichever strategy works best for THIS seed from the list below. You can use variations of the strategies listed below.
+- Avoid questions whose answer is mainly that the evidence is non-causal or non-comparable; instead make the difficulty a research operation the system must perform, e.g. multi-hop synthesis, quantitative comparison, mechanism discrimination, timeline reconstruction, counterexample search, or source/entity resolution.
+- Select whichever strategy works best for THIS seed from the list below. You can use slight variations of the strategies listed below.
 - The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions).
 - The question should be in English.
 
@@ -393,6 +394,7 @@ RULES:
 - DO NOT USE THE SAME STRATEGIES AS THE EXAMPLES BELOW. Be creative and come up with your own strategy. 
 - The question must be NATURAL and something a researcher might actually ask.
 - The question should be in English.
+- Avoid questions whose answer is mainly that the evidence is non-causal or non-comparable; instead make the difficulty a research operation the system must perform, e.g. multi-hop synthesis, quantitative comparison, mechanism discrimination, timeline reconstruction, counterexample search, or source/entity resolution.
 
 STRATEGIES TO NOT USE:
 {BANNED_STRATEGIES}
@@ -1053,7 +1055,7 @@ def harder_question_gen(
             "meaningfully harder. Or (2) the previous verification criterion was incorrect, "
             "unsupported, or could not be reliably verified; in that case, develop a different "
             "question and verification criterion. "
-            "Do not just rephrase a prior attempt. You can use a different approach than "
+            "Do not just rephrase a prior attempt or just make minor modifications. Try to use a different strategy/approach than "
             "before, and you can also use the feedback on prior attempts. "
             "Below is what was tried:\n\n"
             + "\n".join(feedback_blocks)
