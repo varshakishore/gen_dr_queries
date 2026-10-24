@@ -287,7 +287,7 @@ def is_priced(conf: dict) -> bool:
 
 def _dump(obj) -> dict:
     try:
-        return obj.model_dump(mode="json")
+        return obj.model_dump(mode="json", warnings=False)   # SDK may lag the API shape
     except (AttributeError, TypeError):
         return json.loads(json.dumps(obj, default=lambda o: getattr(o, "__dict__", str(o))))
 

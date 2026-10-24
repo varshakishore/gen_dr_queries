@@ -207,7 +207,10 @@ def query_gpt(question: str, conf: dict, client=None) -> dict:
     if conf.get("effort"):
         kwargs["reasoning"] = {"effort": conf["effort"]}
     t0 = time.time()
-    raw = client.responses.create(**kwargs).model_dump(mode="json")
+    # warnings=False: the installed SDK is older than the API's current response shape, so
+    # pydantic warns about item types it does not know. Unknown fields are still preserved
+    # (verified: action.sources, annotations, tool_usage all survive), so the noise is all it is.
+    raw = client.responses.create(**kwargs).model_dump(mode="json", warnings=False)
     answer, trace = to_trace(raw, domains)
     u = raw.get("usage") or {}
     n_search = ((raw.get("tool_usage") or {}).get("web_search") or {}).get("num_requests")
