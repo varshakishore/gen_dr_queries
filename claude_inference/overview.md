@@ -797,6 +797,12 @@ python filter_queries.py --limit 20 --no-push --max-cost 0.10   # smoke test
 python filter_queries.py --limit 2000 --concurrency 16 --max-cost 5
 ```
 
+The `--limit 2000` above is only an example. The run the benchmark's seeds came from labeled
+**6,000** queries and kept **3,311** (55.2%) — see
+`runs/filter_queries/varshak1__asta-user-interactions-filtered.jsonl`, whose `usable` field
+is the filter's verdict. Quoting 2,000/1,078 off this command is wrong and does not match the
+55.2% pass rate.
+
 ---
 
 ## 6. `verify_questions.py` — post-hoc criterion filtering
@@ -871,6 +877,32 @@ so a chosen number of questions appear in two batches. Study 1 (2026-10-01) used
 15 from `runs/final_loop_600` (75 distinct questions, 15 of them double-annotated); its labels are what
 `final_verification.py`'s prompts were tuned against (§11). `annotation_app/README.md` has
 the full flow.
+
+### Study 1 results (`internal_annotations/`)
+
+Study 1 was annotated by six of us, not Prolific workers, and lands in
+`../annotation_app/internal_annotations/annotations/<name>/` rather than the bucket.
+90 ratings over 75 questions, 15 double-annotated:
+
+```
+question benchmark-worthy   67 yes / 11 minor revision / 12 no
+criterion correct           58 yes / 20 minor revision / 12 no
+answer fails criterion      59 yes / 11 no / 20 not applicable
+inter-annotator (15 doubles)  11/15 question, 11/15 criterion, 7/15 fails
+```
+
+Two unit traps. The `fails` counts above are **per rating** (they sum to 90); per *question*
+the split is 45 all-confirm / 7 mixed / 8 all-disagree / 15 all-N/A (sums to 75). Mixing the
+two produces totals that match neither. And a question counts as **human-rejected only when
+every one of its annotators rejected it** (`q_rating == "no"` or `c_rating == "no"`), which
+gives 13 of 75 (17%); "any annotator rejected" gives 16 (21%).
+
+Scoring these against `final_verification_v14` gives 76% agreement, κ = 0.33, the LLM
+rejecting 21 to the humans' 13, keeping 5 of the 13 and discarding 13 the humans kept. The
+paper reports 83% / κ = 0.50 / 21→20 / 3 / 10, which is internally consistent but does not
+reproduce against v14 under any of the three obvious reject conventions — it was computed
+against some earlier reviewer version. **Re-run it against whichever version actually
+produced the released benchmark before quoting it.**
 
 ---
 
@@ -1076,7 +1108,7 @@ link back to — an empty report at the end of a multi-hour run.
 
 ---
 
-## 11. From harvest to benchmark — filter, rejudge, export, cross-system answers
+## 11. From harvest to benchmark — filter, rejudge, export, answer, subset
 
 A loop's `FAILED_FOUND` harvest is not yet a benchmark: some questions are unanswerable,
 use made-up terms, or carry a criterion the answer actually met. Four scripts turn a
@@ -1088,7 +1120,9 @@ research_loop.py              ──► runs/<run>/                             
 final_verification.py         ──► runs/<run>_final_verification[_vN]/           filter
 final_verification_rejudge.py ──► runs/<run>_final_verification[_vN]/rejudge/   re-earn labels for rewrites
 export_benchmark.py           ──► runs/<run>_full_benchmark/                    one file per question
-answer_cross_systems.py       ──► runs/<run>_full_benchmark/ (in place)         other systems' answers
+answer_cross_systems.py       ──► runs/<run>_full_benchmark/ (in place)         every other system's answers
+make_subset.py                ──► runs/<run>_full_benchmark/subsets/            fixed subset for expensive systems
+merge_benchmarks.py           ──► runs/<merged>/                                several exports into one
 ```
 
 For `final_loop_600` the files, counts and provenance of each stage are documented in
@@ -1180,31 +1214,215 @@ the sources Tongyi / WebThinker consulted are resolved from the trace by `cite_u
 (`format_answer_for_judge`) whenever a rendering is needed. DR-Tulu's server reports no
 model name, so its `answer.model` is null.
 
-### `answer_cross_systems.py` — the other two systems
+### `answer_cross_systems.py` — every other system
 
-For every sample and every system whose slot is null (the two non-target systems), sends the
-final question to that system's server, judges the answer against the final criterion with
-the same judge model the target was judged with, and writes `{answer, judgment}` into the
-sample (atomic rewrite, per-file lock; `answer_source` / `judgment_source` =
-`cross_system`). The target's slot is never touched. Resumable: filled slots are skipped, a
-failed call leaves the slot null and is retried on re-run. At the end `index.jsonl`'s
-verdicts are rebuilt from the samples and `cross_system/summary.json` records verdicts by
-system and by target system and how many questions every system fails.
+For every sample and every system whose slot is null, sends the final question to that
+system, judges the answer against the final criterion with the same judge model the target
+was judged with, and writes `{answer, judgment}` into the sample (atomic rewrite, per-file
+lock; `answer_source` / `judgment_source` = `cross_system`). The target's slot is never
+touched. Resumable: filled slots are skipped, a failed call leaves the slot null and is
+retried on re-run. At the end `index.jsonl`'s verdicts are rebuilt from the samples and
+`cross_system/summary.json` records verdicts by system and by target system and how many
+questions every system fails.
+
+`--add-systems` adds slots that `export_benchmark.py` never created, which is how everything
+past the original three got in. A system's `kind` picks the backend:
+
+| `kind` | module | config | domain restriction |
+| --- | --- | --- | --- |
+| *(absent)* | `research_pipeline.query_research_system` | `systems.json`, `systems_s2.json` | server-side (`search_scope` is a note, the server enforces it) |
+| `anthropic` | `frontier_search.py` | `systems_frontier.json` | `allowed_domains` on the search tool — **leaky** |
+| `openai` | `openai_search.py` | `systems_frontier.json` | `filters.allowed_domains` — enforced |
+| `gemini` | `gemini_search.py` | `systems_frontier.json` | none available; prompted only |
+
+Eight configurations have been run on `final_loop_600_full_benchmark`:
+
+```
+drtulu  tongyi  webthinker                open web (tongyi, webthinker), S2 only (drtulu)
+tongyi_s2  webthinker_s2                  same servers, search restricted to arxiv + S2
+claude_opus_s2  gpt56_sol_s2  gemini_flash_prompted_s2    frontier, 100-question subset
+```
 
 ```bash
 python answer_cross_systems.py runs/final_loop_600_full_benchmark --dry-run
 python -u answer_cross_systems.py runs/final_loop_600_full_benchmark --budget-usd 40
+python -u answer_cross_systems.py runs/final_loop_600_full_benchmark \
+    --add-systems gpt56_sol_s2 --systems-file systems_frontier.json \
+    --ids-file runs/final_loop_600_full_benchmark/subsets/subset_100_seed0.json
 ```
 
-`--systems` restricts it to some systems. Run all systems in **one** process: the per-file
-lock does not protect against two processes writing the same sample. `final_loop_600`: 730
-answers (Tongyi 243, WebThinker 251, DR-Tulu 236), about 10 h at concurrency 10 per system,
-dominated by Tongyi and WebThinker (~25 min per answer). Launched on weka 2026-10-07.
+`--systems` restricts it to some systems, `--ids-file` to some questions. Run all systems in
+**one** process: the per-file lock does not protect against two processes writing the same
+sample. The three open systems took 730 answers (Tongyi 243, WebThinker 251, DR-Tulu 236),
+about 10 h at concurrency 10 per system, dominated by Tongyi and WebThinker (~25 min per
+answer); launched on weka 2026-10-07. Frontier answers cost far more than they take time:
+$0.63 (gpt-5.6-sol), $3.02 (claude-opus-5-5), $0.47 (gemini-3.8-flash) per answer, each
+dominated by search results re-read as input tokens across the agent's turns.
 
 Caveats when comparing systems: the target system's answers predate the cross-system ones,
 answers vary from run to run (9 of 31 Tongyi question rewrites passed on re-answering), and
 each question was generated with the target system's profile in the prompt, so a failure
 on another system is evidence of general difficulty, not something the question was tuned for.
+
+### `make_subset.py` — a fixed subset for expensive systems
+
+Draws a stratified random subset of the questions, for systems too expensive to run on all
+of them. Stratified by target system, because fail rates differ by target: each target gets
+a share proportional to its share of the benchmark (largest-remainder rounding), drawn with
+`--seed`. Writes `<bench>/subsets/subset_<n>_seed<seed>.json` and **never overwrites an
+existing one** — systems already run against it would no longer match. Prints a
+representativeness check (each system's fail rate on the subset next to its rate on the
+whole benchmark). Feed it to `answer_cross_systems.py --ids-file`.
+
+```bash
+python make_subset.py runs/final_loop_600_full_benchmark --n 100 --seed 0
+```
+
+`subset_100_seed0` strata: DR-Tulu 35, Tongyi 34, WebThinker 31. This is why open systems
+show `n = 65--69` on the subset rather than 100 — each is scored only on the other targets'
+questions (see §12).
+
+### `frontier_search.py`, `openai_search.py`, `gemini_search.py` — frontier harnesses
+
+One module per provider, each exposing `query_<x>(question, conf)` and returning the same
+`{text, trace, model, usage, cost_usd, ...}` shape the research servers return, so
+`answer_cross_systems.py` and the judge treat them like any other system. All three run the
+provider's **own** server-side search rather than a harness of ours — the point of the
+comparison is what these systems do as products.
+
+Each writes a `trace.domain_audit` recording what the restriction actually bought, because
+the three providers enforce it very differently. On the 100-question subset:
+
+| | restriction | off-domain |
+| --- | --- | --- |
+| `gpt-5.6-sol` | `filters.allowed_domains` | 3 of 12,614 results; 0 citations |
+| `claude-opus-5-5` | `allowed_domains` on the tool | 3,341 of 13,154 results (25%); 67 of 87 answers cited off-domain |
+| `gemini-3.8-flash` | prompt only | every query carried `site:`; 62 off-domain citations |
+
+Provider gotchas, each of which cost a debugging session:
+
+- **Anthropic.** Opus 5.5 rejects `thinking.type = "enabled"`; use `{"type": "adaptive"}`
+  with `output_config.effort`. The streaming SDK drops text the API sent, so the module
+  repairs it (`stream_text_repaired`). The newer `web_search_20260318` tool returned zero
+  citations, so the run stays on `web_search_20250305`.
+- **Gemini.** Citation offsets are **byte** offsets into UTF-8, not character offsets;
+  the module converts them. Sources arrive as redirect URLs that must be resolved, then
+  looked up against S2/arXiv for a usable title.
+- **OpenAI.** Needs `include=["web_search_call.action.sources"]` or the audit sees nothing.
+  Some reference titles come back unusable and are repaired by `fix_titles()`.
+
+The SDKs are older than the APIs, so `model_dump()` emits pydantic
+`PydanticSerializationUnexpectedValue` warnings; they are suppressed with
+`warnings=False`. `verify_no_data_loss.py` makes one small call per provider and deep-diffs
+the raw HTTP JSON against what we store, to prove the warnings are cosmetic — it reports
+"ALL CHECKED PROVIDERS: nothing lost".
+
+### `merge_benchmarks.py` — several exports into one
+
+Merges export dirs without touching them, namespacing ids and file names by run
+(`<run>/round_00/exploit/sample_004`) since sample ids are only unique within a run. Checks
+everything before writing: each input is internally consistent, merged ids and file names
+are unique, and **no seed and no question appears in two inputs** — a shared seed would mean
+the same user query generated both, which breaks the independence the benchmark assumes.
+Used to combine the DR-Tulu-only training runs (`drtulu_train`, `drtulu_train_2`).
+
+---
+
+## 12. Reading the results — scoring conventions
+
+Every number in the paper was re-derived from the artifacts below. The conventions are not
+guessable from the data, and using the wrong one silently moves the headline figures by
+several points, so they are recorded here.
+
+**Pass = `criterion_satisfied`, not `verdict`.** Each judgment carries both: whether the
+answer met the verification criterion, and an overall quality verdict that also fails on
+unrelated problems (bad citations, overclaiming, inconsistency). The benchmark scores the
+criterion — that is the requirement the question was built to test. `cross_system/
+summary.json`'s `verdicts_by_system` is **verdict**-based, so it reproduces the appendix's
+*Overall* column, not the headline numbers; for those, read `criterion_satisfied` out of
+`cross_system/results.jsonl` (dedupe to the last row per `(id, system)` — retries leave
+earlier rows behind).
+
+**A system is never scored on its own questions.** A question entered the benchmark because
+its target system failed it, so including those is circular and would read as 0% by
+construction. Exclude by `target_system`, and exclude the restricted variant too
+(`tongyi_s2` is left out of Tongyi's questions). Hence `n = 243 / 236 / 251` on the full
+benchmark and `n = 65--69` on the 100-subset. There is **no** common subset across all three
+open systems — every question is ineligible for exactly one of them — so any "all systems on
+the same questions" table has to keep the circular zeros and say so.
+
+**"Fails all five open configurations" (259, 71%)** iterates all 365 ids over
+`[drtulu, tongyi, tongyi_s2, webthinker, webthinker_s2]` and treats **any missing or
+own-target slot as a failure**. Excluding own-target slots from the conjunction instead
+gives 267/364 (73%). Both are defensible; they are different claims.
+
+Headline numbers, all reproduced (criterion pass rate, own questions excluded):
+
+```
+                      full benchmark      100-subset
+gpt-5.6-sol                     --        65%  (n=100)
+claude-opus-5-5                 --        55%  (n=87, 13 refusals; 48% if counted as fails)
+gemini-3.8-flash                --        32%  (n=100)
+Tongyi  (arxiv+S2 / open)   22% / 20%     26% / 23%   (n=243 / 66)
+DR-Tulu (S2)                    14%       11%         (n=236 / 65)
+WebThinker (arxiv+S2 / open) 6% / 7%       7% /  4%   (n=251 / 69)
+```
+
+25 of the 87 questions all three frontier systems answered (29%) are failed by all three.
+Gemini is the outlier on criterion-vs-overall: 19% of its answers meet the criterion but
+fail overall, against 2--3% for the other two, almost all citation problems.
+
+### Construction cost
+
+Totals $109.88 in API calls, $0.30 per released question. Where it hides:
+
+```
+seed filtering (6,000 queries, gpt-5.6-luna)                     1.16   derived from stored token counts
+generation loop                                                 91.30
+    question generation (G)                   940 calls         12.59
+    criterion verification (J_inst)           940 calls         52.59   <- 58% of the loop
+    retrieval query decomposition             940 calls          1.68
+    answer judging (J_ans)                    772 calls         23.99
+    meta-steering clustering                    9 rounds         0.45
+final verification (586)                                        12.37
+re-judging revised pairs (157)                                   5.04
+```
+
+Three traps when recomputing this:
+
+- **`loop.json`'s `total_cost_usd` (90.9459) is right but its parts are not.** It books only
+  $0.16 of clustering (rounds 7--8); the true figure is $0.44, summed from each round's
+  `feedback.json` → `meta.clustering.cost_usd`. Per-round `cost_usd` excludes clustering.
+- **936 calls are invisible in the call log.** Summing `kind == "claude_call"` across
+  `run-sample_*.jsonl` gives 2,652 calls / $89.17, short of the loop's own 3,588. The
+  remainder is the retrieval query decomposer, logged inside the `criterion_check` record as
+  `retrieval.decompose_cost_usd`. Adding it back: 3,592 calls / $90.85, which closes against
+  the loop's $90.78 of round costs.
+- **`final_loop_600_1`, `_4`, `_5`, `_7` are not extra spend.** They look like separate runs
+  (cost $17.66 → $36.79 → $45.61 → $63.60) but are progress snapshots of the same resumed
+  campaign: every one of their calls appears in `final_loop_600`, and the union adds $0.00.
+
+Excluded, and worth saying out loud whenever the figure is quoted: compute for the three
+self-hosted target systems (774 answers during the search), the retrieval behind criterion
+verification (940 ScholarQA + Qwen3-Reranker-4B passes, ~250 snippets each), and preliminary
+parameter-selection runs. Judging a cross-system answer costs $0.015--0.019 for frontier
+systems but $0.027--0.046 for open ones, whose reconstructed reference blocks are far longer.
+
+### Where the inputs live
+
+```
+runs/filter_queries/varshak1__asta-user-interactions-filtered.jsonl   6,000 labeled, 3,311 usable (55.2%)
+runs/final_loop_600/                             loop.json, failed_found.jsonl (586), round_NN/feedback.json
+runs/final_loop_600_final_verification_v14/      summary.json (234/157/195), rejudge/summary.json (131/15/11)
+runs/final_loop_600_full_benchmark/              samples/ (365), cross_system/results.jsonl, subsets/
+../annotation_app/internal_annotations/          6 annotators x 15 = 90 ratings over 75 questions
+```
+
+Two things are **not** recoverable from any stored artifact and need their analysis scripts
+if the numbers are ever challenged: the per-attempt assignment of all 829 attempts onto the
+round-8 cluster inventory (the per-round `feedback.json` re-clusters from scratch each round,
+so differencing them is invalid), and the categorization of free-text `other_issues` strings
+into citation/overclaiming/consistency buckets.
 
 ---
 
