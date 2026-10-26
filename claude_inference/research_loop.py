@@ -554,7 +554,9 @@ def run_side(seeds: list, prompt: str, round_dir: Path, args,
         args.python, str(DRIVER),
         "--seeds-file", str(seeds_file),
         "--out-dir", str(out_dir),
-        "--prompt", prompt,
+        # --prompt-override swaps the TEMPLATE only: the cell keeps its explore/exploit
+        # directory and seeds file, so the layout and every downstream reader are unchanged.
+        "--prompt", getattr(args, "prompt_override", None) or prompt,
         "--concurrency", str(concurrency or system.concurrency or args.concurrency),
         "--max-attempts", str(args.max_attempts),
         "--model", args.model,
@@ -799,6 +801,13 @@ def main():
     p.add_argument("--prompt-mix", type=float, default=0.5,
                    help="Share of each round's seeds given to the explore prompt; "
                         "0.5 = an even split (default: 0.5).")
+    p.add_argument("--prompt-override", choices=["explore", "exploit", "free"], default=None,
+                   help="Force every cell to use this make-harder TEMPLATE regardless of the "
+                        "explore/exploit split. Only the template changes -- cells keep their "
+                        "usual round_KK/[<system>/]<prompt>/ directories. Use with "
+                        "--prompt-mix 0 and 'free' for the no-guidance ablation: that prompt "
+                        "has no strategy, banned or few-shot block, so the menus this loop "
+                        "writes are still recorded per round but do not reach the generator.")
     p.add_argument("--stop-after-rounds", type=int, default=0, metavar="N",
                    help="Pause after N rounds that actually ran work in THIS invocation "
                         "(default: 0 = run them all). Re-running the same command "

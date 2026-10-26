@@ -277,8 +277,10 @@ def main():
                         f"{RP.DEFAULT_MODEL}). Accepts a Claude "
                         "id or an OpenAI one (e.g. gpt-5.6-terra); the provider is inferred "
                         "from the id unless --provider says otherwise.")
-    p.add_argument("--prompt", choices=["explore", "exploit"], default="explore",
-                   help="make-harder prompt variant passed to the pipeline (default: explore).")
+    p.add_argument("--prompt", choices=["explore", "exploit", "free"], default="explore",
+                   help="make-harder prompt variant passed to the pipeline (default: explore). "
+                        "'free' is the ablation prompt: no strategy menu, no banned list, "
+                        "no worked examples.")
     p.add_argument("--profile", help="Answering-system profile name passed to the pipeline "
                                      "(e.g. drtulu, tongyi).")
     p.add_argument("--banned-strategies",

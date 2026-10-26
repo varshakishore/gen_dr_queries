@@ -405,6 +405,40 @@ Here are a few examples:
 Reminder: Do not use the same strategies as the examples above.
 """
 
+# Ablation ('free'): the exploit prompt with ALL strategy guidance removed -- no example
+# menu, no worked examples, and no rule pointing at a menu. Everything else (profile,
+# OUTPUT FORMAT, the remaining rules) is byte-identical to the exploit prompt, so a run
+# against this template differs from the exploit arm only in the removed guidance.
+# `chosen_strategy` is still required by OUTPUT FORMAT, so these questions carry a
+# strategy and cluster alongside the other arms. None of the {EXAMPLE_STRATEGIES},
+# {BANNED_STRATEGIES} or {FEW_SHOT_EXAMPLES} sentinels appear, so with_strategies(),
+# with_banned_strategies() and with_few_shots() are all no-ops on it.
+PROMPT_TO_MAKE_HARDER_QUESTION_FREE = """You are an expert in constructing challenging research questions.
+
+Given a seed question, produce an updated question designed to expose weaknesses in deep research systems. 
+
+ANSWERING SYSTEM PROFILE:
+{ANSWERING_SYSTEM_PROFILE}
+
+OUTPUT FORMAT (valid JSON, no extra text):
+{
+  "brainstorming": "<in under 4 sentences, reason about a couple strategies and why they might or might not work for THIS seed>",
+  "chosen_strategy": "<name and explain the single most promising strategy>",
+  "updated_question": "<the rewritten question>",
+  "why_harder": "<explanation of why this question might be hard for a deep research system>",
+  "verification_criterion": "<one concrete, testable criterion for checking whether the answer is good>"
+}
+
+RULES:
+- Avoid questions that can easily be answered by retrieving information.
+- The updated question should be hard to answer correctly, not just hard to retrieve — via higher-order thinking (analysis, comparison, evaluation, synthesis), a reasoning trap the system must catch (false premise, misconception, unanswerable claim), or an embedded constraint that changes what a correct answer must contain.
+- The updated question length should change by fewer than 15 words from the seed.
+- The verification criterion should be specific and checkable, not vague or aspirational. The criterion is checked by a judge who sees ONLY the question, the answer, and the answer's own sources — there is NO external answer key. So don't use hollow existence-counts like "identify at least three implicit assumptions" or "name four categories of evidence." Anchor it to THIS question by naming the actual entities/claims at issue — never a generic template. 
+- Avoid questions whose answer is mainly that the evidence is non-causal or non-comparable; instead make the difficulty a research operation the system must perform, e.g. multi-hop synthesis, quantitative comparison, mechanism discrimination, timeline reconstruction, counterexample search, or source/entity resolution.
+- The question must be NATURAL and something a researcher might actually ask. It should ONLY have one main component (no "and" or multiple sub-questions).
+- The question should be in English.
+"""
+
 PROMPT_FOR_SEED_CRITERION = """You are an expert evaluator of deep research systems.
 
 Given a research question, produce a simple, ATOMIC verification criterion. The criterion must test exactly ONE concrete property of a good answer — not a combination. If the question is underspecified, then the verification_criterion should say "Any non-empty answer is acceptable."
@@ -1792,10 +1826,12 @@ def main():
              "Raise it for slow models, e.g. 7200 for Tongyi.",
     )
     parser.add_argument(
-        "--prompt", choices=["explore", "exploit"], default="explore",
+        "--prompt", choices=["explore", "exploit", "free"], default="explore",
         help="Which make-harder system prompt to use (default: explore). "
              "'explore' forbids reusing the example strategies; 'exploit' keeps the "
-             "in-context strategy menu.",
+             "in-context strategy menu; 'free' is the ablation -- no strategy menu, no "
+             "banned list and no worked examples, so --strategies, --banned-strategies "
+             "and --few-shots-file have no effect on it.",
     )
     parser.add_argument(
         "--profile", choices=sorted(ANSWERING_SYSTEM_PROFILES), default=DEFAULT_PROFILE,
@@ -1915,8 +1951,11 @@ def main():
     if decomposer:
         retrieval_kwargs["decomposer_model"] = decomposer
 
-    base_template = (PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE if args.prompt == "explore"
-                     else PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT)
+    base_template = {
+        "explore": PROMPT_TO_MAKE_HARDER_QUESTION_EXPLORE,
+        "exploit": PROMPT_TO_MAKE_HARDER_QUESTION_EXPLOIT,
+        "free": PROMPT_TO_MAKE_HARDER_QUESTION_FREE,
+    }[args.prompt]
     example_strategies = (load_strategy_file(args.strategies_file) if args.strategies_file
                           else STRATEGY_LISTS[args.strategies])
     banned_strategies = (load_strategy_file(args.banned_strategies_file)
